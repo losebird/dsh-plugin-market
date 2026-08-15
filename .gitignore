@@ -1,4 +1,6 @@
 node_modules/
+dist/
 web/dist/
+web/.npm-cache/
 .DS_Store
 *.log
