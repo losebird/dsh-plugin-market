@@ -31,13 +31,14 @@ const NOISE_TAGS = new Set([
 
 // ── 功能分类器（按顺序首个命中；curated 显式声明优先） ───────────────────────
 const CATEGORY_RULES = [
+  { key: 'tools', re: /stock|股票|行情|quant|trading|kline|财经|基金/ }, // 金融行情优先于 market 关键词
   { key: 'market', re: /market|marketplace|插件市场|插件中心|store|installer/ },
-  { key: 'ui', re: /skin|theme|ui|sidebar|transparent|view.?mode|appearance|界面|主题|皮肤|美化|style|brand/ },
+  { key: 'ui', re: /\bui\b|skin|theme|sidebar|transparent|view.?mode|appearance|界面|主题|皮肤|美化|style|brand/ },
   { key: 'session', re: /session|memory|archive|history|delete|会话|记忆|存档|context|compaction/ },
   { key: 'agent', re: /agent|team|workflow|task|swarm|subagent|auto.?mode|编排|multi.?agent/ },
-  { key: 'comm', re: /telegram|messag|notify|mobile|pwa|pocket|relay|voice|wechat|im(?:-|$)|微信|提醒|通知/ },
+  { key: 'comm', re: /telegram|messag|notify|mobile|pwa|pocket|relay|voice|wechat|\bim\b|im-|微信|提醒|通知/ },
   { key: 'auth', re: /auth|approval|permission|oauth|gate|audit|balance|subscription|login|安全|权限|计费/ },
-  { key: 'fun', re: /pet|girl|companion|persona|entertain|陪伴|宠物|角色|娱乐/ },
+  { key: 'fun', re: /\bfun\b|\bpet\b|girl|companion|persona|entertain|陪伴|宠物|角色|娱乐/ },
   { key: 'skills', re: /skill|技能|能力包/ },
   { key: 'tools', re: /mcp|browser|playwright|computer.?use|file|preview|vision|office|manim|xcode|path|workspace|tool|pdf|image|screen|email/ },
   { key: 'dev', re: /code|provider|model|language|translat|prompt|draft|cli|tui|input|smart|genui|repl|debug/ },
