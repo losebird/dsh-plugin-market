@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
-  ArrowLeft, ArrowSquareOut, CaretRight, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
+  ArrowLeft, CaretRight, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
+  GithubLogo, MagnifyingGlass, Moon, Package, Plug, Sparkle, Star, Sun, UploadSimple, UserCircle, Warning, X,
 } from '@phosphor-icons/react'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
