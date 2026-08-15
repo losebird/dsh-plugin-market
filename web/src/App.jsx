@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
-  ArrowLeft, CaretRight, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
+  ArrowLeft, ArrowSquareOut, CaretRight, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
   GithubLogo, MagnifyingGlass, Moon, Package, Plug, Sparkle, Star, Sun, UploadSimple, UserCircle, Warning, X,
 } from '@phosphor-icons/react'
 import { marked } from 'marked'
@@ -99,6 +99,8 @@ const I18N = {
     'faq.q4': '为什么有些插件标着「未验证」？', 'faq.a4a': '它们的仓库没有声明 ', 'faq.a4b': '，直接 dsh plugin add 只会作为普通依赖安装、不会挂载成插件。请参考作者仓库的手工安装说明。',
     'faq.q5': '安装后插件没有生效？', 'faq.a5': 'bundle 类插件安装后需要重启 dsh 才生效；扩展包里的 skill 在新会话可用，preset 需要在新会话的预设列表中选择。',
     'faq.q6': '如何卸载插件？', 'faq.a6a': '在弹窗里点「卸载」，或在终端执行 ', 'faq.a6b': '（包名可在插件详情里查看）。',
+    'faq.q7': '未验证的插件应该怎么安装呢？', 'faq.a7': '点击卡片「详情」，把项目地址发给 dsh，让它帮你安装即可。',
+    'links.title': '相关资源', 'links.llm': 'AI 大模型', 'links.agent': 'Agent 平台', 'links.token': 'API 中转',
   },
   en: {
     'nav.directory': 'Directory', 'nav.how': 'How it works', 'nav.repo': 'Repo', 'nav.upload': 'Submit',
@@ -171,6 +173,8 @@ const I18N = {
     'faq.q4': 'Why are some plugins marked Unverified?', 'faq.a4a': 'Their repos do not declare ', 'faq.a4b': ', so dsh plugin add would only add them as plain dependencies without mounting. Check the repo for manual install steps.',
     'faq.q5': 'Installed but not taking effect?', 'faq.a5': 'Bundle plugins require a dsh restart. Skills from packs are available in new sessions; presets must be selected in a new session\'s preset list.',
     'faq.q6': 'How do I uninstall?', 'faq.a6a': 'Click Uninstall in the modal, or run ', 'faq.a6b': ' (find the package name in the plugin detail).',
+    'faq.q7': 'How do I install an Unverified plugin?', 'faq.a7': 'Open Details, send the project URL to dsh, and ask it to install for you.',
+    'links.title': 'Related', 'links.llm': 'LLMs', 'links.agent': 'Agent', 'links.token': 'API Relays',
   },
 }
 
@@ -512,8 +516,9 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
           <span><b>{items.length}</b> {t('hero.statTotal')}</span>
           <span className="dot">·</span>
           <span><b>{groupCounts.verified}</b> {t('hero.statVerified')}</span>
+          <span className="dot">·</span>
+          <span className="hero-slogan">Everything is a Plugin.</span>
         </div>
-        <div className="hero-slogan">Everything is a Plugin.</div>
         <InstallStrip onToast={onToast} />
       </section>
 
@@ -541,16 +546,6 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
                 </button>
               )
             })}
-          </div>
-          <div className="seg-side">
-            {(group === 'verified' || group === 'unverified') && (
-              <select className="sort-select" value={sort} onChange={(e) => { setSort(e.target.value); setPage(0) }} aria-label="sort">
-                <option value="stars">{t('dir.sortStars')}</option>
-                <option value="downloads">{t('dir.sortDownloads')}</option>
-                <option value="name">{t('dir.sortName')}</option>
-              </select>
-            )}
-            <button className="btn btn-ghost btn-sm" onClick={onGoSubmit}><UploadSimple size={14} />{t('hero.upload')}</button>
           </div>
         </div>
         {cats.length > 0 && (
@@ -594,6 +589,7 @@ function Faq() {
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },
+    { q: t('faq.q7'), a: <>{t('faq.a7')}</> },
     { q: t('faq.q5'), a: <>{t('faq.a5')}</> },
     { q: t('faq.q6'), a: <>{t('faq.a6a')}<code>{'dsh plugin --profile web remove <package>'}</code>{t('faq.a6b')}</> },
   ]
@@ -606,6 +602,21 @@ function Faq() {
           <div className="faq-body">{it.a}</div>
         </details>
       ))}
+      <div className="links-title">{t('links.title')}</div>
+      <div className="links-wall">
+        {[
+          { label: t('links.llm'), items: [['ChatGPT', 'https://chatgpt.com'], ['Claude', 'https://claude.ai'], ['Gemini', 'https://gemini.google.com'], ['DeepSeek', 'https://chat.deepseek.com'], ['Kimi', 'https://kimi.moonshot.cn'], ['Qwen', 'https://chat.qwen.ai']] },
+          { label: t('links.agent'), items: [['Manus', 'https://manus.im'], ['Coze', 'https://www.coze.cn'], ['Dify', 'https://dify.ai'], ['n8n', 'https://n8n.io']] },
+          { label: t('links.token'), items: [['OpenRouter', 'https://openrouter.ai'], ['SiliconFlow', 'https://siliconflow.cn'], ['AiHubMix', 'https://aihubmix.com']] },
+        ].map((g) => (
+          <div className="links-group" key={g.label}>
+            <span className="links-label">{g.label}</span>
+            {g.items.map(([name, url]) => (
+              <a key={name} className="link-chip" href={url} target="_blank" rel="noreferrer">{name}<ArrowSquareOut size={12} /></a>
+            ))}
+          </div>
+        ))}
+      </div>
     </section>
   )
 }

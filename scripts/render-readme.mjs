@@ -31,7 +31,7 @@ const fmt = (n) => {
 const lines = []
 lines.push('# DSH 插件市场', '')
 lines.push('> 由 GitHub Actions 每日自动采集、按功能分类的 DSH 社区插件清单。', '')
-lines.push('> 数据文件：`registry/all.json`（本 README 由脚本生成，请勿手改；上架新插件见 `docs/SUBMIT.md`）。', '')
+lines.push('> 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。', '')
 const v = items.filter((i) => i.verified !== false).length
 lines.push(`**${items.length}** 个插件 · **${v}** 个可一键安装`)
 lines.push('', '安装市场：', '')

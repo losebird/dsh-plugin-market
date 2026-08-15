@@ -2,7 +2,7 @@
 
 > 由 GitHub Actions 每日自动采集、按功能分类的 DSH 社区插件清单。
 
-> 数据文件：`registry/all.json`（本 README 由脚本生成，请勿手改；上架新插件见 `docs/SUBMIT.md`）。
+> 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
 **2200** 个插件 · **1611** 个可一键安装
 
