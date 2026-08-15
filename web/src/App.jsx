@@ -7,6 +7,7 @@ import {
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
+const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
 
 const DEMO_ITEMS = [
   {
@@ -30,6 +31,14 @@ async function loadRegistry() {
     const res = await fetch(REGISTRY_BASE + 'registry/' + name)
     return res.ok ? res.json() : null
   }
+  // 优先读 raw 主分支（数据永远最新），失败再回退打包进站点的副本
+  try {
+    const res = await fetch(RAW_REGISTRY)
+    if (res.ok) {
+      const parsed = await res.json()
+      if (parsed && Array.isArray(parsed.items)) return parsed.items
+    }
+  } catch {}
   const all = await grab('all.json')
   if (all && Array.isArray(all.items)) return all.items
   const curated = await grab('index.json')
