@@ -26,6 +26,7 @@ window.__ModuleLoader__.load({
         search: '搜索插件…', refresh: '刷新', refreshing: '刷新中…', all: '全部',
         install: '安装', update: '更新', uninstall: '卸载',
         installing: '安装中…', uninstalling: '卸载中…', installed: '已安装',
+        copyUrl: '复制地址', copied: '已复制',
         auto: '自动收录', unver: '未验证', demo: '演示', offline: '已下线',
         offlineNote: '仓库已下线，无法安装', unverNote: '未验证（缺 dsh.bundle 声明），无法一键安装',
         typeBundle: 'DSH 插件', typePack: '扩展包', downloads: '下载量', stars: '星标',
@@ -41,6 +42,7 @@ window.__ModuleLoader__.load({
         search: 'Search plugins…', refresh: 'Refresh', refreshing: 'Refreshing…', all: 'All',
         install: 'Install', update: 'Update', uninstall: 'Uninstall',
         installing: 'Installing…', uninstalling: 'Uninstalling…', installed: 'Installed',
+        copyUrl: 'Copy URL', copied: 'Copied',
         auto: 'Auto', unver: 'Unverified', demo: 'Demo', offline: 'Offline',
         offlineNote: 'Repo offline, cannot install', unverNote: 'Unverified (missing dsh.bundle), one-click install unavailable',
         typeBundle: 'DSH plugin', typePack: 'Pack', downloads: 'Downloads', stars: 'Stars',
@@ -146,7 +148,7 @@ window.__ModuleLoader__.load({
       const store = {
         open: false, loading: false, source: 'demo', notice: null, error: null,
         q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
-        items: [], installed: {}, busy: {},
+        items: [], installed: {}, busy: {}, copiedRepo: null,
       }
       const subs = new Set()
       const patch = (p) => { Object.assign(store, p); for (const f of subs) f() }
@@ -220,6 +222,16 @@ window.__ModuleLoader__.load({
         }
       }
 
+      const copyRepo = (item) => {
+        const url = 'https://github.com/' + item.repo
+        try {
+          navigator.clipboard.writeText(url).then(() => {
+            patch({ copiedRepo: item.id })
+            setTimeout(() => patch({ copiedRepo: null }), 1600)
+          }).catch(() => {})
+        } catch {}
+      }
+
       const fmtNum = (n) => {
         if (typeof n !== 'number') return '0'
         if (n >= 1000000) return (n / 1000000).toFixed(1) + 'm'
@@ -263,7 +275,11 @@ window.__ModuleLoader__.load({
               : unavailable
                 ? h('span', { className: 'dshm-busy' }, t('offlineNote'))
                 : item.verified === false
-                  ? h('span', { className: 'dshm-busy' }, t('unverNote'))
+                  ? h('span', null,
+                      h('span', { className: 'dshm-busy' }, t('unverNote')),
+                      h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
+                        st.copiedRepo === item.id ? t('copied') : t('copyUrl')),
+                    )
                   : installed
                     ? h('span', null,
                         h('button', { className: 'dshm-btn', onClick: () => runInstall(item) }, t('update')),

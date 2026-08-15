@@ -189,17 +189,27 @@ a:hover { text-decoration: underline; }
 .faq-body { padding: 0 18px 14px 42px; color: var(--text-2); font-size: 13.5px; line-height: 1.8; }
 .faq-body code { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); background: var(--panel-2); padding: 1px 6px; border-radius: 5px; }
 
-.links-title { text-align: center; font-size: 13px; color: var(--text-3); margin: 26px 0 12px; }
-.links-wall { display: flex; flex-direction: column; gap: 12px; align-items: center; }
-.links-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
-.links-label { font-size: 12.5px; color: var(--text-3); margin-right: 2px; white-space: nowrap; }
-.link-chip {
-  display: inline-flex; align-items: center; gap: 5px;
-  border: 1px solid var(--border); background: var(--panel); color: var(--text-2);
-  font-size: 12.5px; font-weight: 550; padding: 5px 12px; border-radius: 999px;
+.links-block { margin-top: 34px; text-align: left; }
+.links-title {
+  font-size: 19px; font-weight: 700; letter-spacing: -0.01em;
+  background: linear-gradient(90deg, var(--accent), #2f7ce0, #a855f7);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  display: inline-block;
+}
+.links-wall { display: flex; flex-direction: column; gap: 18px; align-items: stretch; margin-top: 16px; }
+.links-group { display: flex; align-items: flex-start; gap: 18px; }
+.links-label { flex: 0 0 104px; font-size: 15px; font-weight: 650; color: var(--text); padding-top: 8px; }
+.links-items { display: flex; flex-wrap: wrap; gap: 10px; }
+.link-tile {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 9px 16px 9px 12px; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--panel); color: var(--text-2); font-size: 13.5px; font-weight: 550;
   transition: all 120ms ease;
 }
-.link-chip:hover { color: var(--text); border-color: var(--accent); text-decoration: none; }
+.link-tile:hover { border-color: var(--accent); color: var(--text); transform: translateY(-1px); text-decoration: none; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06); }
+.link-tile img { display: block; }
+.link-tile span { white-space: nowrap; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .card {

@@ -39,6 +39,7 @@ const I18N = {
     'install.after': '重启后，侧栏 Settings 旁常驻「插件市场」按钮',
     'install.copy': '复制安装命令', 'install.copied': '已复制',
     'toast.copied': '安装命令已复制，粘贴到终端执行即可',
+    'toast.repo': '项目地址已复制',
     'dir.title': '插件目录', 'dir.count': '{n} 个条目',
     'dir.demo': 'registry 暂不可用，当前展示演示数据。',
     'dir.search': '搜索名称、简介或标签',
@@ -47,7 +48,7 @@ const I18N = {
     'dir.tabFeatured': '精选插件', 'dir.tabNew': '最新发布', 'dir.tabHandmade': '大神手作',
     'dir.emptyAll': '目录还是空的。上传第一个插件？', 'dir.emptyFilter': '没有匹配的插件，换个关键词试试。',
     'dir.pagerPrev': '上一页', 'dir.pagerNext': '下一页', 'dir.pager': '第 {p} / {total} 页',
-    'card.detail': '详情', 'card.install': '安装', 'card.copied': '已复制',
+    'card.detail': '详情', 'card.install': '安装', 'card.copied': '已复制', 'card.copyUrl': '复制地址',
     'card.downloads': '下载量', 'card.stars': 'GitHub 星标',
     'badge.pack': '扩展包', 'badge.auto': '自动收录', 'badge.unver': '未验证', 'badge.demo': '演示', 'badge.off': '已下线', 'badge.featured': '精选',
     'detail.author': '作者', 'detail.version': '版本', 'detail.category': '分类', 'detail.license': '许可', 'detail.downloads': '下载',
@@ -113,6 +114,7 @@ const I18N = {
     'install.after': 'After restart, a Plugin Market button stays beside Settings in the sidebar',
     'install.copy': 'Copy install command', 'install.copied': 'Copied',
     'toast.copied': 'Install command copied. Paste it in your terminal to run.',
+    'toast.repo': 'Repo URL copied',
     'dir.title': 'Plugin Directory', 'dir.count': '{n} entries',
     'dir.demo': 'Registry unavailable, showing demo data.',
     'dir.search': 'Search name, description or tags',
@@ -121,7 +123,7 @@ const I18N = {
     'dir.tabFeatured': 'Featured', 'dir.tabNew': 'New', 'dir.tabHandmade': 'By Makers',
     'dir.emptyAll': 'The directory is empty. Submit the first plugin?', 'dir.emptyFilter': 'No matching plugins. Try another keyword.',
     'dir.pagerPrev': 'Prev', 'dir.pagerNext': 'Next', 'dir.pager': 'Page {p} / {total}',
-    'card.detail': 'Details', 'card.install': 'Install', 'card.copied': 'Copied',
+    'card.detail': 'Details', 'card.install': 'Install', 'card.copied': 'Copied', 'card.copyUrl': 'Copy URL',
     'card.downloads': 'Downloads', 'card.stars': 'GitHub stars',
     'badge.pack': 'Pack', 'badge.auto': 'Auto', 'badge.unver': 'Unverified', 'badge.demo': 'Demo', 'badge.off': 'Offline', 'badge.featured': 'Featured',
     'detail.author': 'Author', 'detail.version': 'Version', 'detail.category': 'Category', 'detail.license': 'License', 'detail.downloads': 'Downloads',
@@ -253,12 +255,20 @@ function Badges({ item, t }) {
 function Card({ item, onOpen, onToast }) {
   const { t } = useLang()
   const [copied, setCopied] = useState(false)
+  const [urlCopied, setUrlCopied] = useState(false)
   const cmd = installCommand(item)
   const doCopy = async () => {
     if (await copyText(cmd)) {
       setCopied(true)
       onToast(t('toast.copied'))
       setTimeout(() => setCopied(false), 1600)
+    }
+  }
+  const doCopyUrl = async () => {
+    if (await copyText('https://github.com/' + item.repo)) {
+      setUrlCopied(true)
+      onToast(t('toast.repo'))
+      setTimeout(() => setUrlCopied(false), 1600)
     }
   }
   return (
@@ -285,6 +295,11 @@ function Card({ item, onOpen, onToast }) {
         {cmd && item.verified !== false && (
           <button className="btn btn-primary btn-sm" onClick={doCopy} title="dsh plugin --profile web add">
             {copied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.install')}</>}
+          </button>
+        )}
+        {item.verified === false && item.repo && (
+          <button className="btn btn-ghost btn-sm" onClick={doCopyUrl} title={'https://github.com/' + item.repo}>
+            {urlCopied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.copyUrl')}</>}
           </button>
         )}
         <span className="spacer" />
@@ -602,20 +617,42 @@ function Faq() {
           <div className="faq-body">{it.a}</div>
         </details>
       ))}
-      <div className="links-title">{t('links.title')}</div>
-      <div className="links-wall">
-        {[
-          { label: t('links.llm'), items: [['ChatGPT', 'https://chatgpt.com'], ['Claude', 'https://claude.ai'], ['Gemini', 'https://gemini.google.com'], ['DeepSeek', 'https://chat.deepseek.com'], ['Kimi', 'https://kimi.moonshot.cn'], ['Qwen', 'https://chat.qwen.ai']] },
-          { label: t('links.agent'), items: [['Manus', 'https://manus.im'], ['Coze', 'https://www.coze.cn'], ['Dify', 'https://dify.ai'], ['n8n', 'https://n8n.io']] },
-          { label: t('links.token'), items: [['OpenRouter', 'https://openrouter.ai'], ['SiliconFlow', 'https://siliconflow.cn'], ['AiHubMix', 'https://aihubmix.com']] },
-        ].map((g) => (
-          <div className="links-group" key={g.label}>
-            <span className="links-label">{g.label}</span>
-            {g.items.map(([name, url]) => (
-              <a key={name} className="link-chip" href={url} target="_blank" rel="noreferrer">{name}<ArrowSquareOut size={12} /></a>
-            ))}
-          </div>
-        ))}
+      <div className="links-block">
+        <div className="links-title">{t('links.title')}</div>
+        <div className="links-wall">
+          {[
+            { label: t('links.llm'), items: [
+              ['Claude', 'claude', 'https://claude.ai'],
+              ['Gemini', 'googlegemini', 'https://gemini.google.com'],
+              ['DeepSeek', 'deepseek', 'https://chat.deepseek.com'],
+              ['Kimi', 'kimi', 'https://kimi.moonshot.cn'],
+              ['Qwen', 'qwen', 'https://chat.qwen.ai'],
+              ['Perplexity', 'perplexity', 'https://www.perplexity.ai'],
+            ] },
+            { label: t('links.agent'), items: [
+              ['Coze', 'coze', 'https://www.coze.cn'],
+              ['Dify', 'dify', 'https://dify.ai'],
+              ['n8n', 'n8n', 'https://n8n.io'],
+            ] },
+            { label: t('links.token'), items: [
+              ['OpenRouter', 'openrouter', 'https://openrouter.ai'],
+              ['Hugging Face', 'huggingface', 'https://huggingface.co'],
+              ['Replicate', 'replicate', 'https://replicate.com'],
+            ] },
+          ].map((g) => (
+            <div className="links-group" key={g.label}>
+              <div className="links-label">{g.label}</div>
+              <div className="links-items">
+                {g.items.map(([name, slug, url]) => (
+                  <a key={slug} className="link-tile" href={url} target="_blank" rel="noreferrer" title={name}>
+                    <img src={'https://cdn.simpleicons.org/' + slug} alt={name} width={26} height={26} loading="lazy" />
+                    <span>{name}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
