@@ -3,6 +3,7 @@
 // /plugin-market/install   POST  → { ok, message | error }
 // /plugin-market/uninstall POST  → { ok, message | error }
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
+import { marked } from 'marked'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 
@@ -18,7 +19,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.7',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.8',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -94,7 +95,7 @@ async function install(args) {
   }
   if (args.type === 'bundle') {
     if (!validBundleSpec(args.spec)) return { ok: false, error: '非法的安装源 spec' }
-    const r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000)
+    const r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
     if (!r.ok) return { ok: false, error: (r.stderr || '').trim() || 'dsh plugin add 失败' }
     const state = await readState()
     const installed = state.installed || {}
@@ -115,9 +116,9 @@ async function install(args) {
     const dl = url.startsWith('https://')
       ? 'curl -fsSL --max-time 300 ' + q(url) + ' -o ' + tmpQ + '/pkg.zip'
       : 'cp ' + q(url.slice(7)) + ' ' + tmpQ + '/pkg.zip'
-    const r1 = await runShell('rm -rf ' + tmpQ + ' && mkdir -p ' + tmpQ + ' && ' + dl, 330000)
+    const r1 = await runShell('rm -rf ' + tmpQ + ' && mkdir -p ' + tmpQ + ' && ' + dl, 330000, { fullAccess: true })
     if (!r1.ok) return { ok: false, error: '下载失败: ' + ((r1.stderr || '').trim() || '未知错误') }
-    const r2 = await runShell('cd ' + tmpQ + ' && unzip -o -q pkg.zip && test -f manifest.json', 60000)
+    const r2 = await runShell('cd ' + tmpQ + ' && unzip -o -q pkg.zip && test -f manifest.json', 60000, { fullAccess: true })
     if (!r2.ok) return { ok: false, error: '压缩包校验失败（缺少 manifest.json 或解压出错）' }
     let manifest
     try {
@@ -143,11 +144,11 @@ async function install(args) {
       for (const id of presets) await rm(join(PRESETS_ROOT, id), { recursive: true, force: true })
       for (const id of packs) {
         await mkdir(SKILLS_ROOT, { recursive: true })
-        await runShell('cp -R ' + q(join(tmp, 'skills', id)) + ' ' + q(SKILLS_ROOT) + '/', 60000)
+        await runShell('cp -R ' + q(join(tmp, 'skills', id)) + ' ' + q(SKILLS_ROOT) + '/', 60000, { fullAccess: true })
       }
       for (const id of presets) {
         await mkdir(PRESETS_ROOT, { recursive: true })
-        await runShell('cp -R ' + q(join(tmp, 'presets', id)) + ' ' + q(PRESETS_ROOT) + '/', 60000)
+        await runShell('cp -R ' + q(join(tmp, 'presets', id)) + ' ' + q(PRESETS_ROOT) + '/', 60000, { fullAccess: true })
       }
     } catch (e) {
       return { ok: false, error: '写入失败: ' + String(e && e.message ? e.message : e) }
@@ -173,7 +174,7 @@ async function uninstall(args) {
   if (!rec) return { ok: false, error: '该条目不是本市场安装的' }
   if (rec.type === 'bundle') {
     const name = typeof rec.package === 'string' && rec.package ? rec.package : args.id
-    const r = await runShell('dsh plugin --profile web remove ' + q(name), 300000)
+    const r = await runShell('dsh plugin --profile web remove ' + q(name), 300000, { fullAccess: true })
     if (!r.ok) return { ok: false, error: ((r.stderr || '').trim() || 'dsh plugin remove 失败') }
     delete installed[args.id]
     await writeState({ installed })
@@ -194,12 +195,28 @@ async function uninstall(args) {
 }
 
 // 宿主 shell 服务封装（resolve → run，容错）
-async function runShell(command, timeoutMs) {
+// 注意：DSH shell 服务的 stdout/stderr 是 { text, truncated } 对象而非字符串；
+// 安装/卸载类命令需要越出会话工作区写用户目录，显式携带 danger-full-access
+// 沙箱策略（用户在弹窗点击安装即授权，等同于自己跑命令）。
+async function runShell(command, timeoutMs, opts = {}) {
   const shell = runShell.shellService
   if (!shell) return { ok: false, stdout: '', stderr: 'shell 服务不可用' }
+  let request = { command, timeoutMs: timeoutMs || 60000 }
+  if (opts.fullAccess) {
+    let workspaceRoot
+    try {
+      const sp = runShell.sandboxPolicyService
+      const standing = sp ? sp.resolve({}) : null
+      workspaceRoot = standing ? standing.workspaceRoot : undefined
+    } catch {}
+    request = {
+      ...request,
+      sandboxPolicy: { mode: 'danger-full-access', ...(workspaceRoot ? { workspaceRoot } : {}) },
+    }
+  }
   let spec
   try {
-    spec = shell.resolve({ command, timeoutMs: timeoutMs || 60000 })
+    spec = shell.resolve(request)
   } catch (e) {
     return { ok: false, stdout: '', stderr: 'shell.resolve 失败: ' + String(e) }
   }
@@ -207,8 +224,8 @@ async function runShell(command, timeoutMs) {
     const result = await shell.run(spec)
     return {
       ok: result.exitCode === 0,
-      stdout: typeof result.stdout === 'string' ? result.stdout : '',
-      stderr: typeof result.stderr === 'string' ? result.stderr : '',
+      stdout: (result.stdout && typeof result.stdout === 'object' && typeof result.stdout.text === 'string') ? result.stdout.text : String(result.stdout || ''),
+      stderr: (result.stderr && typeof result.stderr === 'object' && typeof result.stderr.text === 'string') ? result.stderr.text : String(result.stderr || ''),
     }
   } catch (e) {
     return { ok: false, stdout: '', stderr: 'shell.run 失败: ' + String(e) }
@@ -240,6 +257,7 @@ export default {
     const shell = ctx.shell
     console.log('[dsh-plugin-market] host apply: webServer=' + (webServer !== undefined) + ' shell=' + (shell !== undefined))
     runShell.shellService = shell
+    runShell.sandboxPolicyService = ctx.get('sandboxPolicy')
 
   ctx.effect(() => webServer.register({
     kind: 'prefix',
@@ -255,6 +273,28 @@ export default {
         if (pathname === '/plugin-market/uninstall' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')
           return json(res, 200, await uninstall(body))
+        }
+        if (pathname === '/plugin-market/readme' && req.method === 'GET') {
+          const url = new URL(req.url, 'http://x')
+          const repo = url.searchParams.get('repo') || ''
+          if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return json(res, 400, { ok: false, error: 'bad repo' })
+          try {
+            const base = 'https://raw.githubusercontent.com/' + repo + '/HEAD/'
+            const r = await fetch(base + 'README.md', { signal: AbortSignal.timeout(8000) })
+            if (!r.ok) return json(res, 200, { ok: false, error: 'no readme' })
+            let text = await r.text()
+            text = text.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (m, alt, src) => {
+              if (/^https?:/i.test(src)) return m
+              return '![' + alt + '](' + base + src.replace(/^\.\//, '') + ')'
+            })
+            const safe = String(marked.parse(text))
+              .replace(/<script[\s\S]*?<\/script>/gi, '')
+              .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+              .replace(/javascript:/gi, '')
+            return json(res, 200, { ok: true, html: safe })
+          } catch (e) {
+            return json(res, 200, { ok: false, error: String(e && e.message ? e.message : e) })
+          }
         }
         json(res, 404, { ok: false, error: 'not found' })
       } catch (e) {
