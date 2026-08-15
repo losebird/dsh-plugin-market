@@ -31,8 +31,9 @@ const I18N = {
   zh: {
     'nav.directory': '目录', 'nav.how': '工作原理', 'nav.repo': '仓库', 'nav.upload': '上传插件',
     'nav.themeLight': '切换到亮色主题', 'nav.themeDark': '切换到暗色主题',
-    'hero.t1': '给 DSH 装插件，', 'hero.t2': '一个按钮的事',
-    'hero.sub': '社区插件、skill 与 preset 扩展包的一站式目录。数据来自 GitHub、采集过程透明，安装走 dsh plugin 官方机制，全部开源可审计。',
+    'hero.t1': '发现并安装，', 'hero.t2': 'DSH 社区插件',
+    'hero.sub': '上千个社区插件与扩展包，一键装进你的 DSH。数据来自 GitHub，每日自动采集。',
+    'hero.statTotal': '个插件', 'hero.statVerified': '可一键安装', 'hero.statDaily': '数据来自 GitHub，每日自动采集',
     'hero.browse': '浏览目录', 'hero.upload': '上传插件',
     'install.title': '把插件市场装进你的 DSH',
     'install.after': '重启后，侧栏 Settings 旁常驻「插件市场」按钮',
@@ -47,7 +48,7 @@ const I18N = {
     'dir.pagerPrev': '上一页', 'dir.pagerNext': '下一页', 'dir.pager': '第 {p} / {total} 页',
     'card.detail': '详情', 'card.install': '安装', 'card.copied': '已复制',
     'card.downloads': '下载量', 'card.stars': 'GitHub 星标',
-    'badge.pack': '扩展包', 'badge.auto': '自动收录', 'badge.unver': '未验证', 'badge.demo': '演示', 'badge.off': '已下线',
+    'badge.pack': '扩展包', 'badge.auto': '自动收录', 'badge.unver': '未验证', 'badge.demo': '演示', 'badge.off': '已下线', 'badge.featured': '精选',
     'detail.author': '作者', 'detail.version': '版本', 'detail.category': '分类', 'detail.license': '许可', 'detail.downloads': '下载',
     'detail.intro': '简介', 'detail.readme': '项目说明', 'detail.readmeLoading': '加载项目说明中…',
     'detail.readmeError': '项目 README 加载失败，', 'detail.readmeLink': '去仓库查看',
@@ -94,8 +95,9 @@ const I18N = {
   en: {
     'nav.directory': 'Directory', 'nav.how': 'How it works', 'nav.repo': 'Repo', 'nav.upload': 'Submit',
     'nav.themeLight': 'Switch to light theme', 'nav.themeDark': 'Switch to dark theme',
-    'hero.t1': 'Install DSH plugins,', 'hero.t2': 'one click away',
-    'hero.sub': 'A community directory of plugins, skills and preset packs for DSH. Data lives on GitHub, collection is transparent, and installs go through the official dsh plugin mechanism.',
+    'hero.t1': 'Discover & install,', 'hero.t2': 'DSH community plugins',
+    'hero.sub': 'Thousands of community plugins and packs, one click into your DSH. Data from GitHub, collected daily.',
+    'hero.statTotal': 'plugins', 'hero.statVerified': 'one-click install', 'hero.statDaily': 'from GitHub, collected daily',
     'hero.browse': 'Browse', 'hero.upload': 'Submit plugin',
     'install.title': 'Install the market into your DSH',
     'install.after': 'After restart, a Plugin Market button stays beside Settings in the sidebar',
@@ -110,7 +112,7 @@ const I18N = {
     'dir.pagerPrev': 'Prev', 'dir.pagerNext': 'Next', 'dir.pager': 'Page {p} / {total}',
     'card.detail': 'Details', 'card.install': 'Install', 'card.copied': 'Copied',
     'card.downloads': 'Downloads', 'card.stars': 'GitHub stars',
-    'badge.pack': 'Pack', 'badge.auto': 'Auto', 'badge.unver': 'Unverified', 'badge.demo': 'Demo', 'badge.off': 'Offline',
+    'badge.pack': 'Pack', 'badge.auto': 'Auto', 'badge.unver': 'Unverified', 'badge.demo': 'Demo', 'badge.off': 'Offline', 'badge.featured': 'Featured',
     'detail.author': 'Author', 'detail.version': 'Version', 'detail.category': 'Category', 'detail.license': 'License', 'detail.downloads': 'Downloads',
     'detail.intro': 'About', 'detail.readme': 'README', 'detail.readmeLoading': 'Loading README…',
     'detail.readmeError': 'Failed to load README. ', 'detail.readmeLink': 'View on GitHub',
@@ -218,6 +220,7 @@ function Badges({ item, t }) {
   return (
     <div className="badges">
       <span className="badge badge-cat">{(CATEGORIES[item.category] || CATEGORIES.other)[lang]}</span>
+      {item.source === 'curated' && <span className="badge badge-featured">{t('badge.featured')}</span>}
       {item.type === 'pack' && <span className="badge badge-pack">{t('badge.pack')}</span>}
       {item.auto && <span className="badge badge-auto">{t('badge.auto')}</span>}
       {item.verified === false && <span className="badge badge-unver">{t('badge.unver')}</span>}
@@ -377,7 +380,7 @@ function DetailModal({ item, onClose, onToast }) {
 }
 
 /* ── 首页安装卡 ───────────────────────────────────── */
-function InstallCard({ onToast }) {
+function InstallStrip({ onToast }) {
   const { t } = useLang()
   const [copied, setCopied] = useState(false)
   const doCopy = async () => {
@@ -388,18 +391,12 @@ function InstallCard({ onToast }) {
     }
   }
   return (
-    <div className="term">
-      <div className="term-bar term-bar--hero"><Plug size={15} weight="fill" /> {t('install.title')}</div>
-      <div className="term-body">
-        <div><span className="prompt">$</span> dsh plugin --profile web add {INSTALL_SPEC}</div>
-        <div><span className="prompt">$</span> dsh web</div>
-        <div className="out">{t('install.after')}</div>
-        <div className="term-actions">
-          <button className="btn btn-primary btn-sm" onClick={doCopy}>
-            {copied ? <><Check size={13} />{t('install.copied')}</> : <><Copy size={13} />{t('install.copy')}</>}
-          </button>
-        </div>
-      </div>
+    <div className="hero-install">
+      <span className="hero-install-label"><Plug size={14} weight="fill" />{t('install.title')}</span>
+      <code>dsh plugin --profile web add {INSTALL_SPEC}</code>
+      <button className="btn btn-primary btn-sm" onClick={doCopy}>
+        {copied ? <><Check size={13} />{t('install.copied')}</> : <><Copy size={13} />{t('install.copy')}</>}
+      </button>
     </div>
   )
 }
@@ -470,15 +467,26 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
   return (
     <>
       <section className="shell hero">
-        <div>
-          <h1>{t('hero.t1')}<br /><span className="accent">{t('hero.t2')}</span></h1>
-          <p className="hero-sub">{t('hero.sub')}</p>
-          <div className="hero-ctas">
-            <a className="btn btn-primary" href="#directory">{t('hero.browse')}<CaretRight size={15} /></a>
-            <button className="btn btn-ghost" onClick={onGoSubmit}><UploadSimple size={15} />{t('hero.upload')}</button>
-          </div>
+        <h1 className="hero-h1">{t('hero.t1')}<br /><span className="accent">{t('hero.t2')}</span></h1>
+        <p className="hero-sub">{t('hero.sub')}</p>
+        <div className="hero-search">
+          <MagnifyingGlass size={20} />
+          <input
+            value={q}
+            onChange={(e) => { setQ(e.target.value); setPage(0) }}
+            onFocus={() => document.getElementById('directory') && document.getElementById('directory').scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            placeholder={t('dir.search')}
+            aria-label="search"
+          />
         </div>
-        <InstallCard onToast={onToast} />
+        <div className="hero-stats">
+          <span><b>{items.length}</b> {t('hero.statTotal')}</span>
+          <span className="dot">·</span>
+          <span><b>{groupCounts.verified}</b> {t('hero.statVerified')}</span>
+          <span className="dot">·</span>
+          <span>{t('hero.statDaily')}</span>
+        </div>
+        <InstallStrip onToast={onToast} />
       </section>
 
       <section className="shell section" id="directory">
@@ -498,15 +506,13 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
           </button>
         </div>
         <div className="toolbar">
-          <div className="search">
-            <MagnifyingGlass size={16} />
-            <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} placeholder={t('dir.search')} aria-label="search" />
-          </div>
           <select className="sort-select" value={sort} onChange={(e) => { setSort(e.target.value); setPage(0) }} aria-label="sort">
             <option value="stars">{t('dir.sortStars')}</option>
             <option value="downloads">{t('dir.sortDownloads')}</option>
             <option value="name">{t('dir.sortName')}</option>
           </select>
+          <span className="spacer" />
+          <button className="btn btn-ghost btn-sm" onClick={onGoSubmit}><UploadSimple size={14} />{t('hero.upload')}</button>
         </div>
         {cats.length > 0 && (
           <div className="tag-row">
@@ -534,19 +540,6 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
             <Pager page={safePage} total={totalPages} onChange={setPage} />
           </>
         )}
-      </section>
-
-      <section className="shell how" id="how">
-        <div className="how-left">
-          <h2>{t('how.title')}</h2>
-          <p>{t('how.sub')}</p>
-        </div>
-        <div className="steps">
-          <div className="step"><div className="step-num">01</div><div><h3>{t('how.s1t')}</h3><p>{t('how.s1b')}</p></div></div>
-          <div className="step"><div className="step-num">02</div><div><h3>{t('how.s2t')}</h3><p>{t('how.s2b')}</p></div></div>
-          <div className="step"><div className="step-num">03</div><div><h3>{t('how.s3t')}</h3><p>{t('how.s3b')}</p></div></div>
-          <div className="step"><div className="step-num">04</div><div><h3>{t('how.s4t')}</h3><p>{t('how.s4b')}</p></div></div>
-        </div>
       </section>
     </>
   )
@@ -806,7 +799,6 @@ export default function App() {
           </a>
           <div className="nav-links">
             <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('directory') && document.getElementById('directory').scrollIntoView(), 0) }}>{t('nav.directory')}</button>
-            <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('how') && document.getElementById('how').scrollIntoView(), 0) }}>{t('nav.how')}</button>
             <a className="nav-link" href={'https://github.com/' + GITHUB_REPO} target="_blank" rel="noreferrer"><GithubLogo size={15} />{t('nav.repo')}</a>
             <button className="nav-link nav-cta" onClick={goSubmit}><UploadSimple size={15} />{t('nav.upload')}</button>
             <button
