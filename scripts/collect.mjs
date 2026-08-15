@@ -101,7 +101,6 @@ async function collectCandidates() {
     if (meta.topics !== undefined) r.topics = meta.topics
     if (meta.topicSourced === true) r.topicSourced = true
     if (meta.pushedAt !== undefined) r.pushedAt = meta.pushedAt
-    if (meta.forks !== undefined) r.forks = meta.forks
   }
 
   // ① topic 搜索：只取星标榜头部（top 200/主题），高价值优先、采集快
@@ -118,7 +117,6 @@ async function collectCandidates() {
             topics: it.topics || [],
             topicSourced: true,
             pushedAt: it.pushed_at || null,
-            forks: it.forks_count || 0,
           })
         }
         if (res.items.length < 100) break
@@ -177,7 +175,7 @@ async function collectCandidates() {
     try {
       const res = await ghJson('/orgs/' + org + '/repos?per_page=100')
       if (Array.isArray(res)) {
-        for (const r of res) addRepo(r.full_name, { pushedAt: r.pushed_at || null, forks: r.forks_count || 0 })
+        for (const r of res) addRepo(r.full_name, { pushedAt: r.pushed_at || null })
         console.log('[collect] 组织 ' + org + ' 收录 ' + res.length + ' 个仓库')
       }
     } catch (e) {
@@ -229,7 +227,6 @@ async function buildEntry(repo, prev) {
   }
 
   let stars = repo.stars
-  let forks = repo.forks
   let description = repo.description
   let license = repo.license
   let topics = repo.topics || []
@@ -238,12 +235,11 @@ async function buildEntry(repo, prev) {
     license = license || prev.license
     topics = topics.length > 0 ? topics : (Array.isArray(prev.tags) ? prev.tags : [])
   }
-  if (typeof stars !== 'number' || typeof forks !== 'number') {
+  if (typeof stars !== 'number') {
     try {
       const detail = await ghJson('/repos/' + repo.full_name)
       if (detail) {
         if (typeof stars !== 'number') stars = detail.stargazers_count
-        if (typeof forks !== 'number') forks = detail.forks_count || 0
         description = description || detail.description
         license = license || (detail.license && detail.license.spdx_id)
         topics = detail.topics || topics
@@ -252,7 +248,6 @@ async function buildEntry(repo, prev) {
       console.warn('[collect] repo 详情获取失败（继续）: ' + repo.full_name)
     }
   }
-  if (typeof forks !== 'number') forks = (reuse && typeof prev.forks === 'number') ? prev.forks : 0
 
   const spec = latest ? 'github:' + repo.full_name + '#' + latest.tag_name : 'github:' + repo.full_name
   const owner = repo.full_name.split('/')[0]
@@ -271,7 +266,6 @@ async function buildEntry(repo, prev) {
     license: license || 'UNKNOWN',
     downloads: downloads,
     stars: stars || 0,
-    forks: forks || 0,
     releasedAt: releasedAt,
     topicSourced: repo.topicSourced === true,
     verified: verified,
