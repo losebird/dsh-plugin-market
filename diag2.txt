@@ -1,1 +1,0 @@
-{"exitCode":255,"timedOut":false,"stdout":{"type":"object","keys":["text","truncated"],"text_type":"string"},"stderr":{"type":"object","keys":["text","truncated"],"text_type":"string"}}
