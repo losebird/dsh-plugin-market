@@ -169,7 +169,7 @@ const DEMO_ITEMS = [
   },
   {
     id: 'demo-hello', name: 'Demo Hello Skill', type: 'pack',
-    repo: 'losebird/dsh-plugin-market', spec: 'https://example.com/demo-hello.zip',
+    repo: 'losebird/dsh-plugin-market', spec: 'https://www.dsh-plugin.shop/registry/examples/demo-hello/demo-hello.zip',
     version: 'v0.1.0', author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: '演示扩展包：验证市场安装链路。',
     tags: ['demo', 'skill'], category: 'skills', license: 'MIT', downloads: 0, stars: 0, demo: true, verified: true,

@@ -363,7 +363,7 @@ window.__ModuleLoader__.load({
                 : null,
               h('div', { className: 'dshm-foot' },
                 h('span', null, t('footSrc') + (st.source === 'remote' ? 'github.com/losebird/dsh-plugin-market' : 'demo')),
-                h('a', { href: 'https://losebird.github.io/dsh-plugin-market/', target: '_blank', rel: 'noreferrer' }, t('footSite')),
+                h('a', { href: 'https://www.dsh-plugin.shop/', target: '_blank', rel: 'noreferrer' }, t('footSite')),
               ),
             ),
           )

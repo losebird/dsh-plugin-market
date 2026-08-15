@@ -34241,7 +34241,7 @@
       "name": "Demo Hello Skill",
       "type": "pack",
       "repo": "losebird/dsh-plugin-market",
-      "spec": "https://losebird.github.io/dsh-plugin-market/registry/examples/demo-hello/demo-hello.zip",
+      "spec": "https://www.dsh-plugin.shop/registry/examples/demo-hello/demo-hello.zip",
       "version": "v0.1.0",
       "author": {
         "name": "losebird",

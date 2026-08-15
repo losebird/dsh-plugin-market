@@ -32,7 +32,7 @@ const DEMO_ITEMS = [
     id: 'demo-hello',
     name: 'Demo Hello Skill（演示扩展包）',
     type: 'pack',
-    spec: 'https://losebird.github.io/dsh-plugin-market/registry/examples/demo-hello/demo-hello.zip',
+    spec: 'https://www.dsh-plugin.shop/registry/examples/demo-hello/demo-hello.zip',
     version: 'v0.1.0',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: '演示用 skill 扩展包：安装后新增一个 demo-hello 技能，验证市场安装链路。',
