@@ -123,7 +123,7 @@ a:hover { text-decoration: underline; }
 .section-head .count { color: var(--text-3); font-family: var(--font-mono); font-size: 13px; }
 .section-sub { color: var(--text-2); max-width: 62ch; }
 
-.toolbar { display: flex; gap: 12px; align-items: center; margin: 22px 0 6px; flex-wrap: wrap; }
+.toolbar { display: flex; gap: 12px; align-items: center; margin: 22px 0 6px; flex-wrap: wrap; justify-content: flex-end; }
 .search { flex: 1 1 280px; position: relative; }
 .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-3); }
 .search input {
@@ -158,12 +158,25 @@ a:hover { text-decoration: underline; }
   animation: fade 160ms ease;
 }
 .tag-chip {
-  border: 1px solid var(--border); background: transparent; color: var(--text-2);
-  font: inherit; font-size: 12.5px; padding: 4px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border-2); background: var(--panel); color: var(--text-2);
+  font: inherit; font-size: 13px; font-weight: 550; padding: 7px 16px; border-radius: 999px; cursor: pointer;
   transition: all 120ms ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
-.tag-chip:hover { color: var(--text); border-color: var(--border-2); }
-.tag-chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tag-chip:hover { color: var(--text); border-color: var(--accent); transform: translateY(-1px); }
+.tag-chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); box-shadow: 0 4px 14px rgba(52, 211, 153, 0.3); }
+.chip-count { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); margin-left: 5px; }
+.tag-chip.on .chip-count { color: var(--accent-ink); opacity: 0.85; }
+
+/* ── FAQ ──────────────────────────────────────────── */
+.faq { padding-top: 8px; }
+.faq-item { border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--panel); overflow: hidden; }
+.faq-item summary { cursor: pointer; padding: 14px 18px; font-size: 14.5px; font-weight: 550; color: var(--text); list-style: none; display: flex; align-items: center; gap: 10px; }
+.faq-item summary::before { content: '+'; font-family: var(--font-mono); color: var(--accent); font-weight: 700; font-size: 16px; }
+.faq-item[open] summary::before { content: '\2212'; }
+.faq-item summary:hover { color: var(--accent); }
+.faq-body { padding: 0 18px 14px 42px; color: var(--text-2); font-size: 13.5px; line-height: 1.8; }
+.faq-body code { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); background: var(--panel-2); padding: 1px 6px; border-radius: 5px; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .card {

@@ -39,7 +39,7 @@ const I18N = {
     'install.after': '重启后，侧栏 Settings 旁常驻「插件市场」按钮',
     'install.copy': '复制安装命令', 'install.copied': '已复制',
     'toast.copied': '安装命令已复制，粘贴到终端执行即可',
-    'dir.title': '插件目录', 'dir.count': '{n} 个条目 · 数据源 GitHub · 每日自动采集',
+    'dir.title': '插件目录', 'dir.count': '{n} 个条目',
     'dir.demo': 'registry 暂不可用，当前展示演示数据。',
     'dir.search': '搜索名称、简介或标签',
     'dir.sortStars': '按星标', 'dir.sortDownloads': '按下载量', 'dir.sortName': '按名称',
@@ -91,6 +91,13 @@ const I18N = {
     'err.desc': '必填', 'err.license': '必填', 'err.author': '必填', 'err.authorUrl': '以 https:// 开头',
     'footer.data': '数据源 github.com/{repo}，每日自动采集，全部可审计',
     'footer.install': '安装请在 DSH 应用内「插件市场」弹窗中完成',
+    'faq.title': '常见问题',
+    'faq.q1': '如何安装插件市场？', 'faq.a1a': '在终端执行 ', 'faq.a1b': '，然后重启 dsh。重启后侧栏 Settings 旁常驻「插件市场」按钮。',
+    'faq.q2': '如何在 DSH 里安装插件？', 'faq.a2a': '打开插件市场弹窗，点卡片上的「安装」即可；也可以复制安装命令到终端执行 ', 'faq.a2b': '（把 spec 换成对应插件）。扩展包类插件先下载 zip，再在弹窗里导入。',
+    'faq.q3': '为什么我的终端里没有 dsh 命令？', 'faq.a3a': '如果你是用 ', 'faq.a3b': ' 方式启动的，dsh 命令并没有安装到系统里。先全局安装 ', 'faq.a3c': '，之后 dsh 系列命令（dsh web、dsh plugin add 等）就都可用了。',
+    'faq.q4': '为什么有些插件标着「未验证」？', 'faq.a4a': '它们的仓库没有声明 ', 'faq.a4b': '，直接 dsh plugin add 只会作为普通依赖安装、不会挂载成插件。请参考作者仓库的手工安装说明。',
+    'faq.q5': '安装后插件没有生效？', 'faq.a5': 'bundle 类插件安装后需要重启 dsh 才生效；扩展包里的 skill 在新会话可用，preset 需要在新会话的预设列表中选择。',
+    'faq.q6': '如何卸载插件？', 'faq.a6a': '在弹窗里点「卸载」，或在终端执行 ', 'faq.a6b': '（包名可在插件详情里查看）。',
   },
   en: {
     'nav.directory': 'Directory', 'nav.how': 'How it works', 'nav.repo': 'Repo', 'nav.upload': 'Submit',
@@ -103,7 +110,7 @@ const I18N = {
     'install.after': 'After restart, a Plugin Market button stays beside Settings in the sidebar',
     'install.copy': 'Copy install command', 'install.copied': 'Copied',
     'toast.copied': 'Install command copied. Paste it in your terminal to run.',
-    'dir.title': 'Plugin Directory', 'dir.count': '{n} entries · data from GitHub · collected daily',
+    'dir.title': 'Plugin Directory', 'dir.count': '{n} entries',
     'dir.demo': 'Registry unavailable, showing demo data.',
     'dir.search': 'Search name, description or tags',
     'dir.sortStars': 'By stars', 'dir.sortDownloads': 'By downloads', 'dir.sortName': 'By name',
@@ -155,6 +162,13 @@ const I18N = {
     'err.desc': 'Required', 'err.license': 'Required', 'err.author': 'Required', 'err.authorUrl': 'Must start with https://',
     'footer.data': 'Data source github.com/{repo}, collected daily, fully auditable',
     'footer.install': 'Install from the Plugin Market modal inside DSH',
+    'faq.title': 'FAQ',
+    'faq.q1': 'How do I install the market itself?', 'faq.a1a': 'Run ', 'faq.a1b': ' in your terminal, then restart dsh. The Plugin Market button then stays beside Settings in the sidebar.',
+    'faq.q2': 'How do I install a plugin?', 'faq.a2a': 'Open the market modal and click Install on a card, or copy the command and run ', 'faq.a2b': ' (replace with the plugin spec). For packs, download the zip and import it in the modal.',
+    'faq.q3': 'Why is there no dsh command in my terminal?', 'faq.a3a': 'If you started dsh with ', 'faq.a3b': ', the dsh command is not installed on your system. Install it globally with ', 'faq.a3c': ', then all dsh commands (dsh web, dsh plugin add, etc.) become available.',
+    'faq.q4': 'Why are some plugins marked Unverified?', 'faq.a4a': 'Their repos do not declare ', 'faq.a4b': ', so dsh plugin add would only add them as plain dependencies without mounting. Check the repo for manual install steps.',
+    'faq.q5': 'Installed but not taking effect?', 'faq.a5': 'Bundle plugins require a dsh restart. Skills from packs are available in new sessions; presets must be selected in a new session\'s preset list.',
+    'faq.q6': 'How do I uninstall?', 'faq.a6a': 'Click Uninstall in the modal, or run ', 'faq.a6b': ' (find the package name in the plugin detail).',
   },
 }
 
@@ -474,7 +488,6 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
           <input
             value={q}
             onChange={(e) => { setQ(e.target.value); setPage(0) }}
-            onFocus={() => document.getElementById('directory') && document.getElementById('directory').scrollIntoView({ behavior: 'smooth', block: 'start' })}
             placeholder={t('dir.search')}
             aria-label="search"
           />
@@ -483,8 +496,6 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
           <span><b>{items.length}</b> {t('hero.statTotal')}</span>
           <span className="dot">·</span>
           <span><b>{groupCounts.verified}</b> {t('hero.statVerified')}</span>
-          <span className="dot">·</span>
-          <span>{t('hero.statDaily')}</span>
         </div>
         <InstallStrip onToast={onToast} />
       </section>
@@ -511,7 +522,6 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
             <option value="downloads">{t('dir.sortDownloads')}</option>
             <option value="name">{t('dir.sortName')}</option>
           </select>
-          <span className="spacer" />
           <button className="btn btn-ghost btn-sm" onClick={onGoSubmit}><UploadSimple size={14} />{t('hero.upload')}</button>
         </div>
         {cats.length > 0 && (
@@ -541,7 +551,33 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
           </>
         )}
       </section>
+
+      <Faq />
     </>
+  )
+}
+
+/* ── FAQ ──────────────────────────────────────────── */
+function Faq() {
+  const { t } = useLang()
+  const items = [
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.2</code>{t('faq.a1b')}</> },
+    { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
+    { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
+    { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },
+    { q: t('faq.q5'), a: <>{t('faq.a5')}</> },
+    { q: t('faq.q6'), a: <>{t('faq.a6a')}<code>{'dsh plugin --profile web remove <package>'}</code>{t('faq.a6b')}</> },
+  ]
+  return (
+    <section className="shell section faq" id="faq">
+      <div className="section-head"><h2>{t('faq.title')}</h2></div>
+      {items.map((it, i) => (
+        <details className="faq-item" key={i}>
+          <summary>{it.q}</summary>
+          <div className="faq-body">{it.a}</div>
+        </details>
+      ))}
+    </section>
   )
 }
 

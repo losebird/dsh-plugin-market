@@ -29,6 +29,7 @@ jobs:
             echo "no changes"
           else
             git commit -m "chore(registry): refresh auto-collected plugins"
+            git pull --rebase origin main
             git push
           fi
       # 注意：GITHUB_TOKEN 无法触发其他工作流（GitHub 官方限制），且网站数据
