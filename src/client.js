@@ -134,7 +134,7 @@ window.__ModuleLoader__.load({
     }
 
     async function api(method, body) {
-      const res = await fetch('/api/market/' + method, body
+      const res = await fetch('/plugin-market/' + method, body
         ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }
         : undefined)
       return res.json()

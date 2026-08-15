@@ -1,7 +1,7 @@
 // dsh-plugin-market host 半片：REST API + 安装/卸载执行
-// /api/market/list      GET   → { source, notice, items, installed }
-// /api/market/install   POST  → { ok, message | error }
-// /api/market/uninstall POST  → { ok, message | error }
+// /plugin-market/list      GET   → { source, notice, items, installed }
+// /plugin-market/install   POST  → { ok, message | error }
+// /plugin-market/uninstall POST  → { ok, message | error }
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
@@ -18,8 +18,8 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.2',
-    version: 'v0.1.2',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.3',
+    version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
     tags: ['market', 'ui'],
@@ -241,16 +241,16 @@ export default function (ctx) {
 
   ctx.effect(() => webServer.register({
     kind: 'prefix',
-    path: '/api/market',
+    path: '/plugin-market',
     handler: async (req, res) => {
       const pathname = (req.url || '').split('?')[0]
       try {
-        if (pathname === '/api/market/list' && req.method === 'GET') return json(res, 200, await list())
-        if (pathname === '/api/market/install' && req.method === 'POST') {
+        if (pathname === '/plugin-market/list' && req.method === 'GET') return json(res, 200, await list())
+        if (pathname === '/plugin-market/install' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')
           return json(res, 200, await install(body))
         }
-        if (pathname === '/api/market/uninstall' && req.method === 'POST') {
+        if (pathname === '/plugin-market/uninstall' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')
           return json(res, 200, await uninstall(body))
         }
@@ -259,5 +259,5 @@ export default function (ctx) {
         json(res, 500, { ok: false, error: String(e && e.message ? e.message : e) })
       }
     },
-  }), 'dsh-plugin-market: /api/market routes')
+  }), 'dsh-plugin-market: /plugin-market routes')
 }
