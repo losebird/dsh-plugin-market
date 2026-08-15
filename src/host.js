@@ -12,6 +12,26 @@ const STATE_DIR = join(homedir(), '.dsh', 'plugin-market')
 const STATE_FILE = join(STATE_DIR, 'state.json')
 const SKILLS_ROOT = join(homedir(), '.agents', 'skills')
 const PRESETS_ROOT = join(homedir(), '.dsh', '.agent-presets')
+const DSH_HOME = process.env.DSH_HOME || join(homedir(), '.dsh')
+const PROFILE_MANIFEST = join(DSH_HOME, 'profiles', 'web', 'package.json')
+
+async function readProfileManifest() {
+  try {
+    return JSON.parse(await readFile(PROFILE_MANIFEST, 'utf8'))
+  } catch {
+    return null
+  }
+}
+
+async function writeProfileManifest(m) {
+  await writeFile(PROFILE_MANIFEST, JSON.stringify(m, null, 2) + '\n')
+}
+
+function profileInstalled(manifest) {
+  const deps = new Set(Object.keys((manifest && manifest.dependencies) || {}))
+  const bundles = new Set((manifest && manifest.dsh && manifest.dsh.profile && manifest.dsh.profile.bundles) || [])
+  return { deps, bundles }
+}
 
 const DEMO_ITEMS = [
   {
@@ -19,7 +39,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.8',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.9',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -86,7 +106,17 @@ async function list() {
   } catch {
     notice = '远程 registry 暂不可用，已回退演示数据'
   }
-  return { source, notice, items: items || DEMO_ITEMS, installed }
+  const finalItems = items || DEMO_ITEMS
+  // 手动安装（dsh plugin add）识别：profile 依赖/bundles 里有这个包名 → 标记已安装
+  const manifest = await readProfileManifest()
+  const { deps, bundles } = profileInstalled(manifest)
+  for (const it of finalItems) {
+    if (!it.package) continue
+    if ((deps.has(it.package) || bundles.has(it.package)) && !(it.id in installed)) {
+      installed[it.id] = { type: 'bundle', spec: it.spec || '', package: it.package, source: 'manual' }
+    }
+  }
+  return { source, notice, items: finalItems, installed }
 }
 
 async function install(args) {
@@ -232,6 +262,65 @@ async function runShell(command, timeoutMs, opts = {}) {
   }
 }
 
+// ── 插件管理：已安装列表 / 禁用启用 / 删除 ──────────────────────────────────
+async function installedRows() {
+  const manifest = await readProfileManifest()
+  const { bundles } = profileInstalled(manifest)
+  const state = await readState()
+  const marketInstalled = state.installed || {}
+  const loader = installedRows.loader
+  const entries = loader ? loader.entries() : []
+  const rows = []
+  for (const e of entries) {
+    const name = e.options && e.options.name
+    const rowId = e.options && e.options.id
+    if (!name) continue
+    if (name.startsWith('@deepseek-ai/dsh-')) continue
+    const inBundles = bundles.has(name)
+    const marketRec = Object.values(marketInstalled).find((r) => r && (r.package === name || r.spec === name))
+    rows.push({
+      id: rowId || name,
+      name: name,
+      enabled: inBundles,
+      disabled: !!e.disabled,
+      failed: !!(e.fiber && e.fiber.error),
+      source: marketRec ? 'market' : 'manual',
+      at: marketRec && marketRec.at ? marketRec.at : null,
+    })
+  }
+  return rows
+}
+
+async function togglePlugin(args) {
+  const name = args && args.name
+  const enabled = !!(args && args.enabled)
+  if (!name) return { ok: false, error: '参数错误' }
+  const manifest = await readProfileManifest()
+  if (!manifest) return { ok: false, error: '读取 profile 失败' }
+  const bundles = [...((manifest.dsh && manifest.dsh.profile && manifest.dsh.profile.bundles) || [])]
+  const idx = bundles.indexOf(name)
+  if (enabled && idx === -1) bundles.push(name)
+  if (!enabled && idx !== -1) bundles.splice(idx, 1)
+  manifest.dsh = { ...(manifest.dsh || {}), profile: { ...(manifest.dsh && manifest.dsh.profile), bundles } }
+  await writeProfileManifest(manifest)
+  return { ok: true, message: (enabled ? '已启用 ' : '已禁用 ') + name + '，重启 dsh 后生效' }
+}
+
+async function removePlugin(args) {
+  const name = args && args.name
+  if (!name) return { ok: false, error: '参数错误' }
+  const r = await runShell('dsh plugin --profile web remove ' + q(name), 300000, { fullAccess: true })
+  if (!r.ok) return { ok: false, error: (r.stderr || '').trim() || 'dsh plugin remove 失败' }
+  const state = await readState()
+  const installed = state.installed || {}
+  for (const k of Object.keys(installed)) {
+    const rec = installed[k]
+    if (rec && (rec.package === name || rec.spec === name || k === name)) delete installed[k]
+  }
+  await writeState({ installed })
+  return { ok: true, message: '已卸载 ' + name + '，重启 dsh 后生效' }
+}
+
 const readBody = (req) => new Promise((resolve, reject) => {
   let data = ''
   req.on('data', (chunk) => {
@@ -251,13 +340,14 @@ const json = (res, status, obj) => {
 }
 
 export default {
-  inject: ['webServer', 'shell'],
+  inject: ['webServer', 'shell', 'loader'],
   apply(ctx) {
     const webServer = ctx.webServer
     const shell = ctx.shell
     console.log('[dsh-plugin-market] host apply: webServer=' + (webServer !== undefined) + ' shell=' + (shell !== undefined))
     runShell.shellService = shell
     runShell.sandboxPolicyService = ctx.get('sandboxPolicy')
+    installedRows.loader = ctx.loader
 
   ctx.effect(() => webServer.register({
     kind: 'prefix',
@@ -273,6 +363,17 @@ export default {
         if (pathname === '/plugin-market/uninstall' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')
           return json(res, 200, await uninstall(body))
+        }
+        if (pathname === '/plugin-market/installed' && req.method === 'GET') {
+          return json(res, 200, { ok: true, rows: await installedRows() })
+        }
+        if (pathname === '/plugin-market/toggle' && req.method === 'POST') {
+          const body = JSON.parse((await readBody(req)) || '{}')
+          return json(res, 200, await togglePlugin(body))
+        }
+        if (pathname === '/plugin-market/remove' && req.method === 'POST') {
+          const body = JSON.parse((await readBody(req)) || '{}')
+          return json(res, 200, await removePlugin(body))
         }
         if (pathname === '/plugin-market/readme' && req.method === 'GET') {
           const url = new URL(req.url, 'http://x')

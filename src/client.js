@@ -1,4 +1,4 @@
-// dsh-plugin-market 浏览器半片：侧栏按钮 + 卡片弹窗（AMD bundle，由 client-modules 提供）
+// dsh-plugin-market 浏览器半片：设置 → 插件 → 插件市场（AMD bundle，由 client-modules 提供）
 window.__ModuleLoader__.load({
   id: 'dsh-plugin-market',
   factory: (require) => {
@@ -22,92 +22,95 @@ window.__ModuleLoader__.load({
 
     const I18N = {
       zh: {
-        title: '插件市场', tabVerified: '可一键安装', tabUnverified: '未验证',
+        title: '插件市场', viewMarket: '市场', viewManage: '已安装',
+        tabVerified: '可一键安装', tabUnverified: '未验证',
         tabFeatured: '精选插件', tabNew: '最新发布', tabHandmade: '大神手作',
         search: '搜索插件…', refresh: '刷新', refreshing: '刷新中…', all: '全部',
-        install: '安装', update: '更新', uninstall: '卸载',
-        installing: '安装中…', uninstalling: '卸载中…', installed: '已安装',
-        copyUrl: '复制地址', copied: '已复制',
+        install: '安装', update: '更新', uninstall: '卸载', remove: '删除',
+        installing: '安装中…', uninstalling: '卸载中…', installed: '已安装', latestPill: '已是最新',
+        copyUrl: '复制地址', copied: '已复制', copyCmd: '复制命令',
         auto: '自动收录', unver: '未验证', demo: '演示', offline: '已下线',
         offlineNote: '仓库已下线，无法安装', unverNote: '未验证（缺 dsh.bundle 声明），无法一键安装',
         typeBundle: 'DSH 插件', typePack: '扩展包', downloads: '下载量', stars: '星标',
         loading: '加载中…', empty: '没有匹配的插件',
         sourceRemote: 'registry 实时', sourceDemo: '演示数据',
-        footSrc: '数据源: ', footSite: '打开市场网站 ↗',
         pagerPrev: '上一页', pagerNext: '下一页', page: '第 {p}/{total} 页',
         detailBtn: '详情', back: '返回', readmeLoading: '加载项目说明中…', readmeError: '项目说明加载失败',
-        repoBtn: '查看仓库', latest: '最新', copyCmd: '复制命令',
-        msgInstalled: '安装完成', msgRestart: '重启 DSH 后生效', msgUninstalled: '已卸载',
-        errOp: '操作失败', langBtn: 'EN', sourceLabel: '插件市场',
+        repoBtn: '查看仓库', latest: '最新',
+        msgInstalled: '安装完成', msgRestart: '重启 dsh 后生效', msgUninstalled: '已卸载',
+        msgUseBundle: '重启后在本页「已安装」或 DSH 设置 → 插件中可见该插件。',
+        msgUsePack: 'skill 在新会话可用；preset 在新会话的预设列表中选择后生效。',
+        errOp: '操作失败', langBtn: 'EN',
+        mSearch: '搜索已安装…', mEmpty: '还没有通过插件市场或 dsh plugin add 安装的插件。',
+        enable: '启用', disable: '禁用', enabledLabel: '已启用', disabledLabel: '已禁用',
+        failedLabel: '加载失败', sourceMarket: '市场安装', sourceManual: '手动安装',
+        restartNote: '禁用/启用/删除在重启 dsh 后生效。',
       },
       en: {
-        title: 'Plugin Market', tabVerified: 'One-click install', tabUnverified: 'Unverified',
+        title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
+        tabVerified: 'One-click install', tabUnverified: 'Unverified',
         tabFeatured: 'Featured', tabNew: 'New', tabHandmade: 'By Makers',
         search: 'Search plugins…', refresh: 'Refresh', refreshing: 'Refreshing…', all: 'All',
-        install: 'Install', update: 'Update', uninstall: 'Uninstall',
-        installing: 'Installing…', uninstalling: 'Uninstalling…', installed: 'Installed',
-        copyUrl: 'Copy URL', copied: 'Copied',
+        install: 'Install', update: 'Update', uninstall: 'Uninstall', remove: 'Remove',
+        installing: 'Installing…', uninstalling: 'Uninstalling…', installed: 'Installed', latestPill: 'Up to date',
+        copyUrl: 'Copy URL', copied: 'Copied', copyCmd: 'Copy command',
         auto: 'Auto', unver: 'Unverified', demo: 'Demo', offline: 'Offline',
         offlineNote: 'Repo offline, cannot install', unverNote: 'Unverified (missing dsh.bundle), one-click install unavailable',
         typeBundle: 'DSH plugin', typePack: 'Pack', downloads: 'Downloads', stars: 'Stars',
         loading: 'Loading…', empty: 'No matching plugins',
         sourceRemote: 'registry live', sourceDemo: 'demo data',
-        footSrc: 'Source: ', footSite: 'Open market site ↗',
         pagerPrev: 'Prev', pagerNext: 'Next', page: 'Page {p}/{total}',
         detailBtn: 'Details', back: 'Back', readmeLoading: 'Loading README…', readmeError: 'Failed to load README',
-        repoBtn: 'View repo', latest: 'latest', copyCmd: 'Copy command',
+        repoBtn: 'View repo', latest: 'latest',
         msgInstalled: 'Installed', msgRestart: 'Restart DSH to take effect', msgUninstalled: 'Uninstalled',
-        errOp: 'Operation failed', langBtn: '中文', sourceLabel: 'Plugin Market',
+        msgUseBundle: 'After restart, find it here under Installed or in DSH Settings → Plugins.',
+        msgUsePack: 'Skills are available in new sessions; presets must be selected in a new session\'s preset list.',
+        errOp: 'Operation failed', langBtn: '中文',
+        mSearch: 'Search installed…', mEmpty: 'No plugins installed via the market or dsh plugin add yet.',
+        enable: 'Enable', disable: 'Disable', enabledLabel: 'Enabled', disabledLabel: 'Disabled',
+        failedLabel: 'Failed', sourceMarket: 'Market', sourceManual: 'Manual',
+        restartNote: 'Disable / enable / remove take effect after restarting dsh.',
       },
     }
 
     const PAGE_SIZE = 12
+    const BORDER = 'color-mix(in srgb, var(--dsw-alias-label-secondary) 55%, var(--dsw-alias-border-l2))'
 
-    // 样式注入（与官方 css-module 产物相同的 data-plugin-css 去重模式）
     const CSS = `
-.dshm-action { display:flex; align-items:center; gap:8px; width:100%; padding:6px 10px; border:none; border-radius:8px; background:transparent; color:var(--dsw-alias-label-secondary); cursor:pointer; font-size:13px; }
-.dshm-action:hover { background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); }
-.dshm-action-label { white-space:nowrap; }
-.dshm-rail { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
-.dshm-overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:auto; z-index:200; }
-.dshm-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.45); }
-.dshm-panel { position:relative; display:flex; flex-direction:column; width:min(920px, calc(100vw - 48px)); height:min(680px, calc(100vh - 96px)); background:var(--dsw-alias-bg-layer-1); border:1px solid var(--dsw-alias-border-l2); border-radius:12px; box-shadow:0 24px 64px rgba(0,0,0,0.4); overflow:hidden; }
-.dshm-head { display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--dsw-alias-border-l2); }
-.dshm-title { font-size:15px; font-weight:600; color:var(--dsw-alias-label-primary); }
-.dshm-head-badges { flex:1; display:flex; gap:6px; }
-.dshm-close { margin-left:auto; border:none; background:transparent; color:var(--dsw-alias-label-secondary); font-size:20px; cursor:pointer; line-height:1; }
-.dshm-close:hover { color:var(--dsw-alias-label-primary); }
-.dshm-lang { border:1px solid var(--dsw-alias-border-l2); background:transparent; color:var(--dsw-alias-label-secondary); border-radius:8px; font:inherit; font-size:12px; padding:3px 9px; cursor:pointer; }
-.dshm-lang:hover { color:var(--dsw-alias-label-primary); }
-.dshm-toolbar { display:flex; gap:8px; padding:10px 18px; }
-.dshm-searchwrap { position:relative; flex:1; }
-.dshm-search { width:100%; padding:7px 28px 7px 10px; border:1px solid var(--dsw-alias-border-l2); border-radius:8px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); font-size:13px; }
-.dshm-searchclear { position:absolute; right:7px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--dsw-alias-label-secondary); cursor:pointer; font-size:16px; line-height:1; padding:2px 5px; border-radius:6px; }
-.dshm-searchclear:hover { color:var(--dsw-alias-label-primary); background:var(--dsw-alias-bg-layer-1); }
+.dshm-root { display:flex; flex-direction:column; gap:10px; font-size:13px; color:var(--dsw-alias-label-primary); }
+.dshm-viewseg { display:flex; gap:10px; }
+.dshm-viewbtn { display:inline-flex; align-items:center; gap:6px; border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:13px; font-weight:550; padding:6px 16px; border-radius:8px; cursor:pointer; }
+.dshm-viewbtn:hover { color:var(--dsw-alias-label-primary); }
+.dshm-viewbtn.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
+.dshm-toolbar { display:flex; gap:8px; }
+.dshm-searchwrap { position:relative; flex:1; min-width:0; }
+.dshm-search { width:100%; padding:7px 28px 7px 10px; border:1px solid ${BORDER}; border-radius:8px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); font-size:13px; }
 .dshm-search:focus { outline:none; border-color:var(--dsw-alias-brand-primary); }
-.dshm-strip { margin:0 18px 10px; padding:8px 12px; border-radius:8px; font-size:12px; }
+.dshm-searchclear { position:absolute; right:7px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--dsw-alias-label-secondary); cursor:pointer; font-size:16px; line-height:1; padding:2px 5px; border-radius:6px; }
+.dshm-searchclear:hover { color:var(--dsw-alias-label-primary); }
+.dshm-strip { padding:8px 12px; border-radius:8px; font-size:12px; }
 .dshm-strip-ok { background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-state-success-primary); }
 .dshm-strip-err { background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-state-error-primary); }
-.dshm-grid { flex:1; overflow-y:auto; display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px; padding:4px 18px 12px; align-content:start; }
-.dshm-card { display:flex; flex-direction:column; gap:8px; padding:14px; border:1px solid var(--dsw-alias-border-l2); border-radius:10px; background:var(--dsw-alias-bg-base); }
+.dshm-seg { display:flex; gap:10px; flex-wrap:wrap; }
+.dshm-seg-btn { display:inline-flex; align-items:center; gap:6px; border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12.5px; font-weight:550; padding:5px 14px; border-radius:8px; cursor:pointer; }
+.dshm-seg-btn:hover { color:var(--dsw-alias-label-primary); }
+.dshm-seg-btn.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
+.dshm-cats { display:flex; gap:6px; flex-wrap:wrap; }
+.dshm-chip { border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12px; padding:3px 11px; border-radius:999px; cursor:pointer; }
+.dshm-chip:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-brand-primary); }
+.dshm-chip.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
+.dshm-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:12px; align-content:start; }
+.dshm-card { display:flex; flex-direction:column; gap:8px; padding:14px; border:1px solid ${BORDER}; border-radius:10px; background:var(--dsw-alias-bg-base); }
 .dshm-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
-.dshm-card-name { font-size:14px; font-weight:600; color:var(--dsw-alias-label-primary); }
+.dshm-card-name { font-size:13.5px; font-weight:600; color:var(--dsw-alias-label-primary); }
 .dshm-card-badges { display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
-.dshm-pill { font-size:11px; padding:2px 7px; border-radius:999px; border:1px solid var(--dsw-alias-border-l2); color:var(--dsw-alias-label-secondary); white-space:nowrap; }
+.dshm-pill { font-size:11px; padding:2px 7px; border-radius:999px; border:1px solid ${BORDER}; color:var(--dsw-alias-label-secondary); white-space:nowrap; }
 .dshm-pill-auto { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
 .dshm-pill-on { color:var(--dsw-alias-state-success-primary); border-color:currentColor; }
 .dshm-pill-demo { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
 .dshm-pill-off { color:var(--dsw-alias-state-error-primary); border-color:currentColor; }
 .dshm-pill-unver { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
 .dshm-pill-cat { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
-.dshm-cats { display:flex; gap:6px; flex-wrap:wrap; padding:0 18px 10px; }
-.dshm-chip { border:1px solid var(--dsw-alias-border-l2); background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12px; padding:3px 11px; border-radius:999px; cursor:pointer; }
-.dshm-chip:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-border-l2); }
-.dshm-chip.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
-.dshm-seg { display:flex; gap:10px; padding:0 18px 10px; }
-.dshm-seg-btn { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--dsw-alias-border-l2); background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12.5px; font-weight:550; padding:5px 14px; border-radius:8px; cursor:pointer; }
-.dshm-seg-btn:hover { color:var(--dsw-alias-label-primary); }
-.dshm-seg-btn.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
 .dshm-card-author { font-size:12px; color:var(--dsw-alias-label-secondary); }
 .dshm-card-author a { color:var(--dsw-alias-brand-primary); text-decoration:none; }
 .dshm-card-desc { font-size:12.5px; color:var(--dsw-alias-label-secondary); line-height:1.5; flex:1; }
@@ -115,29 +118,24 @@ window.__ModuleLoader__.load({
 .dshm-tag { font-size:11px; padding:1px 8px; border-radius:999px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-secondary); }
 .dshm-card-stats { display:flex; gap:12px; font-size:12px; color:var(--dsw-alias-label-secondary); }
 .dshm-stat-type { margin-left:auto; }
-.dshm-card-actions { display:flex; gap:8px; align-items:center; }
-.dshm-btn { padding:6px 14px; border-radius:8px; border:1px solid var(--dsw-alias-border-l2); background:transparent; color:var(--dsw-alias-label-primary); font-size:12.5px; cursor:pointer; }
-.dshm-btn:hover { border-color:var(--dsw-alias-border-l2); }
+.dshm-card-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.dshm-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-primary); font-size:12.5px; cursor:pointer; text-decoration:none; }
+.dshm-btn:hover { border-color:var(--dsw-alias-brand-primary); }
 .dshm-btn-primary { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
 .dshm-btn-primary:hover { opacity:0.9; }
 .dshm-btn-danger { background:var(--dsw-alias-state-error-primary); border-color:var(--dsw-alias-state-error-primary); color:#fff; }
-.dshm-btn-danger:hover { opacity:0.9; }
 .dshm-btn-ghost { color:var(--dsw-alias-label-secondary); }
-.dshm-btn-copyurl { background:transparent; color:var(--dsw-alias-state-warn-primary); border-color:var(--dsw-alias-state-warn-primary); }
-.dshm-btn-copyurl:hover { background:rgba(251,191,36,0.1); border-color:var(--dsw-alias-state-warn-primary); color:var(--dsw-alias-state-warn-primary); }
 .dshm-btn:disabled { opacity:0.5; cursor:not-allowed; }
 .dshm-btn-sm { padding:4px 12px; font-size:12px; }
 .dshm-busy { font-size:12px; color:var(--dsw-alias-label-secondary); }
-.dshm-installed-note { font-size:11px; color:var(--dsw-alias-label-secondary); word-break:break-all; }
-.dshm-empty { padding:40px; text-align:center; color:var(--dsw-alias-label-secondary); font-size:13px; flex:1; }
-.dshm-pager { display:flex; align-items:center; justify-content:center; gap:14px; padding:10px 18px 14px; }
+.dshm-empty { padding:32px; text-align:center; color:var(--dsw-alias-label-secondary); font-size:13px; }
+.dshm-pager { display:flex; align-items:center; justify-content:center; gap:14px; padding:10px 0 4px; }
 .dshm-pager-info { font-size:12px; color:var(--dsw-alias-label-secondary); }
-.dshm-foot { display:flex; justify-content:space-between; gap:10px; padding:10px 18px; border-top:1px solid var(--dsw-alias-border-l2); font-size:11.5px; color:var(--dsw-alias-label-secondary); }
-.dshm-foot a { color:var(--dsw-alias-brand-primary); text-decoration:none; }
-
-.dshm-detail { flex:1; overflow-y:auto; padding:14px 18px 18px; display:flex; flex-direction:column; gap:12px; }
+.dshm-detail { display:flex; flex-direction:column; gap:12px; }
 .dshm-detail-head { display:flex; align-items:center; gap:10px; }
-.dshm-detail-name { font-size:16px; font-weight:650; color:var(--dsw-alias-label-primary); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.dshm-backbtn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; border:1px solid ${BORDER}; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); font-size:12.5px; font-weight:600; cursor:pointer; }
+.dshm-backbtn:hover { border-color:var(--dsw-alias-brand-primary); color:var(--dsw-alias-brand-primary); }
+.dshm-detail-name { font-size:15px; font-weight:650; color:var(--dsw-alias-label-primary); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .dshm-detail-meta { display:flex; gap:14px; flex-wrap:wrap; font-size:12.5px; color:var(--dsw-alias-label-secondary); }
 .dshm-readme-title { font-size:12px; font-weight:600; color:var(--dsw-alias-label-secondary); letter-spacing:0.04em; margin-top:6px; }
 .dshm-readme { color:var(--dsw-alias-label-secondary); font-size:13px; line-height:1.7; overflow-wrap:anywhere; }
@@ -149,9 +147,11 @@ window.__ModuleLoader__.load({
 .dshm-readme pre code { background:none; padding:0; color:var(--dsw-alias-label-secondary); }
 .dshm-readme img { max-width:100%; border-radius:8px; }
 .dshm-readme a { color:var(--dsw-alias-brand-primary); }
-.dshm-readme blockquote { border-left:3px solid var(--dsw-alias-border-l2); padding-left:10px; color:var(--dsw-alias-label-secondary); margin:8px 0; }
-.dshm-readme table { border-collapse:collapse; margin:8px 0; }
-.dshm-readme td, .dshm-readme th { border:1px solid var(--dsw-alias-border-l2); padding:4px 8px; font-size:12px; }
+.dshm-readme table { border-collapse:collapse; }
+.dshm-readme td, .dshm-readme th { border:1px solid ${BORDER}; padding:4px 8px; font-size:12px; }
+.dshm-manage-row { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid ${BORDER}; border-radius:10px; background:var(--dsw-alias-bg-base); flex-wrap:wrap; }
+.dshm-manage-name { font-size:13.5px; font-weight:600; color:var(--dsw-alias-label-primary); }
+.dshm-manage-actions { margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; }
 `
     if (typeof document !== 'undefined' && document.querySelector('style[data-plugin-css="dsh-plugin-market"]') === null) {
       const tag = document.createElement('style')
@@ -175,9 +175,10 @@ window.__ModuleLoader__.load({
       try { savedLang = localStorage.getItem('dsh-market-lang') || 'zh' } catch {}
 
       const store = {
-        open: false, loading: false, source: 'demo', notice: null, error: null,
-        q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
         items: [], installed: {}, busy: {}, copiedRepo: null, detail: null, readme: null,
+        q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
+        view: 'market', mRows: [], mQ: '', mCat: null, mLoading: false,
+        notice: null, error: null, loading: false, source: 'demo',
       }
       const subs = new Set()
       const patch = (p) => { Object.assign(store, p); for (const f of subs) f() }
@@ -219,6 +220,16 @@ window.__ModuleLoader__.load({
         }
       }
 
+      const loadInstalled = async () => {
+        patch({ mLoading: true })
+        try {
+          const res = await api('installed')
+          patch({ mRows: (res && Array.isArray(res.rows)) ? res.rows : [], mLoading: false })
+        } catch (e) {
+          patch({ mLoading: false, error: String(e && e.message ? e.message : e) })
+        }
+      }
+
       const runInstall = async (item) => {
         patch({ busy: Object.assign({}, store.busy, { [item.id]: 'install' }), error: null, notice: null })
         try {
@@ -226,10 +237,12 @@ window.__ModuleLoader__.load({
           const ok = res && res.ok
           patch({
             busy: Object.assign({}, store.busy, { [item.id]: null }),
-            notice: ok ? t('msgInstalled') + (item.type === 'bundle' ? '，' + t('msgRestart') : '') : null,
+            notice: ok
+              ? t('msgInstalled') + '，' + t('msgRestart') + '。' + (item.type === 'bundle' ? t('msgUseBundle') : t('msgUsePack'))
+              : null,
             error: ok ? null : ((res && res.error) || t('errOp')),
           })
-          if (ok) await refresh()
+          if (ok) { await refresh(); await loadInstalled() }
         } catch (e) {
           patch({ busy: Object.assign({}, store.busy, { [item.id]: null }), error: String(e && e.message ? e.message : e) })
         }
@@ -242,10 +255,10 @@ window.__ModuleLoader__.load({
           const ok = res && res.ok
           patch({
             busy: Object.assign({}, store.busy, { [item.id]: null }),
-            notice: ok ? t('msgUninstalled') : null,
+            notice: ok ? t('msgUninstalled') + '，' + t('msgRestart') : null,
             error: ok ? null : ((res && res.error) || t('errOp')),
           })
-          if (ok) await refresh()
+          if (ok) { await refresh(); await loadInstalled() }
         } catch (e) {
           patch({ busy: Object.assign({}, store.busy, { [item.id]: null }), error: String(e && e.message ? e.message : e) })
         }
@@ -256,6 +269,15 @@ window.__ModuleLoader__.load({
         try {
           navigator.clipboard.writeText(url).then(() => {
             patch({ copiedRepo: item.id })
+            setTimeout(() => patch({ copiedRepo: null }), 1600)
+          }).catch(() => {})
+        } catch {}
+      }
+      const doCopyCmd = (item) => {
+        const cmd = 'dsh plugin --profile web add ' + item.spec
+        try {
+          navigator.clipboard.writeText(cmd).then(() => {
+            patch({ copiedRepo: item.id + ':cmd' })
             setTimeout(() => patch({ copiedRepo: null }), 1600)
           }).catch(() => {})
         } catch {}
@@ -273,14 +295,18 @@ window.__ModuleLoader__.load({
         }
       }
       const closeDetail = () => patch({ detail: null, readme: null })
-      const doCopyCmd = (item) => {
-        const cmd = 'dsh plugin --profile web add ' + item.spec
-        try {
-          navigator.clipboard.writeText(cmd).then(() => {
-            patch({ copiedRepo: item.id + ':cmd' })
-            setTimeout(() => patch({ copiedRepo: null }), 1600)
-          }).catch(() => {})
-        } catch {}
+
+      const doToggle = async (row) => {
+        const res = await api('toggle', { name: row.name, enabled: !row.enabled })
+        const ok = res && res.ok
+        patch({ notice: ok ? (res.message || t('restartNote')) : null, error: ok ? null : ((res && res.error) || t('errOp')) })
+        if (ok) await loadInstalled()
+      }
+      const doRemove = async (row) => {
+        const res = await api('remove', { name: row.name })
+        const ok = res && res.ok
+        patch({ notice: ok ? (res.message || t('msgUninstalled')) : null, error: ok ? null : ((res && res.error) || t('errOp')) })
+        if (ok) { await loadInstalled(); await refresh() }
       }
 
       const fmtNum = (n) => {
@@ -294,6 +320,7 @@ window.__ModuleLoader__.load({
         const installed = st.installed && st.installed[item.id]
         const busy = st.busy && st.busy[item.id]
         const unavailable = item.status === 'unavailable'
+        const upToDate = !!installed && item.type === 'bundle' && installed.spec === item.spec
         return h('div', { className: 'dshm-card', key: item.id },
           h('div', { className: 'dshm-card-top' },
             h('div', { className: 'dshm-card-name' }, shortName(item.name)),
@@ -304,7 +331,8 @@ window.__ModuleLoader__.load({
               item.demo ? h('span', { className: 'dshm-pill dshm-pill-demo' }, t('demo')) : null,
               item.verified === false ? h('span', { className: 'dshm-pill dshm-pill-unver' }, t('unver')) : null,
               unavailable ? h('span', { className: 'dshm-pill dshm-pill-off' }, t('offline')) : null,
-              installed ? h('span', { className: 'dshm-pill dshm-pill-on' }, t('installed')) : null,
+              upToDate ? h('span', { className: 'dshm-pill dshm-pill-on' }, t('latestPill')) : null,
+              installed && !upToDate ? h('span', { className: 'dshm-pill dshm-pill-on' }, t('installed')) : null,
             ),
           ),
           h('div', { className: 'dshm-card-author' },
@@ -327,42 +355,146 @@ window.__ModuleLoader__.load({
               : unavailable
                 ? h('span', { className: 'dshm-busy' }, t('offlineNote'))
                 : item.verified === false
-                  ? h('span', null,
-                      h('span', { className: 'dshm-busy' }, t('unverNote')),
-                      h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
-                        st.copiedRepo === item.id ? t('copied') : t('copyUrl')),
-                    )
-                  : installed
+                  ? h('span', { className: 'dshm-busy' }, t('unverNote'))
+                  : installed && !upToDate
                     ? h('span', null,
-                        h('button', { className: 'dshm-btn', onClick: () => runInstall(item) }, t('update')),
+                        h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('update')),
                         h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(item) }, t('uninstall')))
-                    : h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('install'))),
-          installed ? h('div', { className: 'dshm-installed-note' }, 'local: ' + (installed.spec || installed.at || '')) : null,
+                    : installed && upToDate
+                      ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(item) }, t('uninstall'))
+                      : h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('install'))),
+          item.verified === false && item.repo
+            ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
+                st.copiedRepo === item.id ? t('copied') : t('copyUrl'))
+            : null,
         )
       }
 
-      slots.inject('sidebar.footer.action', () => slots.register(
-        { name: 'sidebar.footer.action', id: 'plugin-market', order: 5, label: () => (store.lang === 'zh' ? '插件市场' : 'Plugin Market') },
-        (props) => {
-          const st = useStore()
-          const wide = !!(props && props.wide)
-          return h('button', { className: 'dshm-action', title: t('title'), onClick: () => { patch({ open: true }); if (st.items.length === 0 && !st.loading) refresh() } },
-            h('svg', { width: 16, height: 16, viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5 },
-              h('rect', { x: 1.5, y: 1.5, width: 13, height: 13, rx: 3 }),
-              h('path', { d: 'M5.5 8h5M8 5.5v5', strokeLinecap: 'round' }),
-            ),
-            wide
-              ? h('span', { className: 'dshm-action-label' }, t('title'))
-              : h('span', { className: 'dshm-action-label dshm-rail' }, t('title')),
-          )
-        },
-      ))
+      function DetailView(st) {
+        const item = st.detail
+        const installed = st.installed && st.installed[item.id]
+        const upToDate = !!installed && item.type === 'bundle' && installed.spec === item.spec
+        return h('div', { className: 'dshm-detail' },
+          h('div', { className: 'dshm-detail-head' },
+            h('button', { className: 'dshm-backbtn', onClick: closeDetail }, '← ' + t('back')),
+            h('div', { className: 'dshm-detail-name' }, shortName(item.name)),
+            h('span', { className: 'dshm-stat-type' }, item.type === 'bundle' ? t('typeBundle') : t('typePack')),
+          ),
+          h('div', { className: 'dshm-detail-meta' },
+            h('span', null, (item.author && item.author.name) || 'Unknown'),
+            h('span', null, item.version || t('latest')),
+            h('span', null, catLabel(item)),
+            h('span', null, item.license || 'UNKNOWN'),
+            h('span', null, '★ ' + fmtNum(item.stars)),
+            (item.downloads || 0) > 0 ? h('span', null, '⬇ ' + fmtNum(item.downloads)) : null,
+          ),
+          h('div', { className: 'dshm-card-desc' }, item.description || ''),
+          (item.tags && item.tags.length > 0)
+            ? h('div', { className: 'dshm-card-tags' }, item.tags.map((tg) => h('span', { className: 'dshm-tag', key: tg }, tg)))
+            : null,
+          h('div', { className: 'dshm-card-actions' },
+            item.verified !== false && !upToDate
+              ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) },
+                  installed ? t('update') : t('install'))
+              : null,
+            item.type === 'bundle' && item.verified !== false
+              ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => doCopyCmd(item) },
+                  st.copiedRepo === item.id + ':cmd' ? t('copied') : t('copyCmd'))
+              : null,
+            installed
+              ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(item) }, t('uninstall'))
+              : null,
+            item.verified === false
+              ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => copyRepo(item) },
+                  st.copiedRepo === item.id ? t('copied') : t('copyUrl'))
+              : null,
+            h('a', { className: 'dshm-btn dshm-btn-ghost', href: 'https://github.com/' + item.repo, target: '_blank', rel: 'noreferrer' }, t('repoBtn')),
+          ),
+          item.verified === false
+            ? h('div', { className: 'dshm-strip dshm-strip-err' }, t('unverNote'))
+            : null,
+          h('div', { className: 'dshm-readme-title' }, 'README'),
+          st.readme === null
+            ? h('div', { className: 'dshm-empty' }, t('readmeLoading'))
+            : st.readme === 'error'
+              ? h('div', { className: 'dshm-empty' }, t('readmeError'))
+              : st.readme === 'none'
+                ? null
+                : h('div', { className: 'dshm-readme', dangerouslySetInnerHTML: { __html: st.readme } }),
+        )
+      }
 
-      slots.inject('shell.overlay', () => slots.register(
-        { name: 'shell.overlay', id: 'plugin-market-overlay', order: 0 },
+      function ManageView(st) {
+        const qv = (st.mQ || '').trim().toLowerCase()
+        const counts = new Map()
+        for (const row of st.mRows) {
+          const item = st.items.find((it) => it.package === row.name)
+          const c = (item && item.category) || 'other'
+          counts.set(c, (counts.get(c) || 0) + 1)
+        }
+        const cats = [...counts.entries()].sort((a, b) => b[1] - a[1])
+        const rows = st.mRows.filter((row) => {
+          const item = st.items.find((it) => it.package === row.name)
+          if (st.mCat && ((item && item.category) || 'other') !== st.mCat) return false
+          if (!qv) return true
+          const hay = [row.name, row.id].join(' ').toLowerCase()
+          return hay.indexOf(qv) !== -1
+        })
+        return h('div', { className: 'dshm-detail' },
+          h('div', { className: 'dshm-toolbar' },
+            h('div', { className: 'dshm-searchwrap' },
+              h('input', { className: 'dshm-search', placeholder: t('mSearch'), value: st.mQ || '', onChange: (e) => patch({ mQ: e.target.value }) }),
+              (st.mQ && st.mQ.length > 0)
+                ? h('button', { className: 'dshm-searchclear', title: 'clear', onClick: () => patch({ mQ: '' }) }, '×')
+                : null,
+            ),
+          ),
+          cats.length > 0
+            ? h('div', { className: 'dshm-cats' },
+                h('button', { className: 'dshm-chip' + (st.mCat === null ? ' on' : ''), onClick: () => patch({ mCat: null }) }, t('all')),
+                cats.map(([c, n]) => h('button', {
+                  className: 'dshm-chip' + (st.mCat === c ? ' on' : ''),
+                  key: c,
+                  onClick: () => patch({ mCat: st.mCat === c ? null : c }),
+                }, (CATEGORIES[c] || CATEGORIES.other)[store.lang] + ' ' + n)),
+              )
+            : null,
+          h('div', { className: 'dshm-strip dshm-strip-ok' }, t('restartNote')),
+          st.mLoading
+            ? h('div', { className: 'dshm-empty' }, t('loading'))
+            : rows.length === 0
+              ? h('div', { className: 'dshm-empty' }, t('mEmpty'))
+              : h('div', { className: 'dshm-detail' },
+                  rows.map((row) => {
+                    const item = st.items.find((it) => it.package === row.name)
+                    const installed = item && st.installed[item.id]
+                    const upToDate = installed && item.type === 'bundle' && installed.spec === item.spec
+                    return h('div', { className: 'dshm-manage-row', key: row.id || row.name },
+                      h('div', { className: 'dshm-manage-name' }, shortName(row.name)),
+                      h('span', { className: 'dshm-pill' }, row.name),
+                      h('span', { className: 'dshm-pill ' + (row.enabled ? 'dshm-pill-on' : 'dshm-pill-off') }, row.enabled ? t('enabledLabel') : t('disabledLabel')),
+                      row.failed ? h('span', { className: 'dshm-pill dshm-pill-off' }, t('failedLabel')) : null,
+                      h('span', { className: 'dshm-pill dshm-pill-auto' }, row.source === 'market' ? t('sourceMarket') : t('sourceManual')),
+                      h('div', { className: 'dshm-manage-actions' },
+                        h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => doToggle(row) }, row.enabled ? t('disable') : t('enable')),
+                        item && installed && !upToDate
+                          ? h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: () => runInstall(item) }, t('update'))
+                          : null,
+                        h('button', { className: 'dshm-btn dshm-btn-danger dshm-btn-sm', onClick: () => doRemove(row) }, t('remove')),
+                      ),
+                    )
+                  }),
+                ),
+        )
+      }
+
+      slots.inject('settings.plugins.tab', () => slots.register(
+        { name: 'settings.plugins.tab', id: 'market', order: -1, label: () => (store.lang === 'zh' ? '插件市场' : 'Plugin Market') },
         () => {
           const st = useStore()
-          if (!st.open) return null
+          useEffect(() => {
+            if (st.items.length === 0 && !st.loading) refresh()
+          }, [])
           const qv = (st.q || '').trim().toLowerCase()
           let base = st.items
           if (st.group === 'featured') {
@@ -395,114 +527,63 @@ window.__ModuleLoader__.load({
           const fCount = Math.min(100, st.items.length)
           const nCount = st.items.filter((it) => it.releasedAt).length
           const hCount = st.items.filter((it) => it.source === 'curated').length
-          return h('div', { className: 'dshm-overlay', role: 'dialog' },
-            h('div', { className: 'dshm-backdrop', onClick: () => patch({ open: false }) }),
-            h('div', { className: 'dshm-panel' },
-              h('div', { className: 'dshm-head' },
-                h('div', { className: 'dshm-title' }, t('title')),
-                h('div', { className: 'dshm-head-badges' },
-                  h('span', { className: 'dshm-pill' }, st.source === 'remote' ? t('sourceRemote') : t('sourceDemo')),
-                ),
-                h('button', { className: 'dshm-lang', title: 'switch language', onClick: toggleLang }, t('langBtn')),
-                h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ open: false }) }, '×'),
-              ),
-              st.detail
-                ? h('div', { className: 'dshm-detail' },
-                    h('div', { className: 'dshm-detail-head' },
-                      h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: closeDetail }, '← ' + t('back')),
-                      h('div', { className: 'dshm-detail-name' }, shortName(st.detail.name)),
-                      h('span', { className: 'dshm-stat-type' }, st.detail.type === 'bundle' ? t('typeBundle') : t('typePack')),
-                    ),
-                    h('div', { className: 'dshm-detail-meta' },
-                      h('span', null, (st.detail.author && st.detail.author.name) || 'Unknown'),
-                      h('span', null, st.detail.version || t('latest')),
-                      h('span', null, catLabel(st.detail)),
-                      h('span', null, st.detail.license || 'UNKNOWN'),
-                      h('span', null, '★ ' + fmtNum(st.detail.stars)),
-                      (st.detail.downloads || 0) > 0 ? h('span', null, '⬇ ' + fmtNum(st.detail.downloads)) : null,
-                    ),
-                    h('div', { className: 'dshm-card-desc' }, st.detail.description || ''),
-                    (st.detail.tags && st.detail.tags.length > 0)
-                      ? h('div', { className: 'dshm-card-tags' }, st.detail.tags.map((tg) => h('span', { className: 'dshm-tag', key: tg }, tg)))
-                      : null,
-                    h('div', { className: 'dshm-card-actions' },
-                      st.detail.verified !== false
-                        ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(st.detail) },
-                            (st.installed && st.installed[st.detail.id]) ? t('update') : t('install'))
-                        : null,
-                      st.detail.type === 'bundle' && st.detail.verified !== false
-                        ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => doCopyCmd(st.detail) },
-                            st.copiedRepo === st.detail.id + ':cmd' ? t('copied') : t('copyCmd'))
-                        : null,
-                      (st.installed && st.installed[st.detail.id])
-                        ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(st.detail) }, t('uninstall'))
-                        : null,
-                      st.detail.verified === false
-                        ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => copyRepo(st.detail) },
-                            st.copiedRepo === st.detail.id ? t('copied') : t('copyUrl'))
-                        : null,
-                      h('a', { className: 'dshm-btn dshm-btn-ghost', href: 'https://github.com/' + st.detail.repo, target: '_blank', rel: 'noreferrer' }, t('repoBtn')),
-                    ),
-                    st.detail.verified === false
-                      ? h('div', { className: 'dshm-strip dshm-strip-err' }, t('unverNote'))
-                      : null,
-                    h('div', { className: 'dshm-readme-title' }, 'README'),
-                    st.readme === null
-                      ? h('div', { className: 'dshm-empty' }, t('readmeLoading'))
-                      : st.readme === 'error'
-                        ? h('div', { className: 'dshm-empty' }, t('readmeError'))
-                        : st.readme === 'none'
-                          ? null
-                          : h('div', { className: 'dshm-readme', dangerouslySetInnerHTML: { __html: st.readme } }),
-                  )
-                : [
-                    h('div', { className: 'dshm-toolbar' },
-                      h('div', { className: 'dshm-searchwrap' },
-                        h('input', { className: 'dshm-search', placeholder: t('search'), value: st.q || '', onChange: (e) => patch({ q: e.target.value, page: 0 }) }),
-                        (st.q && st.q.length > 0)
-                          ? h('button', { className: 'dshm-searchclear', title: 'clear', onClick: () => patch({ q: '', page: 0 }) }, '×')
-                          : null,
-                      ),
-                      h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => refresh() }, st.loading ? t('refreshing') : t('refresh')),
-                    ),
-                    h('div', { className: 'dshm-seg' },
-                      h('button', { className: 'dshm-seg-btn' + (st.group === 'verified' ? ' on' : ''), onClick: () => patch({ group: 'verified', cat: null, page: 0 }) }, t('tabVerified') + ' ' + vCount),
-                      h('button', { className: 'dshm-seg-btn' + (st.group === 'unverified' ? ' on' : ''), onClick: () => patch({ group: 'unverified', cat: null, page: 0 }) }, t('tabUnverified') + ' ' + uCount),
-                      h('button', { className: 'dshm-seg-btn' + (st.group === 'featured' ? ' on' : ''), onClick: () => patch({ group: 'featured', cat: null, page: 0 }) }, t('tabFeatured') + ' ' + fCount),
-                      h('button', { className: 'dshm-seg-btn' + (st.group === 'new' ? ' on' : ''), onClick: () => patch({ group: 'new', cat: null, page: 0 }) }, t('tabNew') + ' ' + nCount),
-                      h('button', { className: 'dshm-seg-btn' + (st.group === 'handmade' ? ' on' : ''), onClick: () => patch({ group: 'handmade', cat: null, page: 0 }) }, t('tabHandmade') + ' ' + hCount),
-                    ),
-                    cats.length > 0
-                      ? h('div', { className: 'dshm-cats' },
-                          h('button', { className: 'dshm-chip' + (st.cat === null ? ' on' : ''), onClick: () => patch({ cat: null, page: 0 }) }, t('all')),
-                          cats.map(([c, n]) => h('button', {
-                            className: 'dshm-chip' + (st.cat === c ? ' on' : ''),
-                            key: c,
-                            onClick: () => patch({ cat: st.cat === c ? null : c, page: 0 }),
-                          }, (CATEGORIES[c] || CATEGORIES.other)[store.lang] + ' ' + n)),
-                        )
-                      : null,
-                    (st.error || st.notice)
-                      ? h('div', { className: 'dshm-strip ' + (st.error ? 'dshm-strip-err' : 'dshm-strip-ok') }, st.error || st.notice)
-                      : null,
-                    st.loading
-                      ? h('div', { className: 'dshm-empty' }, t('loading'))
-                      : filtered.length === 0
-                        ? h('div', { className: 'dshm-empty' }, t('empty'))
-                        : h('div', { className: 'dshm-grid' }, pageItems.map((it) => Card(it, st))),
-                    totalPages > 1
-                      ? h('div', { className: 'dshm-pager' },
-                          h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', disabled: safePage <= 0, onClick: () => patch({ page: safePage - 1 }) }, '← ' + t('pagerPrev')),
-                          h('span', { className: 'dshm-pager-info' }, t('page', { p: safePage + 1, total: totalPages })),
-                          h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', disabled: safePage >= totalPages - 1, onClick: () => patch({ page: safePage + 1 }) }, t('pagerNext') + ' →'),
-                        )
-                      : null,
-                    h('div', { className: 'dshm-foot' },
-                      h('span', null, t('footSrc') + (st.source === 'remote' ? 'github.com/losebird/dsh-plugin-market' : 'demo')),
-                      h('a', { href: 'https://www.dsh-plugin.shop/', target: '_blank', rel: 'noreferrer' }, t('footSite')),
-                    ),
-                  ],
+
+          if (st.detail) return DetailView(st)
+
+          return h('div', { className: 'dshm-root' },
+            h('div', { className: 'dshm-viewseg' },
+              h('button', { className: 'dshm-viewbtn' + (st.view === 'market' ? ' on' : ''), onClick: () => patch({ view: 'market', detail: null }) }, t('viewMarket') + ' ' + st.items.length),
+              h('button', {
+                className: 'dshm-viewbtn' + (st.view === 'manage' ? ' on' : ''),
+                onClick: () => { patch({ view: 'manage' }); loadInstalled() },
+              }, t('viewManage') + ' ' + st.mRows.length),
+              h('button', { className: 'dshm-viewbtn', title: 'switch language', onClick: toggleLang }, t('langBtn')),
             ),
+            (st.error || st.notice)
+              ? h('div', { className: 'dshm-strip ' + (st.error ? 'dshm-strip-err' : 'dshm-strip-ok') }, st.error || st.notice)
+              : null,
+            st.view === 'manage'
+              ? ManageView(st)
+              : [
+                  h('div', { className: 'dshm-toolbar' },
+                    h('div', { className: 'dshm-searchwrap' },
+                      h('input', { className: 'dshm-search', placeholder: t('search'), value: st.q || '', onChange: (e) => patch({ q: e.target.value, page: 0 }) }),
+                      (st.q && st.q.length > 0)
+                        ? h('button', { className: 'dshm-searchclear', title: 'clear', onClick: () => patch({ q: '', page: 0 }) }, '×')
+                        : null,
+                    ),
+                    h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => refresh() }, st.loading ? t('refreshing') : t('refresh')),
+                  ),
+                  h('div', { className: 'dshm-seg' },
+                    h('button', { className: 'dshm-seg-btn' + (st.group === 'verified' ? ' on' : ''), onClick: () => patch({ group: 'verified', cat: null, page: 0 }) }, t('tabVerified') + ' ' + vCount),
+                    h('button', { className: 'dshm-seg-btn' + (st.group === 'unverified' ? ' on' : ''), onClick: () => patch({ group: 'unverified', cat: null, page: 0 }) }, t('tabUnverified') + ' ' + uCount),
+                    h('button', { className: 'dshm-seg-btn' + (st.group === 'featured' ? ' on' : ''), onClick: () => patch({ group: 'featured', cat: null, page: 0 }) }, t('tabFeatured') + ' ' + fCount),
+                    h('button', { className: 'dshm-seg-btn' + (st.group === 'new' ? ' on' : ''), onClick: () => patch({ group: 'new', cat: null, page: 0 }) }, t('tabNew') + ' ' + nCount),
+                    h('button', { className: 'dshm-seg-btn' + (st.group === 'handmade' ? ' on' : ''), onClick: () => patch({ group: 'handmade', cat: null, page: 0 }) }, t('tabHandmade') + ' ' + hCount),
+                  ),
+                  cats.length > 0
+                    ? h('div', { className: 'dshm-cats' },
+                        h('button', { className: 'dshm-chip' + (st.cat === null ? ' on' : ''), onClick: () => patch({ cat: null, page: 0 }) }, t('all')),
+                        cats.map(([c, n]) => h('button', {
+                          className: 'dshm-chip' + (st.cat === c ? ' on' : ''),
+                          key: c,
+                          onClick: () => patch({ cat: st.cat === c ? null : c, page: 0 }),
+                        }, (CATEGORIES[c] || CATEGORIES.other)[store.lang] + ' ' + n)),
+                      )
+                    : null,
+                  st.loading
+                    ? h('div', { className: 'dshm-empty' }, t('loading'))
+                    : filtered.length === 0
+                      ? h('div', { className: 'dshm-empty' }, t('empty'))
+                      : h('div', { className: 'dshm-grid' }, pageItems.map((it) => Card(it, st))),
+                  totalPages > 1
+                    ? h('div', { className: 'dshm-pager' },
+                        h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', disabled: safePage <= 0, onClick: () => patch({ page: safePage - 1 }) }, '← ' + t('pagerPrev')),
+                        h('span', { className: 'dshm-pager-info' }, t('page', { p: safePage + 1, total: totalPages })),
+                        h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', disabled: safePage >= totalPages - 1, onClick: () => patch({ page: safePage + 1 }) }, t('pagerNext') + ' →'),
+                      )
+                    : null,
+                ],
           )
         },
       ))
