@@ -9,6 +9,13 @@ const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
 
+const CATEGORIES = {
+  ui: '界面与主题', session: '会话与记忆', agent: 'Agent 与工作流', tools: '工具与集成',
+  dev: '开发与输入', comm: '通信与移动', auth: '安全与权限', skills: '技能与扩展',
+  market: '市场与发现', fun: '趣味与个性', other: '其他',
+}
+const catLabel = (item) => (item && item.category && CATEGORIES[item.category]) || CATEGORIES.other
+
 const DEMO_ITEMS = [
   {
     id: 'dsh-plugin-market', name: 'DSH 插件市场', type: 'bundle', package: 'dsh-plugin-market',
@@ -66,6 +73,7 @@ async function copyText(text) {
 function Badges({ item }) {
   return (
     <div className="badges">
+      <span className="badge badge-cat">{catLabel(item)}</span>
       {item.type === 'pack' && <span className="badge badge-pack">扩展包</span>}
       {item.auto && <span className="badge badge-auto">自动收录</span>}
       {item.demo && <span className="badge">演示</span>}
@@ -119,10 +127,14 @@ function DetailModal({ item, onClose }) {
         <div className="meta-row">
           <span>作者 {item.author && item.author.name ? item.author.name : '未知'}</span>
           {item.version && <span>版本 {item.version}</span>}
+          <span>分类 {catLabel(item)}</span>
           <span>许可 {item.license || 'UNKNOWN'}</span>
           <span>下载 {fmtNum(item.downloads)}</span>
           <span><Star size={13} /> {fmtNum(item.stars)}</span>
         </div>
+        {item.tags && item.tags.length > 0 && (
+          <div className="badges">{item.tags.map((t) => <span key={t} className="badge">{t}</span>)}</div>
+        )}
         {item.longDescription && <div className="long-desc">{item.longDescription}</div>}
         {item.type === 'bundle' ? (
           <>
@@ -158,18 +170,21 @@ function DetailModal({ item, onClose }) {
 /* ── 主页面 ───────────────────────────────────────── */
 function Home({ items, status, onGoSubmit, onOpenDetail }) {
   const [q, setQ] = useState('')
-  const [tag, setTag] = useState(null)
+  const [cat, setCat] = useState(null)
   const [sort, setSort] = useState('stars')
 
-  const tags = useMemo(() => {
+  const cats = useMemo(() => {
     const counts = new Map()
-    for (const it of items) for (const t of it.tags || []) counts.set(t, (counts.get(t) || 0) + 1)
-    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map(([t]) => t)
+    for (const it of items) {
+      const c = it.category || 'other'
+      counts.set(c, (counts.get(c) || 0) + 1)
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1])
   }, [items])
 
   const filtered = useMemo(() => {
     let list = items.filter((it) => {
-      if (tag && !(it.tags || []).includes(tag)) return false
+      if (cat && (it.category || 'other') !== cat) return false
       if (!q) return true
       const hay = [it.name, it.description, it.id, (it.tags || []).join(' ')].join(' ').toLowerCase()
       return hay.includes(q.toLowerCase())
@@ -180,7 +195,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail }) {
       return (b.stars || 0) - (a.stars || 0)
     })
     return list
-  }, [items, q, tag, sort])
+  }, [items, q, cat, sort])
 
   return (
     <>
@@ -225,11 +240,13 @@ function Home({ items, status, onGoSubmit, onOpenDetail }) {
             <option value="name">按名称</option>
           </select>
         </div>
-        {tags.length > 0 && (
+        {cats.length > 0 && (
           <div className="tag-row">
-            <button className={'tag-chip' + (tag === null ? ' on' : '')} onClick={() => setTag(null)}>全部</button>
-            {tags.map((t) => (
-              <button key={t} className={'tag-chip' + (tag === t ? ' on' : '')} onClick={() => setTag(tag === t ? null : t)}>{t}</button>
+            <button className={'tag-chip' + (cat === null ? ' on' : '')} onClick={() => setCat(null)}>全部</button>
+            {cats.map(([c, n]) => (
+              <button key={c} className={'tag-chip' + (cat === c ? ' on' : '')} onClick={() => setCat(cat === c ? null : c)}>
+                {CATEGORIES[c] || c} <span className="chip-count">{n}</span>
+              </button>
             ))}
           </div>
         )}

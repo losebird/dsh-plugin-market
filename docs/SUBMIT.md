@@ -31,7 +31,8 @@
 | spec | ✅ | bundle: `github:owner/repo#tag`；pack: `https://…zip` |
 | description | ✅ | 一句话简介 |
 | longDescription | ⬜ | markdown 详情（网站详情区） |
-| tags | ⬜ | 最多 8 个 |
+| tags | ⬜ | 最多 8 个，避免生态噪声词（dsh、deepseek、claude-code 等会被过滤） |
+| category | ⬜ | 功能分类白名单：ui / session / agent / tools / dev / comm / auth / skills / market / fun / other（不填自动判定） |
 | license | ✅ | SPDX id |
 | author.name | ✅ | 作者名 |
 | author.url | ⬜ | `https://` 开头 |

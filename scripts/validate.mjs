@@ -16,6 +16,7 @@ const loadJson = (rel, fallback) => {
 
 const blocklist = (loadJson('registry/blocklist.json', []) || []).map((s) => String(s).toLowerCase())
 const ID_RE = /^[a-z0-9][a-z0-9._-]*$/
+const ALLOWED_CATEGORIES = new Set(['ui', 'session', 'agent', 'tools', 'dev', 'comm', 'auth', 'skills', 'market', 'fun', 'other'])
 
 function checkEntry(entry, file) {
   const where = file + ': '
@@ -24,6 +25,9 @@ function checkEntry(entry, file) {
   }
   if (typeof entry.id === 'string' && !ID_RE.test(entry.id)) errors.push(where + 'id 不符合 ' + ID_RE)
   if (entry.type !== 'bundle' && entry.type !== 'pack') errors.push(where + 'type 必须是 bundle 或 pack')
+  if (entry.category !== undefined && !ALLOWED_CATEGORIES.has(entry.category)) {
+    errors.push(where + 'category 必须是: ' + [...ALLOWED_CATEGORIES].join(' | '))
+  }
   if (!entry.author || typeof entry.author.name !== 'string') errors.push(where + '缺少 author.name')
   if (entry.author && entry.author.url && !/^https:\/\//.test(entry.author.url)) errors.push(where + 'author.url 必须以 https:// 开头')
   if (entry.type === 'bundle') {

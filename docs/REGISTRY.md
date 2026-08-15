@@ -27,6 +27,7 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
   "description": "一句话简介（卡片显示）",
   "longDescription": "完整介绍，支持 markdown（网站详情页显示，可选）",
   "tags": ["market", "ui"],
+  "category": "market",            // 功能分类，见下方白名单；curated 可显式声明，否则由分类器自动判定
   "license": "MIT",
   "downloads": 123,   // 由 collector 汇总 release 资产下载数（自动条目）；curated 也可静态维护
   "stars": 456,       // 由 collector 填（自动条目）
@@ -46,6 +47,21 @@ presets/<id>/agent.cordis.yml   # 一个 preset 一个目录（可选）
 ```
 
 安装时：`skills/<id>/` → `~/.agents/skills/<id>/`，`presets/<id>/` → `~/.dsh/.agent-presets/<id>/`。
+
+## 功能分类
+
+每个条目带 `category` 字段，白名单：
+
+| key | 含义 | key | 含义 |
+|---|---|---|---|
+| `ui` | 界面与主题 | `comm` | 通信与移动 |
+| `session` | 会话与记忆 | `auth` | 安全与权限 |
+| `agent` | Agent 与工作流 | `skills` | 技能与扩展 |
+| `tools` | 工具与集成 | `market` | 市场与发现 |
+| `dev` | 开发与输入 | `fun` | 趣味与个性 |
+| `other` | 其他 | | |
+
+curated 条目可显式声明 `category`；未声明的由采集器按名称/简介/标签关键词自动判定。展示用的 `tags` 会过滤掉 dsh-plugin、deepseek、claude-code 等生态噪声词。
 
 ## 去重与合并规则
 

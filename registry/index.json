@@ -14,6 +14,7 @@
       "description": "DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。",
       "longDescription": "在 DSH Web 界面侧栏底部增加「插件市场」按钮，弹窗里浏览社区插件（bundle 插件与 skill/preset 扩展包），一键安装、更新、卸载。安装前有信任确认，安装状态本地记录。",
       "tags": ["market", "ui"],
+      "category": "market",
       "license": "MIT",
       "downloads": 0,
       "stars": 0
@@ -29,6 +30,7 @@
       "description": "演示扩展包：安装后新增一个 demo-hello 技能，验证市场安装链路。",
       "longDescription": "最小的 skill 扩展包，用于验证「下载 zip → 校验 manifest → 落盘 ~/.agents/skills/」的完整安装链路。安装后新会话可用 demo-hello 技能。",
       "tags": ["demo", "skill"],
+      "category": "skills",
       "license": "MIT",
       "downloads": 0,
       "stars": 0,

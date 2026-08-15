@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // DSH 插件市场自动采集器（GitHub Actions 定时运行）
-// 来源：① topic 搜索（免鉴权）② code search（GITHUB_TOKEN）③ 上一轮 auto.json 续存
+// 来源：① topic 搜索（免鉴权）② code search（GITHUB_TOKEN）③ awesome 列表 README 链接
+//       ④ 组织仓库列表 ⑤ 上一轮 auto.json 续存
 // 校验：package.json 必须声明 dsh.bundle 或 dsh.client 才算插件
-// 去重：键 = npm 包名（若有）或规范化 repo URL；curated 覆盖 auto
+// 去重：键 = npm 包名（若有）或规范化 repo URL；curated 覆盖 auto；跨源共享同一候选表
+// 分类：按功能分类器给每个条目打 category（curated 可显式声明），噪声 topic 标签一律过滤
 // 输出：registry/auto.json（纯自动）+ registry/all.json（curated ∪ auto，按 stars 排序）
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
@@ -11,7 +13,44 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const TOKEN = process.env.GITHUB_TOKEN || ''
+
+// ── 采集源配置 ──────────────────────────────────────────────────────────────
 const TOPICS = ['dsh-plugin', 'dsh-extension', 'deepseek-harness-plugin']
+const AWESOME_LISTS = ['Dominic789654/awesome-deepseek-harness', 'awesome-dsh-plugin/awesome-dsh-plugin']
+const ORGS = ['omdsh-dev']
+const CODE_SEARCH_PAGES = 3 // 每页 100，最多 300 个 code search 命中
+const TOPIC_PAGES = 2 // 每页 100
+
+// 噪声标签：生态关键词，不做功能分类展示
+const NOISE_TAGS = new Set([
+  'dsh-plugin', 'deepseek-harness', 'deepseek-harness-plugin', 'dsh', 'deepseek',
+  'dsh-plugins', 'deepseek-harness-plugins', 'ai-agents', 'claude-code', 'cordis',
+  'ai-agent', 'agent-skills', 'ai', 'agents', 'llm', 'plugin', 'plugins',
+  'deepseek-ai', 'awesome', 'harness', 'artificial-intelligence',
+])
+
+// ── 功能分类器（按顺序首个命中；curated 显式声明优先） ───────────────────────
+const CATEGORY_RULES = [
+  { key: 'market', re: /market|marketplace|插件市场|插件中心|store|installer/ },
+  { key: 'ui', re: /skin|theme|ui|sidebar|transparent|view.?mode|appearance|界面|主题|皮肤|美化|style|brand/ },
+  { key: 'session', re: /session|memory|archive|history|delete|会话|记忆|存档|context|compaction/ },
+  { key: 'agent', re: /agent|team|workflow|task|swarm|subagent|auto.?mode|编排|multi.?agent/ },
+  { key: 'comm', re: /telegram|messag|notify|mobile|pwa|pocket|relay|voice|wechat|im(?:-|$)|微信|提醒|通知/ },
+  { key: 'auth', re: /auth|approval|permission|oauth|gate|audit|balance|subscription|login|安全|权限|计费/ },
+  { key: 'fun', re: /pet|girl|companion|persona|entertain|陪伴|宠物|角色|娱乐/ },
+  { key: 'skills', re: /skill|技能|能力包/ },
+  { key: 'tools', re: /mcp|browser|playwright|computer.?use|file|preview|vision|office|manim|xcode|path|workspace|tool|pdf|image|screen|email/ },
+  { key: 'dev', re: /code|provider|model|language|translat|prompt|draft|cli|tui|input|smart|genui|repl|debug/ },
+]
+
+function categorize(entry) {
+  if (typeof entry.category === 'string' && entry.category.length > 0) return entry.category
+  const hay = [entry.name, entry.description, (entry.tags || []).join(' ')].join(' ').toLowerCase()
+  for (const rule of CATEGORY_RULES) {
+    if (rule.re.test(hay)) return rule.key
+  }
+  return 'other'
+}
 
 const ghJson = async (path) => {
   const headers = { 'user-agent': 'dsh-plugin-market-collector', accept: 'application/vnd.github+json' }
@@ -25,6 +64,10 @@ const ghJson = async (path) => {
 const normRepo = (fullName) => 'github.com/' + String(fullName).toLowerCase().replace(/\.git$/, '').replace(/\/+$/, '')
 const normPkg = (name) => String(name).toLowerCase()
 const keyOf = (it) => (it.package ? 'pkg:' + normPkg(it.package) : 'repo:' + normRepo(it.repo))
+const cleanTags = (tags) => (tags || [])
+  .map((t) => String(t).trim())
+  .filter((t) => t.length > 0 && t.length <= 32 && !NOISE_TAGS.has(t.toLowerCase()))
+  .slice(0, 8)
 
 const loadJson = (rel, fallback) => {
   const p = join(ROOT, rel)
@@ -34,49 +77,105 @@ const loadJson = (rel, fallback) => {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-// ── 候选收集 ────────────────────────────────────────────────────────────────
+// ── 候选收集（所有来源汇入同一张按 repo 去重的表） ───────────────────────────
 async function collectCandidates() {
   const byRepo = new Map()
-  const addRepo = (fullName) => {
+  const addRepo = (fullName, meta = {}) => {
     if (!fullName || typeof fullName !== 'string') return
-    if (!byRepo.has(fullName.toLowerCase())) byRepo.set(fullName.toLowerCase(), { full_name: fullName })
+    const key = fullName.toLowerCase()
+    if (!byRepo.has(key)) byRepo.set(key, { full_name: fullName })
+    const r = byRepo.get(key)
+    if (meta.stars !== undefined) r.stars = meta.stars
+    if (meta.description !== undefined) r.description = meta.description
+    if (meta.license !== undefined) r.license = meta.license
+    if (meta.topics !== undefined) r.topics = meta.topics
   }
+
+  // ① topic 搜索
   for (const topic of TOPICS) {
-    try {
-      const res = await ghJson('/search/repositories?q=' + encodeURIComponent('topic:' + topic + ' fork:false archived:false') + '&sort=stars&per_page=100')
-      if (res && Array.isArray(res.items)) {
+    for (let page = 1; page <= TOPIC_PAGES; page++) {
+      try {
+        const res = await ghJson('/search/repositories?q=' + encodeURIComponent('topic:' + topic + ' fork:false archived:false') + '&sort=stars&per_page=100&page=' + page)
+        if (!res || !Array.isArray(res.items)) break
         for (const it of res.items) {
-          addRepo(it.full_name)
-          const r = byRepo.get(it.full_name.toLowerCase())
-          r.stars = it.stargazers_count
-          r.description = it.description || ''
-          r.license = it.license && it.license.spdx_id ? it.license.spdx_id : null
-          r.topics = it.topics || []
+          addRepo(it.full_name, {
+            stars: it.stargazers_count,
+            description: it.description || '',
+            license: it.license && it.license.spdx_id ? it.license.spdx_id : null,
+            topics: it.topics || [],
+          })
         }
+        if (res.items.length < 100) break
+      } catch (e) {
+        console.warn('[collect] topic 搜索失败（' + topic + ' p' + page + '）: ' + e.message)
+        break
       }
-    } catch (e) {
-      console.warn('[collect] topic 搜索失败（' + topic + '）: ' + e.message)
+      await sleep(800)
     }
-    await sleep(800)
   }
+
+  // ② code search（依赖 @deepseek-ai/dsh 包的都是候选）
   if (TOKEN) {
-    try {
-      const res = await ghJson('/search/code?q=' + encodeURIComponent('"@deepseek-ai/dsh" filename:package.json') + '&per_page=100')
-      if (res && Array.isArray(res.items)) {
+    for (let page = 1; page <= CODE_SEARCH_PAGES; page++) {
+      try {
+        const res = await ghJson('/search/code?q=' + encodeURIComponent('"@deepseek-ai/dsh" filename:package.json') + '&per_page=100&page=' + page)
+        if (!res || !Array.isArray(res.items)) break
         for (const it of res.items) if (it.repository) addRepo(it.repository.full_name)
+        if (res.items.length < 100) break
+      } catch (e) {
+        console.warn('[collect] code search 失败: ' + e.message)
+        break
       }
-    } catch (e) {
-      console.warn('[collect] code search 失败: ' + e.message)
+      await sleep(800)
     }
   } else {
-    console.warn('[collect] 未提供 GITHUB_TOKEN，跳过 code search（仅 topic 搜索）')
+    console.warn('[collect] 未提供 GITHUB_TOKEN，跳过 code search')
   }
+
+  // ③ awesome 列表：README 里的 GitHub 仓库链接
+  for (const list of AWESOME_LISTS) {
+    try {
+      const res = await fetch('https://raw.githubusercontent.com/' + list + '/HEAD/README.md', { headers: { 'user-agent': 'dsh-plugin-market-collector' } })
+      if (!res.ok) { console.warn('[collect] awesome 列表读取失败: ' + list); continue }
+      const text = await res.text()
+      const re = /https?:\/\/github\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)/g
+      let m
+      let count = 0
+      while ((m = re.exec(text)) !== null) {
+        const full = m[1] + '/' + m[2]
+        // 跳过列表仓库自身与 GitHub 官方页
+        if (AWESOME_LISTS.some((l) => l.toLowerCase() === full.toLowerCase() || l.toLowerCase().startsWith(full.toLowerCase() + '/'))) continue
+        if (full === 'deepseek-ai/deepseek-harness') continue
+        addRepo(full)
+        count++
+      }
+      console.log('[collect] awesome 列表 ' + list + ' 提取 ' + count + ' 个仓库链接')
+    } catch (e) {
+      console.warn('[collect] awesome 列表处理失败: ' + list + ' ' + e.message)
+    }
+    await sleep(300)
+  }
+
+  // ④ 组织仓库列表
+  for (const org of ORGS) {
+    try {
+      const res = await ghJson('/orgs/' + org + '/repos?per_page=100')
+      if (Array.isArray(res)) {
+        for (const r of res) addRepo(r.full_name)
+        console.log('[collect] 组织 ' + org + ' 收录 ' + res.length + ' 个仓库')
+      }
+    } catch (e) {
+      console.warn('[collect] 组织仓库读取失败: ' + org + ' ' + e.message)
+    }
+    await sleep(300)
+  }
+
   return [...byRepo.values()]
 }
 
 // ── 单仓库 → 条目 ──────────────────────────────────────────────────────────
 async function buildEntry(repo) {
-  const [owner, name] = repo.full_name.split('/')
+  const [, name] = repo.full_name.split('/')
   let pkg = null
   try {
     const raw = await fetch('https://raw.githubusercontent.com/' + repo.full_name + '/HEAD/package.json', { headers: { 'user-agent': 'dsh-plugin-market-collector' } })
@@ -112,7 +211,8 @@ async function buildEntry(repo) {
   }
 
   const spec = latest ? 'github:' + repo.full_name + '#' + latest.tag_name : 'github:' + repo.full_name
-  return {
+  const owner = repo.full_name.split('/')[0]
+  const entry = {
     id: pkg.name ? pkg.name.replace(/^@/, '').replace(/[/.]/g, '-') : name.toLowerCase(),
     name: pkg.name || name,
     type: 'bundle',
@@ -122,13 +222,15 @@ async function buildEntry(repo) {
     version: latest ? latest.tag_name : null,
     author: { name: owner, url: 'https://github.com/' + owner },
     description: pkg.description || description || '',
-    tags: topics.slice(0, 8),
+    tags: cleanTags(topics),
     license: license || 'UNKNOWN',
     downloads: downloads,
     stars: stars || 0,
     source: 'auto',
     auto: true,
   }
+  entry.category = categorize(entry)
+  return entry
 }
 
 // ── 主流程 ──────────────────────────────────────────────────────────────────
@@ -141,8 +243,7 @@ async function main() {
   const entries = []
   const seen = new Set()
   for (const repo of candidates) {
-    const blocked = blocklist.includes(normRepo(repo.full_name))
-    if (blocked) continue
+    if (blocklist.includes(normRepo(repo.full_name))) continue
     let entry = null
     try {
       entry = await buildEntry(repo)
@@ -176,11 +277,18 @@ async function main() {
   const curatedKeys = new Set(curatedItems.map(keyOf))
   const autoOnly = entries.filter((e) => !curatedKeys.has(keyOf(e)))
   const all = [...curatedItems, ...autoOnly]
+  for (const it of all) {
+    it.category = categorize(it)
+    if (Array.isArray(it.tags)) it.tags = cleanTags(it.tags)
+  }
   all.sort((a, b) => (b.stars || 0) - (a.stars || 0))
 
   writeFileSync(join(ROOT, 'registry/auto.json'), JSON.stringify({ schemaVersion: 1, updatedAt: new Date().toISOString(), items: entries }, null, 2))
   writeFileSync(join(ROOT, 'registry/all.json'), JSON.stringify({ schemaVersion: 1, updatedAt: new Date().toISOString(), items: all }, null, 2))
+  const byCat = {}
+  for (const it of all) byCat[it.category] = (byCat[it.category] || 0) + 1
   console.log('[collect] curated=' + curatedItems.length + ' auto=' + entries.length + ' merged=' + all.length)
+  console.log('[collect] 分类分布: ' + JSON.stringify(byCat))
 }
 
 main().catch((e) => {

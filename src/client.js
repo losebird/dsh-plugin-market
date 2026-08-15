@@ -6,6 +6,13 @@ window.__ModuleLoader__.load({
     const { useState, useEffect } = React
     const h = React.createElement
 
+    const CATEGORIES = {
+      ui: '界面与主题', session: '会话与记忆', agent: 'Agent 与工作流', tools: '工具与集成',
+      dev: '开发与输入', comm: '通信与移动', auth: '安全与权限', skills: '技能与扩展',
+      market: '市场与发现', fun: '趣味与个性', other: '其他',
+    }
+    const catLabel = (item) => (item && item.category && CATEGORIES[item.category]) || CATEGORIES.other
+
     // 样式注入（与官方 css-module 产物相同的 data-plugin-css 去重模式）
     const CSS = `
 .dshm-action { display:flex; align-items:center; gap:8px; width:100%; padding:6px 10px; border:none; border-radius:8px; background:transparent; color:var(--dsw-alias-label-secondary); cursor:pointer; font-size:13px; }
@@ -36,6 +43,11 @@ window.__ModuleLoader__.load({
 .dshm-pill-on { color:var(--dsw-alias-state-success-primary); border-color:currentColor; }
 .dshm-pill-demo { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
 .dshm-pill-off { color:var(--dsw-alias-state-error-primary); border-color:currentColor; }
+.dshm-pill-cat { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
+.dshm-cats { display:flex; gap:6px; flex-wrap:wrap; padding:0 18px 10px; }
+.dshm-chip { border:1px solid var(--dsw-alias-border-l1); background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12px; padding:3px 11px; border-radius:999px; cursor:pointer; }
+.dshm-chip:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-border-l2); }
+.dshm-chip.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
 .dshm-card-author { font-size:12px; color:var(--dsw-alias-label-secondary); }
 .dshm-card-author a { color:var(--dsw-alias-brand-primary); text-decoration:none; }
 .dshm-card-desc { font-size:12.5px; color:var(--dsw-alias-label-secondary); line-height:1.5; flex:1; }
@@ -79,7 +91,7 @@ window.__ModuleLoader__.load({
 
       const store = {
         open: false, loading: false, source: 'demo', notice: null, error: null,
-        q: '', items: [], installed: {}, busy: {}, confirm: null,
+        q: '', cat: null, items: [], installed: {}, busy: {}, confirm: null,
       }
       const subs = new Set()
       const patch = (p) => { Object.assign(store, p); for (const f of subs) f() }
@@ -157,6 +169,7 @@ window.__ModuleLoader__.load({
           h('div', { className: 'dshm-card-top' },
             h('div', { className: 'dshm-card-name' }, item.name),
             h('div', { className: 'dshm-card-badges' },
+              h('span', { className: 'dshm-pill dshm-pill-cat' }, catLabel(item)),
               item.version ? h('span', { className: 'dshm-pill' }, item.version) : null,
               item.auto ? h('span', { className: 'dshm-pill dshm-pill-auto' }, '自动收录') : null,
               item.demo ? h('span', { className: 'dshm-pill dshm-pill-demo' }, '演示') : null,
@@ -220,7 +233,14 @@ window.__ModuleLoader__.load({
           const st = useStore()
           if (!st.open) return null
           const qv = (st.q || '').trim().toLowerCase()
+          const catCounts = new Map()
+          for (const it of st.items) {
+            const c = it.category || 'other'
+            catCounts.set(c, (catCounts.get(c) || 0) + 1)
+          }
+          const cats = [...catCounts.entries()].sort((a, b) => b[1] - a[1])
           const items = st.items.filter((it) => {
+            if (st.cat && (it.category || 'other') !== st.cat) return false
             if (!qv) return true
             const hay = [it.name, it.description, (it.tags || []).join(' '), it.id].join(' ').toLowerCase()
             return hay.indexOf(qv) !== -1
@@ -239,6 +259,16 @@ window.__ModuleLoader__.load({
                 h('input', { className: 'dshm-search', placeholder: '搜索插件…', value: st.q || '', onChange: (e) => patch({ q: e.target.value }) }),
                 h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => refresh() }, st.loading ? '刷新中…' : '刷新'),
               ),
+              cats.length > 0
+                ? h('div', { className: 'dshm-cats' },
+                    h('button', { className: 'dshm-chip' + (st.cat === null ? ' on' : ''), onClick: () => patch({ cat: null }) }, '全部'),
+                    cats.map(([c, n]) => h('button', {
+                      className: 'dshm-chip' + (st.cat === c ? ' on' : ''),
+                      key: c,
+                      onClick: () => patch({ cat: st.cat === c ? null : c }),
+                    }, (CATEGORIES[c] || c) + ' ' + n)),
+                  )
+                : null,
               (st.error || st.notice)
                 ? h('div', { className: 'dshm-strip ' + (st.error ? 'dshm-strip-err' : 'dshm-strip-ok') }, st.error || st.notice)
                 : null,

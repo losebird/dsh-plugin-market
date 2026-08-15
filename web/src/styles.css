@@ -118,6 +118,8 @@ a:hover { text-decoration: underline; }
 .card-name { font-size: 15px; font-weight: 650; line-height: 1.35; }
 .badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
 .badge { font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border-2); color: var(--text-2); white-space: nowrap; }
+.badge-cat { color: var(--accent); border-color: rgba(52, 211, 153, 0.45); }
+.chip-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); margin-left: 4px; }
 .badge-auto { color: var(--warn); border-color: rgba(251, 191, 36, 0.45); }
 .badge-pack { color: var(--accent); border-color: rgba(52, 211, 153, 0.45); }
 .badge-off { color: var(--error); border-color: rgba(248, 113, 113, 0.45); }
