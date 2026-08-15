@@ -613,12 +613,14 @@ function Faq() {
   return (
     <section className="shell section faq" id="faq">
       <div className="section-head"><h2>{t('faq.title')}</h2></div>
-      {items.map((it, i) => (
-        <details className="faq-item" key={i}>
-          <summary>{it.q}</summary>
-          <div className="faq-body">{it.a}</div>
-        </details>
-      ))}
+      <div className="faq-grid">
+        {items.map((it, i) => (
+          <div className={'faq-card' + (i === 0 ? ' faq-card-hero' : '')} key={i}>
+            <div className="faq-q">{it.q}</div>
+            <div className="faq-a">{it.a}</div>
+          </div>
+        ))}
+      </div>
     </section>
   )
 }

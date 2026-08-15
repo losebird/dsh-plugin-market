@@ -181,15 +181,31 @@ a:hover { text-decoration: underline; }
 .tag-chip.on .chip-count { color: var(--accent-ink); opacity: 0.85; }
 
 /* ── FAQ ──────────────────────────────────────────── */
-.faq { padding-top: 8px; max-width: 760px; margin: 0 auto; }
-.faq .section-head { justify-content: center; }
-.faq-item { border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--panel); overflow: hidden; }
-.faq-item summary { cursor: pointer; padding: 14px 18px; font-size: 14.5px; font-weight: 550; color: var(--text); list-style: none; display: flex; align-items: center; gap: 10px; }
-.faq-item summary::before { content: '+'; font-family: var(--font-mono); color: var(--accent); font-weight: 700; font-size: 16px; }
-.faq-item[open] summary::before { content: '\2212'; }
-.faq-item summary:hover { color: var(--accent); }
-.faq-body { padding: 0 18px 14px 42px; color: var(--text-2); font-size: 13.5px; line-height: 1.8; }
-.faq-body code { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); background: var(--panel-2); padding: 1px 6px; border-radius: 5px; }
+.faq { padding-top: 8px; }
+.faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+.faq-card {
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel);
+  padding: 20px 22px; display: flex; flex-direction: column; gap: 10px;
+  transition: border-color 120ms ease;
+}
+.faq-card:hover { border-color: var(--border-2); }
+.faq-card-hero { grid-column: span 2; border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.faq-q {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 15px; font-weight: 650; color: var(--text); line-height: 1.45;
+}
+.faq-q::before {
+  content: 'Q'; flex: none; width: 24px; height: 24px; border-radius: 7px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent);
+  font-family: var(--font-mono); font-size: 12.5px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center; margin-top: 1px;
+}
+.faq-a { color: var(--text-2); font-size: 13.5px; line-height: 1.8; padding-left: 34px; }
+.faq-a code { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); background: var(--panel-2); padding: 1px 6px; border-radius: 5px; }
+@media (max-width: 860px) {
+  .faq-grid { grid-template-columns: 1fr; }
+  .faq-card-hero { grid-column: auto; }
+}
 
 .links-sec { padding-top: 8px; }
 .links-title {
