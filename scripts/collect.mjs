@@ -2,7 +2,8 @@
 // DSH 插件市场自动采集器（GitHub Actions 定时运行）
 // 来源：① topic 搜索（免鉴权）② code search（GITHUB_TOKEN）③ awesome 列表 README 链接
 //       ④ 组织仓库列表 ⑤ 上一轮 auto.json 续存
-// 校验：package.json 必须声明 dsh.bundle 或 dsh.client 才算插件
+// 校验：verified 采用官方判据 dsh.bundle.patch（与 dsh plugin add 一致）；
+//       topic 来源仓库即使无声明也收录并标 verified: false
 // 去重：键 = npm 包名（若有）或规范化 repo URL；curated 覆盖 auto；跨源共享同一候选表
 // 分类：按功能分类器给每个条目打 category（curated 可显式声明），噪声 topic 标签一律过滤
 // 输出：registry/auto.json（纯自动）+ registry/all.json（curated ∪ auto，按 stars 排序）
@@ -19,7 +20,7 @@ const TOPICS = ['dsh-plugin', 'dsh-extension', 'deepseek-harness-plugin']
 const AWESOME_LISTS = ['Dominic789654/awesome-deepseek-harness', 'awesome-dsh-plugin/awesome-dsh-plugin']
 const ORGS = ['omdsh-dev']
 const CODE_SEARCH_PAGES = 3 // 每页 100，最多 300 个 code search 命中
-const TOPIC_PAGES = 2 // 每页 100
+const TOPIC_PAGES = 10 // 每页 100，最多 1000 个 topic 命中（搜索 API 上限 1000）
 
 // 噪声标签：生态关键词，不做功能分类展示
 const NOISE_TAGS = new Set([
@@ -90,6 +91,7 @@ async function collectCandidates() {
     if (meta.description !== undefined) r.description = meta.description
     if (meta.license !== undefined) r.license = meta.license
     if (meta.topics !== undefined) r.topics = meta.topics
+    if (meta.topicSourced === true) r.topicSourced = true
   }
 
   // ① topic 搜索
@@ -104,6 +106,7 @@ async function collectCandidates() {
             description: it.description || '',
             license: it.license && it.license.spdx_id ? it.license.spdx_id : null,
             topics: it.topics || [],
+            topicSourced: true,
           })
         }
         if (res.items.length < 100) break
@@ -175,6 +178,9 @@ async function collectCandidates() {
 }
 
 // ── 单仓库 → 条目 ──────────────────────────────────────────────────────────
+// verified 采用官方判据：package.json 里声明了 dsh.bundle.patch（与 dsh plugin
+// add 的挂载判定 exportsPatch 一致）。topic 来源的仓库即使无声明也收录，
+// 标 verified: false（未验证，禁用一键安装）。
 async function buildEntry(repo) {
   const [, name] = repo.full_name.split('/')
   let pkg = null
@@ -182,7 +188,11 @@ async function buildEntry(repo) {
     const raw = await fetch('https://raw.githubusercontent.com/' + repo.full_name + '/HEAD/package.json', { headers: { 'user-agent': 'dsh-plugin-market-collector' } })
     if (raw.ok) pkg = await raw.json()
   } catch {}
-  if (!pkg || !pkg.dsh || (!pkg.dsh.bundle && !pkg.dsh.client)) return null
+  const hasDshSignal = !!(pkg && pkg.dsh && (pkg.dsh.bundle || pkg.dsh.client))
+  const deps = pkg ? { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) } : {}
+  const hasDshDep = Object.keys(deps).some((k) => k.startsWith('@deepseek-ai/dsh'))
+  if (!repo.topicSourced && !hasDshSignal && !hasDshDep) return null
+  const verified = !!(pkg && pkg.dsh && pkg.dsh.bundle && pkg.dsh.bundle.patch)
 
   let releases = null
   try {
@@ -214,19 +224,20 @@ async function buildEntry(repo) {
   const spec = latest ? 'github:' + repo.full_name + '#' + latest.tag_name : 'github:' + repo.full_name
   const owner = repo.full_name.split('/')[0]
   const entry = {
-    id: pkg.name ? pkg.name.replace(/^@/, '').replace(/[/.]/g, '-') : name.toLowerCase(),
-    name: pkg.name || name,
+    id: pkg && pkg.name ? pkg.name.replace(/^@/, '').replace(/[/.]/g, '-') : name.toLowerCase(),
+    name: (pkg && pkg.name) || name,
     type: 'bundle',
-    package: pkg.name || null,
+    package: (pkg && pkg.name) || null,
     repo: repo.full_name,
     spec: spec,
     version: latest ? latest.tag_name : null,
     author: { name: owner, url: 'https://github.com/' + owner },
-    description: pkg.description || description || '',
+    description: (pkg && pkg.description) || description || '',
     tags: cleanTags(topics),
     license: license || 'UNKNOWN',
     downloads: downloads,
     stars: stars || 0,
+    verified: verified,
     source: 'auto',
     auto: true,
   }
@@ -281,6 +292,7 @@ async function main() {
   for (const it of all) {
     it.category = categorize(it)
     if (Array.isArray(it.tags)) it.tags = cleanTags(it.tags)
+    if (!('verified' in it)) it.verified = true
   }
   all.sort((a, b) => (b.stars || 0) - (a.stars || 0))
 

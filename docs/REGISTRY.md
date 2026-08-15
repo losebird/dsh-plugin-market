@@ -33,6 +33,8 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
   "stars": 456,       // 由 collector 填（自动条目）
   "source": "auto",   // auto | curated
   "auto": true,       // 自动收录徽章
+  "verified": true,   // 可安装判据：package.json 声明了 dsh.bundle.patch（与 dsh plugin add 一致）
+  // 未验证（false）的条目仍会展示，但禁用一键安装；curated 条目默认为 true
   "status": "unavailable", // 可选：仓库已删/私有，禁用安装按钮但保留条目
   "contents": { "skills": ["demo-hello"], "presets": [] } // pack 条目声明 zip 内的目录
 }

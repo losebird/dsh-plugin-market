@@ -43,6 +43,7 @@ window.__ModuleLoader__.load({
 .dshm-pill-on { color:var(--dsw-alias-state-success-primary); border-color:currentColor; }
 .dshm-pill-demo { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
 .dshm-pill-off { color:var(--dsw-alias-state-error-primary); border-color:currentColor; }
+.dshm-pill-unver { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
 .dshm-pill-cat { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
 .dshm-cats { display:flex; gap:6px; flex-wrap:wrap; padding:0 18px 10px; }
 .dshm-chip { border:1px solid var(--dsw-alias-border-l1); background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12px; padding:3px 11px; border-radius:999px; cursor:pointer; }
@@ -173,6 +174,7 @@ window.__ModuleLoader__.load({
               item.version ? h('span', { className: 'dshm-pill' }, item.version) : null,
               item.auto ? h('span', { className: 'dshm-pill dshm-pill-auto' }, '自动收录') : null,
               item.demo ? h('span', { className: 'dshm-pill dshm-pill-demo' }, '演示') : null,
+              item.verified === false ? h('span', { className: 'dshm-pill dshm-pill-unver' }, '未验证') : null,
               unavailable ? h('span', { className: 'dshm-pill dshm-pill-off' }, '已下线') : null,
               installed ? h('span', { className: 'dshm-pill dshm-pill-on' }, '已安装') : null,
             ),
@@ -195,7 +197,9 @@ window.__ModuleLoader__.load({
               ? h('span', { className: 'dshm-busy' }, busy === 'uninstall' ? '卸载中…' : '安装中…')
               : unavailable
                 ? h('span', { className: 'dshm-busy' }, '仓库已下线，无法安装')
-                : installed
+                : item.verified === false
+                  ? h('span', { className: 'dshm-busy' }, '未验证（缺 dsh.bundle 声明），无法一键安装')
+                  : installed
                   ? h('span', null,
                       h('button', { className: 'dshm-btn', onClick: () => { patch({ confirm: null }); runInstall(item) } }, '更新'),
                       h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(item) }, '卸载'))

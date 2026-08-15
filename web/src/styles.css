@@ -142,7 +142,9 @@ a:hover { text-decoration: underline; }
 .chip-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); margin-left: 4px; }
 .badge-auto { color: var(--warn); border-color: rgba(251, 191, 36, 0.45); }
 .badge-pack { color: var(--accent); border-color: rgba(52, 211, 153, 0.45); }
+.badge-unver { color: var(--warn); border-color: rgba(251, 191, 36, 0.5); }
 .badge-off { color: var(--error); border-color: rgba(248, 113, 113, 0.45); }
+.term-bar--hero { font-size: 15.5px; font-weight: 700; color: var(--accent); background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent); border-bottom-color: var(--accent); }
 .card-author { font-size: 12.5px; color: var(--text-3); }
 .card-author a { color: var(--text-2); }
 .card-desc {

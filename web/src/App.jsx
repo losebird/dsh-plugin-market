@@ -79,6 +79,7 @@ function Badges({ item }) {
       <span className="badge badge-cat">{catLabel(item)}</span>
       {item.type === 'pack' && <span className="badge badge-pack">扩展包</span>}
       {item.auto && <span className="badge badge-auto">自动收录</span>}
+      {item.verified === false && <span className="badge badge-unver">未验证</span>}
       {item.demo && <span className="badge">演示</span>}
       {item.status === 'unavailable' && <span className="badge badge-off">已下线</span>}
     </div>
@@ -112,7 +113,7 @@ function Card({ item, onOpen }) {
         <button className="btn btn-primary btn-sm" onClick={() => onOpen(item)} disabled={item.status === 'unavailable'}>
           详情<CaretRight size={13} />
         </button>
-        {cmd && (
+        {cmd && item.verified !== false && (
           <button className="btn btn-ghost btn-sm" onClick={doCopy} title="复制安装命令">
             {copied ? <><Check size={13} />已复制</> : <><Copy size={13} />复制命令</>}
           </button>
@@ -188,7 +189,12 @@ function DetailModal({ item, onClose }) {
             {readme.status === 'ready' && <div className="readme" dangerouslySetInnerHTML={{ __html: readme.html }} />}
           </>
         )}
-        {item.type === 'bundle' ? (
+        {item.type === 'bundle' && item.verified === false ? (
+          <div className="strip strip-demo">
+            <Warning size={15} />
+            该仓库未声明 dsh.bundle.patch，一键安装不可用（直接 dsh plugin add 只会作为普通依赖安装、不会挂载插件）。请到仓库查看作者提供的手工安装方式。
+          </div>
+        ) : item.type === 'bundle' ? (
           <>
             <div className="install-box">
               <code>{cmd}</code>
@@ -230,7 +236,7 @@ function InstallCard() {
   }
   return (
     <div className="term">
-      <div className="term-bar"><Plug size={14} /> 把插件市场装进你的 DSH</div>
+      <div className="term-bar term-bar--hero"><Plug size={15} weight="fill" /> 把插件市场装进你的 DSH</div>
       <div className="term-body">
         <div><span className="prompt">$</span> dsh plugin --profile web add {INSTALL_SPEC}</div>
         <div><span className="prompt">$</span> dsh web</div>
