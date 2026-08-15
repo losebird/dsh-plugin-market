@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-15T15:41:34.529Z",
+  "updatedAt": "2026-08-15T15:41:34.528Z",
   "items": [
     {
       "id": "liustack-modlens",
@@ -729,30 +729,6 @@
       "auto": true
     },
     {
-      "id": "dsh-plugin-liang-calibrator",
-      "name": "dsh-plugin-liang-calibrator",
-      "type": "bundle",
-      "package": "dsh-plugin-liang-calibrator",
-      "repo": "BruzWJ/Liang-Saint-Slider",
-      "spec": "github:BruzWJ/Liang-Saint-Slider",
-      "version": null,
-      "author": {
-        "name": "BruzWJ",
-        "url": "https://github.com/BruzWJ"
-      },
-      "description": "滑动变祖器 — the liang-intensity-calibrator as the DeepSeek Harness model + thinking-effort slider. Clicking the composer's model seat opens the 31-level calibrator directly; the six stages map 1:1 onto DeepSeek-V4-Flash/Pro × Off/High/Max.",
-      "tags": [
-        "deepseek",
-        "deepseek-harness",
-        "deepseek-harness-plugin"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 60,
-      "source": "auto",
-      "auto": true
-    },
-    {
       "id": "dsh-external-dsh-super-injector",
       "name": "@dsh-external/dsh-super-injector",
       "type": "bundle",
@@ -878,6 +854,30 @@
       "license": "BSD-3-Clause",
       "downloads": 0,
       "stars": 50,
+      "source": "auto",
+      "auto": true
+    },
+    {
+      "id": "dsh-plugin-liang-calibrator",
+      "name": "dsh-plugin-liang-calibrator",
+      "type": "bundle",
+      "package": "dsh-plugin-liang-calibrator",
+      "repo": "BruzWJ/Liang-Saint-Slider",
+      "spec": "github:BruzWJ/Liang-Saint-Slider",
+      "version": null,
+      "author": {
+        "name": "BruzWJ",
+        "url": "https://github.com/BruzWJ"
+      },
+      "description": "滑动变祖器 — the liang-intensity-calibrator as the DeepSeek Harness model + thinking-effort slider. Clicking the composer's model seat opens the 31-level calibrator directly; the six stages map 1:1 onto DeepSeek-V4-Flash/Pro × Off/High/Max.",
+      "tags": [
+        "deepseek",
+        "deepseek-harness",
+        "deepseek-harness-plugin"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 60,
       "source": "auto",
       "auto": true
     },
@@ -1454,6 +1454,32 @@
         "deepseek-harness-plugin",
         "dsh",
         "dsh-plugin"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 3,
+      "source": "auto",
+      "auto": true
+    },
+    {
+      "id": "dsh-plugin-market",
+      "name": "dsh-plugin-market",
+      "type": "bundle",
+      "package": "dsh-plugin-market",
+      "repo": "TheYoungChen/dsh-plugin-market",
+      "spec": "github:TheYoungChen/dsh-plugin-market#v1.0.0",
+      "version": "v1.0.0",
+      "author": {
+        "name": "TheYoungChen",
+        "url": "https://github.com/TheYoungChen"
+      },
+      "description": "DeepSeek Harness plugin market: browse the dsh-plugin GitHub topic and install plugins from a panel above Settings.",
+      "tags": [
+        "deepseek-harness",
+        "deepseek-harness-plugin",
+        "dsh",
+        "dsh-plugin",
+        "dsh-plugins"
       ],
       "license": "MIT",
       "downloads": 0,
@@ -2342,55 +2368,6 @@
       "stars": 1,
       "source": "auto",
       "auto": true
-    },
-    {
-      "id": "dsh-plugin-market",
-      "name": "DSH 插件市场",
-      "type": "bundle",
-      "package": "dsh-plugin-market",
-      "repo": "losebird/dsh-plugin-market",
-      "spec": "github:losebird/dsh-plugin-market#v0.1.0",
-      "version": "v0.1.0",
-      "author": {
-        "name": "losebird",
-        "url": "https://github.com/losebird"
-      },
-      "description": "DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。",
-      "longDescription": "在 DSH Web 界面侧栏底部增加「插件市场」按钮，弹窗里浏览社区插件（bundle 插件与 skill/preset 扩展包），一键安装、更新、卸载。安装前有信任确认，安装状态本地记录。",
-      "tags": [
-        "market",
-        "ui"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 0
-    },
-    {
-      "id": "demo-hello",
-      "name": "Demo Hello Skill",
-      "type": "pack",
-      "repo": "losebird/dsh-plugin-market",
-      "spec": "https://losebird.github.io/dsh-plugin-market/registry/examples/demo-hello/demo-hello.zip",
-      "version": "v0.1.0",
-      "author": {
-        "name": "losebird",
-        "url": "https://github.com/losebird"
-      },
-      "description": "演示扩展包：安装后新增一个 demo-hello 技能，验证市场安装链路。",
-      "longDescription": "最小的 skill 扩展包，用于验证「下载 zip → 校验 manifest → 落盘 ~/.agents/skills/」的完整安装链路。安装后新会话可用 demo-hello 技能。",
-      "tags": [
-        "demo",
-        "skill"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 0,
-      "contents": {
-        "skills": [
-          "demo-hello"
-        ],
-        "presets": []
-      }
     },
     {
       "id": "dsh-offpeak",
