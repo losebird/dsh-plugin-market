@@ -289,7 +289,7 @@ window.__ModuleLoader__.load({
                 : item.verified === false
                   ? h('span', null,
                       h('span', { className: 'dshm-busy' }, t('unverNote')),
-                      h('button', { className: 'dshm-btn dshm-btn-copyurl dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
+                      h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
                         st.copiedRepo === item.id ? t('copied') : t('copyUrl')),
                     )
                   : installed

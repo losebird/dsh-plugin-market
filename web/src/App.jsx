@@ -303,7 +303,7 @@ function Card({ item, onOpen, onToast }) {
           </button>
         )}
         {item.verified === false && item.repo && (
-          <button className="btn btn-copyurl btn-sm" onClick={doCopyUrl} title={'https://github.com/' + item.repo}>
+          <button className="btn btn-primary btn-sm" onClick={doCopyUrl} title={'https://github.com/' + item.repo}>
             {urlCopied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.copyUrl')}</>}
           </button>
         )}
