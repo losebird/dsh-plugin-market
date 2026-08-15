@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-15T16:03:03.787Z",
+  "updatedAt": "2026-08-15T16:18:16.068Z",
   "items": [
     {
       "id": "liustack-modlens",
@@ -27,7 +27,7 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 1808,
+      "stars": 1816,
       "source": "auto",
       "auto": true,
       "category": "agent"
@@ -54,7 +54,7 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 1206,
+      "stars": 1216,
       "source": "auto",
       "auto": true,
       "category": "ui"
@@ -78,7 +78,7 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 1149,
+      "stars": 1164,
       "source": "auto",
       "auto": true,
       "category": "ui"
@@ -108,7 +108,7 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 1021,
+      "stars": 1022,
       "source": "auto",
       "auto": true,
       "category": "agent"
@@ -195,7 +195,7 @@
         "llm-agent"
       ],
       "license": "Apache-2.0",
-      "downloads": 4281,
+      "downloads": 4285,
       "stars": 452,
       "source": "auto",
       "auto": true,
@@ -226,7 +226,7 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 418,
+      "stars": 419,
       "source": "auto",
       "auto": true,
       "category": "ui"
@@ -310,7 +310,7 @@
       ],
       "license": "BSD-3-Clause",
       "downloads": 0,
-      "stars": 400,
+      "stars": 401,
       "source": "auto",
       "auto": true,
       "category": "ui"
@@ -338,7 +338,7 @@
       "stars": 324,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dshmarket",
@@ -358,7 +358,7 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 250,
+      "stars": 255,
       "source": "auto",
       "auto": true,
       "category": "market"
@@ -379,7 +379,7 @@
       "tags": [],
       "license": "MIT",
       "downloads": 0,
-      "stars": 208,
+      "stars": 210,
       "source": "auto",
       "auto": true,
       "category": "ui"
@@ -399,11 +399,11 @@
       "description": "Oh-DSH: installable Desktop, Web, and TUI surfaces over DeepSeek Harness",
       "tags": [],
       "license": "MIT",
-      "downloads": 1694,
-      "stars": 187,
+      "downloads": 1696,
+      "stars": 188,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
     },
     {
       "id": "whale-girl",
@@ -424,10 +424,10 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 164,
+      "stars": 165,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "fun"
     },
     {
       "id": "huiliyi37-dsh-tianshu-tui",
@@ -447,10 +447,34 @@
       ],
       "license": "Apache-2.0",
       "downloads": 0,
-      "stars": 156,
+      "stars": 159,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
+    },
+    {
+      "id": "dsh-vision-router",
+      "name": "dsh-vision-router",
+      "type": "bundle",
+      "package": "dsh-vision-router",
+      "repo": "ysr666/dsh-vision-router",
+      "spec": "github:ysr666/dsh-vision-router#v1.2.0",
+      "version": "v1.2.0",
+      "author": {
+        "name": "ysr666",
+        "url": "https://github.com/ysr666"
+      },
+      "description": "Eyes for text-only DeepSeek Harness agents: built-in free vision chain (no key) + pixel-level vision tools (Q&A, grounding, crop, pixel diff, colors, OCR, SVG trace, cutout, screenshots). One-command install, no Python, image turns work like ordinary tool-calling turns.",
+      "tags": [
+        "multimodal",
+        "vision"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 128,
+      "source": "auto",
+      "auto": true,
+      "category": "agent"
     },
     {
       "id": "dsh-external-dsh-agent-rp",
@@ -478,30 +502,6 @@
       "category": "agent"
     },
     {
-      "id": "dsh-vision-router",
-      "name": "dsh-vision-router",
-      "type": "bundle",
-      "package": "dsh-vision-router",
-      "repo": "ysr666/dsh-vision-router",
-      "spec": "github:ysr666/dsh-vision-router#v1.2.0",
-      "version": "v1.2.0",
-      "author": {
-        "name": "ysr666",
-        "url": "https://github.com/ysr666"
-      },
-      "description": "Eyes for text-only DeepSeek Harness agents: built-in free vision chain (no key) + pixel-level vision tools (Q&A, grounding, crop, pixel diff, colors, OCR, SVG trace, cutout, screenshots). One-command install, no Python, image turns work like ordinary tool-calling turns.",
-      "tags": [
-        "multimodal",
-        "vision"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 125,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
-    },
-    {
       "id": "dsh-external-dsh-visualize",
       "name": "@dsh-external/dsh-visualize",
       "type": "bundle",
@@ -520,7 +520,7 @@
       ],
       "license": "BSD-3-Clause",
       "downloads": 0,
-      "stars": 111,
+      "stars": 112,
       "source": "auto",
       "auto": true,
       "category": "skills"
@@ -613,7 +613,7 @@
       "tags": [],
       "license": "MIT",
       "downloads": 0,
-      "stars": 88,
+      "stars": 89,
       "source": "auto",
       "auto": true,
       "category": "ui"
@@ -676,8 +676,8 @@
       "type": "bundle",
       "package": "dsh-plugin-marketplace",
       "repo": "bradeGithub/DSH-Plugins-Marketplace",
-      "spec": "github:bradeGithub/DSH-Plugins-Marketplace#v1.4.4",
-      "version": "v1.4.4",
+      "spec": "github:bradeGithub/DSH-Plugins-Marketplace#v1.4.5",
+      "version": "v1.4.5",
       "author": {
         "name": "bradeGithub",
         "url": "https://github.com/bradeGithub"
@@ -692,7 +692,7 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 66,
+      "stars": 68,
       "source": "auto",
       "auto": true,
       "category": "market"
@@ -726,6 +726,27 @@
       "category": "agent"
     },
     {
+      "id": "dsh-external-dsh-super-injector",
+      "name": "@dsh-external/dsh-super-injector",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-super-injector",
+      "repo": "yjh051108/dsh-super-injector",
+      "spec": "github:yjh051108/dsh-super-injector#v0.3.3",
+      "version": "v0.3.3",
+      "author": {
+        "name": "yjh051108",
+        "url": "https://github.com/yjh051108"
+      },
+      "description": "超级模组注入器：运行时注入任意本地 DSH 插件包（junction 链接 + loader.create，不碰 patch/package.json/不重启），热重载全家桶 + 开发侧挂区一键转正 + 一键卸载 + 路由自愈 + 插件管理 UI（设置页：列表/卸载/拖入内化），清单持久化重启自动恢复——DSH 生态的 BepInEx 式模组注入入口",
+      "tags": [],
+      "license": "UNKNOWN",
+      "downloads": 4442,
+      "stars": 60,
+      "source": "auto",
+      "auto": true,
+      "category": "ui"
+    },
+    {
       "id": "dsh-plugin-liang-calibrator",
       "name": "dsh-plugin-liang-calibrator",
       "type": "bundle",
@@ -745,27 +766,6 @@
       "source": "auto",
       "auto": true,
       "category": "dev"
-    },
-    {
-      "id": "dsh-external-dsh-super-injector",
-      "name": "@dsh-external/dsh-super-injector",
-      "type": "bundle",
-      "package": "@dsh-external/dsh-super-injector",
-      "repo": "yjh051108/dsh-super-injector",
-      "spec": "github:yjh051108/dsh-super-injector#v0.3.3",
-      "version": "v0.3.3",
-      "author": {
-        "name": "yjh051108",
-        "url": "https://github.com/yjh051108"
-      },
-      "description": "超级模组注入器：运行时注入任意本地 DSH 插件包（junction 链接 + loader.create，不碰 patch/package.json/不重启），热重载全家桶 + 开发侧挂区一键转正 + 一键卸载 + 路由自愈 + 插件管理 UI（设置页：列表/卸载/拖入内化），清单持久化重启自动恢复——DSH 生态的 BepInEx 式模组注入入口",
-      "tags": [],
-      "license": "UNKNOWN",
-      "downloads": 4378,
-      "stars": 59,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
     },
     {
       "id": "dsh-external-workflow",
@@ -833,7 +833,7 @@
       "tags": [],
       "license": "MIT",
       "downloads": 0,
-      "stars": 51,
+      "stars": 53,
       "source": "auto",
       "auto": true,
       "category": "comm"
@@ -861,7 +861,33 @@
       ],
       "license": "BSD-3-Clause",
       "downloads": 0,
-      "stars": 50,
+      "stars": 51,
+      "source": "auto",
+      "auto": true,
+      "category": "market"
+    },
+    {
+      "id": "sanqi-normal-dsh-webui-market-plugin",
+      "name": "@sanqi-normal/dsh-webui-market-plugin",
+      "type": "bundle",
+      "package": "@sanqi-normal/dsh-webui-market-plugin",
+      "repo": "Sanqi-normal/dsh-webui-market-plugin",
+      "spec": "github:Sanqi-normal/dsh-webui-market-plugin",
+      "version": null,
+      "author": {
+        "name": "Sanqi-normal",
+        "url": "https://github.com/Sanqi-normal"
+      },
+      "description": "In-harness community plugin market for the dsh web GUI: browse awesome-dsh-plugin.com, install and uninstall plugins into a profile",
+      "tags": [
+        "agent-harness",
+        "plugin-market",
+        "ui",
+        "web"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 49,
       "source": "auto",
       "auto": true,
       "category": "market"
@@ -885,33 +911,7 @@
       "stars": 48,
       "source": "auto",
       "auto": true,
-      "category": "ui"
-    },
-    {
-      "id": "sanqi-normal-dsh-webui-market-plugin",
-      "name": "@sanqi-normal/dsh-webui-market-plugin",
-      "type": "bundle",
-      "package": "@sanqi-normal/dsh-webui-market-plugin",
-      "repo": "Sanqi-normal/dsh-webui-market-plugin",
-      "spec": "github:Sanqi-normal/dsh-webui-market-plugin",
-      "version": null,
-      "author": {
-        "name": "Sanqi-normal",
-        "url": "https://github.com/Sanqi-normal"
-      },
-      "description": "In-harness community plugin market for the dsh web GUI: browse awesome-dsh-plugin.com, install and uninstall plugins into a profile",
-      "tags": [
-        "agent-harness",
-        "plugin-market",
-        "ui",
-        "web"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 48,
-      "source": "auto",
-      "auto": true,
-      "category": "market"
+      "category": "session"
     },
     {
       "id": "dsh-notification",
@@ -929,7 +929,7 @@
       "tags": [],
       "license": "MIT",
       "downloads": 0,
-      "stars": 47,
+      "stars": 48,
       "source": "auto",
       "auto": true,
       "category": "tools"
@@ -953,7 +953,7 @@
       "stars": 45,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-toy",
@@ -975,6 +975,32 @@
       "source": "auto",
       "auto": true,
       "category": "other"
+    },
+    {
+      "id": "dsh-external-dsh-automation",
+      "name": "@dsh-external/dsh-automation",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-automation",
+      "repo": "titanwings/dsh-automation",
+      "spec": "github:titanwings/dsh-automation#v0.1.1",
+      "version": "v0.1.1",
+      "author": {
+        "name": "titanwings",
+        "url": "https://github.com/titanwings"
+      },
+      "description": "Run coding tasks on schedule in fresh Agent sessions, and manage automations from DeepSeek Harness Web or an Agent",
+      "tags": [
+        "automation",
+        "coding-agent",
+        "dsh-bundle",
+        "scheduled-tasks"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 41,
+      "source": "auto",
+      "auto": true,
+      "category": "session"
     },
     {
       "id": "dsh-context",
@@ -1000,32 +1026,6 @@
       "category": "session"
     },
     {
-      "id": "dsh-external-dsh-automation",
-      "name": "@dsh-external/dsh-automation",
-      "type": "bundle",
-      "package": "@dsh-external/dsh-automation",
-      "repo": "titanwings/dsh-automation",
-      "spec": "github:titanwings/dsh-automation#v0.1.1",
-      "version": "v0.1.1",
-      "author": {
-        "name": "titanwings",
-        "url": "https://github.com/titanwings"
-      },
-      "description": "Run coding tasks on schedule in fresh Agent sessions, and manage automations from DeepSeek Harness Web or an Agent",
-      "tags": [
-        "automation",
-        "coding-agent",
-        "dsh-bundle",
-        "scheduled-tasks"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 40,
-      "source": "auto",
-      "auto": true,
-      "category": "session"
-    },
-    {
       "id": "tencent-connect-dsh-qqbot",
       "name": "@tencent-connect/dsh-qqbot",
       "type": "bundle",
@@ -1043,10 +1043,10 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 36,
+      "stars": 38,
       "source": "auto",
       "auto": true,
-      "category": "other"
+      "category": "comm"
     },
     {
       "id": "zat-dsh-engine",
@@ -1091,6 +1091,32 @@
       "category": "other"
     },
     {
+      "id": "anysearch-anysearch-dsh",
+      "name": "@anysearch/anysearch-dsh",
+      "type": "bundle",
+      "package": "@anysearch/anysearch-dsh",
+      "repo": "anysearch-team/anysearch-dsh",
+      "spec": "github:anysearch-team/anysearch-dsh#v0.1.1",
+      "version": "v0.1.1",
+      "author": {
+        "name": "anysearch-team",
+        "url": "https://github.com/anysearch-team"
+      },
+      "description": "AnySearch web search provider and advanced tools for DeepSeek Harness",
+      "tags": [
+        "agent-tools",
+        "anysearch",
+        "typescript",
+        "web-search"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 35,
+      "source": "auto",
+      "auto": true,
+      "category": "agent"
+    },
+    {
       "id": "dsh-skill-viewer",
       "name": "dsh-skill-viewer",
       "type": "bundle",
@@ -1107,7 +1133,7 @@
         "skills"
       ],
       "license": "MIT",
-      "downloads": 438,
+      "downloads": 440,
       "stars": 35,
       "source": "auto",
       "auto": true,
@@ -1135,32 +1161,6 @@
       "category": "market"
     },
     {
-      "id": "anysearch-anysearch-dsh",
-      "name": "@anysearch/anysearch-dsh",
-      "type": "bundle",
-      "package": "@anysearch/anysearch-dsh",
-      "repo": "anysearch-team/anysearch-dsh",
-      "spec": "github:anysearch-team/anysearch-dsh#v0.1.1",
-      "version": "v0.1.1",
-      "author": {
-        "name": "anysearch-team",
-        "url": "https://github.com/anysearch-team"
-      },
-      "description": "AnySearch web search provider and advanced tools for DeepSeek Harness",
-      "tags": [
-        "agent-tools",
-        "anysearch",
-        "typescript",
-        "web-search"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 34,
-      "source": "auto",
-      "auto": true,
-      "category": "agent"
-    },
-    {
       "id": "dsh-usage-stats",
       "name": "dsh-usage-stats",
       "type": "bundle",
@@ -1176,6 +1176,27 @@
       "tags": [
         "deepseek-harness-plugin-dev"
       ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 33,
+      "source": "auto",
+      "auto": true,
+      "category": "auth"
+    },
+    {
+      "id": "dsh-ui-status-label",
+      "name": "dsh-ui-status-label",
+      "type": "bundle",
+      "package": "dsh-ui-status-label",
+      "repo": "alingalingling/ui-status-label",
+      "spec": "github:alingalingling/ui-status-label",
+      "version": null,
+      "author": {
+        "name": "alingalingling",
+        "url": "https://github.com/alingalingling"
+      },
+      "description": "Configurable running-turn status text for dsh Web: General Settings row plus the conversationStatus provider for the chat view",
+      "tags": [],
       "license": "MIT",
       "downloads": 0,
       "stars": 33,
@@ -1211,28 +1232,7 @@
       "stars": 33,
       "source": "auto",
       "auto": true,
-      "category": "ui"
-    },
-    {
-      "id": "dsh-ui-status-label",
-      "name": "dsh-ui-status-label",
-      "type": "bundle",
-      "package": "dsh-ui-status-label",
-      "repo": "alingalingling/ui-status-label",
-      "spec": "github:alingalingling/ui-status-label",
-      "version": null,
-      "author": {
-        "name": "alingalingling",
-        "url": "https://github.com/alingalingling"
-      },
-      "description": "Configurable running-turn status text for dsh Web: General Settings row plus the conversationStatus provider for the chat view",
-      "tags": [],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 32,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "oil-oil-dsh-vision",
@@ -1254,7 +1254,7 @@
       ],
       "license": "MIT",
       "downloads": 0,
-      "stars": 32,
+      "stars": 33,
       "source": "auto",
       "auto": true,
       "category": "tools"
@@ -1328,6 +1328,35 @@
       "source": "auto",
       "auto": true,
       "category": "ui"
+    },
+    {
+      "id": "zseven-w-dsh-noema",
+      "name": "@zseven-w/dsh-noema",
+      "type": "bundle",
+      "package": "@zseven-w/dsh-noema",
+      "repo": "ZSeven-W/dsh-noema",
+      "spec": "github:ZSeven-W/dsh-noema",
+      "version": null,
+      "author": {
+        "name": "ZSeven-W",
+        "url": "https://github.com/ZSeven-W"
+      },
+      "description": "Noema long-term memory plugin for DSH: durable, inspectable agent memory with recall tools and a settings page.",
+      "tags": [
+        "agent-memory",
+        "coding-agent",
+        "long-term-memory",
+        "mcp",
+        "memory",
+        "noema",
+        "typescript"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 30,
+      "source": "auto",
+      "auto": true,
+      "category": "session"
     },
     {
       "id": "dsh-reasoning-effort",
@@ -1426,7 +1455,7 @@
       "stars": 27,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-interconnect",
@@ -1452,6 +1481,27 @@
       "category": "comm"
     },
     {
+      "id": "dsh-find-plugin",
+      "name": "dsh-find-plugin",
+      "type": "bundle",
+      "package": "dsh-find-plugin",
+      "repo": "awesome-dsh-plugin/dsh-find-plugin",
+      "spec": "github:awesome-dsh-plugin/dsh-find-plugin",
+      "version": null,
+      "author": {
+        "name": "awesome-dsh-plugin",
+        "url": "https://github.com/awesome-dsh-plugin"
+      },
+      "description": "Find DeepSeek Harness plugins inside the agent — live GitHub dsh-plugin topic search, ranked by stars.",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 26,
+      "source": "auto",
+      "auto": true,
+      "category": "agent"
+    },
+    {
       "id": "openbiliclaw-dsh-plugin",
       "name": "@openbiliclaw/dsh-plugin",
       "type": "bundle",
@@ -1474,56 +1524,6 @@
       "source": "auto",
       "auto": true,
       "category": "ui"
-    },
-    {
-      "id": "zseven-w-dsh-noema",
-      "name": "@zseven-w/dsh-noema",
-      "type": "bundle",
-      "package": "@zseven-w/dsh-noema",
-      "repo": "ZSeven-W/dsh-noema",
-      "spec": "github:ZSeven-W/dsh-noema",
-      "version": null,
-      "author": {
-        "name": "ZSeven-W",
-        "url": "https://github.com/ZSeven-W"
-      },
-      "description": "Noema long-term memory plugin for DSH: durable, inspectable agent memory with recall tools and a settings page.",
-      "tags": [
-        "agent-memory",
-        "coding-agent",
-        "long-term-memory",
-        "mcp",
-        "memory",
-        "noema",
-        "typescript"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 26,
-      "source": "auto",
-      "auto": true,
-      "category": "session"
-    },
-    {
-      "id": "dsh-find-plugin",
-      "name": "dsh-find-plugin",
-      "type": "bundle",
-      "package": "dsh-find-plugin",
-      "repo": "awesome-dsh-plugin/dsh-find-plugin",
-      "spec": "github:awesome-dsh-plugin/dsh-find-plugin",
-      "version": null,
-      "author": {
-        "name": "awesome-dsh-plugin",
-        "url": "https://github.com/awesome-dsh-plugin"
-      },
-      "description": "Find DeepSeek Harness plugins inside the agent — live GitHub dsh-plugin topic search, ranked by stars.",
-      "tags": [],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 25,
-      "source": "auto",
-      "auto": true,
-      "category": "agent"
     },
     {
       "id": "dsh-custom-tool",
@@ -1570,7 +1570,7 @@
         "markdown-parser"
       ],
       "license": "Apache-2.0",
-      "downloads": 658,
+      "downloads": 659,
       "stars": 24,
       "source": "auto",
       "auto": true,
@@ -1773,7 +1773,7 @@
       "stars": 21,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-model-router",
@@ -1841,6 +1841,27 @@
       "category": "fun"
     },
     {
+      "id": "dsh-plugin-template",
+      "name": "dsh-plugin-template",
+      "type": "bundle",
+      "package": "dsh-plugin-template",
+      "repo": "bugmaker2/dsh-plugin-template",
+      "spec": "github:bugmaker2/dsh-plugin-template",
+      "version": null,
+      "author": {
+        "name": "bugmaker2",
+        "url": "https://github.com/bugmaker2"
+      },
+      "description": "Minimal Hello World plugin template for DeepSeek Harness.",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 19,
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
       "id": "dsh-user-experience",
       "name": "dsh-user-experience",
       "type": "bundle",
@@ -1886,6 +1907,31 @@
       "category": "ui"
     },
     {
+      "id": "dsh-client-auto-continue",
+      "name": "dsh-client-auto-continue",
+      "type": "bundle",
+      "package": "dsh-client-auto-continue",
+      "repo": "HsiangNianian/dsh-auto-continue",
+      "spec": "github:HsiangNianian/dsh-auto-continue#v0.5.2",
+      "version": "v0.5.2",
+      "author": {
+        "name": "HsiangNianian",
+        "url": "https://github.com/HsiangNianian"
+      },
+      "description": "DSH Web UI plugin: automatically sends \"继续\" (continue) when a request is interrupted by network errors or other non-human causes",
+      "tags": [
+        "auto-contiune",
+        "automatic",
+        "web-ui"
+      ],
+      "license": "MIT",
+      "downloads": 1,
+      "stars": 18,
+      "source": "auto",
+      "auto": true,
+      "category": "ui"
+    },
+    {
       "id": "deepseek-ai-dsh-plugin-check",
       "name": "@deepseek-ai/dsh-plugin-check",
       "type": "bundle",
@@ -1908,7 +1954,7 @@
       "stars": 18,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "loserfox-distill",
@@ -1930,27 +1976,6 @@
       "source": "auto",
       "auto": true,
       "category": "skills"
-    },
-    {
-      "id": "dsh-plugin-template",
-      "name": "dsh-plugin-template",
-      "type": "bundle",
-      "package": "dsh-plugin-template",
-      "repo": "bugmaker2/dsh-plugin-template",
-      "spec": "github:bugmaker2/dsh-plugin-template",
-      "version": null,
-      "author": {
-        "name": "bugmaker2",
-        "url": "https://github.com/bugmaker2"
-      },
-      "description": "Minimal Hello World plugin template for DeepSeek Harness.",
-      "tags": [],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 18,
-      "source": "auto",
-      "auto": true,
-      "category": "other"
     },
     {
       "id": "deepseek-ai-dsh-toolkit",
@@ -2026,7 +2051,7 @@
       "stars": 17,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "auth"
     },
     {
       "id": "dsh-lark-channel",
@@ -2116,32 +2141,7 @@
       "stars": 16,
       "source": "auto",
       "auto": true,
-      "category": "ui"
-    },
-    {
-      "id": "dsh-client-auto-continue",
-      "name": "dsh-client-auto-continue",
-      "type": "bundle",
-      "package": "dsh-client-auto-continue",
-      "repo": "HsiangNianian/dsh-auto-continue",
-      "spec": "github:HsiangNianian/dsh-auto-continue#v0.5.2",
-      "version": "v0.5.2",
-      "author": {
-        "name": "HsiangNianian",
-        "url": "https://github.com/HsiangNianian"
-      },
-      "description": "DSH Web UI plugin: automatically sends \"继续\" (continue) when a request is interrupted by network errors or other non-human causes",
-      "tags": [
-        "auto-contiune",
-        "automatic",
-        "web-ui"
-      ],
-      "license": "MIT",
-      "downloads": 1,
-      "stars": 16,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "dingyi222666-dsh-focus-chat",
@@ -2308,6 +2308,32 @@
       "category": "comm"
     },
     {
+      "id": "dsh-external-ego-browser",
+      "name": "@dsh-external/ego-browser",
+      "type": "bundle",
+      "package": "@dsh-external/ego-browser",
+      "repo": "Fisfzy/ego-browser",
+      "spec": "github:Fisfzy/ego-browser",
+      "version": null,
+      "author": {
+        "name": "Fisfzy",
+        "url": "https://github.com/Fisfzy"
+      },
+      "description": "ego-browser (ego-lite) integration plugin for DSH: structured browser-automation tools (30+ ego_*) that drive the vendored ego runtime through ctx.subprocess, plus a realtime watch panel (live SSE screencast + direct mouse interaction with the agent browser + download capture + human-verification notice + tab bar + login guide).",
+      "tags": [
+        "agent-browser",
+        "browser-automation",
+        "dshx",
+        "ego-lite"
+      ],
+      "license": "UNKNOWN",
+      "downloads": 0,
+      "stars": 14,
+      "source": "auto",
+      "auto": true,
+      "category": "agent"
+    },
+    {
       "id": "dsh-balance-meter",
       "name": "dsh-balance-meter",
       "type": "bundle",
@@ -2354,7 +2380,7 @@
         "macos"
       ],
       "license": "Apache-2.0",
-      "downloads": 17,
+      "downloads": 18,
       "stars": 13,
       "source": "auto",
       "auto": true,
@@ -2387,32 +2413,6 @@
       "category": "auth"
     },
     {
-      "id": "dsh-external-ego-browser",
-      "name": "@dsh-external/ego-browser",
-      "type": "bundle",
-      "package": "@dsh-external/ego-browser",
-      "repo": "Fisfzy/ego-browser",
-      "spec": "github:Fisfzy/ego-browser",
-      "version": null,
-      "author": {
-        "name": "Fisfzy",
-        "url": "https://github.com/Fisfzy"
-      },
-      "description": "ego-browser (ego-lite) integration plugin for DSH: structured browser-automation tools (30+ ego_*) that drive the vendored ego runtime through ctx.subprocess, plus a realtime watch panel (live SSE screencast + direct mouse interaction with the agent browser + download capture + human-verification notice + tab bar + login guide).",
-      "tags": [
-        "agent-browser",
-        "browser-automation",
-        "dshx",
-        "ego-lite"
-      ],
-      "license": "UNKNOWN",
-      "downloads": 0,
-      "stars": 13,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
-    },
-    {
       "id": "yejiming-dsh-gomoku",
       "name": "@yejiming/dsh-gomoku",
       "type": "bundle",
@@ -2431,7 +2431,7 @@
       "stars": 13,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-whale-report",
@@ -2479,7 +2479,7 @@
       "stars": 13,
       "source": "auto",
       "auto": true,
-      "category": "market"
+      "category": "tools"
     },
     {
       "id": "deepseek-ai-dsh-security-audit",
@@ -2512,8 +2512,8 @@
       "type": "bundle",
       "package": "dsh-undo-savepoint",
       "repo": "lire1131/dsh-undo",
-      "spec": "github:lire1131/dsh-undo#v0.3.1",
-      "version": "v0.3.1",
+      "spec": "github:lire1131/dsh-undo#v0.3.2",
+      "version": "v0.3.2",
       "author": {
         "name": "lire1131",
         "url": "https://github.com/lire1131"
@@ -2529,7 +2529,7 @@
       "stars": 12,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "mars-sea-dsh-commandcode-provider",
@@ -2572,11 +2572,11 @@
       "description": "DSH diff-viewer plugin: PiUI-style visual diff surface (split/unified, change bars, line numbers, word-level marks, collapsed context, windowed rendering) replacing the stock DiffBlock for write/edit tool calls. Registers into the ui-tool diff-card chain slots.",
       "tags": [],
       "license": "UNKNOWN",
-      "downloads": 287,
+      "downloads": 297,
       "stars": 12,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-external-dsh-deep-research",
@@ -2597,7 +2597,7 @@
       "stars": 12,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "bill9109-dsh-web-ui-notify",
@@ -2619,6 +2619,30 @@
       "source": "auto",
       "auto": true,
       "category": "ui"
+    },
+    {
+      "id": "dsh-advisor",
+      "name": "dsh-advisor",
+      "type": "bundle",
+      "package": "dsh-advisor",
+      "repo": "btspoony/dsh-advisor",
+      "spec": "github:btspoony/dsh-advisor#v0.1.4",
+      "version": "v0.1.4",
+      "author": {
+        "name": "btspoony",
+        "url": "https://github.com/btspoony"
+      },
+      "description": "dsh plugin bundle porting the omp advisor subsystem: a per-session reviewer model that observes the primary transcript and injects severity-ranked advice (nit/concern/blocker).",
+      "tags": [
+        "advisor",
+        "agentic-ai"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 11,
+      "source": "auto",
+      "auto": true,
+      "category": "session"
     },
     {
       "id": "deepseek-manners",
@@ -2781,7 +2805,7 @@
       "stars": 11,
       "source": "auto",
       "auto": true,
-      "category": "market"
+      "category": "tools"
     },
     {
       "id": "dsh-archived-sessions",
@@ -2859,10 +2883,10 @@
       "category": "ui"
     },
     {
-      "id": "dsh-external-dsh-task-status",
-      "name": "@dsh-external/dsh-task-status",
+      "id": "vlln-dsh-task-status",
+      "name": "@vlln/dsh-task-status",
       "type": "bundle",
-      "package": "@dsh-external/dsh-task-status",
+      "package": "@vlln/dsh-task-status",
       "repo": "vlln/dsh-task-status",
       "spec": "github:vlln/dsh-task-status",
       "version": null,
@@ -2996,6 +3020,29 @@
       },
       "description": "Claude Science-style research workbench for DeepSeek Harness: ReAct research-loop engine (research_* tools), versioned artifacts with provenance (artifact_* tools), and 10 science skills for genomics / pathogens / bioinformatics.",
       "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 10,
+      "source": "auto",
+      "auto": true,
+      "category": "ui"
+    },
+    {
+      "id": "dsh-external-dsh-task-status",
+      "name": "@dsh-external/dsh-task-status",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-task-status",
+      "repo": "vlln/dsh-task-status",
+      "spec": "github:vlln/dsh-task-status",
+      "version": null,
+      "author": {
+        "name": "vlln",
+        "url": "https://github.com/vlln"
+      },
+      "description": "后台任务状态条——对话输入区上方的任务进度 UI（官方 dock 槽 + Node 轮询路由）",
+      "tags": [
+        "ui"
+      ],
       "license": "MIT",
       "downloads": 0,
       "stars": 10,
@@ -3155,31 +3202,7 @@
       "stars": 9,
       "source": "auto",
       "auto": true,
-      "category": "ui"
-    },
-    {
-      "id": "dsh-advisor",
-      "name": "dsh-advisor",
-      "type": "bundle",
-      "package": "dsh-advisor",
-      "repo": "btspoony/dsh-advisor",
-      "spec": "github:btspoony/dsh-advisor#v0.1.4",
-      "version": "v0.1.4",
-      "author": {
-        "name": "btspoony",
-        "url": "https://github.com/btspoony"
-      },
-      "description": "dsh plugin bundle porting the omp advisor subsystem: a per-session reviewer model that observes the primary transcript and injects severity-ranked advice (nit/concern/blocker).",
-      "tags": [
-        "advisor",
-        "agentic-ai"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 9,
-      "source": "auto",
-      "auto": true,
-      "category": "session"
+      "category": "tools"
     },
     {
       "id": "dsh-codex-connect",
@@ -3324,7 +3347,7 @@
       "stars": 9,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-fail-logger",
@@ -3395,7 +3418,7 @@
       "stars": 8,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-external-dsh-ui-progress",
@@ -3437,7 +3460,7 @@
       "stars": 8,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-plugin-solo-thinking",
@@ -3458,7 +3481,7 @@
         "typescript"
       ],
       "license": "MIT",
-      "downloads": 12,
+      "downloads": 14,
       "stars": 8,
       "source": "auto",
       "auto": true,
@@ -3487,7 +3510,7 @@
       "stars": 8,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-playwright-browser",
@@ -3721,7 +3744,7 @@
       "stars": 7,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-answer-pet",
@@ -3809,7 +3832,7 @@
         "oauth"
       ],
       "license": "MIT",
-      "downloads": 11,
+      "downloads": 12,
       "stars": 7,
       "source": "auto",
       "auto": true,
@@ -3859,11 +3882,11 @@
         "prompt-queue"
       ],
       "license": "MIT",
-      "downloads": 31,
+      "downloads": 33,
       "stars": 7,
       "source": "auto",
       "auto": true,
-      "category": "dev"
+      "category": "tools"
     },
     {
       "id": "dsh-overleaf",
@@ -4161,7 +4184,7 @@
       "stars": 6,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "fakechris-dsh-track",
@@ -4207,7 +4230,7 @@
       "stars": 6,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "lyhalal-dsh-notification-center",
@@ -4543,7 +4566,7 @@
       "stars": 6,
       "source": "auto",
       "auto": true,
-      "category": "market"
+      "category": "tools"
     },
     {
       "id": "loserfox-telegram",
@@ -4612,7 +4635,7 @@
       "stars": 6,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "dsh-updater-ui",
@@ -4658,6 +4681,30 @@
         "typescript"
       ],
       "license": "Apache-2.0",
+      "downloads": 0,
+      "stars": 5,
+      "source": "auto",
+      "auto": true,
+      "category": "agent"
+    },
+    {
+      "id": "dsh-llm-fallbacks",
+      "name": "dsh-llm-fallbacks",
+      "type": "bundle",
+      "package": "dsh-llm-fallbacks",
+      "repo": "btspoony/dsh-llm-fallbacks",
+      "spec": "github:btspoony/dsh-llm-fallbacks#v0.1.5",
+      "version": "v0.1.5",
+      "author": {
+        "name": "btspoony",
+        "url": "https://github.com/btspoony"
+      },
+      "description": "Automatic provider/model fallback chains for DeepSeek Harness agents when LLM requests keep failing (retry exhausted, auth, quota, rate limit)",
+      "tags": [
+        "fallbacks",
+        "subagents"
+      ],
+      "license": "MIT",
       "downloads": 0,
       "stars": 5,
       "source": "auto",
@@ -4761,7 +4808,7 @@
       "stars": 5,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
     },
     {
       "id": "dsh-cue-plugin",
@@ -4877,7 +4924,7 @@
       "stars": 5,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-image-subagent",
@@ -5007,7 +5054,7 @@
         "name": "LJninse",
         "url": "https://github.com/LJninse"
       },
-      "description": "顶部栏「IDE」按钮：自动检测本机已安装的 IDE（VS Code / JetBrains / Cursor / Windsurf / Zed / Trae / VSCodium / Android Studio / Sublime Text 等），一键用其打开当前工作区目录；自定义 IDE 与默认 IDE 会持久化，界面文案支持中英文。",
+      "description": "顶部栏「IDE」按钮：自动检测本机已安装的 IDE（VS Code / JetBrains / Cursor / Windsurf / Zed / Trae / VSCodium / Android Studio / Sublime Text 等），设默认后单击直达、点 ▾ 或右键可选其它，一键用其打开当前工作区目录；自定义 IDE 与默认 IDE 会持久化，界面文案支持中英文。",
       "tags": [],
       "license": "NOASSERTION",
       "downloads": 0,
@@ -5041,7 +5088,7 @@
       "stars": 5,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "skills"
     },
     {
       "id": "nowledge-mem-deepseek-harness",
@@ -5091,7 +5138,7 @@
       "stars": 5,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-external-dsh-evolve",
@@ -5335,7 +5382,7 @@
       "stars": 5,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "auth"
     },
     {
       "id": "dsh-catppuccin",
@@ -5402,6 +5449,27 @@
       "description": "DSH web GUI 鲸鱼娘桌宠插件：可拖动吸附角落的 Q 版蓝发女仆鲸鱼娘。16 个动作（idle/happy/wave/sleep/cry/think/drag/eat/dance/blush/surprise/stretch/angry/music/swim/wait）序列帧动画；触发方式：单击/长按/双击/悬停/滚轮缩放/拖拽甩出/右键菜单（动作点播+设置+隐藏）、会话状态联动（思考/出错/完成/审批等待/任务开始/连续出错/关键词）、时间型（整点报时/时段问候/深夜提醒/空闲分级）、随机小动作、粒子特效、偏好持久化。序列帧经本地 proxy-bridge /media/pet 通道提供。",
       "tags": [],
       "license": "UNKNOWN",
+      "downloads": 0,
+      "stars": 5,
+      "source": "auto",
+      "auto": true,
+      "category": "ui"
+    },
+    {
+      "id": "deepseek-harness-zh_pro",
+      "name": "deepseek-harness-zh_pro",
+      "type": "bundle",
+      "package": "deepseek-harness-zh_pro",
+      "repo": "magian1127/deepseek-harness-zh_pro",
+      "spec": "github:magian1127/deepseek-harness-zh_pro",
+      "version": null,
+      "author": {
+        "name": "magian1127",
+        "url": "https://github.com/magian1127"
+      },
+      "description": "DSH 中文增强插件：中文界面修正残留英文、统一术语与格式，统计行完整显示，并可注入「中文优先提示」让大模型优先用中文回复与思考（默认关闭）",
+      "tags": [],
+      "license": "MIT",
       "downloads": 0,
       "stars": 5,
       "source": "auto",
@@ -5564,7 +5632,7 @@
       "stars": 5,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "nonamelego-dsh-catppuccin",
@@ -5689,6 +5757,31 @@
       "category": "other"
     },
     {
+      "id": "tonydua-dsh-web-search-exa",
+      "name": "@tonydua/dsh-web-search-exa",
+      "type": "bundle",
+      "package": "@tonydua/dsh-web-search-exa",
+      "repo": "TonyDua/dsh-web-search-exa",
+      "spec": "github:TonyDua/dsh-web-search-exa",
+      "version": null,
+      "author": {
+        "name": "TonyDua",
+        "url": "https://github.com/TonyDua"
+      },
+      "description": "Zero-config Exa web search provider for DeepSeek Harness (dsh): keyless anonymous MCP fallback (mcp.exa.ai/mcp) plus keyed REST search — a drop-in WebSearchProvider for the ctx.web seam, no API key required.",
+      "tags": [
+        "exa",
+        "mcp",
+        "web-search"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 5,
+      "source": "auto",
+      "auto": true,
+      "category": "tools"
+    },
+    {
       "id": "dsh-trio",
       "name": "dsh-trio",
       "type": "bundle",
@@ -5771,6 +5864,27 @@
       "source": "auto",
       "auto": true,
       "category": "auth"
+    },
+    {
+      "id": "xmanrui-dsh-feishu",
+      "name": "@xmanrui/dsh-feishu",
+      "type": "bundle",
+      "package": "@xmanrui/dsh-feishu",
+      "repo": "xmanrui/dsh-feishu",
+      "spec": "github:xmanrui/dsh-feishu",
+      "version": null,
+      "author": {
+        "name": "xmanrui",
+        "url": "https://github.com/xmanrui"
+      },
+      "description": "DeepSeek Harness plugin for multi-bot Feishu setup and streaming chat",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 5,
+      "source": "auto",
+      "auto": true,
+      "category": "other"
     },
     {
       "id": "dsh-eval-harness",
@@ -5937,30 +6051,6 @@
       "category": "market"
     },
     {
-      "id": "dsh-llm-fallbacks",
-      "name": "dsh-llm-fallbacks",
-      "type": "bundle",
-      "package": "dsh-llm-fallbacks",
-      "repo": "btspoony/dsh-llm-fallbacks",
-      "spec": "github:btspoony/dsh-llm-fallbacks#v0.1.4",
-      "version": "v0.1.4",
-      "author": {
-        "name": "btspoony",
-        "url": "https://github.com/btspoony"
-      },
-      "description": "Automatic provider/model fallback chains for DeepSeek Harness agents when LLM requests keep failing (retry exhausted, auth, quota, rate limit)",
-      "tags": [
-        "fallbacks",
-        "subagents"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 4,
-      "source": "auto",
-      "auto": true,
-      "category": "agent"
-    },
-    {
       "id": "dsh-undo",
       "name": "dsh-undo",
       "type": "bundle",
@@ -5979,7 +6069,7 @@
       "stars": 4,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "morlay-session-persistence-rdb",
@@ -6369,6 +6459,29 @@
       "stars": 4,
       "source": "auto",
       "auto": true,
+      "category": "agent"
+    },
+    {
+      "id": "vlln-dsh-loop",
+      "name": "@vlln/dsh-loop",
+      "type": "bundle",
+      "package": "@vlln/dsh-loop",
+      "repo": "vlln/dsh-loop",
+      "spec": "github:vlln/dsh-loop",
+      "version": null,
+      "author": {
+        "name": "vlln",
+        "url": "https://github.com/vlln"
+      },
+      "description": "定时循环插件：/loop 命令 + loop 工具 + 活动状态条（官方 dock 槽）",
+      "tags": [
+        "ui"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 4,
+      "source": "auto",
+      "auto": true,
       "category": "ui"
     },
     {
@@ -6424,6 +6537,31 @@
       "source": "auto",
       "auto": true,
       "category": "ui"
+    },
+    {
+      "id": "dsh-monkey-desk",
+      "name": "dsh-monkey-desk",
+      "type": "bundle",
+      "package": "dsh-monkey-desk",
+      "repo": "svmlearn/dsh-monkey-desk",
+      "spec": "github:svmlearn/dsh-monkey-desk",
+      "version": null,
+      "author": {
+        "name": "svmlearn",
+        "url": "https://github.com/svmlearn"
+      },
+      "description": "马喽办公室 (Monkey Desk) — multi-agent workstation visualization for DSH Web: watch subagents, dispatch tasks, redo work, archive roles.",
+      "tags": [
+        "multi-agent",
+        "subagent",
+        "visualization"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 4,
+      "source": "auto",
+      "auto": true,
+      "category": "session"
     },
     {
       "id": "dsh-external-dsh-input-history",
@@ -6490,7 +6628,7 @@
       "stars": 4,
       "source": "auto",
       "auto": true,
-      "category": "other"
+      "category": "fun"
     },
     {
       "id": "zimzaza4-dsh-bash-win",
@@ -6801,27 +6939,6 @@
       "category": "tools"
     },
     {
-      "id": "deepseek-harness-zh_pro",
-      "name": "deepseek-harness-zh_pro",
-      "type": "bundle",
-      "package": "deepseek-harness-zh_pro",
-      "repo": "magian1127/deepseek-harness-zh_pro",
-      "spec": "github:magian1127/deepseek-harness-zh_pro",
-      "version": null,
-      "author": {
-        "name": "magian1127",
-        "url": "https://github.com/magian1127"
-      },
-      "description": "DSH 中文增强插件：中文界面修正残留英文、统一术语与格式，统计行完整显示，并可注入「中文优先提示」让大模型优先用中文回复与思考（默认关闭）",
-      "tags": [],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 4,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
-    },
-    {
       "id": "dsh-input-plus",
       "name": "dsh-input-plus",
       "type": "bundle",
@@ -6845,18 +6962,18 @@
       "category": "ui"
     },
     {
-      "id": "dsh-drop-file-to-path",
-      "name": "dsh-drop-file-to-path",
+      "id": "dsh-file-upload",
+      "name": "dsh-file-upload",
       "type": "bundle",
-      "package": "dsh-drop-file-to-path",
+      "package": "dsh-file-upload",
       "repo": "GLFzr/dsh-drop-file-to-path",
-      "spec": "github:GLFzr/dsh-drop-file-to-path#v1.4.8",
-      "version": "v1.4.8",
+      "spec": "github:GLFzr/dsh-drop-file-to-path#v2.0.0",
+      "version": "v2.0.0",
       "author": {
         "name": "GLFzr",
         "url": "https://github.com/GLFzr"
       },
-      "description": "Codex-style drag-drop for DSH web GUI: drag any file, it lands in ~/.dsh-dropbox, and the path lands in the composer as a whole blue chip (the mandatory .b64 suffix is display-hidden; the real path serializes on submit). Hot-pluggable: install with `dsh plugin --profile web add ./plugins/drop-file-to-path`, no dsh source changes.",
+      "description": "Codex-style drag-drop for DSH web GUI: drag any file, it lands in ~/.dsh-dropbox, and the path lands in the composer as a whole blue chip (the mandatory .b64 suffix is display-hidden; the real path serializes on submit). Hot-pluggable: install with `dsh plugin --profile web add ./plugins/file-upload`, no dsh source changes.",
       "tags": [
         "drag-drop",
         "web-ui"
@@ -7060,31 +7177,6 @@
       "category": "session"
     },
     {
-      "id": "tonydua-dsh-web-search-exa",
-      "name": "@tonydua/dsh-web-search-exa",
-      "type": "bundle",
-      "package": "@tonydua/dsh-web-search-exa",
-      "repo": "TonyDua/dsh-web-search-exa",
-      "spec": "github:TonyDua/dsh-web-search-exa",
-      "version": null,
-      "author": {
-        "name": "TonyDua",
-        "url": "https://github.com/TonyDua"
-      },
-      "description": "Zero-config Exa web search provider for DeepSeek Harness (dsh): keyless anonymous MCP fallback (mcp.exa.ai/mcp) plus keyed REST search — a drop-in WebSearchProvider for the ctx.web seam, no API key required.",
-      "tags": [
-        "exa",
-        "mcp",
-        "web-search"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 4,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
-    },
-    {
       "id": "picgo-dsh-plugin",
       "name": "@picgo/dsh-plugin",
       "type": "bundle",
@@ -7176,27 +7268,6 @@
       "source": "auto",
       "auto": true,
       "category": "auth"
-    },
-    {
-      "id": "xmanrui-dsh-feishu",
-      "name": "@xmanrui/dsh-feishu",
-      "type": "bundle",
-      "package": "@xmanrui/dsh-feishu",
-      "repo": "xmanrui/dsh-feishu",
-      "spec": "github:xmanrui/dsh-feishu",
-      "version": null,
-      "author": {
-        "name": "xmanrui",
-        "url": "https://github.com/xmanrui"
-      },
-      "description": "DeepSeek Harness plugin for multi-bot Feishu setup and streaming chat",
-      "tags": [],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 4,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
     },
     {
       "id": "dsh-plugin-notify",
@@ -7292,7 +7363,7 @@
       "stars": 4,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-plugin-manager",
@@ -7308,6 +7379,30 @@
       },
       "description": "GUI in the DSH settings panel: toggle/delete MCP servers, browse and trash skills, list built-in plugin packages — hot-applied without restart.",
       "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 4,
+      "source": "auto",
+      "auto": true,
+      "category": "session"
+    },
+    {
+      "id": "dsh-drop-file-to-path",
+      "name": "dsh-drop-file-to-path",
+      "type": "bundle",
+      "package": "dsh-drop-file-to-path",
+      "repo": "GLFzr/dsh-drop-file-to-path",
+      "spec": "github:GLFzr/dsh-drop-file-to-path#v1.4.8",
+      "version": "v1.4.8",
+      "author": {
+        "name": "GLFzr",
+        "url": "https://github.com/GLFzr"
+      },
+      "description": "Codex-style drag-drop for DSH web GUI: drag any file, it lands in ~/.dsh-dropbox, and the path lands in the composer as a whole blue chip (the mandatory .b64 suffix is display-hidden; the real path serializes on submit). Hot-pluggable: install with `dsh plugin --profile web add ./plugins/drop-file-to-path`, no dsh source changes.",
+      "tags": [
+        "drag-drop",
+        "web-ui"
+      ],
       "license": "MIT",
       "downloads": 0,
       "stars": 4,
@@ -7364,7 +7459,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-skin-claude-code",
@@ -7508,7 +7603,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "long-draft-input",
@@ -7602,7 +7697,7 @@
         "typescript"
       ],
       "license": "MIT",
-      "downloads": 50,
+      "downloads": 54,
       "stars": 3,
       "source": "auto",
       "auto": true,
@@ -7647,7 +7742,7 @@
       "description": "A compact per-model reasoning effort editor for DeepSeek Harness custom providers.",
       "tags": [],
       "license": "MIT",
-      "downloads": 15,
+      "downloads": 16,
       "stars": 3,
       "source": "auto",
       "auto": true,
@@ -8314,7 +8409,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "dsh-plugin-publisher",
@@ -8340,7 +8435,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-ernie-image",
@@ -8390,8 +8485,8 @@
       "type": "bundle",
       "package": "dsh-multimodal",
       "repo": "MC5lan/dsh-multimodal",
-      "spec": "github:MC5lan/dsh-multimodal#v1.0.0",
-      "version": "v1.0.0",
+      "spec": "github:MC5lan/dsh-multimodal#0.2.1",
+      "version": "0.2.1",
       "author": {
         "name": "MC5lan",
         "url": "https://github.com/MC5lan"
@@ -8529,29 +8624,6 @@
       "category": "dev"
     },
     {
-      "id": "dsh-external-dsh-loop",
-      "name": "@dsh-external/dsh-loop",
-      "type": "bundle",
-      "package": "@dsh-external/dsh-loop",
-      "repo": "vlln/dsh-loop",
-      "spec": "github:vlln/dsh-loop",
-      "version": null,
-      "author": {
-        "name": "vlln",
-        "url": "https://github.com/vlln"
-      },
-      "description": "定时循环插件：/loop 命令 + loop 工具 + 活动状态条（官方 dock 槽）",
-      "tags": [
-        "ui"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 3,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
-    },
-    {
       "id": "dsh-revive",
       "name": "dsh-revive",
       "type": "bundle",
@@ -8663,7 +8735,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "deepseek-ai-dsh-daily-fortune",
@@ -8747,7 +8819,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "other"
+      "category": "fun"
     },
     {
       "id": "deepseek-ai-dsh-fun-weather",
@@ -8836,7 +8908,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-prompt-stash",
@@ -9453,6 +9525,27 @@
       "category": "skills"
     },
     {
+      "id": "michengai-dsh-skills-manager",
+      "name": "@michengai/dsh-skills-manager",
+      "type": "bundle",
+      "package": "@michengai/dsh-skills-manager",
+      "repo": "MichengAI/dsh-skills-manager",
+      "spec": "github:MichengAI/dsh-skills-manager",
+      "version": null,
+      "author": {
+        "name": "MichengAI",
+        "url": "https://github.com/MichengAI"
+      },
+      "description": "NPM-installable DSH Web plugin for managing local skills and viewing shared Agent skills safely.",
+      "tags": [],
+      "license": "Apache-2.0",
+      "downloads": 0,
+      "stars": 3,
+      "source": "auto",
+      "auto": true,
+      "category": "agent"
+    },
+    {
       "id": "dsh-cost-balance",
       "name": "dsh-cost-balance",
       "type": "bundle",
@@ -9759,6 +9852,32 @@
       "category": "session"
     },
     {
+      "id": "dsh-session-link",
+      "name": "dsh-session-link",
+      "type": "bundle",
+      "package": "dsh-session-link",
+      "repo": "PwnKY/dsh-session-link",
+      "spec": "github:PwnKY/dsh-session-link",
+      "version": null,
+      "author": {
+        "name": "PwnKY",
+        "url": "https://github.com/PwnKY"
+      },
+      "description": "Codex-style session deep links for DeepSeek Harness (dsh): copy a dsh:// link from any conversation, open it in the browser, or paste it into another conversation to read that session's context.",
+      "tags": [
+        "agent",
+        "codex",
+        "deep-link",
+        "session"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 3,
+      "source": "auto",
+      "auto": true,
+      "category": "ui"
+    },
+    {
       "id": "dsh-session-export",
       "name": "dsh-session-export",
       "type": "bundle",
@@ -9962,7 +10081,30 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
+    },
+    {
+      "id": "dsh-plugin-multimodal",
+      "name": "dsh-plugin-multimodal",
+      "type": "bundle",
+      "package": "dsh-plugin-multimodal",
+      "repo": "shinjiyu/dsh-plugin-multimodal",
+      "spec": "github:shinjiyu/dsh-plugin-multimodal#v0.1.0",
+      "version": "v0.1.0",
+      "author": {
+        "name": "shinjiyu",
+        "url": "https://github.com/shinjiyu"
+      },
+      "description": "Vision sidecar for DeepSeek Harness: accept image attachments on text-only models, describe them, then send text to the main model.",
+      "tags": [
+        "vision"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 3,
+      "source": "auto",
+      "auto": true,
+      "category": "tools"
     },
     {
       "id": "dsh-codex-tools",
@@ -10031,7 +10173,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-finance",
@@ -10153,7 +10295,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "anweat-dsh-browser",
@@ -10272,7 +10414,7 @@
       "stars": 3,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
     },
     {
       "id": "dsh-agent-relay",
@@ -10607,6 +10749,29 @@
       "category": "ui"
     },
     {
+      "id": "dsh-external-dsh-loop",
+      "name": "@dsh-external/dsh-loop",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-loop",
+      "repo": "vlln/dsh-loop",
+      "spec": "github:vlln/dsh-loop",
+      "version": null,
+      "author": {
+        "name": "vlln",
+        "url": "https://github.com/vlln"
+      },
+      "description": "定时循环插件：/loop 命令 + loop 工具 + 活动状态条（官方 dock 槽）",
+      "tags": [
+        "ui"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 3,
+      "source": "auto",
+      "auto": true,
+      "category": "ui"
+    },
+    {
       "id": "dshmath-manim",
       "name": "dshmath-manim",
       "type": "bundle",
@@ -10676,7 +10841,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-better-deepseek",
@@ -10809,7 +10974,30 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
+    },
+    {
+      "id": "dsh-market-github",
+      "name": "dsh-market-github",
+      "type": "bundle",
+      "package": "dsh-market-github",
+      "repo": "loker66fan/dsh-market-github",
+      "spec": "github:loker66fan/dsh-market-github#v0.3.0",
+      "version": "v0.3.0",
+      "author": {
+        "name": "loker66fan",
+        "url": "https://github.com/loker66fan"
+      },
+      "description": "In-harness plugin market for the dsh web GUI — startup-page onboarding entry + real-time GitHub topic:dsh-plugin search with pagination, one-click install with never-lost progress, trial-boot verification, enable/disable, and one-click restart.",
+      "tags": [
+        "agent-harness"
+      ],
+      "license": "NOASSERTION",
+      "downloads": 0,
+      "stars": 2,
+      "source": "auto",
+      "auto": true,
+      "category": "market"
     },
     {
       "id": "dsh-mobile-gate",
@@ -10861,29 +11049,6 @@
       "source": "auto",
       "auto": true,
       "category": "session"
-    },
-    {
-      "id": "dsh-market-github",
-      "name": "dsh-market-github",
-      "type": "bundle",
-      "package": "dsh-market-github",
-      "repo": "loker66fan/dsh-market-github",
-      "spec": "github:loker66fan/dsh-market-github#v0.3.0",
-      "version": "v0.3.0",
-      "author": {
-        "name": "loker66fan",
-        "url": "https://github.com/loker66fan"
-      },
-      "description": "In-harness plugin market for the dsh web GUI — startup-page onboarding entry + real-time GitHub topic:dsh-plugin search with pagination, one-click install with never-lost progress, trial-boot verification, enable/disable, and one-click restart.",
-      "tags": [
-        "agent-harness"
-      ],
-      "license": "NOASSERTION",
-      "downloads": 0,
-      "stars": 2,
-      "source": "auto",
-      "auto": true,
-      "category": "market"
     },
     {
       "id": "deepseek-harness-pets",
@@ -11507,7 +11672,7 @@
         "typescript"
       ],
       "license": "MIT",
-      "downloads": 4,
+      "downloads": 6,
       "stars": 2,
       "source": "auto",
       "auto": true,
@@ -11556,7 +11721,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-usage-widget",
@@ -11604,7 +11769,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "auth"
     },
     {
       "id": "dsh-usage-billing",
@@ -11786,7 +11951,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-profile-plugin-switch",
@@ -11807,7 +11972,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-plugin-explorer",
@@ -12160,7 +12325,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "dsh-revdiff",
@@ -12281,7 +12446,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-plugin-workbench",
@@ -12571,31 +12736,6 @@
       "category": "agent"
     },
     {
-      "id": "dsh-monkey-desk",
-      "name": "dsh-monkey-desk",
-      "type": "bundle",
-      "package": "dsh-monkey-desk",
-      "repo": "svmlearn/dsh-monkey-desk",
-      "spec": "github:svmlearn/dsh-monkey-desk",
-      "version": null,
-      "author": {
-        "name": "svmlearn",
-        "url": "https://github.com/svmlearn"
-      },
-      "description": "马喽办公室 (Monkey Desk) — multi-agent workstation visualization for DSH Web: watch subagents, dispatch tasks, redo work, archive roles.",
-      "tags": [
-        "multi-agent",
-        "subagent",
-        "visualization"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 2,
-      "source": "auto",
-      "auto": true,
-      "category": "session"
-    },
-    {
       "id": "dsh-digipet",
       "name": "dsh-digipet",
       "type": "bundle",
@@ -12704,7 +12844,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-model-thinking",
@@ -12780,7 +12920,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-file-mentions",
@@ -12851,7 +12991,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
     },
     {
       "id": "jasonjin06-dsh-sound-effects",
@@ -13128,7 +13268,7 @@
         "windows"
       ],
       "license": "MIT",
-      "downloads": 128,
+      "downloads": 129,
       "stars": 2,
       "source": "auto",
       "auto": true,
@@ -13241,27 +13381,6 @@
       "category": "ui"
     },
     {
-      "id": "michengai-dsh-skills-manager",
-      "name": "@michengai/dsh-skills-manager",
-      "type": "bundle",
-      "package": "@michengai/dsh-skills-manager",
-      "repo": "MichengAI/dsh-skills-manager",
-      "spec": "github:MichengAI/dsh-skills-manager",
-      "version": null,
-      "author": {
-        "name": "MichengAI",
-        "url": "https://github.com/MichengAI"
-      },
-      "description": "NPM-installable DSH Web plugin for managing local skills and viewing shared Agent skills safely.",
-      "tags": [],
-      "license": "Apache-2.0",
-      "downloads": 0,
-      "stars": 2,
-      "source": "auto",
-      "auto": true,
-      "category": "agent"
-    },
-    {
       "id": "dsh-composer-expand",
       "name": "dsh-composer-expand",
       "type": "bundle",
@@ -13352,7 +13471,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "auth"
     },
     {
       "id": "dsh-web-default-session",
@@ -13373,7 +13492,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-diagram",
@@ -13512,7 +13631,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "auth"
     },
     {
       "id": "dsh-plugin-terminal",
@@ -13535,7 +13654,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "linxin666-dsh-client-ui-activity-heatmap",
@@ -13781,32 +13900,6 @@
         "native-ui",
         "rolehub",
         "session-room"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 2,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
-    },
-    {
-      "id": "dsh-session-link",
-      "name": "dsh-session-link",
-      "type": "bundle",
-      "package": "dsh-session-link",
-      "repo": "PwnKY/dsh-session-link",
-      "spec": "github:PwnKY/dsh-session-link",
-      "version": null,
-      "author": {
-        "name": "PwnKY",
-        "url": "https://github.com/PwnKY"
-      },
-      "description": "Codex-style session deep links for DeepSeek Harness (dsh): copy a dsh:// link from any conversation, open it in the browser, or paste it into another conversation to read that session's context.",
-      "tags": [
-        "agent",
-        "codex",
-        "deep-link",
-        "session"
       ],
       "license": "MIT",
       "downloads": 0,
@@ -14072,29 +14165,6 @@
       "category": "dev"
     },
     {
-      "id": "dsh-plugin-multimodal",
-      "name": "dsh-plugin-multimodal",
-      "type": "bundle",
-      "package": "dsh-plugin-multimodal",
-      "repo": "shinjiyu/dsh-plugin-multimodal",
-      "spec": "github:shinjiyu/dsh-plugin-multimodal#v0.1.0",
-      "version": "v0.1.0",
-      "author": {
-        "name": "shinjiyu",
-        "url": "https://github.com/shinjiyu"
-      },
-      "description": "Vision sidecar for DeepSeek Harness: accept image attachments on text-only models, describe them, then send text to the main model.",
-      "tags": [
-        "vision"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 2,
-      "source": "auto",
-      "auto": true,
-      "category": "tools"
-    },
-    {
       "id": "dsh-download-progress",
       "name": "dsh-download-progress",
       "type": "bundle",
@@ -14244,7 +14314,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "dsh-backup",
@@ -14309,7 +14379,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "fun"
+      "category": "tools"
     },
     {
       "id": "dsh-zotero",
@@ -14474,7 +14544,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "kanonouta-dsh-captain",
@@ -14526,7 +14596,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "skills"
     },
     {
       "id": "dsh-taskboard",
@@ -14547,7 +14617,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-cowork-chatnode-wechat",
@@ -14593,7 +14663,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "comm"
     },
     {
       "id": "dsh-plugin-notify-sound",
@@ -14662,7 +14732,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "comm"
     },
     {
       "id": "dsh-im-hub",
@@ -14691,7 +14761,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-hooks",
@@ -14712,7 +14782,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
     },
     {
       "id": "dsh-unread-dot",
@@ -14733,7 +14803,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "deepseek-ai-dsh-sandbox-mxc",
@@ -14885,7 +14955,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "dsh-whale-arcade",
@@ -14931,7 +15001,7 @@
       "stars": 2,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "minybear-dsh-pet",
@@ -15140,7 +15210,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-mobile",
@@ -15170,7 +15240,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "comm"
     },
     {
       "id": "dsh-custom-brand",
@@ -15295,6 +15365,30 @@
       "category": "tools"
     },
     {
+      "id": "dsh-update-checker",
+      "name": "dsh-update-checker",
+      "type": "bundle",
+      "package": "dsh-update-checker",
+      "repo": "YZz-S/dsh-update-checker",
+      "spec": "github:YZz-S/dsh-update-checker",
+      "version": null,
+      "author": {
+        "name": "YZz-S",
+        "url": "https://github.com/YZz-S"
+      },
+      "description": "DeepSeek Harness (dsh) 更新检查插件：会话顶栏显示当前版本，自动检查 npm 最新版本，有新版本时提示升级。",
+      "tags": [
+        "cordis-plugin",
+        "update-checker"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 1,
+      "source": "auto",
+      "auto": true,
+      "category": "session"
+    },
+    {
       "id": "dsh-approval-comment",
       "name": "dsh-approval-comment",
       "type": "bundle",
@@ -15321,8 +15415,8 @@
       "type": "bundle",
       "package": "dsh-pocket",
       "repo": "shaobeichen/dsh-pocket",
-      "spec": "github:shaobeichen/dsh-pocket#v1.0.12",
-      "version": "v1.0.12",
+      "spec": "github:shaobeichen/dsh-pocket#v1.0.13",
+      "version": "v1.0.13",
       "author": {
         "name": "shaobeichen",
         "url": "https://github.com/shaobeichen"
@@ -15343,80 +15437,6 @@
       "source": "auto",
       "auto": true,
       "category": "market"
-    },
-    {
-      "id": "dsh-update-checker",
-      "name": "dsh-update-checker",
-      "type": "bundle",
-      "package": "dsh-update-checker",
-      "repo": "YZz-S/dsh-update-checker",
-      "spec": "github:YZz-S/dsh-update-checker",
-      "version": null,
-      "author": {
-        "name": "YZz-S",
-        "url": "https://github.com/YZz-S"
-      },
-      "description": "DeepSeek Harness (dsh) 更新检查插件：会话顶栏显示当前版本，自动检查 npm 最新版本，有新版本时提示升级。",
-      "tags": [
-        "cordis-plugin",
-        "update-checker"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 1,
-      "source": "auto",
-      "auto": true,
-      "category": "session"
-    },
-    {
-      "id": "dsh-notifier",
-      "name": "dsh-notifier",
-      "type": "bundle",
-      "package": "dsh-notifier",
-      "repo": "YZz-S/dsh-notifier",
-      "spec": "github:YZz-S/dsh-notifier",
-      "version": null,
-      "author": {
-        "name": "YZz-S",
-        "url": "https://github.com/YZz-S"
-      },
-      "description": "DeepSeek Harness (dsh) 系统通知插件：任务完成或需要人工确认/输入时，发送操作系统原生通知。",
-      "tags": [
-        "ai-coding",
-        "notifications",
-        "system-notification"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 1,
-      "source": "auto",
-      "auto": true,
-      "category": "comm"
-    },
-    {
-      "id": "dsh-sidebar-files",
-      "name": "dsh-sidebar-files",
-      "type": "bundle",
-      "package": "dsh-sidebar-files",
-      "repo": "Fallen0543/dsh-sidebar-files",
-      "spec": "github:Fallen0543/dsh-sidebar-files",
-      "version": null,
-      "author": {
-        "name": "Fallen0543",
-        "url": "https://github.com/Fallen0543"
-      },
-      "description": "Sidebar file tree for DeepSeek Harness: a files panel with a lazy, per-extension-icon tree, copy-path and send-to-agent actions",
-      "tags": [
-        "agent",
-        "coding-agent",
-        "dsh-patch"
-      ],
-      "license": "NOASSERTION",
-      "downloads": 0,
-      "stars": 1,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
     },
     {
       "id": "dsh-vision-bridge",
@@ -15529,6 +15549,31 @@
       "category": "agent"
     },
     {
+      "id": "dsh-notifier",
+      "name": "dsh-notifier",
+      "type": "bundle",
+      "package": "dsh-notifier",
+      "repo": "YZz-S/dsh-notifier",
+      "spec": "github:YZz-S/dsh-notifier",
+      "version": null,
+      "author": {
+        "name": "YZz-S",
+        "url": "https://github.com/YZz-S"
+      },
+      "description": "DeepSeek Harness (dsh) 系统通知插件：任务完成或需要人工确认/输入时，发送操作系统原生通知。",
+      "tags": [
+        "ai-coding",
+        "notifications",
+        "system-notification"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 1,
+      "source": "auto",
+      "auto": true,
+      "category": "comm"
+    },
+    {
       "id": "dsh-pathlink",
       "name": "dsh-pathlink",
       "type": "bundle",
@@ -15548,6 +15593,31 @@
       "source": "auto",
       "auto": true,
       "category": "tools"
+    },
+    {
+      "id": "dsh-sidebar-files",
+      "name": "dsh-sidebar-files",
+      "type": "bundle",
+      "package": "dsh-sidebar-files",
+      "repo": "Fallen0543/dsh-sidebar-files",
+      "spec": "github:Fallen0543/dsh-sidebar-files",
+      "version": null,
+      "author": {
+        "name": "Fallen0543",
+        "url": "https://github.com/Fallen0543"
+      },
+      "description": "Sidebar file tree for DeepSeek Harness: a files panel with a lazy, per-extension-icon tree, copy-path and send-to-agent actions",
+      "tags": [
+        "agent",
+        "coding-agent",
+        "dsh-patch"
+      ],
+      "license": "NOASSERTION",
+      "downloads": 0,
+      "stars": 1,
+      "source": "auto",
+      "auto": true,
+      "category": "ui"
     },
     {
       "id": "dsh-anchored-standard",
@@ -15596,7 +15666,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "lifenrir-dsh-scenario",
@@ -15869,7 +15939,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "dsh-llm-codex-app-server",
@@ -16006,7 +16076,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-asc",
@@ -16168,7 +16238,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "auth"
     },
     {
       "id": "dsh-usage-panel",
@@ -16260,7 +16330,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-screenshot-diff",
@@ -16482,7 +16552,7 @@
       "description": "Specification-driven development workflows for DeepSeek Harness.",
       "tags": [],
       "license": "MIT",
-      "downloads": 70,
+      "downloads": 71,
       "stars": 1,
       "source": "auto",
       "auto": true,
@@ -16543,8 +16613,8 @@
       "type": "bundle",
       "package": "dsh-report-studio",
       "repo": "ciceroyang/dsh-report-studio",
-      "spec": "github:ciceroyang/dsh-report-studio#v0.2.0",
-      "version": "v0.2.0",
+      "spec": "github:ciceroyang/dsh-report-studio#v0.3.0",
+      "version": "v0.3.0",
       "author": {
         "name": "ciceroyang",
         "url": "https://github.com/ciceroyang"
@@ -16776,7 +16846,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "t7kai-dsh-client-ui-slingshot",
@@ -16912,7 +16982,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-external-dsh-client-ui-rollback-visual",
@@ -17175,7 +17245,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "voco-input-sh",
@@ -18106,6 +18176,27 @@
       "category": "tools"
     },
     {
+      "id": "dsh-video-downloader",
+      "name": "dsh-video-downloader",
+      "type": "bundle",
+      "package": "dsh-video-downloader",
+      "repo": "zimai233/dsh-video-downloader",
+      "spec": "github:zimai233/dsh-video-downloader",
+      "version": null,
+      "author": {
+        "name": "zimai233",
+        "url": "https://github.com/zimai233"
+      },
+      "description": "Media downloader for DeepSeek Harness. Detect and download video/audio from Bilibili, YouTube, Douyin, Xiaohongshu.",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 1,
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
       "id": "dsh-github-intelligence",
       "name": "dsh-github-intelligence",
       "type": "bundle",
@@ -18232,6 +18323,34 @@
       "category": "tools"
     },
     {
+      "id": "dsh-full-remote",
+      "name": "dsh-full-remote",
+      "type": "bundle",
+      "package": "dsh-full-remote",
+      "repo": "JUANWANG-BUAA/dsh-full-remote",
+      "spec": "github:JUANWANG-BUAA/dsh-full-remote#v0.2.1",
+      "version": "v0.2.1",
+      "author": {
+        "name": "JUANWANG-BUAA",
+        "url": "https://github.com/JUANWANG-BUAA"
+      },
+      "description": "Remote DeepSeek Harness with full server-side API access: Host/Origin rewrite restores settings.*, credentials.*, and host.listDirectory that other tunnels 403. Token-gated reverse proxy plus mobile control UI.",
+      "tags": [
+        "mobile",
+        "remote-access",
+        "reverse-proxy",
+        "security",
+        "tunnel",
+        "websocket"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 1,
+      "source": "auto",
+      "auto": true,
+      "category": "market"
+    },
+    {
       "id": "dsh-remotion",
       "name": "dsh-remotion",
       "type": "bundle",
@@ -18274,7 +18393,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "session"
+      "category": "tools"
     },
     {
       "id": "dsh-plugin-automations",
@@ -18863,7 +18982,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-devquest",
@@ -19018,7 +19137,7 @@
       "stars": 1,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "dsh-plugin-market",
@@ -19092,7 +19211,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "dsh-image-skin",
@@ -19185,7 +19304,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-auth-gate",
@@ -19280,29 +19399,27 @@
       "category": "auth"
     },
     {
-      "id": "dsh-taskswarm",
-      "name": "dsh-taskswarm",
+      "id": "dsh-external-dsh-client-ui-skin-amadeus",
+      "name": "@dsh-external/dsh-client-ui-skin-amadeus",
       "type": "bundle",
-      "package": "dsh-taskswarm",
-      "repo": "february2015/dsh-taskswarm",
-      "spec": "github:february2015/dsh-taskswarm",
+      "package": "@dsh-external/dsh-client-ui-skin-amadeus",
+      "repo": "guidemeee/dsh-amadeus-skin",
+      "spec": "github:guidemeee/dsh-amadeus-skin",
       "version": null,
       "author": {
-        "name": "february2015",
-        "url": "https://github.com/february2015"
+        "name": "guidemeee",
+        "url": "https://github.com/guidemeee"
       },
-      "description": "TaskSwarm (蜂群) — multi-agent task orchestration for DeepSeek Harness. Native port of TaskPlane (github.com/HenryLach/taskplane, MIT): waves/lanes parallel execution, git worktree isolation, PROMPT.md/STATUS.md task packets, file mailbox, cross-model review.",
+      "description": "Amadeus (Steins;Gate 0) static skin for the dsh web GUI: Future Gadget Lab scene + Kurisu portrait layered under the native Harness UI",
       "tags": [
-        "git-worktree",
-        "multi-agent",
-        "taskplane"
+        "steins-gate"
       ],
-      "license": "MIT",
+      "license": "UNKNOWN",
       "downloads": 0,
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "agent"
+      "category": "ui"
     },
     {
       "id": "dsh-mobile-pwa",
@@ -19329,25 +19446,29 @@
       "category": "ui"
     },
     {
-      "id": "dsh-skill-manager",
-      "name": "dsh-skill-manager",
+      "id": "dsh-taskswarm",
+      "name": "dsh-taskswarm",
       "type": "bundle",
-      "package": "dsh-skill-manager",
-      "repo": "Thomas-key/dsh-skill-manager",
-      "spec": "github:Thomas-key/dsh-skill-manager",
+      "package": "dsh-taskswarm",
+      "repo": "february2015/dsh-taskswarm",
+      "spec": "github:february2015/dsh-taskswarm",
       "version": null,
       "author": {
-        "name": "Thomas-key",
-        "url": "https://github.com/Thomas-key"
+        "name": "february2015",
+        "url": "https://github.com/february2015"
       },
-      "description": "Manage DeepSeek Harness skills: list filesystem skills and toggle them on/off (SKILL.md <-> SKILL.md.disabled), from the agent or via the Settings UI (bundle-included).",
-      "tags": [],
+      "description": "TaskSwarm (蜂群) — multi-agent task orchestration for DeepSeek Harness. Native port of TaskPlane (github.com/HenryLach/taskplane, MIT): waves/lanes parallel execution, git worktree isolation, PROMPT.md/STATUS.md task packets, file mailbox, cross-model review.",
+      "tags": [
+        "git-worktree",
+        "multi-agent",
+        "taskplane"
+      ],
       "license": "MIT",
       "downloads": 0,
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-workspace-dir",
@@ -19372,6 +19493,27 @@
       "source": "auto",
       "auto": true,
       "category": "tools"
+    },
+    {
+      "id": "dsh-skill-manager",
+      "name": "dsh-skill-manager",
+      "type": "bundle",
+      "package": "dsh-skill-manager",
+      "repo": "Thomas-key/dsh-skill-manager",
+      "spec": "github:Thomas-key/dsh-skill-manager",
+      "version": null,
+      "author": {
+        "name": "Thomas-key",
+        "url": "https://github.com/Thomas-key"
+      },
+      "description": "Manage DeepSeek Harness skills: list filesystem skills and toggle them on/off (SKILL.md <-> SKILL.md.disabled), from the agent or via the Settings UI (bundle-included).",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "source": "auto",
+      "auto": true,
+      "category": "ui"
     },
     {
       "id": "dsh-msys2-bash-executor",
@@ -19973,7 +20115,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "mimo-vision",
@@ -20109,7 +20251,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "skills"
     },
     {
       "id": "dsh-deepseek-vision",
@@ -20272,7 +20414,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-zagens-office",
@@ -20455,7 +20597,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "comm"
     },
     {
       "id": "uiopt",
@@ -20476,7 +20618,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-task-capsule",
@@ -20541,7 +20683,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
     },
     {
       "id": "linxin666-dsh-light-theater",
@@ -20588,7 +20730,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-qq2007-skin",
@@ -20887,7 +21029,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-message-rail",
@@ -21227,27 +21369,6 @@
       "category": "market"
     },
     {
-      "id": "dsh-file-upload",
-      "name": "dsh-file-upload",
-      "type": "bundle",
-      "package": "dsh-file-upload",
-      "repo": "HongMing-Huang/dsh-file-upload",
-      "spec": "github:HongMing-Huang/dsh-file-upload",
-      "version": null,
-      "author": {
-        "name": "HongMing-Huang",
-        "url": "https://github.com/HongMing-Huang"
-      },
-      "description": "DeepSeek Harness dual-face plugin: Claude-style drag-and-drop / paperclip uploads, fully bundled document→Markdown (MarkItDown engine, 20+ formats, image OCR), text inlining, voice input, audio transcription (optional ASR), read_document tool.",
-      "tags": [],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 0,
-      "source": "auto",
-      "auto": true,
-      "category": "ui"
-    },
-    {
       "id": "ysyyhhh-dsh-pet",
       "name": "@ysyyhhh/dsh-pet",
       "type": "bundle",
@@ -21270,7 +21391,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "fun"
     },
     {
       "id": "dsh-chat-tidy",
@@ -21284,7 +21405,7 @@
         "name": "ChuanTianML",
         "url": "https://github.com/ChuanTianML"
       },
-      "description": "Polished, compact chat typography and layout for the DeepSeek Harness Web UI",
+      "description": "Codex-aligned chat typography and layout for the DeepSeek Harness Web UI",
       "tags": [
         "typography",
         "web-ui"
@@ -21357,7 +21478,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "other"
     },
     {
       "id": "dsh-terminal",
@@ -21402,7 +21523,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
     },
     {
       "id": "api-balance",
@@ -21423,7 +21544,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "auth"
     },
     {
       "id": "dsline-chat",
@@ -21694,6 +21815,27 @@
       "source": "auto",
       "auto": true,
       "category": "session"
+    },
+    {
+      "id": "dsh-interrupt-button",
+      "name": "dsh-interrupt-button",
+      "type": "bundle",
+      "package": "dsh-interrupt-button",
+      "repo": "guo-ziao/dsh-interrupt-button",
+      "spec": "github:guo-ziao/dsh-interrupt-button",
+      "version": null,
+      "author": {
+        "name": "guo-ziao",
+        "url": "https://github.com/guo-ziao"
+      },
+      "description": "A green interrupt button beside the DeepSeek Harness send box: silently stops a running agent, which then summarizes its progress and asks for your new requirements; the interrupt prompt is customizable.",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "source": "auto",
+      "auto": true,
+      "category": "agent"
     },
     {
       "id": "dsh-wallpaper",
@@ -22414,7 +22556,31 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
+    },
+    {
+      "id": "dsh-vision-subagent",
+      "name": "dsh-vision-subagent",
+      "type": "bundle",
+      "package": "dsh-vision-subagent",
+      "repo": "ruby1304/dsh-vision-subagent",
+      "spec": "github:ruby1304/dsh-vision-subagent",
+      "version": null,
+      "author": {
+        "name": "ruby1304",
+        "url": "https://github.com/ruby1304"
+      },
+      "description": "Vision for text-only DeepSeek Harness agents: delegate image reading to a one-shot subagent on a configurable vision route (MiniMax / Kimi / any OpenAI-compatible provider), keeping image bytes and the vision model's context out of the main session.",
+      "tags": [
+        "multimodal",
+        "vision"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "source": "auto",
+      "auto": true,
+      "category": "session"
     },
     {
       "id": "dsh-paste-to-path",
@@ -22533,7 +22699,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-voice-bundle",
@@ -22584,7 +22750,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
     },
     {
       "id": "dsh-context-proxy",
@@ -22647,7 +22813,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-image-search",
@@ -22669,27 +22835,6 @@
       "source": "auto",
       "auto": true,
       "category": "tools"
-    },
-    {
-      "id": "dsh-video-downloader",
-      "name": "dsh-video-downloader",
-      "type": "bundle",
-      "package": "dsh-video-downloader",
-      "repo": "zimai233/dsh-video-downloader",
-      "spec": "github:zimai233/dsh-video-downloader",
-      "version": null,
-      "author": {
-        "name": "zimai233",
-        "url": "https://github.com/zimai233"
-      },
-      "description": "Media downloader for DeepSeek Harness. Detect and download video/audio from Bilibili, YouTube, Douyin, Xiaohongshu.",
-      "tags": [],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 0,
-      "source": "auto",
-      "auto": true,
-      "category": "other"
     },
     {
       "id": "dsh-plugin-search",
@@ -22890,7 +23035,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "fun"
+      "category": "tools"
     },
     {
       "id": "dsh-plugin-judge",
@@ -22988,6 +23133,30 @@
       "category": "tools"
     },
     {
+      "id": "dsh-pubmed",
+      "name": "dsh-pubmed",
+      "type": "bundle",
+      "package": "dsh-pubmed",
+      "repo": "wade20250715/dsh-pubmed",
+      "spec": "github:wade20250715/dsh-pubmed",
+      "version": null,
+      "author": {
+        "name": "wade20250715",
+        "url": "https://github.com/wade20250715"
+      },
+      "description": "PubMed 深度检索工具集 for DeepSeek Harness：文献检索、作者调查、同名消歧、机构统计、导师匹配、撤稿核查。零 API key，纯 NCBI 公共接口。",
+      "tags": [
+        "biomedical-literature",
+        "pubmed"
+      ],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
       "id": "cot-lint",
       "name": "cot-lint",
       "type": "bundle",
@@ -23053,7 +23222,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-dual-agent-presets",
@@ -23151,6 +23320,32 @@
       "category": "session"
     },
     {
+      "id": "alib8b8-dsh-plugin-aflare",
+      "name": "@alib8b8/dsh-plugin-aflare",
+      "type": "bundle",
+      "package": "@alib8b8/dsh-plugin-aflare",
+      "repo": "alib8b8/dsh-plugin-aflare",
+      "spec": "github:alib8b8/dsh-plugin-aflare",
+      "version": null,
+      "author": {
+        "name": "alib8b8",
+        "url": "https://github.com/alib8b8"
+      },
+      "description": "DeepSeek Harness (DSH) Cordis plugin exposing aflare workflow tools",
+      "tags": [
+        "aflare",
+        "automation",
+        "mcp",
+        "workflow"
+      ],
+      "license": "NOASSERTION",
+      "downloads": 0,
+      "stars": 0,
+      "source": "auto",
+      "auto": true,
+      "category": "agent"
+    },
+    {
       "id": "dsh-open-with",
       "name": "dsh-open-with",
       "type": "bundle",
@@ -23172,7 +23367,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "tools"
     },
     {
       "id": "luzhengyangtx-dsh-telegram-duty",
@@ -23217,7 +23412,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "dev"
     },
     {
       "id": "dsh-notify",
@@ -23286,7 +23481,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "auth"
     },
     {
       "id": "dsh-windtunnel",
@@ -23456,7 +23651,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "session"
     },
     {
       "id": "dsh-check-update",
@@ -23498,7 +23693,7 @@
       "stars": 0,
       "source": "auto",
       "auto": true,
-      "category": "ui"
+      "category": "agent"
     },
     {
       "id": "dsh-desktop-shortcut",
@@ -23524,6 +23719,27 @@
       "source": "auto",
       "auto": true,
       "category": "other"
+    },
+    {
+      "id": "want-a-init",
+      "name": "want-a-init",
+      "type": "bundle",
+      "package": "want-a-init",
+      "repo": "mexiaosqwq/want-a-init",
+      "spec": "github:mexiaosqwq/want-a-init",
+      "version": null,
+      "author": {
+        "name": "mexiaosqwq",
+        "url": "https://github.com/mexiaosqwq"
+      },
+      "description": "Model-driven /init command for DeepSeek Harness: analyzes the current project and generates/updates a high-signal AGENTS.md.",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "source": "auto",
+      "auto": true,
+      "category": "agent"
     },
     {
       "id": "dsh-plugin-scout",
