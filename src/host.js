@@ -18,7 +18,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.3',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.4',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -233,11 +233,13 @@ const json = (res, status, obj) => {
   res.end(JSON.stringify(obj))
 }
 
-export default function (ctx) {
-  const webServer = ctx.get('webServer')
-  const shell = ctx.get('shell')
-  if (webServer === undefined || shell === undefined) return
-  runShell.shellService = shell
+export default {
+  apply(ctx) {
+    const webServer = ctx.get('webServer')
+    const shell = ctx.get('shell')
+    console.log('[dsh-plugin-market] host apply: webServer=' + (webServer !== undefined) + ' shell=' + (shell !== undefined))
+    if (webServer === undefined || shell === undefined) return
+    runShell.shellService = shell
 
   ctx.effect(() => webServer.register({
     kind: 'prefix',
@@ -260,4 +262,5 @@ export default function (ctx) {
       }
     },
   }), 'dsh-plugin-market: /plugin-market routes')
+  },
 }
