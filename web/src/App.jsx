@@ -260,7 +260,7 @@ function Card({ item, onOpen, onToast }) {
           {t('card.detail')}<CaretRight size={13} />
         </button>
         {cmd && item.verified !== false && (
-          <button className="btn btn-cta btn-sm" onClick={doCopy} title="dsh plugin --profile web add">
+          <button className="btn btn-primary btn-sm" onClick={doCopy} title="dsh plugin --profile web add">
             {copied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.install')}</>}
           </button>
         )}
@@ -349,14 +349,14 @@ function DetailModal({ item, onClose, onToast }) {
           <>
             <div className="install-box">
               <code>{cmd}</code>
-              <button className="btn btn-cta btn-sm" onClick={doCopy}>{copied ? t('detail.copied') : t('detail.copy')}</button>
+              <button className="btn btn-primary btn-sm" onClick={doCopy}>{copied ? t('detail.copied') : t('detail.copy')}</button>
             </div>
             <p className="card-desc">{t('detail.bundleNote')}</p>
           </>
         ) : (
           <>
             {/^https:\/\//.test(item.spec || '') && (
-              <a className="btn btn-cta btn-sm" style={{ alignSelf: 'flex-start' }} href={item.spec} target="_blank" rel="noreferrer">
+              <a className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }} href={item.spec} target="_blank" rel="noreferrer">
                 <DownloadSimple size={15} />{t('detail.packDownload')}
               </a>
             )}
@@ -395,7 +395,7 @@ function InstallCard({ onToast }) {
         <div><span className="prompt">$</span> dsh web</div>
         <div className="out">{t('install.after')}</div>
         <div className="term-actions">
-          <button className="btn btn-cta btn-sm" onClick={doCopy}>
+          <button className="btn btn-primary btn-sm" onClick={doCopy}>
             {copied ? <><Check size={13} />{t('install.copied')}</> : <><Copy size={13} />{t('install.copy')}</>}
           </button>
         </div>

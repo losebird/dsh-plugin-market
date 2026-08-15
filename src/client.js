@@ -107,8 +107,8 @@ window.__ModuleLoader__.load({
 .dshm-card-actions { display:flex; gap:8px; align-items:center; }
 .dshm-btn { padding:6px 14px; border-radius:8px; border:1px solid var(--dsw-alias-border-l1); background:transparent; color:var(--dsw-alias-label-primary); font-size:12.5px; cursor:pointer; }
 .dshm-btn:hover { border-color:var(--dsw-alias-border-l2); }
-.dshm-btn-primary { background:#fb923c; border-color:#fb923c; color:#2a0d00; }
-.dshm-btn-primary:hover { filter:brightness(1.08); opacity:1; }
+.dshm-btn-primary { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
+.dshm-btn-primary:hover { opacity:0.9; }
 .dshm-btn-danger { background:var(--dsw-alias-state-error-primary); border-color:var(--dsw-alias-state-error-primary); color:#fff; }
 .dshm-btn-danger:hover { opacity:0.9; }
 .dshm-btn-ghost { color:var(--dsw-alias-label-secondary); }
