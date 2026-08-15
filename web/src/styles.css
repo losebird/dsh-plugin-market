@@ -203,7 +203,6 @@ a:hover { text-decoration: underline; }
 .faq-a code { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); background: var(--panel-2); padding: 1px 6px; border-radius: 5px; }
 @media (max-width: 860px) {
   .faq-grid { grid-template-columns: 1fr; }
-  .faq-card-hero { grid-column: auto; }
 }
 
 .links-sec { padding-top: 8px; }
