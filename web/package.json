@@ -12,6 +12,8 @@
     "@fontsource-variable/jetbrains-mono": "^5.2.5",
     "@fontsource-variable/outfit": "^5.2.5",
     "@phosphor-icons/react": "^2.1.7",
+    "dompurify": "^3.4.13",
+    "marked": "^18.0.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

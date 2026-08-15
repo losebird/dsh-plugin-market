@@ -1,10 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
-  ArrowLeft, CaretRight, CheckCircle, CircleNotch, Copy, DownloadSimple,
-  GithubLogo, MagnifyingGlass, Package, Plug, Star, UploadSimple, Warning, X,
+  ArrowLeft, CaretRight, Check, CheckCircle, CircleNotch, Copy, DownloadSimple,
+  GithubLogo, MagnifyingGlass, Moon, Package, Plug, Star, Sun, UploadSimple, Warning, X,
 } from '@phosphor-icons/react'
+import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.1'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -83,7 +86,11 @@ function Badges({ item }) {
 }
 
 function Card({ item, onOpen }) {
+  const [copied, setCopied] = useState(false)
   const cmd = installCommand(item)
+  const doCopy = async () => {
+    if (await copyText(cmd)) { setCopied(true); setTimeout(() => setCopied(false), 1600) }
+  }
   return (
     <div className="card">
       <div className="card-top">
@@ -105,7 +112,11 @@ function Card({ item, onOpen }) {
         <button className="btn btn-primary btn-sm" onClick={() => onOpen(item)} disabled={item.status === 'unavailable'}>
           详情<CaretRight size={13} />
         </button>
-        {cmd && <button className="btn btn-ghost btn-sm" onClick={() => copyText(cmd)} title="复制安装命令">复制命令</button>}
+        {cmd && (
+          <button className="btn btn-ghost btn-sm" onClick={doCopy} title="复制安装命令">
+            {copied ? <><Check size={13} />已复制</> : <><Copy size={13} />复制命令</>}
+          </button>
+        )}
         <span className="spacer" />
       </div>
     </div>
@@ -114,8 +125,31 @@ function Card({ item, onOpen }) {
 
 function DetailModal({ item, onClose }) {
   const [copied, setCopied] = useState(false)
+  const [readme, setReadme] = useState({ status: 'idle' })
   const cmd = installCommand(item)
   const doCopy = async () => { if (await copyText(cmd)) { setCopied(true); setTimeout(() => setCopied(false), 1600) } }
+
+  useEffect(() => {
+    let alive = true
+    if (!item.repo) { setReadme({ status: 'none' }); return }
+    setReadme({ status: 'loading' })
+    const base = 'https://raw.githubusercontent.com/' + item.repo + '/HEAD/'
+    fetch(base + 'README.md')
+      .then((res) => { if (!res.ok) throw new Error(String(res.status)); return res.text() })
+      .then((text) => {
+        if (!alive) return
+        const renderer = new marked.Renderer()
+        renderer.image = ({ href, title, text: alt }) => {
+          const src = /^https?:/i.test(href || '') ? href : base + (href || '').replace(/^\.\//, '')
+          return '<img src="' + src + '" alt="' + (alt || '') + '"' + (title ? ' title="' + title + '"' : '') + ' loading="lazy">'
+        }
+        const html = DOMPurify.sanitize(marked.parse(text, { renderer }))
+        setReadme({ status: 'ready', html })
+      })
+      .catch(() => { if (alive) setReadme({ status: 'error' }) })
+    return () => { alive = false }
+  }, [item.repo])
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -135,7 +169,25 @@ function DetailModal({ item, onClose }) {
         {item.tags && item.tags.length > 0 && (
           <div className="badges">{item.tags.map((t) => <span key={t} className="badge">{t}</span>)}</div>
         )}
-        {item.longDescription && <div className="long-desc">{item.longDescription}</div>}
+        {item.longDescription && (
+          <>
+            <h4 className="readme-title">简介</h4>
+            <div className="long-desc">{item.longDescription}</div>
+          </>
+        )}
+        {item.repo && (
+          <>
+            <h4 className="readme-title">项目说明</h4>
+            {readme.status === 'loading' && <div className="readme-state"><CircleNotch size={14} className="spin" /> 加载项目说明中…</div>}
+            {readme.status === 'error' && (
+              <div className="readme-state">
+                项目 README 加载失败，
+                <a href={'https://github.com/' + item.repo} target="_blank" rel="noreferrer">去仓库查看</a>
+              </div>
+            )}
+            {readme.status === 'ready' && <div className="readme" dangerouslySetInnerHTML={{ __html: readme.html }} />}
+          </>
+        )}
         {item.type === 'bundle' ? (
           <>
             <div className="install-box">
@@ -161,6 +213,32 @@ function DetailModal({ item, onClose }) {
           {item.status === 'unavailable' && (
             <span style={{ color: 'var(--error)', fontSize: 13 }}><Warning size={13} /> 该条目仓库已删除或转为私有</span>
           )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── 首页安装卡 ───────────────────────────────────── */
+function InstallCard() {
+  const [copied, setCopied] = useState(false)
+  const doCopy = async () => {
+    if (await copyText('dsh plugin --profile web add ' + INSTALL_SPEC)) {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    }
+  }
+  return (
+    <div className="term">
+      <div className="term-bar"><Plug size={14} /> 把插件市场装进你的 DSH</div>
+      <div className="term-body">
+        <div><span className="prompt">$</span> dsh plugin --profile web add {INSTALL_SPEC}</div>
+        <div><span className="prompt">$</span> dsh web</div>
+        <div className="out">重启后，侧栏 Settings 旁常驻「插件市场」按钮</div>
+        <div className="term-actions">
+          <button className="btn btn-primary btn-sm" onClick={doCopy}>
+            {copied ? <><Check size={13} />已复制</> : <><Copy size={13} />复制安装命令</>}
+          </button>
         </div>
       </div>
     </div>
@@ -210,15 +288,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail }) {
             <button className="btn btn-ghost" onClick={onGoSubmit}><UploadSimple size={15} />上传插件</button>
           </div>
         </div>
-        <div className="term">
-          <div className="term-bar"><Plug size={14} /> 安装方式</div>
-          <div className="term-body">
-            <div><span className="prompt">$</span> dsh plugin --profile web add github:owner/repo#tag</div>
-            <div className="out">+ dsh-plugin-market@v0.1.0 installed</div>
-            <div><span className="prompt">$</span> dsh web</div>
-            <div className="out">restart dsh to activate plugins</div>
-          </div>
-        </div>
+        <InstallCard />
       </section>
 
       <section className="shell section" id="directory">
@@ -510,6 +580,14 @@ export default function App() {
   const [items, setItems] = useState([])
   const [status, setStatus] = useState('loading')
   const [detail, setDetail] = useState(null)
+  const [theme, setTheme] = useState(() => {
+    try { return localStorage.getItem('dsh-market-theme') || 'dark' } catch { return 'dark' }
+  })
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    try { localStorage.setItem('dsh-market-theme', theme) } catch {}
+  }, [theme])
 
   useEffect(() => {
     let alive = true
@@ -535,6 +613,14 @@ export default function App() {
             <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('how') && document.getElementById('how').scrollIntoView(), 0) }}>工作原理</button>
             <a className="nav-link" href={'https://github.com/' + GITHUB_REPO} target="_blank" rel="noreferrer"><GithubLogo size={15} />仓库</a>
             <button className="nav-link nav-cta" onClick={goSubmit}><UploadSimple size={15} />上传插件</button>
+            <button
+              className="nav-link"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="切换主题"
+              title={theme === 'dark' ? '切换到亮色主题' : '切换到暗色主题'}
+            >
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
           </div>
         </div>
       </nav>
