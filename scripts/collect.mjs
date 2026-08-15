@@ -267,6 +267,7 @@ async function buildEntry(repo, prev) {
     downloads: downloads,
     stars: stars || 0,
     releasedAt: releasedAt,
+    topicSourced: repo.topicSourced === true,
     verified: verified,
     source: 'auto',
     auto: true,
@@ -306,6 +307,11 @@ async function main() {
   for (const prev of prevAuto) {
     const key = keyOf(prev)
     if (seen.has(key)) continue
+    // topic 来源的老条目直接保留，不做逐条状态检查（降低每日 API 压力）
+    if (prev.topicSourced === true) {
+      entries.push(prev)
+      continue
+    }
     let detail = null
     try {
       detail = await ghJson('/repos/' + prev.repo)
