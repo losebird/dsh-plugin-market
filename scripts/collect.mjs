@@ -94,27 +94,30 @@ async function collectCandidates() {
     if (meta.topicSourced === true) r.topicSourced = true
   }
 
-  // ① topic 搜索
-  for (const topic of TOPICS) {
-    for (let page = 1; page <= TOPIC_PAGES; page++) {
-      try {
-        const res = await ghJson('/search/repositories?q=' + encodeURIComponent('topic:' + topic + ' fork:false archived:false') + '&sort=stars&per_page=100&page=' + page)
-        if (!res || !Array.isArray(res.items)) break
-        for (const it of res.items) {
-          addRepo(it.full_name, {
-            stars: it.stargazers_count,
-            description: it.description || '',
-            license: it.license && it.license.spdx_id ? it.license.spdx_id : null,
-            topics: it.topics || [],
-            topicSourced: true,
-          })
+  // ① topic 搜索：topic 来源的仓库全部收录（无 dsh 声明的标 verified: false）
+  // 同星数仓库排序不稳定，用 stars + updated 两种排序各拉一轮取并集
+  for (const sort of ['stars', 'updated']) {
+    for (const topic of TOPICS) {
+      for (let page = 1; page <= TOPIC_PAGES; page++) {
+        try {
+          const res = await ghJson('/search/repositories?q=' + encodeURIComponent('topic:' + topic + ' fork:false archived:false') + '&sort=' + sort + '&per_page=100&page=' + page)
+          if (!res || !Array.isArray(res.items)) break
+          for (const it of res.items) {
+            addRepo(it.full_name, {
+              stars: it.stargazers_count,
+              description: it.description || '',
+              license: it.license && it.license.spdx_id ? it.license.spdx_id : null,
+              topics: it.topics || [],
+              topicSourced: true,
+            })
+          }
+          if (res.items.length < 100) break
+        } catch (e) {
+          console.warn('[collect] topic 搜索失败（' + topic + ' sort=' + sort + ' p' + page + '）: ' + e.message)
+          break
         }
-        if (res.items.length < 100) break
-      } catch (e) {
-        console.warn('[collect] topic 搜索失败（' + topic + ' p' + page + '）: ' + e.message)
-        break
+        await sleep(800)
       }
-      await sleep(800)
     }
   }
 
