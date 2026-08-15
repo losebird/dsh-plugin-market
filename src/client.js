@@ -23,6 +23,7 @@ window.__ModuleLoader__.load({
     const I18N = {
       zh: {
         title: '插件市场', tabVerified: '可一键安装', tabUnverified: '未验证',
+        tabFeatured: '精选插件', tabNew: '最新发布', tabHandmade: '大神手作',
         search: '搜索插件…', refresh: '刷新', refreshing: '刷新中…', all: '全部',
         install: '安装', update: '更新', uninstall: '卸载',
         installing: '安装中…', uninstalling: '卸载中…', installed: '已安装',
@@ -39,6 +40,7 @@ window.__ModuleLoader__.load({
       },
       en: {
         title: 'Plugin Market', tabVerified: 'One-click install', tabUnverified: 'Unverified',
+        tabFeatured: 'Featured', tabNew: 'New', tabHandmade: 'By Makers',
         search: 'Search plugins…', refresh: 'Refresh', refreshing: 'Refreshing…', all: 'All',
         install: 'Install', update: 'Update', uninstall: 'Uninstall',
         installing: 'Installing…', uninstalling: 'Uninstalling…', installed: 'Installed',
@@ -314,16 +316,23 @@ window.__ModuleLoader__.load({
           const st = useStore()
           if (!st.open) return null
           const qv = (st.q || '').trim().toLowerCase()
+          let base = st.items
+          if (st.group === 'featured') {
+            base = [...st.items].sort((a, b) => (b.stars || 0) - (a.stars || 0)).slice(0, 100)
+          } else if (st.group === 'new') {
+            base = st.items.filter((it) => it.releasedAt).sort((a, b) => String(b.releasedAt).localeCompare(String(a.releasedAt))).slice(0, 200)
+          } else if (st.group === 'handmade') {
+            base = st.items.filter((it) => it.source === 'curated').sort((a, b) => (b.stars || 0) - (a.stars || 0))
+          } else {
+            base = st.items.filter((it) => (st.group === 'unverified' ? it.verified === false : it.verified !== false))
+          }
           const catCounts = new Map()
-          for (const it of st.items) {
-            if ((st.group === 'verified' && it.verified === false) || (st.group === 'unverified' && it.verified !== false)) continue
+          for (const it of base) {
             const c = it.category || 'other'
             catCounts.set(c, (catCounts.get(c) || 0) + 1)
           }
           const cats = [...catCounts.entries()].sort((a, b) => b[1] - a[1])
-          const filtered = st.items.filter((it) => {
-            if (st.group === 'verified' && it.verified === false) return false
-            if (st.group === 'unverified' && it.verified !== false) return false
+          const filtered = base.filter((it) => {
             if (st.cat && (it.category || 'other') !== st.cat) return false
             if (!qv) return true
             const hay = [it.name, it.description, (it.tags || []).join(' '), it.id].join(' ').toLowerCase()
@@ -335,6 +344,9 @@ window.__ModuleLoader__.load({
           let vCount = 0
           let uCount = 0
           for (const it of st.items) { if (it.verified === false) uCount++; else vCount++ }
+          const fCount = Math.min(100, st.items.length)
+          const nCount = st.items.filter((it) => it.releasedAt).length
+          const hCount = st.items.filter((it) => it.source === 'curated').length
           return h('div', { className: 'dshm-overlay', role: 'dialog' },
             h('div', { className: 'dshm-backdrop', onClick: () => patch({ open: false }) }),
             h('div', { className: 'dshm-panel' },
@@ -353,6 +365,9 @@ window.__ModuleLoader__.load({
               h('div', { className: 'dshm-seg' },
                 h('button', { className: 'dshm-seg-btn' + (st.group === 'verified' ? ' on' : ''), onClick: () => patch({ group: 'verified', cat: null, page: 0 }) }, t('tabVerified') + ' ' + vCount),
                 h('button', { className: 'dshm-seg-btn' + (st.group === 'unverified' ? ' on' : ''), onClick: () => patch({ group: 'unverified', cat: null, page: 0 }) }, t('tabUnverified') + ' ' + uCount),
+                h('button', { className: 'dshm-seg-btn' + (st.group === 'featured' ? ' on' : ''), onClick: () => patch({ group: 'featured', cat: null, page: 0 }) }, t('tabFeatured') + ' ' + fCount),
+                h('button', { className: 'dshm-seg-btn' + (st.group === 'new' ? ' on' : ''), onClick: () => patch({ group: 'new', cat: null, page: 0 }) }, t('tabNew') + ' ' + nCount),
+                h('button', { className: 'dshm-seg-btn' + (st.group === 'handmade' ? ' on' : ''), onClick: () => patch({ group: 'handmade', cat: null, page: 0 }) }, t('tabHandmade') + ' ' + hCount),
               ),
               cats.length > 0
                 ? h('div', { className: 'dshm-cats' },

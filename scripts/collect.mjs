@@ -337,6 +337,7 @@ async function main() {
     it.category = categorize(it)
     if (Array.isArray(it.tags)) it.tags = cleanTags(it.tags)
     if (!('verified' in it)) it.verified = true
+    if (!('source' in it)) it.source = 'curated'
   }
   all.sort((a, b) => (b.stars || 0) - (a.stars || 0))
 
