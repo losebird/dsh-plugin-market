@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   ArrowLeft, CaretRight, Check, CheckCircle, CircleNotch, Copy, DownloadSimple,
   GithubLogo, MagnifyingGlass, Moon, Package, Plug, Star, Sun, UploadSimple, Warning, X,
@@ -11,28 +11,168 @@ const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.1'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
+const PAGE_SIZE = 24
 
 const CATEGORIES = {
-  ui: '界面与主题', session: '会话与记忆', agent: 'Agent 与工作流', tools: '工具与集成',
-  dev: '开发与输入', comm: '通信与移动', auth: '安全与权限', skills: '技能与扩展',
-  market: '市场与发现', fun: '趣味与个性', other: '其他',
+  ui: { zh: '界面与主题', en: 'UI & Themes' },
+  session: { zh: '会话与记忆', en: 'Sessions & Memory' },
+  agent: { zh: 'Agent 与工作流', en: 'Agents & Workflows' },
+  tools: { zh: '工具与集成', en: 'Tools & Integrations' },
+  dev: { zh: '开发与输入', en: 'Dev & Input' },
+  comm: { zh: '通信与移动', en: 'Comm & Mobile' },
+  auth: { zh: '安全与权限', en: 'Security & Permissions' },
+  skills: { zh: '技能与扩展', en: 'Skills & Packs' },
+  market: { zh: '市场与发现', en: 'Market & Discovery' },
+  fun: { zh: '趣味与个性', en: 'Fun & Personality' },
+  other: { zh: '其他', en: 'Other' },
 }
-const catLabel = (item) => (item && item.category && CATEGORIES[item.category]) || CATEGORIES.other
+
+const I18N = {
+  zh: {
+    'nav.directory': '目录', 'nav.how': '工作原理', 'nav.repo': '仓库', 'nav.upload': '上传插件',
+    'nav.themeLight': '切换到亮色主题', 'nav.themeDark': '切换到暗色主题',
+    'hero.t1': '给 DSH 装插件，', 'hero.t2': '一个按钮的事',
+    'hero.sub': '社区插件、skill 与 preset 扩展包的一站式目录。数据来自 GitHub、采集过程透明，安装走 dsh plugin 官方机制，全部开源可审计。',
+    'hero.browse': '浏览目录', 'hero.upload': '上传插件',
+    'install.title': '把插件市场装进你的 DSH',
+    'install.after': '重启后，侧栏 Settings 旁常驻「插件市场」按钮',
+    'install.copy': '复制安装命令', 'install.copied': '已复制',
+    'toast.copied': '安装命令已复制，粘贴到终端执行即可',
+    'dir.title': '插件目录', 'dir.count': '{n} 个条目 · 数据源 GitHub · 每日自动采集',
+    'dir.demo': 'registry 暂不可用，当前展示演示数据。',
+    'dir.search': '搜索名称、简介或标签',
+    'dir.sortStars': '按星标', 'dir.sortDownloads': '按下载量', 'dir.sortName': '按名称',
+    'dir.tabVerified': '可一键安装', 'dir.tabUnverified': '未验证',
+    'dir.emptyAll': '目录还是空的。上传第一个插件？', 'dir.emptyFilter': '没有匹配的插件，换个关键词试试。',
+    'dir.pagerPrev': '上一页', 'dir.pagerNext': '下一页', 'dir.pager': '第 {p} / {total} 页',
+    'card.detail': '详情', 'card.install': '安装', 'card.copied': '已复制',
+    'card.downloads': '下载量', 'card.stars': 'GitHub 星标',
+    'badge.pack': '扩展包', 'badge.auto': '自动收录', 'badge.unver': '未验证', 'badge.demo': '演示', 'badge.off': '已下线',
+    'detail.author': '作者', 'detail.version': '版本', 'detail.category': '分类', 'detail.license': '许可', 'detail.downloads': '下载',
+    'detail.intro': '简介', 'detail.readme': '项目说明', 'detail.readmeLoading': '加载项目说明中…',
+    'detail.readmeError': '项目 README 加载失败，', 'detail.readmeLink': '去仓库查看',
+    'detail.copy': '复制', 'detail.copied': '已复制',
+    'detail.bundleNote': '在 DSH 应用内打开侧栏「插件市场」弹窗点安装即可，安装后重启 DSH 生效。',
+    'detail.packDownload': '下载扩展包 zip',
+    'detail.packNote': '下载 zip 后在 DSH 插件市场弹窗中选择「从本地导入」，或手动解压到对应目录（skill 放 ~/.agents/skills/，preset 放 ~/.dsh/.agent-presets/）。',
+    'detail.repo': '查看仓库', 'detail.unavailable': '该条目仓库已删除或转为私有',
+    'detail.unverified': '该仓库未声明 dsh.bundle.patch，一键安装不可用（直接 dsh plugin add 只会作为普通依赖安装、不会挂载插件）。请到仓库查看作者提供的手工安装方式。',
+    'how.title': '工作原理',
+    'how.sub': '没有私有后端。插件数据就是仓库里的 JSON 文件，每天由 GitHub Actions 自动采集、去重、合并，网站与 DSH 弹窗读的是同一份数据。',
+    'how.s1t': '作者发布', 'how.s1b': '插件作者在自己的 GitHub 仓库发 Release（bundle 包或 zip 扩展包），构建产物直接提交进仓库，不依赖安装时编译。',
+    'how.s2t': 'PR 上架或自动收录', 'how.s2b': '上传页生成条目 JSON，作者向 registry/curated/ 提 PR，合并即上架；仓库打了 topic 的插件也会被每日任务自动收录。',
+    'how.s3t': '每日合并去重', 'how.s3b': '采集任务汇总下载量与星标，按包名和仓库去重，curated 条目优先，输出 registry/all.json。',
+    'how.s4t': 'DSH 内一键安装', 'how.s4b': '用户在 DSH 侧栏的插件市场弹窗里点安装，等价执行 dsh plugin --profile web add，重启后生效。',
+    'submit.back': '返回目录', 'submit.title': '上传插件',
+    'submit.sub': '填好表单后点击「发起 PR」，会把条目 JSON 直接带到 GitHub 的新建文件页面。提交后自动跑 schema 校验，合并即上架。详细规范见仓库 docs/SUBMIT.md。',
+    'submit.type': '插件类型', 'submit.typeBundle': 'DSH 插件（bundle，走 dsh plugin add）', 'submit.typePack': '扩展包（skill / preset zip）',
+    'submit.id': 'id', 'submit.idHint': '全局唯一标识，用于目录与卸载记录。',
+    'submit.name': '名称', 'submit.repo': '仓库', 'submit.repoHint': '插件代码所在的 GitHub 仓库。',
+    'submit.spec': '安装源 spec', 'submit.specBundleHint': '带 tag 的 github: 形式最稳，tag 即版本。',
+    'submit.specPackHint': 'GitHub Release 里 zip 资产的下载地址。',
+    'submit.package': 'npm 包名', 'submit.packageHint': '卸载时按包名执行 dsh plugin remove，有就填。',
+    'submit.version': '版本', 'submit.description': '一句话简介', 'submit.longDesc': '完整介绍',
+    'submit.longDescPh': '支持 markdown 的详细介绍，显示在详情弹窗',
+    'submit.tags': '标签', 'submit.tagsHint': '逗号分隔，最多 8 个。',
+    'submit.license': '许可', 'submit.authorName': '作者名', 'submit.authorUrl': '作者主页',
+    'submit.skills': '包含的 skill 目录', 'submit.skillsHint': '逗号分隔，对应 zip 内 skills/<id>/ 目录。',
+    'submit.presets': '包含的 preset 目录', 'submit.presetsHint': '逗号分隔，对应 zip 内 presets/<id>/ 目录。',
+    'submit.pr': '发起 PR', 'submit.copyJson': '复制条目 JSON', 'submit.copied': '已复制',
+    'submit.checkTitle': '发起 PR 前请确认',
+    'submit.c1': '插件仓库已推送到 GitHub', 'submit.c2': '已发布一个 Release，tag 与 spec 一致',
+    'submit.c3': '构建产物已提交进仓库（不依赖安装时 prepare 编译）', 'submit.c4': 'package.json 声明了 dsh.bundle 或 dsh.client',
+    'submit.p1': '扩展包按规范组织：manifest.json + skills/ + presets/', 'submit.p2': '已打成 zip 并上传为 GitHub Release 资产',
+    'submit.p3': 'spec 是资产的实际下载地址', 'submit.p4': '已登录 GitHub，点击发起 PR 后在新页面提交',
+    'submit.preview': '预览',
+    'err.id': '小写字母、数字、点、下划线、连字符，字母或数字开头', 'err.name': '必填',
+    'err.repo': 'owner/name 形式',
+    'err.specBundle': 'github:owner/repo#tag、git+https://…#tag 或 npm 包名', 'err.specPack': 'https:// 开头的 zip 下载地址',
+    'err.desc': '必填', 'err.license': '必填', 'err.author': '必填', 'err.authorUrl': '以 https:// 开头',
+    'footer.data': '数据源 github.com/{repo}，每日自动采集，全部可审计',
+    'footer.install': '安装请在 DSH 应用内「插件市场」弹窗中完成',
+  },
+  en: {
+    'nav.directory': 'Directory', 'nav.how': 'How it works', 'nav.repo': 'Repo', 'nav.upload': 'Submit',
+    'nav.themeLight': 'Switch to light theme', 'nav.themeDark': 'Switch to dark theme',
+    'hero.t1': 'Install DSH plugins,', 'hero.t2': 'one click away',
+    'hero.sub': 'A community directory of plugins, skills and preset packs for DSH. Data lives on GitHub, collection is transparent, and installs go through the official dsh plugin mechanism.',
+    'hero.browse': 'Browse', 'hero.upload': 'Submit plugin',
+    'install.title': 'Install the market into your DSH',
+    'install.after': 'After restart, a Plugin Market button stays beside Settings in the sidebar',
+    'install.copy': 'Copy install command', 'install.copied': 'Copied',
+    'toast.copied': 'Install command copied. Paste it in your terminal to run.',
+    'dir.title': 'Plugin Directory', 'dir.count': '{n} entries · data from GitHub · collected daily',
+    'dir.demo': 'Registry unavailable, showing demo data.',
+    'dir.search': 'Search name, description or tags',
+    'dir.sortStars': 'By stars', 'dir.sortDownloads': 'By downloads', 'dir.sortName': 'By name',
+    'dir.tabVerified': 'One-click install', 'dir.tabUnverified': 'Unverified',
+    'dir.emptyAll': 'The directory is empty. Submit the first plugin?', 'dir.emptyFilter': 'No matching plugins. Try another keyword.',
+    'dir.pagerPrev': 'Prev', 'dir.pagerNext': 'Next', 'dir.pager': 'Page {p} / {total}',
+    'card.detail': 'Details', 'card.install': 'Install', 'card.copied': 'Copied',
+    'card.downloads': 'Downloads', 'card.stars': 'GitHub stars',
+    'badge.pack': 'Pack', 'badge.auto': 'Auto', 'badge.unver': 'Unverified', 'badge.demo': 'Demo', 'badge.off': 'Offline',
+    'detail.author': 'Author', 'detail.version': 'Version', 'detail.category': 'Category', 'detail.license': 'License', 'detail.downloads': 'Downloads',
+    'detail.intro': 'About', 'detail.readme': 'README', 'detail.readmeLoading': 'Loading README…',
+    'detail.readmeError': 'Failed to load README. ', 'detail.readmeLink': 'View on GitHub',
+    'detail.copy': 'Copy', 'detail.copied': 'Copied',
+    'detail.bundleNote': 'Open the Plugin Market modal in DSH and click install. Restart DSH to take effect.',
+    'detail.packDownload': 'Download pack zip',
+    'detail.packNote': 'Download the zip, then import it from the DSH Plugin Market modal, or extract manually (skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/).',
+    'detail.repo': 'View repo', 'detail.unavailable': 'This repo has been deleted or made private',
+    'detail.unverified': 'This repo does not declare dsh.bundle.patch, so one-click install is unavailable (dsh plugin add would only add it as a plain dependency). Check the repo for the author\'s manual install steps.',
+    'how.title': 'How it works',
+    'how.sub': 'No private backend. Plugin data is just JSON files in the repo, collected, deduplicated and merged by GitHub Actions daily. The website and the DSH modal read the same data.',
+    'how.s1t': 'Authors publish', 'how.s1b': 'Authors cut a Release in their GitHub repo (bundle package or zip pack) and commit build artifacts instead of relying on install-time builds.',
+    'how.s2t': 'PR or auto-collection', 'how.s2b': 'The submit page generates the entry JSON; authors PR it into registry/curated/. Repos tagged with the topic are also picked up by the daily job.',
+    'how.s3t': 'Daily merge & dedup', 'how.s3b': 'The collector aggregates downloads and stars, dedups by package name and repo, prefers curated entries, and writes registry/all.json.',
+    'how.s4t': 'One-click install in DSH', 'how.s4b': 'Users click install in the DSH sidebar modal, which runs dsh plugin --profile web add. Restart to activate.',
+    'submit.back': 'Back to directory', 'submit.title': 'Submit a plugin',
+    'submit.sub': 'Fill the form and click Submit PR to carry the entry JSON straight into a GitHub new-file page. Schema validation runs automatically on the PR; merge to publish. See docs/SUBMIT.md for the spec.',
+    'submit.type': 'Type', 'submit.typeBundle': 'DSH plugin (bundle, via dsh plugin add)', 'submit.typePack': 'Pack (skill / preset zip)',
+    'submit.id': 'id', 'submit.idHint': 'Globally unique id used for the directory and uninstall bookkeeping.',
+    'submit.name': 'Name', 'submit.repo': 'Repo', 'submit.repoHint': 'The GitHub repo hosting the plugin code.',
+    'submit.spec': 'Install spec', 'submit.specBundleHint': 'A tagged github: spec is the most stable; the tag is the version.',
+    'submit.specPackHint': 'Download URL of the zip asset in a GitHub Release.',
+    'submit.package': 'npm package name', 'submit.packageHint': 'Used for dsh plugin remove. Fill it in when you have one.',
+    'submit.version': 'Version', 'submit.description': 'Short description', 'submit.longDesc': 'Full description',
+    'submit.longDescPh': 'Markdown details shown in the detail modal',
+    'submit.tags': 'Tags', 'submit.tagsHint': 'Comma separated, up to 8.',
+    'submit.license': 'License', 'submit.authorName': 'Author name', 'submit.authorUrl': 'Author URL',
+    'submit.skills': 'Skill dirs', 'submit.skillsHint': 'Comma separated, matching skills/<id>/ inside the zip.',
+    'submit.presets': 'Preset dirs', 'submit.presetsHint': 'Comma separated, matching presets/<id>/ inside the zip.',
+    'submit.pr': 'Submit PR', 'submit.copyJson': 'Copy entry JSON', 'submit.copied': 'Copied',
+    'submit.checkTitle': 'Before submitting',
+    'submit.c1': 'Plugin repo is pushed to GitHub', 'submit.c2': 'A Release exists and its tag matches spec',
+    'submit.c3': 'Build artifacts are committed (no install-time prepare builds)', 'submit.c4': 'package.json declares dsh.bundle or dsh.client',
+    'submit.p1': 'Pack follows the layout: manifest.json + skills/ + presets/', 'submit.p2': 'Zipped and uploaded as a GitHub Release asset',
+    'submit.p3': 'spec is the real download URL of the asset', 'submit.p4': 'You are signed in to GitHub to submit the PR',
+    'submit.preview': 'Preview',
+    'err.id': 'Lowercase letters, digits, dots, underscores, hyphens; must start with a letter or digit', 'err.name': 'Required',
+    'err.repo': 'owner/name form',
+    'err.specBundle': 'github:owner/repo#tag, git+https://…#tag, or an npm package name', 'err.specPack': 'An https:// zip download URL',
+    'err.desc': 'Required', 'err.license': 'Required', 'err.author': 'Required', 'err.authorUrl': 'Must start with https://',
+    'footer.data': 'Data source github.com/{repo}, collected daily, fully auditable',
+    'footer.install': 'Install from the Plugin Market modal inside DSH',
+  },
+}
+
+const LangCtx = createContext(null)
+const useLang = () => useContext(LangCtx)
 
 const DEMO_ITEMS = [
   {
     id: 'dsh-plugin-market', name: 'DSH 插件市场', type: 'bundle', package: 'dsh-plugin-market',
-    repo: 'losebird/dsh-plugin-market', spec: 'github:losebird/dsh-plugin-market#main',
-    version: 'v0.1.0', author: { name: 'losebird', url: 'https://github.com/losebird' },
+    repo: 'losebird/dsh-plugin-market', spec: 'github:losebird/dsh-plugin-market#v0.1.1',
+    version: 'v0.1.1', author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
-    tags: ['market', 'ui'], license: 'MIT', downloads: 0, stars: 0, demo: true,
+    tags: ['market', 'ui'], category: 'market', license: 'MIT', downloads: 0, stars: 0, demo: true, verified: true,
   },
   {
     id: 'demo-hello', name: 'Demo Hello Skill', type: 'pack',
     repo: 'losebird/dsh-plugin-market', spec: 'https://example.com/demo-hello.zip',
     version: 'v0.1.0', author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: '演示扩展包：验证市场安装链路。',
-    tags: ['demo', 'skill'], license: 'MIT', downloads: 0, stars: 0, demo: true,
+    tags: ['demo', 'skill'], category: 'skills', license: 'MIT', downloads: 0, stars: 0, demo: true, verified: true,
   },
 ]
 
@@ -41,7 +181,6 @@ async function loadRegistry() {
     const res = await fetch(REGISTRY_BASE + 'registry/' + name)
     return res.ok ? res.json() : null
   }
-  // 优先读 raw 主分支（数据永远最新），失败再回退打包进站点的副本
   try {
     const res = await fetch(RAW_REGISTRY)
     if (res.ok) {
@@ -53,8 +192,7 @@ async function loadRegistry() {
   if (all && Array.isArray(all.items)) return all.items
   const curated = await grab('index.json')
   const auto = await grab('auto.json')
-  const items = [...((curated && curated.items) || []), ...((auto && auto.items) || [])]
-  return items
+  return [...((curated && curated.items) || []), ...((auto && auto.items) || [])]
 }
 
 function fmtNum(n) {
@@ -73,49 +211,55 @@ async function copyText(text) {
 }
 
 /* ── 小组件 ───────────────────────────────────────── */
-function Badges({ item }) {
+function Badges({ item, t }) {
+  const { lang } = useLang()
   return (
     <div className="badges">
-      <span className="badge badge-cat">{catLabel(item)}</span>
-      {item.type === 'pack' && <span className="badge badge-pack">扩展包</span>}
-      {item.auto && <span className="badge badge-auto">自动收录</span>}
-      {item.verified === false && <span className="badge badge-unver">未验证</span>}
-      {item.demo && <span className="badge">演示</span>}
-      {item.status === 'unavailable' && <span className="badge badge-off">已下线</span>}
+      <span className="badge badge-cat">{(CATEGORIES[item.category] || CATEGORIES.other)[lang]}</span>
+      {item.type === 'pack' && <span className="badge badge-pack">{t('badge.pack')}</span>}
+      {item.auto && <span className="badge badge-auto">{t('badge.auto')}</span>}
+      {item.verified === false && <span className="badge badge-unver">{t('badge.unver')}</span>}
+      {item.demo && <span className="badge">{t('badge.demo')}</span>}
+      {item.status === 'unavailable' && <span className="badge badge-off">{t('badge.off')}</span>}
     </div>
   )
 }
 
-function Card({ item, onOpen }) {
+function Card({ item, onOpen, onToast }) {
+  const { t } = useLang()
   const [copied, setCopied] = useState(false)
   const cmd = installCommand(item)
   const doCopy = async () => {
-    if (await copyText(cmd)) { setCopied(true); setTimeout(() => setCopied(false), 1600) }
+    if (await copyText(cmd)) {
+      setCopied(true)
+      onToast(t('toast.copied'))
+      setTimeout(() => setCopied(false), 1600)
+    }
   }
   return (
     <div className="card">
       <div className="card-top">
         <div className="card-name">{item.name}</div>
-        <Badges item={item} />
+        <Badges item={item} t={t} />
       </div>
       <div className="card-author">
         {item.author && item.author.url
           ? <a href={item.author.url} target="_blank" rel="noreferrer">{item.author.name}</a>
-          : (item.author && item.author.name) || '匿名作者'}
+          : (item.author && item.author.name) || 'Unknown'}
       </div>
       <div className="card-desc">{item.description || ''}</div>
       <div className="card-stats">
-        <span title="下载量"><DownloadSimple size={14} />{fmtNum(item.downloads)}</span>
-        <span title="GitHub 星标"><Star size={14} />{fmtNum(item.stars)}</span>
+        <span title={t('card.downloads')}><DownloadSimple size={14} />{fmtNum(item.downloads)}</span>
+        <span title={t('card.stars')}><Star size={14} />{fmtNum(item.stars)}</span>
         {item.version && <span>{item.version}</span>}
       </div>
       <div className="card-actions">
         <button className="btn btn-primary btn-sm" onClick={() => onOpen(item)} disabled={item.status === 'unavailable'}>
-          详情<CaretRight size={13} />
+          {t('card.detail')}<CaretRight size={13} />
         </button>
         {cmd && item.verified !== false && (
-          <button className="btn btn-ghost btn-sm" onClick={doCopy} title="复制安装命令">
-            {copied ? <><Check size={13} />已复制</> : <><Copy size={13} />复制命令</>}
+          <button className="btn btn-ghost btn-sm" onClick={doCopy} title="dsh plugin --profile web add">
+            {copied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.install')}</>}
           </button>
         )}
         <span className="spacer" />
@@ -124,11 +268,18 @@ function Card({ item, onOpen }) {
   )
 }
 
-function DetailModal({ item, onClose }) {
+function DetailModal({ item, onClose, onToast }) {
+  const { t, lang } = useLang()
   const [copied, setCopied] = useState(false)
   const [readme, setReadme] = useState({ status: 'idle' })
   const cmd = installCommand(item)
-  const doCopy = async () => { if (await copyText(cmd)) { setCopied(true); setTimeout(() => setCopied(false), 1600) } }
+  const doCopy = async () => {
+    if (await copyText(cmd)) {
+      setCopied(true)
+      onToast(t('toast.copied'))
+      setTimeout(() => setCopied(false), 1600)
+    }
+  }
 
   useEffect(() => {
     let alive = true
@@ -151,73 +302,71 @@ function DetailModal({ item, onClose }) {
     return () => { alive = false }
   }, [item.repo])
 
+  const catLabel = (CATEGORIES[item.category] || CATEGORIES.other)[lang]
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
           <h3>{item.name}</h3>
-          <button className="modal-close" onClick={onClose} aria-label="关闭"><X size={18} /></button>
+          <button className="modal-close" onClick={onClose} aria-label="close"><X size={18} /></button>
         </div>
-        <Badges item={item} />
+        <Badges item={item} t={t} />
         <div className="meta-row">
-          <span>作者 {item.author && item.author.name ? item.author.name : '未知'}</span>
-          {item.version && <span>版本 {item.version}</span>}
-          <span>分类 {catLabel(item)}</span>
-          <span>许可 {item.license || 'UNKNOWN'}</span>
-          <span>下载 {fmtNum(item.downloads)}</span>
+          <span>{t('detail.author')} {item.author && item.author.name ? item.author.name : 'Unknown'}</span>
+          {item.version && <span>{t('detail.version')} {item.version}</span>}
+          <span>{t('detail.category')} {catLabel}</span>
+          <span>{t('detail.license')} {item.license || 'UNKNOWN'}</span>
+          <span>{t('detail.downloads')} {fmtNum(item.downloads)}</span>
           <span><Star size={13} /> {fmtNum(item.stars)}</span>
         </div>
         {item.tags && item.tags.length > 0 && (
-          <div className="badges">{item.tags.map((t) => <span key={t} className="badge">{t}</span>)}</div>
+          <div className="badges">{item.tags.map((tg) => <span key={tg} className="badge">{tg}</span>)}</div>
         )}
         {item.longDescription && (
           <>
-            <h4 className="readme-title">简介</h4>
+            <h4 className="readme-title">{t('detail.intro')}</h4>
             <div className="long-desc">{item.longDescription}</div>
           </>
         )}
         {item.repo && (
           <>
-            <h4 className="readme-title">项目说明</h4>
-            {readme.status === 'loading' && <div className="readme-state"><CircleNotch size={14} className="spin" /> 加载项目说明中…</div>}
+            <h4 className="readme-title">{t('detail.readme')}</h4>
+            {readme.status === 'loading' && <div className="readme-state"><CircleNotch size={14} className="spin" /> {t('detail.readmeLoading')}</div>}
             {readme.status === 'error' && (
               <div className="readme-state">
-                项目 README 加载失败，
-                <a href={'https://github.com/' + item.repo} target="_blank" rel="noreferrer">去仓库查看</a>
+                {t('detail.readmeError')}
+                <a href={'https://github.com/' + item.repo} target="_blank" rel="noreferrer">{t('detail.readmeLink')}</a>
               </div>
             )}
             {readme.status === 'ready' && <div className="readme" dangerouslySetInnerHTML={{ __html: readme.html }} />}
           </>
         )}
         {item.type === 'bundle' && item.verified === false ? (
-          <div className="strip strip-demo">
-            <Warning size={15} />
-            该仓库未声明 dsh.bundle.patch，一键安装不可用（直接 dsh plugin add 只会作为普通依赖安装、不会挂载插件）。请到仓库查看作者提供的手工安装方式。
-          </div>
+          <div className="strip strip-demo"><Warning size={15} /> {t('detail.unverified')}</div>
         ) : item.type === 'bundle' ? (
           <>
             <div className="install-box">
               <code>{cmd}</code>
-              <button className="btn btn-primary btn-sm" onClick={doCopy}>{copied ? '已复制' : '复制'}</button>
+              <button className="btn btn-primary btn-sm" onClick={doCopy}>{copied ? t('detail.copied') : t('detail.copy')}</button>
             </div>
-            <p className="card-desc">在 DSH 应用内打开侧栏「插件市场」弹窗点安装即可，安装后重启 DSH 生效。</p>
+            <p className="card-desc">{t('detail.bundleNote')}</p>
           </>
         ) : (
           <>
             {/^https:\/\//.test(item.spec || '') && (
               <a className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }} href={item.spec} target="_blank" rel="noreferrer">
-                <DownloadSimple size={15} />下载扩展包 zip
+                <DownloadSimple size={15} />{t('detail.packDownload')}
               </a>
             )}
-            <p className="card-desc">下载 zip 后在 DSH 插件市场弹窗中选择「从本地导入」，或手动解压到对应目录（skill 放 ~/.agents/skills/，preset 放 ~/.dsh/.agent-presets/）。</p>
+            <p className="card-desc">{t('detail.packNote')}</p>
           </>
         )}
         <div className="card-actions">
           <a className="btn btn-ghost btn-sm" href={'https://github.com/' + item.repo} target="_blank" rel="noreferrer">
-            <GithubLogo size={14} />查看仓库
+            <GithubLogo size={14} />{t('detail.repo')}
           </a>
           {item.status === 'unavailable' && (
-            <span style={{ color: 'var(--error)', fontSize: 13 }}><Warning size={13} /> 该条目仓库已删除或转为私有</span>
+            <span style={{ color: 'var(--error)', fontSize: 13 }}><Warning size={13} /> {t('detail.unavailable')}</span>
           )}
         </div>
       </div>
@@ -226,24 +375,26 @@ function DetailModal({ item, onClose }) {
 }
 
 /* ── 首页安装卡 ───────────────────────────────────── */
-function InstallCard() {
+function InstallCard({ onToast }) {
+  const { t } = useLang()
   const [copied, setCopied] = useState(false)
   const doCopy = async () => {
     if (await copyText('dsh plugin --profile web add ' + INSTALL_SPEC)) {
       setCopied(true)
+      onToast(t('toast.copied'))
       setTimeout(() => setCopied(false), 1600)
     }
   }
   return (
     <div className="term">
-      <div className="term-bar term-bar--hero"><Plug size={15} weight="fill" /> 把插件市场装进你的 DSH</div>
+      <div className="term-bar term-bar--hero"><Plug size={15} weight="fill" /> {t('install.title')}</div>
       <div className="term-body">
         <div><span className="prompt">$</span> dsh plugin --profile web add {INSTALL_SPEC}</div>
         <div><span className="prompt">$</span> dsh web</div>
-        <div className="out">重启后，侧栏 Settings 旁常驻「插件市场」按钮</div>
+        <div className="out">{t('install.after')}</div>
         <div className="term-actions">
           <button className="btn btn-primary btn-sm" onClick={doCopy}>
-            {copied ? <><Check size={13} />已复制</> : <><Copy size={13} />复制安装命令</>}
+            {copied ? <><Check size={13} />{t('install.copied')}</> : <><Copy size={13} />{t('install.copy')}</>}
           </button>
         </div>
       </div>
@@ -251,23 +402,52 @@ function InstallCard() {
   )
 }
 
+/* ── 分页器 ───────────────────────────────────────── */
+function Pager({ page, total, onChange }) {
+  const { t } = useLang()
+  if (total <= 1) return null
+  return (
+    <div className="pager">
+      <button className="btn btn-ghost btn-sm" disabled={page <= 0} onClick={() => onChange(page - 1)}>← {t('dir.pagerPrev')}</button>
+      <span className="pager-info">{t('dir.pager', { p: page + 1, total })}</span>
+      <button className="btn btn-ghost btn-sm" disabled={page >= total - 1} onClick={() => onChange(page + 1)}>{t('dir.pagerNext')} →</button>
+    </div>
+  )
+}
+
 /* ── 主页面 ───────────────────────────────────────── */
-function Home({ items, status, onGoSubmit, onOpenDetail }) {
+function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
+  const { t, lang } = useLang()
   const [q, setQ] = useState('')
   const [cat, setCat] = useState(null)
+  const [group, setGroup] = useState('verified')
   const [sort, setSort] = useState('stars')
+  const [page, setPage] = useState(0)
+
+  const groupCounts = useMemo(() => {
+    let v = 0
+    let u = 0
+    for (const it of items) {
+      if (it.verified === false) u++
+      else v++
+    }
+    return { verified: v, unverified: u }
+  }, [items])
 
   const cats = useMemo(() => {
     const counts = new Map()
     for (const it of items) {
+      if ((group === 'verified' && it.verified === false) || (group === 'unverified' && it.verified !== false)) continue
       const c = it.category || 'other'
       counts.set(c, (counts.get(c) || 0) + 1)
     }
     return [...counts.entries()].sort((a, b) => b[1] - a[1])
-  }, [items])
+  }, [items, group])
 
   const filtered = useMemo(() => {
     let list = items.filter((it) => {
+      if (group === 'verified' && it.verified === false) return false
+      if (group === 'unverified' && it.verified !== false) return false
       if (cat && (it.category || 'other') !== cat) return false
       if (!q) return true
       const hay = [it.name, it.description, it.id, (it.tags || []).join(' ')].join(' ').toLowerCase()
@@ -279,49 +459,61 @@ function Home({ items, status, onGoSubmit, onOpenDetail }) {
       return (b.stars || 0) - (a.stars || 0)
     })
     return list
-  }, [items, q, cat, sort])
+  }, [items, q, cat, group, sort])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const safePage = Math.min(page, totalPages - 1)
+  const pageItems = filtered.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE)
 
   return (
     <>
       <section className="shell hero">
         <div>
-          <h1>给 DSH 装插件，<br /><span className="accent">一个按钮的事</span></h1>
-          <p className="hero-sub">
-            社区插件、skill 与 preset 扩展包的一站式目录。数据来自 GitHub、采集过程透明，安装走 dsh plugin 官方机制，全部开源可审计。
-          </p>
+          <h1>{t('hero.t1')}<br /><span className="accent">{t('hero.t2')}</span></h1>
+          <p className="hero-sub">{t('hero.sub')}</p>
           <div className="hero-ctas">
-            <a className="btn btn-primary" href="#directory">浏览目录<CaretRight size={15} /></a>
-            <button className="btn btn-ghost" onClick={onGoSubmit}><UploadSimple size={15} />上传插件</button>
+            <a className="btn btn-primary" href="#directory">{t('hero.browse')}<CaretRight size={15} /></a>
+            <button className="btn btn-ghost" onClick={onGoSubmit}><UploadSimple size={15} />{t('hero.upload')}</button>
           </div>
         </div>
-        <InstallCard />
+        <InstallCard onToast={onToast} />
       </section>
 
       <section className="shell section" id="directory">
         <div className="section-head">
-          <h2>插件目录</h2>
-          <span className="count">{items.length} 个条目 · 数据源 GitHub · 每日自动采集</span>
+          <h2>{t('dir.title')}</h2>
+          <span className="count">{t('dir.count', { n: items.length })}</span>
         </div>
         {status === 'demo' && (
-          <div className="strip strip-demo"><Warning size={16} /> registry 暂不可用，当前展示演示数据。推送仓库后自动切换。</div>
+          <div className="strip strip-demo"><Warning size={16} /> {t('dir.demo')}</div>
         )}
+        <div className="seg">
+          <button className={'seg-btn' + (group === 'verified' ? ' on' : '')} onClick={() => { setGroup('verified'); setCat(null); setPage(0) }}>
+            <CheckCircle size={14} />{t('dir.tabVerified')} <span className="chip-count">{groupCounts.verified}</span>
+          </button>
+          <button className={'seg-btn' + (group === 'unverified' ? ' on' : '')} onClick={() => { setGroup('unverified'); setCat(null); setPage(0) }}>
+            <Warning size={14} />{t('dir.tabUnverified')} <span className="chip-count">{groupCounts.unverified}</span>
+          </button>
+        </div>
         <div className="toolbar">
           <div className="search">
             <MagnifyingGlass size={16} />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="搜索名称、简介或标签" aria-label="搜索插件" />
+            <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} placeholder={t('dir.search')} aria-label="search" />
           </div>
-          <select className="sort-select" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="排序">
-            <option value="stars">按星标</option>
-            <option value="downloads">按下载量</option>
-            <option value="name">按名称</option>
+          <select className="sort-select" value={sort} onChange={(e) => { setSort(e.target.value); setPage(0) }} aria-label="sort">
+            <option value="stars">{t('dir.sortStars')}</option>
+            <option value="downloads">{t('dir.sortDownloads')}</option>
+            <option value="name">{t('dir.sortName')}</option>
           </select>
         </div>
         {cats.length > 0 && (
           <div className="tag-row">
-            <button className={'tag-chip' + (cat === null ? ' on' : '')} onClick={() => setCat(null)}>全部</button>
+            <button className={'tag-chip' + (cat === null ? ' on' : '')} onClick={() => { setCat(null); setPage(0) }}>
+              {(CATEGORIES.all || { zh: '全部', en: 'All' })[lang]}
+            </button>
             {cats.map(([c, n]) => (
-              <button key={c} className={'tag-chip' + (cat === c ? ' on' : '')} onClick={() => setCat(cat === c ? null : c)}>
-                {CATEGORIES[c] || c} <span className="chip-count">{n}</span>
+              <button key={c} className={'tag-chip' + (cat === c ? ' on' : '')} onClick={() => { setCat(cat === c ? null : c); setPage(0) }}>
+                {(CATEGORIES[c] || CATEGORIES.other)[lang]} <span className="chip-count">{n}</span>
               </button>
             ))}
           </div>
@@ -331,48 +523,27 @@ function Home({ items, status, onGoSubmit, onOpenDetail }) {
         ) : filtered.length === 0 ? (
           <div className="state">
             <Package size={34} />
-            <p>{items.length === 0 ? '目录还是空的。上传第一个插件？' : '没有匹配的插件，换个关键词试试。'}</p>
-            {items.length === 0 && <button className="btn btn-primary" onClick={onGoSubmit}>上传插件</button>}
+            <p>{items.length === 0 ? t('dir.emptyAll') : t('dir.emptyFilter')}</p>
+            {items.length === 0 && <button className="btn btn-primary" onClick={onGoSubmit}>{t('hero.upload')}</button>}
           </div>
         ) : (
-          <div className="grid">{filtered.map((it) => <Card key={it.id} item={it} onOpen={onOpenDetail} />)}</div>
+          <>
+            <div className="grid">{pageItems.map((it) => <Card key={it.id} item={it} onOpen={onOpenDetail} onToast={onToast} />)}</div>
+            <Pager page={safePage} total={totalPages} onChange={setPage} />
+          </>
         )}
       </section>
 
       <section className="shell how" id="how">
         <div className="how-left">
-          <h2>工作原理</h2>
-          <p>没有私有后端。插件数据就是仓库里的 JSON 文件，每天由 GitHub Actions 自动采集、去重、合并，网站与 DSH 弹窗读的是同一份数据。</p>
+          <h2>{t('how.title')}</h2>
+          <p>{t('how.sub')}</p>
         </div>
         <div className="steps">
-          <div className="step">
-            <div className="step-num">01</div>
-            <div>
-              <h3>作者发布</h3>
-              <p>插件作者在自己的 GitHub 仓库发 Release（bundle 包或 zip 扩展包），构建产物直接提交进仓库，不依赖安装时编译。</p>
-            </div>
-          </div>
-          <div className="step">
-            <div className="step-num">02</div>
-            <div>
-              <h3>PR 上架或自动收录</h3>
-              <p>上传页生成条目 JSON，作者向 <code>registry/curated/</code> 提 PR，合并即上架；仓库打了 topic 的插件也会被每日任务自动收录。</p>
-            </div>
-          </div>
-          <div className="step">
-            <div className="step-num">03</div>
-            <div>
-              <h3>每日合并去重</h3>
-              <p>采集任务汇总下载量与星标，按包名和仓库去重，curated 条目优先，输出 <code>registry/all.json</code>。</p>
-            </div>
-          </div>
-          <div className="step">
-            <div className="step-num">04</div>
-            <div>
-              <h3>DSH 内一键安装</h3>
-              <p>用户在 DSH 侧栏的插件市场弹窗里点安装，等价执行 <code>dsh plugin --profile web add</code>，安装前有信任确认，重启后生效。</p>
-            </div>
-          </div>
+          <div className="step"><div className="step-num">01</div><div><h3>{t('how.s1t')}</h3><p>{t('how.s1b')}</p></div></div>
+          <div className="step"><div className="step-num">02</div><div><h3>{t('how.s2t')}</h3><p>{t('how.s2b')}</p></div></div>
+          <div className="step"><div className="step-num">03</div><div><h3>{t('how.s3t')}</h3><p>{t('how.s3b')}</p></div></div>
+          <div className="step"><div className="step-num">04</div><div><h3>{t('how.s4t')}</h3><p>{t('how.s4b')}</p></div></div>
         </div>
       </section>
     </>
@@ -385,6 +556,7 @@ const BUNDLE_SPEC_RE = /^(github:|git\+)[^\s"']+(#[^\s"']+)?$|^@?[\w.-]+\/[\w.-]
 const PACK_SPEC_RE = /^https:\/\/[^\s"']+$/
 
 function SubmitPage({ onBack }) {
+  const { t } = useLang()
   const [form, setForm] = useState({
     type: 'bundle', id: '', name: '', repo: '', spec: '', version: '',
     package: '', description: '', longDescription: '', tags: '', license: 'MIT',
@@ -394,7 +566,7 @@ function SubmitPage({ onBack }) {
   const [copied, setCopied] = useState(false)
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
-  const setType = (t) => setForm((f) => ({ ...f, type: t }))
+  const setType = (tp) => setForm((f) => ({ ...f, type: tp }))
 
   const entry = useMemo(() => {
     const e = {
@@ -404,12 +576,12 @@ function SubmitPage({ onBack }) {
     }
     if (form.version) e.version = form.version
     if (form.longDescription) e.longDescription = form.longDescription
-    if (form.tags) e.tags = form.tags.split(/[,，]/).map((t) => t.trim()).filter(Boolean).slice(0, 8)
+    if (form.tags) e.tags = form.tags.split(/[,，]/).map((x) => x.trim()).filter(Boolean).slice(0, 8)
     if (form.authorUrl && /^https:\/\//.test(form.authorUrl)) e.author.url = form.authorUrl
     if (form.type === 'bundle' && form.package) e.package = form.package
     if (form.type === 'pack') {
-      const skills = form.skills.split(/[,，]/).map((t) => t.trim()).filter(Boolean)
-      const presets = form.presets.split(/[,，]/).map((t) => t.trim()).filter(Boolean)
+      const skills = form.skills.split(/[,，]/).map((x) => x.trim()).filter(Boolean)
+      const presets = form.presets.split(/[,，]/).map((x) => x.trim()).filter(Boolean)
       if (skills.length || presets.length) e.contents = { skills, presets }
     }
     return e
@@ -417,16 +589,16 @@ function SubmitPage({ onBack }) {
 
   const validate = () => {
     const e = {}
-    if (!ID_RE.test(form.id)) e.id = '小写字母、数字、点、下划线、连字符，字母或数字开头'
-    if (!form.name.trim()) e.name = '必填'
-    if (!/^[\w.-]+\/[\w.-]+$/.test(form.repo)) e.repo = 'owner/name 形式'
+    if (!ID_RE.test(form.id)) e.id = t('err.id')
+    if (!form.name.trim()) e.name = t('err.name')
+    if (!/^[\w.-]+\/[\w.-]+$/.test(form.repo)) e.repo = t('err.repo')
     if (form.type === 'bundle' ? !BUNDLE_SPEC_RE.test(form.spec) : !PACK_SPEC_RE.test(form.spec)) {
-      e.spec = form.type === 'bundle' ? 'github:owner/repo#tag、git+https://…#tag 或 npm 包名' : 'https:// 开头的 zip 下载地址'
+      e.spec = form.type === 'bundle' ? t('err.specBundle') : t('err.specPack')
     }
-    if (!form.description.trim()) e.description = '必填'
-    if (!form.license.trim()) e.license = '必填'
-    if (!form.authorName.trim()) e.authorName = '必填'
-    if (form.authorUrl && !/^https:\/\//.test(form.authorUrl)) e.authorUrl = '以 https:// 开头'
+    if (!form.description.trim()) e.description = t('err.desc')
+    if (!form.license.trim()) e.license = t('err.license')
+    if (!form.authorName.trim()) e.authorName = t('err.author')
+    if (form.authorUrl && !/^https:\/\//.test(form.authorUrl)) e.authorUrl = t('err.authorUrl')
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -446,133 +618,130 @@ function SubmitPage({ onBack }) {
   return (
     <div className="shell">
       <div className="page-head">
-        <button className="back-btn" onClick={onBack}><ArrowLeft size={14} />返回目录</button>
-        <h1>上传插件</h1>
+        <button className="back-btn" onClick={onBack}><ArrowLeft size={14} />{t('submit.back')}</button>
+        <h1>{t('submit.title')}</h1>
       </div>
-      <p className="page-sub">
-        填好表单后点击「发起 PR」，会把条目 JSON 直接带到 GitHub 的新建文件页面。提交后自动跑 schema 校验，合并即上架。
-        详细规范见仓库 docs/SUBMIT.md。
-      </p>
+      <p className="page-sub">{t('submit.sub')}</p>
       <div className="submit-grid">
         <form onSubmit={(e) => { e.preventDefault(); openPR() }}>
           <div className="field">
-            <label>插件类型</label>
+            <label>{t('submit.type')}</label>
             <div className="radio-row">
               <label className={'radio' + (form.type === 'bundle' ? ' on' : '')}>
                 <input type="radio" name="type" checked={form.type === 'bundle'} onChange={() => setType('bundle')} />
-                <Plug size={15} />DSH 插件（bundle，走 dsh plugin add）
+                <Plug size={15} />{t('submit.typeBundle')}
               </label>
               <label className={'radio' + (form.type === 'pack' ? ' on' : '')}>
                 <input type="radio" name="type" checked={form.type === 'pack'} onChange={() => setType('pack')} />
-                <Package size={15} />扩展包（skill / preset zip）
+                <Package size={15} />{t('submit.typePack')}
               </label>
             </div>
           </div>
           <div className="field">
-            <label>id <span className="req">*</span></label>
+            <label>{t('submit.id')} <span className="req">*</span></label>
             <input value={form.id} onChange={set('id')} placeholder="stock-combo-analyzer" />
-            <div className="hint">全局唯一标识，用于目录与卸载记录。</div>
+            <div className="hint">{t('submit.idHint')}</div>
             {errors.id && <div className="err">{errors.id}</div>}
           </div>
           <div className="field">
-            <label>名称 <span className="req">*</span></label>
-            <input value={form.name} onChange={set('name')} placeholder="股票组合分析" />
+            <label>{t('submit.name')} <span className="req">*</span></label>
+            <input value={form.name} onChange={set('name')} placeholder="Stock Analyzer" />
             {errors.name && <div className="err">{errors.name}</div>}
           </div>
           <div className="field">
-            <label>仓库 <span className="req">*</span></label>
+            <label>{t('submit.repo')} <span className="req">*</span></label>
             <input value={form.repo} onChange={set('repo')} placeholder="losebird/dsh-plugin-stock" />
-            <div className="hint">插件代码所在的 GitHub 仓库。</div>
+            <div className="hint">{t('submit.repoHint')}</div>
             {errors.repo && <div className="err">{errors.repo}</div>}
           </div>
           <div className="field">
-            <label>安装源 spec <span className="req">*</span></label>
+            <label>{t('submit.spec')} <span className="req">*</span></label>
             <input value={form.spec} onChange={set('spec')} placeholder={form.type === 'bundle' ? 'github:losebird/dsh-plugin-stock#v0.1.5' : 'https://github.com/owner/repo/releases/download/tag/pkg.zip'} />
-            <div className="hint">{form.type === 'bundle' ? '带 tag 的 github: 形式最稳，tag 即版本。' : 'GitHub Release 里 zip 资产的下载地址。'}</div>
+            <div className="hint">{form.type === 'bundle' ? t('submit.specBundleHint') : t('submit.specPackHint')}</div>
             {errors.spec && <div className="err">{errors.spec}</div>}
           </div>
           {form.type === 'bundle' && (
             <div className="field">
-              <label>npm 包名</label>
+              <label>{t('submit.package')}</label>
               <input value={form.package} onChange={set('package')} placeholder="dsh-plugin-stock" />
-              <div className="hint">卸载时按包名执行 dsh plugin remove，有就填。</div>
+              <div className="hint">{t('submit.packageHint')}</div>
             </div>
           )}
           <div className="field">
-            <label>版本</label>
+            <label>{t('submit.version')}</label>
             <input value={form.version} onChange={set('version')} placeholder="v0.1.5" />
           </div>
           <div className="field">
-            <label>一句话简介 <span className="req">*</span></label>
-            <input value={form.description} onChange={set('description')} placeholder="基于三维一体模型的 A 股量化分析工具" />
+            <label>{t('submit.description')} <span className="req">*</span></label>
+            <input value={form.description} onChange={set('description')} placeholder="A-share quantitative analysis toolkit" />
             {errors.description && <div className="err">{errors.description}</div>}
           </div>
           <div className="field">
-            <label>完整介绍</label>
-            <textarea value={form.longDescription} onChange={set('longDescription')} placeholder="支持 markdown 的详细介绍，显示在详情弹窗" />
+            <label>{t('submit.longDesc')}</label>
+            <textarea value={form.longDescription} onChange={set('longDescription')} placeholder={t('submit.longDescPh')} />
           </div>
           <div className="field">
-            <label>标签</label>
+            <label>{t('submit.tags')}</label>
             <input value={form.tags} onChange={set('tags')} placeholder="stock, analysis" />
-            <div className="hint">逗号分隔，最多 8 个。</div>
+            <div className="hint">{t('submit.tagsHint')}</div>
           </div>
           <div className="field">
-            <label>许可 <span className="req">*</span></label>
+            <label>{t('submit.license')} <span className="req">*</span></label>
             <input value={form.license} onChange={set('license')} placeholder="MIT" />
             {errors.license && <div className="err">{errors.license}</div>}
           </div>
           <div className="field">
-            <label>作者名 <span className="req">*</span></label>
+            <label>{t('submit.authorName')} <span className="req">*</span></label>
             <input value={form.authorName} onChange={set('authorName')} placeholder="losebird" />
             {errors.authorName && <div className="err">{errors.authorName}</div>}
           </div>
           <div className="field">
-            <label>作者主页</label>
+            <label>{t('submit.authorUrl')}</label>
             <input value={form.authorUrl} onChange={set('authorUrl')} placeholder="https://github.com/losebird" />
             {errors.authorUrl && <div className="err">{errors.authorUrl}</div>}
           </div>
           {form.type === 'pack' && (
             <>
               <div className="field">
-                <label>包含的 skill 目录</label>
+                <label>{t('submit.skills')}</label>
                 <input value={form.skills} onChange={set('skills')} placeholder="stock-combo-analyzer" />
-                <div className="hint">逗号分隔，对应 zip 内 skills/&lt;id&gt;/ 目录。</div>
+                <div className="hint">{t('submit.skillsHint')}</div>
               </div>
               <div className="field">
-                <label>包含的 preset 目录</label>
+                <label>{t('submit.presets')}</label>
                 <input value={form.presets} onChange={set('presets')} placeholder="stock-analyst" />
-                <div className="hint">逗号分隔，对应 zip 内 presets/&lt;id&gt;/ 目录。</div>
+                <div className="hint">{t('submit.presetsHint')}</div>
               </div>
             </>
           )}
           <div className="form-actions">
-            <button type="submit" className="btn btn-primary"><GithubLogo size={16} />发起 PR</button>
-            <button type="button" className="btn btn-ghost" onClick={doCopy}>{copied ? '已复制' : '复制条目 JSON'}</button>
+            <button type="submit" className="btn btn-primary"><GithubLogo size={16} />{t('submit.pr')}</button>
+            <button type="button" className="btn btn-ghost" onClick={doCopy}>{copied ? t('submit.copied') : t('submit.copyJson')}</button>
           </div>
         </form>
 
         <div className="preview-panel">
           <div className="preview-box">
-            <div className="bar"><span>registry/curated/{(form.id || 'plugin')}.json</span><span>预览</span></div>
+            <div className="bar"><span>registry/curated/{(form.id || 'plugin')}.json</span><span>{t('submit.preview')}</span></div>
             <pre>{JSON.stringify(entry, null, 2)}</pre>
           </div>
           <div className="check-list">
-            <h4>发起 PR 前请确认</h4>
+            <h4>{t('submit.checkTitle')}</h4>
             {form.type === 'bundle' ? (
               <>
-                <li><CheckCircle size={15} /> 插件仓库已推送到 GitHub</li>
-                <li><CheckCircle size={15} /> 已发布一个 Release，tag 与 spec 一致</li>
-                <li><CheckCircle size={15} /> 构建产物已提交进仓库（不依赖安装时 prepare 编译）</li>
-                <li><CheckCircle size={15} /> package.json 声明了 dsh.bundle 或 dsh.client</li>
+                <li><CheckCircle size={15} /> {t('submit.c1')}</li>
+                <li><CheckCircle size={15} /> {t('submit.c2')}</li>
+                <li><CheckCircle size={15} /> {t('submit.c3')}</li>
+                <li><CheckCircle size={15} /> {t('submit.c4')}</li>
               </>
             ) : (
               <>
-                <li><CheckCircle size={15} /> 扩展包按规范组织：manifest.json + skills/ + presets/</li>
-                <li><CheckCircle size={15} /> 已打成 zip 并上传为 GitHub Release 资产</li>
-                <li><CheckCircle size={15} /> spec 是资产的实际下载地址</li>
+                <li><CheckCircle size={15} /> {t('submit.p1')}</li>
+                <li><CheckCircle size={15} /> {t('submit.p2')}</li>
+                <li><CheckCircle size={15} /> {t('submit.p3')}</li>
               </>
             )}
-            <li><CheckCircle size={15} /> 已登录 GitHub，点击发起 PR 后在新页面提交</li>
+            <li><CheckCircle size={15} /> {t('submit.p4')}</li>
           </div>
         </div>
       </div>
@@ -586,14 +755,22 @@ export default function App() {
   const [items, setItems] = useState([])
   const [status, setStatus] = useState('loading')
   const [detail, setDetail] = useState(null)
+  const [toast, setToast] = useState(null)
   const [theme, setTheme] = useState(() => {
     try { return localStorage.getItem('dsh-market-theme') || 'dark' } catch { return 'dark' }
+  })
+  const [lang, setLang] = useState(() => {
+    try { return localStorage.getItem('dsh-market-lang') || 'zh' } catch { return 'zh' }
   })
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
     try { localStorage.setItem('dsh-market-theme', theme) } catch {}
   }, [theme])
+
+  useEffect(() => {
+    try { localStorage.setItem('dsh-market-lang', lang) } catch {}
+  }, [lang])
 
   useEffect(() => {
     let alive = true
@@ -603,27 +780,46 @@ export default function App() {
     return () => { alive = false }
   }, [])
 
+  const showToast = (msg) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 2600)
+  }
+
+  const t = useMemo(() => (key, vars) => {
+    let s = (I18N[lang] && I18N[lang][key]) || key
+    if (vars) for (const k in vars) s = s.split('{' + k + '}').join(String(vars[k]))
+    return s
+  }, [lang])
+
   const goSubmit = () => setView('submit')
   const goHome = () => setView('home')
 
   return (
-    <>
+    <LangCtx.Provider value={{ t, lang, setLang }}>
       <nav className="nav">
         <div className="nav-inner shell">
           <a className="brand" href="#top" onClick={goHome}>
             <span className="brand-mark"><Plug size={16} weight="bold" /></span>
-            DSH 插件市场
+            DSH Plugin Market
           </a>
           <div className="nav-links">
-            <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('directory') && document.getElementById('directory').scrollIntoView(), 0) }}>目录</button>
-            <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('how') && document.getElementById('how').scrollIntoView(), 0) }}>工作原理</button>
-            <a className="nav-link" href={'https://github.com/' + GITHUB_REPO} target="_blank" rel="noreferrer"><GithubLogo size={15} />仓库</a>
-            <button className="nav-link nav-cta" onClick={goSubmit}><UploadSimple size={15} />上传插件</button>
+            <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('directory') && document.getElementById('directory').scrollIntoView(), 0) }}>{t('nav.directory')}</button>
+            <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('how') && document.getElementById('how').scrollIntoView(), 0) }}>{t('nav.how')}</button>
+            <a className="nav-link" href={'https://github.com/' + GITHUB_REPO} target="_blank" rel="noreferrer"><GithubLogo size={15} />{t('nav.repo')}</a>
+            <button className="nav-link nav-cta" onClick={goSubmit}><UploadSimple size={15} />{t('nav.upload')}</button>
+            <button
+              className="nav-link"
+              onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+              aria-label="switch language"
+              title={lang === 'zh' ? 'Switch to English' : '切换到中文'}
+            >
+              {lang === 'zh' ? 'EN' : '中文'}
+            </button>
             <button
               className="nav-link"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              aria-label="切换主题"
-              title={theme === 'dark' ? '切换到亮色主题' : '切换到暗色主题'}
+              aria-label="switch theme"
+              title={theme === 'dark' ? t('nav.themeLight') : t('nav.themeDark')}
             >
               {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
             </button>
@@ -632,18 +828,19 @@ export default function App() {
       </nav>
       <main id="top">
         {view === 'home' ? (
-          <Home items={items} status={status} onGoSubmit={goSubmit} onOpenDetail={setDetail} />
+          <Home items={items} status={status} onGoSubmit={goSubmit} onOpenDetail={setDetail} onToast={showToast} />
         ) : (
           <SubmitPage onBack={goHome} />
         )}
       </main>
       <footer>
         <div className="footer-inner shell">
-          <span>数据源 github.com/{GITHUB_REPO}，每日自动采集，全部可审计</span>
-          <span>安装请在 DSH 应用内「插件市场」弹窗中完成</span>
+          <span>{t('footer.data', { repo: GITHUB_REPO })}</span>
+          <span>{t('footer.install')}</span>
         </div>
       </footer>
-      {detail && <DetailModal item={detail} onClose={() => setDetail(null)} />}
-    </>
+      {detail && <DetailModal item={detail} onClose={() => setDetail(null)} onToast={showToast} />}
+      {toast && <div className="toast"><Check size={14} />{toast}</div>}
+    </LangCtx.Provider>
   )
 }
