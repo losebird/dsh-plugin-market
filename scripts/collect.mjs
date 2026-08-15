@@ -20,7 +20,7 @@ const TOPICS = ['dsh-plugin', 'dsh-extension', 'deepseek-harness-plugin']
 const AWESOME_LISTS = ['Dominic789654/awesome-deepseek-harness', 'awesome-dsh-plugin/awesome-dsh-plugin']
 const ORGS = ['omdsh-dev']
 const CODE_SEARCH_PAGES = 3 // 每页 100，最多 300 个 code search 命中
-const TOPIC_PAGES = 10 // 每页 100，最多 1000 个 topic 命中（搜索 API 上限 1000）
+const TOPIC_PAGES = 2 // 每页 100；按星标只取头部高价值项目，采集快且不易限流
 
 // 噪声标签：生态关键词，不做功能分类展示
 const NOISE_TAGS = new Set([
@@ -100,32 +100,31 @@ async function collectCandidates() {
     if (meta.license !== undefined) r.license = meta.license
     if (meta.topics !== undefined) r.topics = meta.topics
     if (meta.topicSourced === true) r.topicSourced = true
+    if (meta.pushedAt !== undefined) r.pushedAt = meta.pushedAt
   }
 
-  // ① topic 搜索：topic 来源的仓库全部收录（无 dsh 声明的标 verified: false）
-  // 同星数仓库排序不稳定，用 stars + updated 两种排序各拉一轮取并集
-  for (const sort of ['stars', 'updated']) {
-    for (const topic of TOPICS) {
-      for (let page = 1; page <= TOPIC_PAGES; page++) {
-        try {
-          const res = await ghJson('/search/repositories?q=' + encodeURIComponent('topic:' + topic + ' fork:false archived:false') + '&sort=' + sort + '&per_page=100&page=' + page)
-          if (!res || !Array.isArray(res.items)) break
-          for (const it of res.items) {
-            addRepo(it.full_name, {
-              stars: it.stargazers_count,
-              description: it.description || '',
-              license: it.license && it.license.spdx_id ? it.license.spdx_id : null,
-              topics: it.topics || [],
-              topicSourced: true,
-            })
-          }
-          if (res.items.length < 100) break
-        } catch (e) {
-          console.warn('[collect] topic 搜索失败（' + topic + ' sort=' + sort + ' p' + page + '）: ' + e.message)
-          break
+  // ① topic 搜索：只取星标榜头部（top 200/主题），高价值优先、采集快
+  for (const topic of TOPICS) {
+    for (let page = 1; page <= TOPIC_PAGES; page++) {
+      try {
+        const res = await ghJson('/search/repositories?q=' + encodeURIComponent('topic:' + topic + ' fork:false archived:false') + '&sort=stars&per_page=100&page=' + page)
+        if (!res || !Array.isArray(res.items)) break
+        for (const it of res.items) {
+          addRepo(it.full_name, {
+            stars: it.stargazers_count,
+            description: it.description || '',
+            license: it.license && it.license.spdx_id ? it.license.spdx_id : null,
+            topics: it.topics || [],
+            topicSourced: true,
+            pushedAt: it.pushed_at || null,
+          })
         }
-        await sleep(800)
+        if (res.items.length < 100) break
+      } catch (e) {
+        console.warn('[collect] topic 搜索失败（' + topic + ' p' + page + '）: ' + e.message)
+        break
       }
+      await sleep(800)
     }
   }
 
@@ -176,7 +175,7 @@ async function collectCandidates() {
     try {
       const res = await ghJson('/orgs/' + org + '/repos?per_page=100')
       if (Array.isArray(res)) {
-        for (const r of res) addRepo(r.full_name)
+        for (const r of res) addRepo(r.full_name, { pushedAt: r.pushed_at || null })
         console.log('[collect] 组织 ' + org + ' 收录 ' + res.length + ' 个仓库')
       }
     } catch (e) {
@@ -252,6 +251,7 @@ async function buildEntry(repo, prev) {
 
   const spec = latest ? 'github:' + repo.full_name + '#' + latest.tag_name : 'github:' + repo.full_name
   const owner = repo.full_name.split('/')[0]
+  const releasedAt = (latest && latest.published_at) || repo.pushedAt || (reuse && prev.releasedAt) || null
   const entry = {
     id: pkg && pkg.name ? pkg.name.replace(/^@/, '').replace(/[/.]/g, '-') : name.toLowerCase(),
     name: (pkg && pkg.name) || name,
@@ -266,6 +266,7 @@ async function buildEntry(repo, prev) {
     license: license || 'UNKNOWN',
     downloads: downloads,
     stars: stars || 0,
+    releasedAt: releasedAt,
     verified: verified,
     source: 'auto',
     auto: true,

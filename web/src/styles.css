@@ -86,6 +86,15 @@ a:hover { text-decoration: underline; }
 .hero-stats { margin-top: 18px; display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; color: var(--text-2); font-size: 13.5px; }
 .hero-stats b { color: var(--text); }
 .hero-stats .dot { color: var(--text-3); }
+.hero-slogan {
+  margin-top: 16px; font-size: 21px; font-weight: 700; letter-spacing: 0.05em;
+  background: linear-gradient(90deg, #0a8f5f, #2f7ce0, #a855f7, #f59e0b, #ef4444, #0a8f5f);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: slogan-flow 6s linear infinite;
+}
+@keyframes slogan-flow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
 .hero-install {
   margin-top: 22px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;
   background: var(--panel); border: 1px solid var(--border); border-radius: 12px;

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
-  ArrowLeft, CaretRight, Check, CheckCircle, CircleNotch, Copy, DownloadSimple,
-  GithubLogo, MagnifyingGlass, Moon, Package, Plug, Star, Sun, UploadSimple, Warning, X,
+  ArrowLeft, CaretRight, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
+  GithubLogo, MagnifyingGlass, Moon, Package, Plug, Sparkle, Star, Sun, UploadSimple, UserCircle, Warning, X,
 } from '@phosphor-icons/react'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
@@ -31,7 +31,7 @@ const I18N = {
   zh: {
     'nav.directory': '目录', 'nav.how': '工作原理', 'nav.repo': '仓库', 'nav.upload': '上传插件',
     'nav.themeLight': '切换到亮色主题', 'nav.themeDark': '切换到暗色主题',
-    'hero.t1': '发现并安装，', 'hero.t2': 'DSH 社区插件',
+    'hero.t1': '发现并安装', 'hero.t2': 'DSH 社区插件',
     'hero.sub': '上千个社区插件与扩展包，一键装进你的 DSH。数据来自 GitHub，每日自动采集。',
     'hero.statTotal': '个插件', 'hero.statVerified': '可一键安装', 'hero.statDaily': '数据来自 GitHub，每日自动采集',
     'hero.browse': '浏览目录', 'hero.upload': '上传插件',
@@ -44,6 +44,7 @@ const I18N = {
     'dir.search': '搜索名称、简介或标签',
     'dir.sortStars': '按星标', 'dir.sortDownloads': '按下载量', 'dir.sortName': '按名称',
     'dir.tabVerified': '可一键安装', 'dir.tabUnverified': '未验证',
+    'dir.tabFeatured': '精选插件', 'dir.tabNew': '最新发布', 'dir.tabHandmade': '大神手作',
     'dir.emptyAll': '目录还是空的。上传第一个插件？', 'dir.emptyFilter': '没有匹配的插件，换个关键词试试。',
     'dir.pagerPrev': '上一页', 'dir.pagerNext': '下一页', 'dir.pager': '第 {p} / {total} 页',
     'card.detail': '详情', 'card.install': '安装', 'card.copied': '已复制',
@@ -102,7 +103,7 @@ const I18N = {
   en: {
     'nav.directory': 'Directory', 'nav.how': 'How it works', 'nav.repo': 'Repo', 'nav.upload': 'Submit',
     'nav.themeLight': 'Switch to light theme', 'nav.themeDark': 'Switch to dark theme',
-    'hero.t1': 'Discover & install,', 'hero.t2': 'DSH community plugins',
+    'hero.t1': 'Discover & install', 'hero.t2': 'DSH community plugins',
     'hero.sub': 'Thousands of community plugins and packs, one click into your DSH. Data from GitHub, collected daily.',
     'hero.statTotal': 'plugins', 'hero.statVerified': 'one-click install', 'hero.statDaily': 'from GitHub, collected daily',
     'hero.browse': 'Browse', 'hero.upload': 'Submit plugin',
@@ -115,6 +116,7 @@ const I18N = {
     'dir.search': 'Search name, description or tags',
     'dir.sortStars': 'By stars', 'dir.sortDownloads': 'By downloads', 'dir.sortName': 'By name',
     'dir.tabVerified': 'One-click install', 'dir.tabUnverified': 'Unverified',
+    'dir.tabFeatured': 'Featured', 'dir.tabNew': 'New', 'dir.tabHandmade': 'By Makers',
     'dir.emptyAll': 'The directory is empty. Submit the first plugin?', 'dir.emptyFilter': 'No matching plugins. Try another keyword.',
     'dir.pagerPrev': 'Prev', 'dir.pagerNext': 'Next', 'dir.pager': 'Page {p} / {total}',
     'card.detail': 'Details', 'card.install': 'Install', 'card.copied': 'Copied',
@@ -444,35 +446,49 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
       if (it.verified === false) u++
       else v++
     }
-    return { verified: v, unverified: u }
+    const curated = items.filter((it) => it.source === 'curated').length
+    const withDate = items.filter((it) => it.releasedAt).length
+    return { verified: v, unverified: u, featured: Math.min(100, items.length), new: withDate, handmade: curated }
   }, [items])
+
+  const base = useMemo(() => {
+    if (group === 'featured') {
+      return [...items].sort((a, b) => (b.stars || 0) - (a.stars || 0)).slice(0, 100)
+    }
+    if (group === 'new') {
+      return items
+        .filter((it) => it.releasedAt)
+        .sort((a, b) => String(b.releasedAt).localeCompare(String(a.releasedAt)))
+        .slice(0, 200)
+    }
+    if (group === 'handmade') {
+      return items.filter((it) => it.source === 'curated').sort((a, b) => (b.stars || 0) - (a.stars || 0))
+    }
+    const list = items.filter((it) => (group === 'unverified' ? it.verified === false : it.verified !== false))
+    return [...list].sort((a, b) => {
+      if (sort === 'downloads') return (b.downloads || 0) - (a.downloads || 0)
+      if (sort === 'name') return (a.name || '').localeCompare(b.name || '')
+      return (b.stars || 0) - (a.stars || 0)
+    })
+  }, [items, group, sort])
 
   const cats = useMemo(() => {
     const counts = new Map()
-    for (const it of items) {
-      if ((group === 'verified' && it.verified === false) || (group === 'unverified' && it.verified !== false)) continue
+    for (const it of base) {
       const c = it.category || 'other'
       counts.set(c, (counts.get(c) || 0) + 1)
     }
     return [...counts.entries()].sort((a, b) => b[1] - a[1])
-  }, [items, group])
+  }, [base])
 
   const filtered = useMemo(() => {
-    let list = items.filter((it) => {
-      if (group === 'verified' && it.verified === false) return false
-      if (group === 'unverified' && it.verified !== false) return false
+    return base.filter((it) => {
       if (cat && (it.category || 'other') !== cat) return false
       if (!q) return true
       const hay = [it.name, it.description, it.id, (it.tags || []).join(' ')].join(' ').toLowerCase()
       return hay.includes(q.toLowerCase())
     })
-    list = [...list].sort((a, b) => {
-      if (sort === 'downloads') return (b.downloads || 0) - (a.downloads || 0)
-      if (sort === 'name') return (a.name || '').localeCompare(b.name || '')
-      return (b.stars || 0) - (a.stars || 0)
-    })
-    return list
-  }, [items, q, cat, group, sort])
+  }, [base, cat, q])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage = Math.min(page, totalPages - 1)
@@ -497,6 +513,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
           <span className="dot">·</span>
           <span><b>{groupCounts.verified}</b> {t('hero.statVerified')}</span>
         </div>
+        <div className="hero-slogan">Everything is a Plugin.</div>
         <InstallStrip onToast={onToast} />
       </section>
 
@@ -510,19 +527,29 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
         )}
         <div className="seg">
           <div className="seg-tabs">
-            <button className={'seg-btn' + (group === 'verified' ? ' on' : '')} onClick={() => { setGroup('verified'); setCat(null); setPage(0) }}>
-              <CheckCircle size={14} />{t('dir.tabVerified')} <span className="chip-count">{groupCounts.verified}</span>
-            </button>
-            <button className={'seg-btn' + (group === 'unverified' ? ' on' : '')} onClick={() => { setGroup('unverified'); setCat(null); setPage(0) }}>
-              <Warning size={14} />{t('dir.tabUnverified')} <span className="chip-count">{groupCounts.unverified}</span>
-            </button>
+            {[
+              { key: 'verified', label: t('dir.tabVerified'), icon: CheckCircle },
+              { key: 'unverified', label: t('dir.tabUnverified'), icon: Warning },
+              { key: 'featured', label: t('dir.tabFeatured'), icon: Sparkle },
+              { key: 'new', label: t('dir.tabNew'), icon: Clock },
+              { key: 'handmade', label: t('dir.tabHandmade'), icon: UserCircle },
+            ].map((g) => {
+              const Icon = g.icon
+              return (
+                <button key={g.key} className={'seg-btn' + (group === g.key ? ' on' : '')} onClick={() => { setGroup(g.key); setCat(null); setPage(0) }}>
+                  <Icon size={14} />{g.label} <span className="chip-count">{groupCounts[g.key]}</span>
+                </button>
+              )
+            })}
           </div>
           <div className="seg-side">
-            <select className="sort-select" value={sort} onChange={(e) => { setSort(e.target.value); setPage(0) }} aria-label="sort">
-              <option value="stars">{t('dir.sortStars')}</option>
-              <option value="downloads">{t('dir.sortDownloads')}</option>
-              <option value="name">{t('dir.sortName')}</option>
-            </select>
+            {(group === 'verified' || group === 'unverified') && (
+              <select className="sort-select" value={sort} onChange={(e) => { setSort(e.target.value); setPage(0) }} aria-label="sort">
+                <option value="stars">{t('dir.sortStars')}</option>
+                <option value="downloads">{t('dir.sortDownloads')}</option>
+                <option value="name">{t('dir.sortName')}</option>
+              </select>
+            )}
             <button className="btn btn-ghost btn-sm" onClick={onGoSubmit}><UploadSimple size={14} />{t('hero.upload')}</button>
           </div>
         </div>

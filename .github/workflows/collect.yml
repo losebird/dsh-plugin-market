@@ -20,11 +20,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/collect.mjs
+      - name: Render README
+        run: node scripts/render-readme.mjs
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add registry/auto.json registry/all.json
+          git add registry/auto.json registry/all.json README.md
           if git diff --cached --quiet; then
             echo "no changes"
           else
