@@ -389,7 +389,6 @@ window.__ModuleLoader__.load({
       ))
     }
 
-    exports.apply = apply
-    return module.exports
+    return { apply }
   },
 })
