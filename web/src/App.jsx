@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   ArrowLeft, ArrowSquareOut, CaretRight, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
-  GithubLogo, MagnifyingGlass, Moon, Package, Plug, Sparkle, Star, Sun, UploadSimple, UserCircle, Warning, X,
+  GitFork, GithubLogo, MagnifyingGlass, Moon, Package, Plug, Sparkle, Star, Sun, UploadSimple, UserCircle, Warning, X,
 } from '@phosphor-icons/react'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
@@ -49,7 +49,7 @@ const I18N = {
     'dir.emptyAll': '目录还是空的。上传第一个插件？', 'dir.emptyFilter': '没有匹配的插件，换个关键词试试。',
     'dir.pagerPrev': '上一页', 'dir.pagerNext': '下一页', 'dir.pager': '第 {p} / {total} 页',
     'card.detail': '详情', 'card.install': '安装', 'card.copied': '已复制', 'card.copyUrl': '复制地址',
-    'card.downloads': '下载量', 'card.stars': 'GitHub 星标',
+    'card.downloads': '下载量', 'card.stars': 'GitHub 星标', 'card.forks': 'Fork 数',
     'badge.pack': '扩展包', 'badge.auto': '自动收录', 'badge.unver': '未验证', 'badge.demo': '演示', 'badge.off': '已下线', 'badge.featured': '精选',
     'detail.author': '作者', 'detail.version': '版本', 'detail.category': '分类', 'detail.license': '许可', 'detail.downloads': '下载',
     'detail.intro': '简介', 'detail.readme': '项目说明', 'detail.readmeLoading': '加载项目说明中…',
@@ -124,7 +124,7 @@ const I18N = {
     'dir.emptyAll': 'The directory is empty. Submit the first plugin?', 'dir.emptyFilter': 'No matching plugins. Try another keyword.',
     'dir.pagerPrev': 'Prev', 'dir.pagerNext': 'Next', 'dir.pager': 'Page {p} / {total}',
     'card.detail': 'Details', 'card.install': 'Install', 'card.copied': 'Copied', 'card.copyUrl': 'Copy URL',
-    'card.downloads': 'Downloads', 'card.stars': 'GitHub stars',
+    'card.downloads': 'Downloads', 'card.stars': 'GitHub stars', 'card.forks': 'Forks',
     'badge.pack': 'Pack', 'badge.auto': 'Auto', 'badge.unver': 'Unverified', 'badge.demo': 'Demo', 'badge.off': 'Offline', 'badge.featured': 'Featured',
     'detail.author': 'Author', 'detail.version': 'Version', 'detail.category': 'Category', 'detail.license': 'License', 'detail.downloads': 'Downloads',
     'detail.intro': 'About', 'detail.readme': 'README', 'detail.readmeLoading': 'Loading README…',
@@ -284,8 +284,13 @@ function Card({ item, onOpen, onToast }) {
       </div>
       <div className="card-desc">{item.description || ''}</div>
       <div className="card-stats">
-        <span title={t('card.downloads')}><DownloadSimple size={14} />{fmtNum(item.downloads)}</span>
         <span title={t('card.stars')}><Star size={14} />{fmtNum(item.stars)}</span>
+        {typeof item.forks === 'number' && item.forks > 0 && (
+          <span title={t('card.forks')}><GitFork size={14} />{fmtNum(item.forks)}</span>
+        )}
+        {(item.downloads || 0) > 0 && (
+          <span title={t('card.downloads')}><DownloadSimple size={14} />{fmtNum(item.downloads)}</span>
+        )}
         {item.version && <span>{item.version}</span>}
       </div>
       <div className="card-actions">

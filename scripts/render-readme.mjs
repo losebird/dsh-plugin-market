@@ -59,7 +59,7 @@ for (const [k, label] of CATS) {
     if (it.type === 'pack') marks.push('扩展包')
     if (it.version) marks.push(String(it.version))
     const markStr = marks.length > 0 ? ' · ' + marks.join(' · ') : ''
-    lines.push(`- [${name}](${repo}) ${desc} ⭐ ${fmt(it.stars)} ⬇ ${fmt(it.downloads)}${markStr}`)
+    lines.push(`- [${name}](${repo}) ${desc} ⭐ ${fmt(it.stars)} · Fork ${fmt(it.forks)} · ⬇ ${fmt(it.downloads)}${markStr}`)
   }
   lines.push('')
 }
