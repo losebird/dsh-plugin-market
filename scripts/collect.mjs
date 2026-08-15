@@ -192,7 +192,8 @@ async function collectCandidates() {
 // verified 采用官方判据：package.json 里声明了 dsh.bundle.patch（与 dsh plugin
 // add 的挂载判定 exportsPatch 一致）。topic 来源的仓库即使无声明也收录，
 // 标 verified: false（未验证，禁用一键安装）。
-async function buildEntry(repo) {
+// 上一轮已有数据的仓库直接复用版本/下载量/spec，跳过 releases 调用（省配额）。
+async function buildEntry(repo, prev) {
   const [, name] = repo.full_name.split('/')
   let pkg = null
   try {
@@ -205,28 +206,36 @@ async function buildEntry(repo) {
   if (!repo.topicSourced && !hasDshSignal && !hasDshDep) return null
   const verified = !!(pkg && pkg.dsh && pkg.dsh.bundle && pkg.dsh.bundle.patch)
 
-  // 无 package.json 的 topic 仓库不再发起 releases/detail 调用（不可安装，省配额）
-  let releases = null
-  if (pkg) {
+  const reuse = prev && prev.repo && prev.repo.toLowerCase() === repo.full_name.toLowerCase() && prev.status !== 'unavailable'
+
+  let latest = null
+  let downloads = 0
+  if (reuse && typeof prev.version === 'string') {
+    latest = { tag_name: prev.version }
+    downloads = typeof prev.downloads === 'number' ? prev.downloads : 0
+  } else if (pkg) {
     try {
       const rel = await ghJson('/repos/' + repo.full_name + '/releases?per_page=30')
-      if (Array.isArray(rel)) releases = rel
+      const releases = Array.isArray(rel) ? rel : []
+      for (const r of releases) {
+        if (!latest && !r.draft && !r.prerelease) latest = r
+        for (const a of r.assets || []) downloads += a.download_count || 0
+      }
+      if (!latest && releases.length > 0) latest = releases[0]
     } catch (e) {
       console.warn('[collect] releases 获取失败（继续）: ' + repo.full_name)
     }
   }
-  let downloads = 0
-  let latest = null
-  for (const r of releases || []) {
-    if (!latest && !r.draft && !r.prerelease) latest = r
-    for (const a of r.assets || []) downloads += a.download_count || 0
-  }
-  if (!latest && releases && releases.length > 0) latest = releases[0]
 
   let stars = repo.stars
   let description = repo.description
   let license = repo.license
   let topics = repo.topics || []
+  if (reuse) {
+    description = description || prev.description
+    license = license || prev.license
+    topics = topics.length > 0 ? topics : (Array.isArray(prev.tags) ? prev.tags : [])
+  }
   if (typeof stars !== 'number') {
     try {
       const detail = await ghJson('/repos/' + repo.full_name)
@@ -272,13 +281,14 @@ async function main() {
   const prevAuto = (loadJson('registry/auto.json', { items: [] }).items) || []
 
   const candidates = await collectCandidates()
+  const prevByRepo = new Map(prevAuto.map((p) => [normRepo(p.repo), p]))
   const entries = []
   const seen = new Set()
   for (const repo of candidates) {
     if (blocklist.includes(normRepo(repo.full_name))) continue
     let entry = null
     try {
-      entry = await buildEntry(repo)
+      entry = await buildEntry(repo, prevByRepo.get(normRepo(repo.full_name)))
     } catch (e) {
       console.warn('[collect] 处理失败 ' + repo.full_name + ': ' + e.message)
     }
