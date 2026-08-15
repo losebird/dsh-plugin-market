@@ -509,20 +509,22 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
           <div className="strip strip-demo"><Warning size={16} /> {t('dir.demo')}</div>
         )}
         <div className="seg">
-          <button className={'seg-btn' + (group === 'verified' ? ' on' : '')} onClick={() => { setGroup('verified'); setCat(null); setPage(0) }}>
-            <CheckCircle size={14} />{t('dir.tabVerified')} <span className="chip-count">{groupCounts.verified}</span>
-          </button>
-          <button className={'seg-btn' + (group === 'unverified' ? ' on' : '')} onClick={() => { setGroup('unverified'); setCat(null); setPage(0) }}>
-            <Warning size={14} />{t('dir.tabUnverified')} <span className="chip-count">{groupCounts.unverified}</span>
-          </button>
-        </div>
-        <div className="toolbar">
-          <select className="sort-select" value={sort} onChange={(e) => { setSort(e.target.value); setPage(0) }} aria-label="sort">
-            <option value="stars">{t('dir.sortStars')}</option>
-            <option value="downloads">{t('dir.sortDownloads')}</option>
-            <option value="name">{t('dir.sortName')}</option>
-          </select>
-          <button className="btn btn-ghost btn-sm" onClick={onGoSubmit}><UploadSimple size={14} />{t('hero.upload')}</button>
+          <div className="seg-tabs">
+            <button className={'seg-btn' + (group === 'verified' ? ' on' : '')} onClick={() => { setGroup('verified'); setCat(null); setPage(0) }}>
+              <CheckCircle size={14} />{t('dir.tabVerified')} <span className="chip-count">{groupCounts.verified}</span>
+            </button>
+            <button className={'seg-btn' + (group === 'unverified' ? ' on' : '')} onClick={() => { setGroup('unverified'); setCat(null); setPage(0) }}>
+              <Warning size={14} />{t('dir.tabUnverified')} <span className="chip-count">{groupCounts.unverified}</span>
+            </button>
+          </div>
+          <div className="seg-side">
+            <select className="sort-select" value={sort} onChange={(e) => { setSort(e.target.value); setPage(0) }} aria-label="sort">
+              <option value="stars">{t('dir.sortStars')}</option>
+              <option value="downloads">{t('dir.sortDownloads')}</option>
+              <option value="name">{t('dir.sortName')}</option>
+            </select>
+            <button className="btn btn-ghost btn-sm" onClick={onGoSubmit}><UploadSimple size={14} />{t('hero.upload')}</button>
+          </div>
         </div>
         {cats.length > 0 && (
           <div className="tag-row">

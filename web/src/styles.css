@@ -138,7 +138,9 @@ a:hover { text-decoration: underline; }
 .sort-select:focus { outline: none; border-color: var(--accent); }
 
 .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
-.seg { display: flex; gap: 10px; margin: 18px 0 12px; }
+.seg { display: flex; gap: 10px; margin: 18px 0 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.seg-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+.seg-side { display: flex; gap: 10px; align-items: center; margin-left: auto; }
 .seg-btn {
   display: inline-flex; align-items: center; gap: 7px;
   border: 1px solid var(--border); background: var(--panel); color: var(--text-2);
@@ -169,7 +171,8 @@ a:hover { text-decoration: underline; }
 .tag-chip.on .chip-count { color: var(--accent-ink); opacity: 0.85; }
 
 /* ── FAQ ──────────────────────────────────────────── */
-.faq { padding-top: 8px; }
+.faq { padding-top: 8px; max-width: 760px; margin: 0 auto; }
+.faq .section-head { justify-content: center; }
 .faq-item { border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--panel); overflow: hidden; }
 .faq-item summary { cursor: pointer; padding: 14px 18px; font-size: 14.5px; font-weight: 550; color: var(--text); list-style: none; display: flex; align-items: center; gap: 10px; }
 .faq-item summary::before { content: '+'; font-family: var(--font-mono); color: var(--accent); font-weight: 700; font-size: 16px; }
