@@ -1,0 +1,3 @@
+name: 极简模式（带压缩）
+description: 在极简模式的双工具基础上加入自动压缩、/compact 与大工具输出剪枝。
+order: 4
