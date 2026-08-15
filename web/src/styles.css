@@ -189,7 +189,6 @@ a:hover { text-decoration: underline; }
   transition: border-color 120ms ease;
 }
 .faq-card:hover { border-color: var(--border-2); }
-.faq-card-hero { grid-column: span 2; border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 .faq-q {
   display: flex; align-items: flex-start; gap: 10px;
   font-size: 15px; font-weight: 650; color: var(--text); line-height: 1.45;
