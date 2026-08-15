@@ -298,7 +298,7 @@ function Card({ item, onOpen, onToast }) {
           </button>
         )}
         {item.verified === false && item.repo && (
-          <button className="btn btn-ghost btn-sm" onClick={doCopyUrl} title={'https://github.com/' + item.repo}>
+          <button className="btn btn-copyurl btn-sm" onClick={doCopyUrl} title={'https://github.com/' + item.repo}>
             {urlCopied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.copyUrl')}</>}
           </button>
         )}
@@ -592,6 +592,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
       </section>
 
       <Faq />
+      <LinksSection />
     </>
   )
 }
@@ -617,42 +618,51 @@ function Faq() {
           <div className="faq-body">{it.a}</div>
         </details>
       ))}
-      <div className="links-block">
-        <div className="links-title">{t('links.title')}</div>
-        <div className="links-wall">
-          {[
-            { label: t('links.llm'), items: [
-              ['Claude', 'claude', 'https://claude.ai'],
-              ['Gemini', 'googlegemini', 'https://gemini.google.com'],
-              ['DeepSeek', 'deepseek', 'https://chat.deepseek.com'],
-              ['Kimi', 'kimi', 'https://kimi.moonshot.cn'],
-              ['Qwen', 'qwen', 'https://chat.qwen.ai'],
-              ['Perplexity', 'perplexity', 'https://www.perplexity.ai'],
-            ] },
-            { label: t('links.agent'), items: [
-              ['Coze', 'coze', 'https://www.coze.cn'],
-              ['Dify', 'dify', 'https://dify.ai'],
-              ['n8n', 'n8n', 'https://n8n.io'],
-            ] },
-            { label: t('links.token'), items: [
-              ['OpenRouter', 'openrouter', 'https://openrouter.ai'],
-              ['Hugging Face', 'huggingface', 'https://huggingface.co'],
-              ['Replicate', 'replicate', 'https://replicate.com'],
-            ] },
-          ].map((g) => (
-            <div className="links-group" key={g.label}>
-              <div className="links-label">{g.label}</div>
-              <div className="links-items">
-                {g.items.map(([name, slug, url]) => (
-                  <a key={slug} className="link-tile" href={url} target="_blank" rel="noreferrer" title={name}>
-                    <img src={'https://cdn.simpleicons.org/' + slug} alt={name} width={26} height={26} loading="lazy" />
-                    <span>{name}</span>
-                  </a>
-                ))}
-              </div>
+    </section>
+  )
+}
+
+/* ── 资源墙（全宽左对齐） ─────────────────────────── */
+function LinksSection() {
+  const { t } = useLang()
+  const groups = [
+    { label: t('links.llm'), items: [
+      ['ChatGPT', 'https://www.google.com/s2/favicons?domain=chatgpt.com&sz=64', 'https://chatgpt.com'],
+      ['Claude', 'https://cdn.simpleicons.org/claude', 'https://claude.ai'],
+      ['Gemini', 'https://cdn.simpleicons.org/googlegemini', 'https://gemini.google.com'],
+      ['DeepSeek', 'https://cdn.simpleicons.org/deepseek', 'https://chat.deepseek.com'],
+      ['Kimi', 'https://cdn.simpleicons.org/kimi', 'https://kimi.moonshot.cn'],
+      ['Qwen', 'https://cdn.simpleicons.org/qwen', 'https://chat.qwen.ai'],
+      ['Perplexity', 'https://cdn.simpleicons.org/perplexity', 'https://www.perplexity.ai'],
+    ] },
+    { label: t('links.agent'), items: [
+      ['Coze', 'https://cdn.simpleicons.org/coze', 'https://www.coze.cn'],
+      ['Dify', 'https://cdn.simpleicons.org/dify', 'https://dify.ai'],
+      ['n8n', 'https://cdn.simpleicons.org/n8n', 'https://n8n.io'],
+    ] },
+    { label: t('links.token'), items: [
+      ['OpenRouter', 'https://cdn.simpleicons.org/openrouter', 'https://openrouter.ai'],
+      ['Hugging Face', 'https://cdn.simpleicons.org/huggingface', 'https://huggingface.co'],
+      ['Replicate', 'https://cdn.simpleicons.org/replicate', 'https://replicate.com'],
+    ] },
+  ]
+  return (
+    <section className="shell section links-sec" id="links">
+      <div className="links-title">{t('links.title')}</div>
+      <div className="links-wall">
+        {groups.map((g) => (
+          <div className="links-group" key={g.label}>
+            <div className="links-label">{g.label}</div>
+            <div className="links-items">
+              {g.items.map(([name, icon, url]) => (
+                <a key={name} className="link-tile" href={url} target="_blank" rel="noreferrer" title={name}>
+                  <img src={icon} alt={name} width={26} height={26} loading="lazy" />
+                  <span>{name}</span>
+                </a>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </section>
   )

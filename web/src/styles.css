@@ -115,6 +115,8 @@ a:hover { text-decoration: underline; }
 .btn-primary:hover { filter: brightness(1.08); text-decoration: none; }
 .btn-ghost { background: transparent; color: var(--text-2); border-color: var(--border-2); }
 .btn-ghost:hover { color: var(--text); border-color: var(--text-3); text-decoration: none; }
+.btn-copyurl { background: transparent; color: var(--warn); border-color: var(--warn); }
+.btn-copyurl:hover { background: color-mix(in srgb, var(--warn) 12%, transparent); border-color: var(--warn); color: var(--warn); text-decoration: none; }
 .btn-sm { padding: 6px 14px; font-size: 13px; }
 .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 
@@ -189,7 +191,7 @@ a:hover { text-decoration: underline; }
 .faq-body { padding: 0 18px 14px 42px; color: var(--text-2); font-size: 13.5px; line-height: 1.8; }
 .faq-body code { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); background: var(--panel-2); padding: 1px 6px; border-radius: 5px; }
 
-.links-block { margin-top: 34px; text-align: left; }
+.links-sec { padding-top: 8px; }
 .links-title {
   font-size: 19px; font-weight: 700; letter-spacing: -0.01em;
   background: linear-gradient(90deg, var(--accent), #2f7ce0, #a855f7);

@@ -114,6 +114,8 @@ window.__ModuleLoader__.load({
 .dshm-btn-danger { background:var(--dsw-alias-state-error-primary); border-color:var(--dsw-alias-state-error-primary); color:#fff; }
 .dshm-btn-danger:hover { opacity:0.9; }
 .dshm-btn-ghost { color:var(--dsw-alias-label-secondary); }
+.dshm-btn-copyurl { background:transparent; color:var(--dsw-alias-state-warn-primary); border-color:var(--dsw-alias-state-warn-primary); }
+.dshm-btn-copyurl:hover { background:rgba(251,191,36,0.1); border-color:var(--dsw-alias-state-warn-primary); color:var(--dsw-alias-state-warn-primary); }
 .dshm-btn:disabled { opacity:0.5; cursor:not-allowed; }
 .dshm-btn-sm { padding:4px 12px; font-size:12px; }
 .dshm-busy { font-size:12px; color:var(--dsw-alias-label-secondary); }
@@ -277,7 +279,7 @@ window.__ModuleLoader__.load({
                 : item.verified === false
                   ? h('span', null,
                       h('span', { className: 'dshm-busy' }, t('unverNote')),
-                      h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
+                      h('button', { className: 'dshm-btn dshm-btn-copyurl dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
                         st.copiedRepo === item.id ? t('copied') : t('copyUrl')),
                     )
                   : installed
