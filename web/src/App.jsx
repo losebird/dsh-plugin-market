@@ -206,6 +206,8 @@ function installCommand(item) {
   return item.type === 'bundle' ? 'dsh plugin --profile web add ' + item.spec : ''
 }
 
+const shortName = (n) => String(n || '').split('/').pop() || String(n || '')
+
 async function copyText(text) {
   try { await navigator.clipboard.writeText(text); return true } catch { return false }
 }
@@ -239,7 +241,7 @@ function Card({ item, onOpen, onToast }) {
   return (
     <div className="card">
       <div className="card-top">
-        <div className="card-name">{item.name}</div>
+        <div className="card-name">{shortName(item.name)}</div>
         <Badges item={item} t={t} />
       </div>
       <div className="card-author">
@@ -254,11 +256,11 @@ function Card({ item, onOpen, onToast }) {
         {item.version && <span>{item.version}</span>}
       </div>
       <div className="card-actions">
-        <button className="btn btn-primary btn-sm" onClick={() => onOpen(item)} disabled={item.status === 'unavailable'}>
+        <button className="btn btn-ghost btn-sm" onClick={() => onOpen(item)} disabled={item.status === 'unavailable'}>
           {t('card.detail')}<CaretRight size={13} />
         </button>
         {cmd && item.verified !== false && (
-          <button className="btn btn-ghost btn-sm" onClick={doCopy} title="dsh plugin --profile web add">
+          <button className="btn btn-cta btn-sm" onClick={doCopy} title="dsh plugin --profile web add">
             {copied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.install')}</>}
           </button>
         )}
@@ -347,14 +349,14 @@ function DetailModal({ item, onClose, onToast }) {
           <>
             <div className="install-box">
               <code>{cmd}</code>
-              <button className="btn btn-primary btn-sm" onClick={doCopy}>{copied ? t('detail.copied') : t('detail.copy')}</button>
+              <button className="btn btn-cta btn-sm" onClick={doCopy}>{copied ? t('detail.copied') : t('detail.copy')}</button>
             </div>
             <p className="card-desc">{t('detail.bundleNote')}</p>
           </>
         ) : (
           <>
             {/^https:\/\//.test(item.spec || '') && (
-              <a className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }} href={item.spec} target="_blank" rel="noreferrer">
+              <a className="btn btn-cta btn-sm" style={{ alignSelf: 'flex-start' }} href={item.spec} target="_blank" rel="noreferrer">
                 <DownloadSimple size={15} />{t('detail.packDownload')}
               </a>
             )}
@@ -393,7 +395,7 @@ function InstallCard({ onToast }) {
         <div><span className="prompt">$</span> dsh web</div>
         <div className="out">{t('install.after')}</div>
         <div className="term-actions">
-          <button className="btn btn-primary btn-sm" onClick={doCopy}>
+          <button className="btn btn-cta btn-sm" onClick={doCopy}>
             {copied ? <><Check size={13} />{t('install.copied')}</> : <><Copy size={13} />{t('install.copy')}</>}
           </button>
         </div>
@@ -757,7 +759,7 @@ export default function App() {
   const [detail, setDetail] = useState(null)
   const [toast, setToast] = useState(null)
   const [theme, setTheme] = useState(() => {
-    try { return localStorage.getItem('dsh-market-theme') || 'dark' } catch { return 'dark' }
+    try { return localStorage.getItem('dsh-market-theme') || 'light' } catch { return 'light' }
   })
   const [lang, setLang] = useState(() => {
     try { return localStorage.getItem('dsh-market-lang') || 'zh' } catch { return 'zh' }

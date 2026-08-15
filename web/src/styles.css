@@ -1,26 +1,6 @@
 /* DSH 插件市场：暗色 devtool 语言，单强调色（emerald），单圆角体系（容器 12 / 交互 10） */
+/* 默认亮色主题；[data-theme='dark'] 覆盖为暗色 */
 :root {
-  --bg: #0b0b0e;
-  --panel: #131318;
-  --panel-2: #1a1a21;
-  --border: #26262e;
-  --border-2: #34343e;
-  --text: #f4f4f6;
-  --text-2: #a2a2ad;
-  --text-3: #6d6d78;
-  --accent: #34d399;
-  --accent-ink: #04281c;
-  --warn: #fbbf24;
-  --error: #f87171;
-  --nav-bg: rgba(11, 11, 14, 0.86);
-  --term-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-  --radius-lg: 12px;
-  --radius-sm: 10px;
-  --font-ui: 'Outfit Variable', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace;
-}
-
-[data-theme='light'] {
   --bg: #f6f7f8;
   --panel: #ffffff;
   --panel-2: #f1f2f4;
@@ -31,10 +11,35 @@
   --text-3: #7c828c;
   --accent: #0a8f5f;
   --accent-ink: #ffffff;
+  --cta: #ea580c;
+  --cta-ink: #ffffff;
   --warn: #b7791f;
   --error: #dc2626;
   --nav-bg: rgba(246, 247, 248, 0.88);
   --term-shadow: 0 18px 44px rgba(23, 24, 28, 0.14);
+  --radius-lg: 12px;
+  --radius-sm: 10px;
+  --font-ui: 'Outfit Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace;
+}
+
+[data-theme='dark'] {
+  --bg: #0b0b0e;
+  --panel: #131318;
+  --panel-2: #1a1a21;
+  --border: #26262e;
+  --border-2: #34343e;
+  --text: #f4f4f6;
+  --text-2: #a2a2ad;
+  --text-3: #6d6d78;
+  --accent: #34d399;
+  --accent-ink: #04281c;
+  --cta: #fb923c;
+  --cta-ink: #2a0d00;
+  --warn: #fbbf24;
+  --error: #f87171;
+  --nav-bg: rgba(11, 11, 14, 0.86);
+  --term-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -85,6 +90,8 @@ a:hover { text-decoration: underline; }
 .btn:active { transform: translateY(1px); }
 .btn-primary { background: var(--accent); color: var(--accent-ink); }
 .btn-primary:hover { filter: brightness(1.08); text-decoration: none; }
+.btn-cta { background: var(--cta); color: var(--cta-ink); }
+.btn-cta:hover { filter: brightness(1.08); text-decoration: none; }
 .btn-ghost { background: transparent; color: var(--text-2); border-color: var(--border-2); }
 .btn-ghost:hover { color: var(--text); border-color: var(--text-3); text-decoration: none; }
 .btn-sm { padding: 6px 14px; font-size: 13px; }
@@ -133,7 +140,7 @@ a:hover { text-decoration: underline; }
 .toast {
   position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 200;
   display: flex; align-items: center; gap: 8px;
-  background: var(--accent); color: var(--accent-ink);
+  background: var(--cta); color: var(--cta-ink);
   font-size: 13.5px; font-weight: 550; padding: 10px 18px; border-radius: 999px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   animation: fade 160ms ease;

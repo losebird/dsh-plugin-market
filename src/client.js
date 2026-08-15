@@ -107,8 +107,8 @@ window.__ModuleLoader__.load({
 .dshm-card-actions { display:flex; gap:8px; align-items:center; }
 .dshm-btn { padding:6px 14px; border-radius:8px; border:1px solid var(--dsw-alias-border-l1); background:transparent; color:var(--dsw-alias-label-primary); font-size:12.5px; cursor:pointer; }
 .dshm-btn:hover { border-color:var(--dsw-alias-border-l2); }
-.dshm-btn-primary { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
-.dshm-btn-primary:hover { opacity:0.9; }
+.dshm-btn-primary { background:#fb923c; border-color:#fb923c; color:#2a0d00; }
+.dshm-btn-primary:hover { filter:brightness(1.08); opacity:1; }
 .dshm-btn-danger { background:var(--dsw-alias-state-error-primary); border-color:var(--dsw-alias-state-error-primary); color:#fff; }
 .dshm-btn-danger:hover { opacity:0.9; }
 .dshm-btn-ghost { color:var(--dsw-alias-label-secondary); }
@@ -165,6 +165,7 @@ window.__ModuleLoader__.load({
         return s
       }
       const catLabel = (item) => (CATEGORIES[item.category] || CATEGORIES.other)[store.lang]
+      const shortName = (n) => String(n || '').split('/').pop() || String(n || '')
       const toggleLang = () => {
         const next = store.lang === 'zh' ? 'en' : 'zh'
         patch({ lang: next })
@@ -232,7 +233,7 @@ window.__ModuleLoader__.load({
         const unavailable = item.status === 'unavailable'
         return h('div', { className: 'dshm-card', key: item.id },
           h('div', { className: 'dshm-card-top' },
-            h('div', { className: 'dshm-card-name' }, item.name),
+            h('div', { className: 'dshm-card-name' }, shortName(item.name)),
             h('div', { className: 'dshm-card-badges' },
               h('span', { className: 'dshm-pill dshm-pill-cat' }, catLabel(item)),
               item.version ? h('span', { className: 'dshm-pill' }, item.version) : null,
