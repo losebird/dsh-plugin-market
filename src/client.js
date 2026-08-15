@@ -76,7 +76,10 @@ window.__ModuleLoader__.load({
 .dshm-lang { border:1px solid var(--dsw-alias-border-l1); background:transparent; color:var(--dsw-alias-label-secondary); border-radius:8px; font:inherit; font-size:12px; padding:3px 9px; cursor:pointer; }
 .dshm-lang:hover { color:var(--dsw-alias-label-primary); }
 .dshm-toolbar { display:flex; gap:8px; padding:10px 18px; }
-.dshm-search { flex:1; padding:7px 10px; border:1px solid var(--dsw-alias-border-l1); border-radius:8px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); font-size:13px; }
+.dshm-searchwrap { position:relative; flex:1; }
+.dshm-search { width:100%; padding:7px 28px 7px 10px; border:1px solid var(--dsw-alias-border-l1); border-radius:8px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); font-size:13px; }
+.dshm-searchclear { position:absolute; right:7px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--dsw-alias-label-secondary); cursor:pointer; font-size:16px; line-height:1; padding:2px 5px; border-radius:6px; }
+.dshm-searchclear:hover { color:var(--dsw-alias-label-primary); background:var(--dsw-alias-bg-layer-1); }
 .dshm-search:focus { outline:none; border-color:var(--dsw-alias-brand-primary); }
 .dshm-strip { margin:0 18px 10px; padding:8px 12px; border-radius:8px; font-size:12px; }
 .dshm-strip-ok { background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-state-success-primary); }
@@ -359,7 +362,12 @@ window.__ModuleLoader__.load({
                 h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ open: false }) }, '×'),
               ),
               h('div', { className: 'dshm-toolbar' },
-                h('input', { className: 'dshm-search', placeholder: t('search'), value: st.q || '', onChange: (e) => patch({ q: e.target.value, page: 0 }) }),
+                h('div', { className: 'dshm-searchwrap' },
+                  h('input', { className: 'dshm-search', placeholder: t('search'), value: st.q || '', onChange: (e) => patch({ q: e.target.value, page: 0 }) }),
+                  (st.q && st.q.length > 0)
+                    ? h('button', { className: 'dshm-searchclear', title: 'clear', onClick: () => patch({ q: '', page: 0 }) }, '×')
+                    : null,
+                ),
                 h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => refresh() }, st.loading ? t('refreshing') : t('refresh')),
               ),
               h('div', { className: 'dshm-seg' },
