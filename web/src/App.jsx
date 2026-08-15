@@ -926,6 +926,7 @@ export default function App() {
           </a>
           <div className="nav-links">
             <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('directory') && document.getElementById('directory').scrollIntoView(), 0) }}>{t('nav.directory')}</button>
+            <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('faq') && document.getElementById('faq').scrollIntoView(), 0) }}>{t('faq.title')}</button>
             <a className="nav-link" href={'https://github.com/' + GITHUB_REPO} target="_blank" rel="noreferrer"><GithubLogo size={15} />{t('nav.repo')}</a>
             <button className="nav-link nav-cta" onClick={goSubmit}><UploadSimple size={15} />{t('nav.upload')}</button>
             <button
