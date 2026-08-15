@@ -57,10 +57,18 @@ function categorize(entry) {
 const ghJson = async (path) => {
   const headers = { 'user-agent': 'dsh-plugin-market-collector', accept: 'application/vnd.github+json' }
   if (TOKEN) headers.authorization = 'Bearer ' + TOKEN
-  const res = await fetch('https://api.github.com' + path, { headers })
-  if (res.status === 403 || res.status === 429) throw new Error('github rate limited: ' + path)
-  if (!res.ok) return null
-  return res.json()
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await fetch('https://api.github.com' + path, { headers })
+    if ((res.status === 403 || res.status === 429) && attempt === 0) {
+      console.warn('[collect] 限流，30s 后退避重试: ' + path)
+      await sleep(30000)
+      continue
+    }
+    if (res.status === 403 || res.status === 429) throw new Error('github rate limited: ' + path)
+    if (!res.ok) return null
+    return res.json()
+  }
+  return null
 }
 
 const normRepo = (fullName) => 'github.com/' + String(fullName).toLowerCase().replace(/\.git$/, '').replace(/\/+$/, '')
@@ -197,11 +205,16 @@ async function buildEntry(repo) {
   if (!repo.topicSourced && !hasDshSignal && !hasDshDep) return null
   const verified = !!(pkg && pkg.dsh && pkg.dsh.bundle && pkg.dsh.bundle.patch)
 
+  // 无 package.json 的 topic 仓库不再发起 releases/detail 调用（不可安装，省配额）
   let releases = null
-  try {
-    const rel = await ghJson('/repos/' + repo.full_name + '/releases?per_page=30')
-    if (Array.isArray(rel)) releases = rel
-  } catch {}
+  if (pkg) {
+    try {
+      const rel = await ghJson('/repos/' + repo.full_name + '/releases?per_page=30')
+      if (Array.isArray(rel)) releases = rel
+    } catch (e) {
+      console.warn('[collect] releases 获取失败（继续）: ' + repo.full_name)
+    }
+  }
   let downloads = 0
   let latest = null
   for (const r of releases || []) {
@@ -215,12 +228,16 @@ async function buildEntry(repo) {
   let license = repo.license
   let topics = repo.topics || []
   if (typeof stars !== 'number') {
-    const detail = await ghJson('/repos/' + repo.full_name)
-    if (detail) {
-      stars = detail.stargazers_count
-      description = description || detail.description
-      license = license || (detail.license && detail.license.spdx_id)
-      topics = detail.topics || topics
+    try {
+      const detail = await ghJson('/repos/' + repo.full_name)
+      if (detail) {
+        stars = detail.stargazers_count
+        description = description || detail.description
+        license = license || (detail.license && detail.license.spdx_id)
+        topics = detail.topics || topics
+      }
+    } catch (e) {
+      console.warn('[collect] repo 详情获取失败（继续）: ' + repo.full_name)
     }
   }
 
@@ -271,21 +288,28 @@ async function main() {
     if (seen.has(key)) continue
     seen.add(key)
     entries.push(entry)
-    await sleep(200)
+    await sleep(400)
   }
 
-  // 上轮存在、本轮未重新发现的条目：查一次 repo 状态，404/私有 → unavailable，否则保留旧数据
+  // 上轮存在、本轮未重新发现的条目：查一次 repo 状态，404/私有 → unavailable，限流/异常 → 保留原数据
   for (const prev of prevAuto) {
     const key = keyOf(prev)
     if (seen.has(key)) continue
-    const detail = await ghJson('/repos/' + prev.repo)
-    if (detail === null) {
+    let detail = null
+    try {
+      detail = await ghJson('/repos/' + prev.repo)
+    } catch (e) {
+      console.warn('[collect] 状态检查限流，保留原条目: ' + prev.repo)
+    }
+    if (detail === undefined) {
+      entries.push(prev)
+    } else if (detail === null) {
       entries.push({ ...prev, status: 'unavailable' })
       console.warn('[collect] 标记 unavailable: ' + prev.repo)
     } else {
       entries.push(prev)
     }
-    await sleep(200)
+    await sleep(400)
   }
 
   // curated 覆盖 auto（按包名/repo 键），all = curated ∪ auto-only
