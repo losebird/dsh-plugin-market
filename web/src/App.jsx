@@ -652,7 +652,7 @@ function LinksSection() {
   ]
   return (
     <section className="shell section links-sec" id="links">
-      <div className="links-title">{t('links.title')}</div>
+      <div className="section-head links-head"><h2>{t('links.title')}</h2></div>
       <div className="links-wall">
         {groups.map((g) => (
           <div className="links-group" key={g.label}>

@@ -207,13 +207,7 @@ a:hover { text-decoration: underline; }
 }
 
 .links-sec { padding-top: 8px; }
-.links-title {
-  font-size: 19px; font-weight: 700; letter-spacing: -0.01em;
-  background: linear-gradient(90deg, var(--accent), #2f7ce0, #a855f7);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  display: inline-block;
-}
+.links-head { justify-content: center; }
 .links-wall { display: flex; flex-direction: column; gap: 18px; align-items: stretch; margin-top: 16px; }
 .links-group { display: flex; align-items: flex-start; gap: 18px; }
 .links-label { flex: 0 0 104px; font-size: 15px; font-weight: 650; color: var(--text); padding-top: 8px; }
