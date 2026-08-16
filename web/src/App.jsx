@@ -7,7 +7,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
-const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.16'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.17'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -610,7 +610,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.16</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.17</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },

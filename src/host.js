@@ -59,7 +59,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.16',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.17',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -335,7 +335,8 @@ async function installedRows() {
     const name = e.options && e.options.name
     const rowId = e.options && e.options.id
     if (!name) continue
-    if (name.startsWith('@deepseek-ai/dsh-')) continue
+    if (name.startsWith('@deepseek-ai/')) continue
+    if (/^(cordis|typert|schemastery|cosmokit|minato|reggol|yakumo)(:|$)/i.test(name)) continue
     const inBundles = bundles.has(name)
     const marketRec = Object.values(marketInstalled).find((r) => r && (r.package === name || r.spec === name))
     rows.push({

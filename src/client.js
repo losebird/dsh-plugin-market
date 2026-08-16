@@ -117,7 +117,7 @@ window.__ModuleLoader__.load({
 .dshm-chip:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-brand-primary); }
 .dshm-chip.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
 .dshm-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:12px; align-content:start; }
-.dshm-card { display:flex; flex-direction:column; gap:8px; padding:16px; border:1px solid ${BORDER}; border-radius:12px; background:var(--dsw-alias-bg-base); }
+.dshm-card { display:flex; flex-direction:column; gap:6px; padding:12px; border:1px solid ${BORDER}; border-radius:12px; background:var(--dsw-alias-bg-base); }
 .dshm-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
 .dshm-card-name { font-size:13px; font-weight:600; color:var(--dsw-alias-label-primary); }
 .dshm-card-badges { display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
@@ -131,7 +131,7 @@ window.__ModuleLoader__.load({
 .dshm-pill-cat { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
 .dshm-card-author { font-size:12px; color:var(--dsw-alias-label-secondary); }
 .dshm-card-author a { color:var(--dsw-alias-brand-primary); text-decoration:none; }
-.dshm-card-desc { font-size:12.5px; color:var(--dsw-alias-label-secondary); line-height:1.5; flex:1; }
+.dshm-card-desc { font-size:12px; color:var(--dsw-alias-label-secondary); line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .dshm-card-tags { display:flex; gap:6px; flex-wrap:wrap; }
 .dshm-tag { font-size:11px; padding:1px 8px; border-radius:999px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-secondary); }
 .dshm-card-stats { display:flex; gap:12px; font-size:12px; color:var(--dsw-alias-label-secondary); }
@@ -504,7 +504,7 @@ window.__ModuleLoader__.load({
                       h('span', { className: 'dshm-pill' }, row.name),
                       h('span', { className: 'dshm-pill ' + (row.enabled ? 'dshm-pill-on' : 'dshm-pill-warn') }, row.enabled ? t('enabledLabel') : t('disabledLabel')),
                       row.failed ? h('span', { className: 'dshm-pill dshm-pill-off' }, t('failedLabel')) : null,
-                      h('span', { className: 'dshm-pill dshm-pill-auto' }, row.source === 'market' ? t('sourceMarket') : t('sourceManual')),
+                      h('span', { className: 'dshm-pill ' + (row.source === 'market' ? 'dshm-pill-on' : '') }, row.source === 'market' ? t('sourceMarket') : t('sourceManual')),
                       h('div', { className: 'dshm-manage-actions' },
                         h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => doToggle(row) }, row.enabled ? t('disable') : t('enable')),
                         item && installed && !upToDate
@@ -522,6 +522,11 @@ window.__ModuleLoader__.load({
         { name: 'settings.section', id: 'market', order: 17, label: () => (store.lang === 'zh' ? '插件市场' : 'Plugin Market') },
         (props) => {
           const st = useStore()
+          useEffect(() => {
+            if (props && typeof props.close === 'function') props.close()
+            patch({ open: true, detail: null })
+            if (st.items.length === 0 && !st.loading) refresh()
+          }, [])
           return h('div', { className: 'dshm-root' },
             h('button', {
               className: 'dshm-launch',

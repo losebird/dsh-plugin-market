@@ -8,8 +8,8 @@
       "type": "bundle",
       "package": "dsh-plugin-market",
       "repo": "losebird/dsh-plugin-market",
-      "spec": "github:losebird/dsh-plugin-market#v0.1.16",
-      "version": "v0.1.16",
+      "spec": "github:losebird/dsh-plugin-market#v0.1.17",
+      "version": "v0.1.17",
       "author": {
         "name": "losebird",
         "url": "https://github.com/losebird"
