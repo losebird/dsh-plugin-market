@@ -56,8 +56,8 @@ window.__ModuleLoader__.load({
         jobAutoClose: '本窗口将在 3 秒后自动关闭', jobClose: '关闭',
         readmeLang: '语言', readmeDefault: '默认',
         agentInstall: '交给 DSH 安装', agentUninstall: '交给 DSH 卸载',
-        agentNote: 'DSH 会阅读项目 README 并在此窗口内自动执行安装；需要你选择或确认时，会在此窗口内询问。',
-        agentNoteUninstall: 'DSH 会按项目 README 的卸载说明（或从各 profile 移除）自动卸载，需要确认时在此窗口内询问。',
+        agentNote: '点「安装」后，请求会发送给 DSH 会话：就像你在对话框里说“帮我装这个”一样，执行、提问与审批都在你的对话中进行。',
+        agentNoteUninstall: '点「卸载」后，请求会发送给 DSH 会话：它会按项目说明卸载，需要确认时会在对话中问你。',
         jobCancel: '取消', jobAnswerPlaceholder: '输入你的回答，回车提交…', jobSubmit: '提交',
       },
       en: {
@@ -95,8 +95,8 @@ window.__ModuleLoader__.load({
         jobAutoClose: 'This window closes automatically in 3 seconds', jobClose: 'Close',
         readmeLang: 'Language', readmeDefault: 'Default',
         agentInstall: 'Let DSH install', agentUninstall: 'Let DSH uninstall',
-        agentNote: 'DSH reads the project README and runs the install right in this window; when your choice or input is needed, it asks you here.',
-        agentNoteUninstall: 'DSH follows the README uninstall steps (or removes it from every profile) and asks you in this window when confirmation is needed.',
+        agentNote: 'Clicking Install hands the request to your DSH session — exactly like asking in the chat: execution, questions and approvals happen in your conversation.',
+        agentNoteUninstall: 'Clicking Uninstall hands the request to your DSH session, which follows the project instructions and asks you in the chat when confirmation is needed.',
         jobCancel: 'Cancel', jobAnswerPlaceholder: 'Type your answer and press Enter…', jobSubmit: 'Submit',
       },
     }
@@ -332,6 +332,7 @@ window.__ModuleLoader__.load({
               message: j.message || null,
               error: j.error || null,
               question: j.question || null,
+              delegated: j.delegated === true,
             }
             patch({ job: next })
             if (j.status === 'done' || j.status === 'error') {
@@ -339,11 +340,18 @@ window.__ModuleLoader__.load({
               patch({ busy: Object.assign({}, store.busy, { [item.id]: null }) })
               const isUninstall = next.kind === 'uninstall'
               patch({ notice: j.status === 'done' ? (j.message || (isUninstall ? t('msgUninstalled') : t('msgInstalled'))) : null, error: j.status === 'error' ? (j.error || t('errOp')) : null })
-              await refresh()
-              await loadInstalled()
-              setTimeout(() => {
-                if (store.job && store.job.id === id) patch({ job: null })
-              }, 3000)
+              if (j.delegated === true) {
+                // 交给 DSH 会话的任务：3 秒后连市场窗口一起关闭，让用户直接回到对话里跟进
+                setTimeout(() => {
+                  if (store.job && store.job.id === id) patch({ job: null, open: false, detail: null })
+                }, 3000)
+              } else {
+                await refresh()
+                await loadInstalled()
+                setTimeout(() => {
+                  if (store.job && store.job.id === id) patch({ job: null })
+                }, 3000)
+              }
             } else {
               jobTimers.set(id, setTimeout(() => tick(), 400))
             }
