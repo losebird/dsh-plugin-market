@@ -45,7 +45,7 @@ const CATEGORY_RULES = [
   { key: 'dev', re: /code|provider|model|language|translat|prompt|draft|cli|tui|input|smart|genui|repl|debug/ },
 ]
 
-function categorize(entry) {
+export function categorize(entry) {
   if (typeof entry.category === 'string' && entry.category.length > 0) return entry.category
   const hay = [entry.name, entry.description, (entry.tags || []).join(' ')].join(' ').toLowerCase()
   for (const rule of CATEGORY_RULES) {
@@ -73,7 +73,9 @@ const ghJson = async (path) => {
 
 const normRepo = (fullName) => 'github.com/' + String(fullName).toLowerCase().replace(/\.git$/, '').replace(/\/+$/, '')
 const normPkg = (name) => String(name).toLowerCase()
-const keyOf = (it) => (it.package ? 'pkg:' + normPkg(it.package) : 'repo:' + normRepo(it.repo))
+// 去重键：优先按仓库区分（同一 npm 包名的不同仓库是不同项目，如官方 fork 不应互相吞并），
+// 无仓库信息的条目才退回包名
+const keyOf = (it) => (it.repo ? 'repo:' + normRepo(it.repo) : (it.package ? 'pkg:' + normPkg(it.package) : 'id:' + String(it.id || '').toLowerCase()))
 const cleanTags = (tags) => (tags || [])
   .map((t) => String(t).trim())
   .filter((t) => t.length > 0 && t.length <= 32 && !NOISE_TAGS.has(t.toLowerCase()))
@@ -100,6 +102,7 @@ async function collectCandidates() {
     if (meta.license !== undefined) r.license = meta.license
     if (meta.topics !== undefined) r.topics = meta.topics
     if (meta.topicSourced === true) r.topicSourced = true
+    if (meta.orgSourced === true) r.orgSourced = true
     if (meta.pushedAt !== undefined) r.pushedAt = meta.pushedAt
   }
 
@@ -170,12 +173,19 @@ async function collectCandidates() {
     await sleep(300)
   }
 
-  // ④ 组织仓库列表
+  // ④ 组织仓库列表（org 成员身份本身即 DSH 相关性信号）
   for (const org of ORGS) {
     try {
       const res = await ghJson('/orgs/' + org + '/repos?per_page=100')
       if (Array.isArray(res)) {
-        for (const r of res) addRepo(r.full_name, { pushedAt: r.pushed_at || null })
+        for (const r of res) addRepo(r.full_name, {
+          pushedAt: r.pushed_at || null,
+          orgSourced: true,
+          stars: r.stargazers_count || 0,
+          description: r.description || '',
+          license: r.license && r.license.spdx_id ? r.license.spdx_id : null,
+          topics: r.topics || [],
+        })
         console.log('[collect] 组织 ' + org + ' 收录 ' + res.length + ' 个仓库')
       }
     } catch (e) {
@@ -287,7 +297,7 @@ export function detectInstallFromReadme(readme) {
 // add 的挂载判定 exportsPatch 一致）。topic 来源的仓库即使无声明也收录，
 // 标 verified: false（未验证，禁用一键安装）。
 // 上一轮已有数据的仓库直接复用版本/下载量/spec，跳过 releases 调用（省配额）。
-async function buildEntry(repo, prev) {
+export async function buildEntry(repo, prev) {
   const [, name] = repo.full_name.split('/')
   let pkg = null
   try {
@@ -297,7 +307,8 @@ async function buildEntry(repo, prev) {
   const hasDshSignal = !!(pkg && pkg.dsh && (pkg.dsh.bundle || pkg.dsh.client))
   const deps = pkg ? { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) } : {}
   const hasDshDep = Object.keys(deps).some((k) => k.startsWith('@deepseek-ai/dsh'))
-  if (!repo.topicSourced && !hasDshSignal && !hasDshDep) return null
+  // org 成员身份即相关性信号：官方组织仓库即使 package.json 未声明 dsh 字段也保留
+  if (!repo.topicSourced && !repo.orgSourced && !hasDshSignal && !hasDshDep) return null
   const verified = !!(pkg && pkg.dsh && pkg.dsh.bundle && pkg.dsh.bundle.patch)
 
   // 安装方式判定：优先取项目 README 写明的官方安装方式，其次按包特征启发式。

@@ -716,11 +716,13 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
   }, [base])
 
   const filtered = useMemo(() => {
+    const normSearch = (s) => String(s || '').toLowerCase().replace(/_/g, '-')
+    const qv = normSearch(q)
     return base.filter((it) => {
       if (cat && (it.category || 'other') !== cat) return false
       if (!q) return true
-      const hay = [it.name, it.description, it.id, (it.tags || []).join(' ')].join(' ').toLowerCase()
-      return hay.includes(q.toLowerCase())
+      const hay = normSearch([it.name, it.description, it.repo, it.package, it.id, (it.tags || []).join(' ')].join(' '))
+      return hay.includes(qv)
     })
   }, [base, cat, q])
 

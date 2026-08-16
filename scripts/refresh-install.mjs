@@ -12,7 +12,7 @@ const CONCURRENCY = 12
 
 const normPkg = (name) => String(name).toLowerCase()
 const normRepo = (fullName) => 'github.com/' + String(fullName).toLowerCase().replace(/\.git$/, '').replace(/\/+$/, '')
-const keyOf = (it) => (it.package ? 'pkg:' + normPkg(it.package) : 'repo:' + normRepo(it.repo))
+const keyOf = (it) => (it.repo ? 'repo:' + normRepo(it.repo) : (it.package ? 'pkg:' + normPkg(it.package) : 'id:' + String(it.id || '').toLowerCase()))
 
 const loadJson = (rel, fallback) => {
   const p = join(ROOT, rel)

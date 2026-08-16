@@ -749,7 +749,7 @@ window.__ModuleLoader__.load({
       }
 
       function ManageView(st) {
-        const qv = (st.mQ || '').trim().toLowerCase()
+        const qv = (st.mQ || '').trim().toLowerCase().replace(/_/g, '-')
         const counts = new Map()
         for (const row of st.mRows) {
           const item = st.items.find((it) => it.package === row.name)
@@ -761,7 +761,7 @@ window.__ModuleLoader__.load({
           const item = st.items.find((it) => it.package === row.name)
           if (st.mCat && ((item && item.category) || 'other') !== st.mCat) return false
           if (!qv) return true
-          const hay = [row.name, row.id].join(' ').toLowerCase()
+          const hay = [row.name, row.id, (item && item.repo) || ''].join(' ').toLowerCase().replace(/_/g, '-')
           return hay.indexOf(qv) !== -1
         })
         return h('div', { className: 'dshm-detail' },
@@ -941,7 +941,8 @@ window.__ModuleLoader__.load({
           }, [(st.job && st.job.lines && st.job.lines.length) || 0])
           const jobOverlay = st.job ? JobDialogView(st, jobRef) : null
           if (!st.open) return jobOverlay
-          const qv = (st.q || '').trim().toLowerCase()
+          const normSearch = (s) => String(s || '').toLowerCase().replace(/_/g, '-')
+          const qv = normSearch((st.q || '').trim())
           let base = st.items
           if (st.group === 'featured') {
             base = [...st.items].sort((a, b) => (b.stars || 0) - (a.stars || 0)).slice(0, 100)
@@ -961,7 +962,7 @@ window.__ModuleLoader__.load({
           const filtered = base.filter((it) => {
             if (st.cat && (it.category || 'other') !== st.cat) return false
             if (!qv) return true
-            const hay = [it.name, it.description, (it.tags || []).join(' '), it.id].join(' ').toLowerCase()
+            const hay = normSearch([it.name, it.description, it.repo, it.package, (it.tags || []).join(' '), it.id].join(' '))
             return hay.indexOf(qv) !== -1
           })
           const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
