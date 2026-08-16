@@ -810,7 +810,10 @@ async function installedRows() {
   const state = await readState()
   const marketInstalled = state.installed || {}
   const loader = installedRows.loader
-  const entries = loader ? loader.entries() : []
+  // entries() 是一次性 generator：必须先物化为数组，否则后面的 loaderNames
+  // 循环会把它消费光，branch ① 再遍历时得到零条目，全部插件都被误报为
+  // 未挂载/已禁用（enabled 恒为 false）。0.1.56 修复。
+  const entries = loader ? [...loader.entries()] : []
   const otherMap = await otherProfileMap()
   const loaderNames = new Set()
   for (const e of entries) {
