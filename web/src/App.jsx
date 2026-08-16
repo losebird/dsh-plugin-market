@@ -7,7 +7,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
-const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.43'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.44'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -607,10 +607,10 @@ function CopiedModal({ info, onClose, onOpenDetail }) {
   )
 }
 
-function WhaleMark({ size = 20 }) {
+function WhaleMark({ size = 22 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 512 512" aria-hidden="true">
-      <g transform="translate(256 276) scale(0.95) translate(-256 -276)">
+      <g transform="translate(256 258) scale(1.08) translate(-256 -258)">
         <g fill="#7EC8F7">
           <ellipse cx="392" cy="250" rx="58" ry="24" transform="rotate(24 392 250)" />
           <ellipse cx="392" cy="318" rx="58" ry="24" transform="rotate(-24 392 318)" />
@@ -817,7 +817,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.43</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.44</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },

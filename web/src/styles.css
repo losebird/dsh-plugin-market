@@ -59,7 +59,7 @@ a:hover { text-decoration: underline; }
 .nav-inner { height: 64px; display: flex; align-items: center; gap: 28px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 650; font-size: 15px; color: var(--text); }
 .brand:hover { text-decoration: none; }
-.brand-mark { width: 30px; height: 30px; border-radius: 9px; background: #ffffff; color: #5FA9E8; display: flex; align-items: center; justify-content: center; }
+.brand-mark { width: 30px; height: 30px; border-radius: 9px; background: transparent; color: #5FA9E8; display: flex; align-items: center; justify-content: center; }
 .nav-links { display: flex; gap: 4px; margin-left: auto; align-items: center; }
 .nav-link {
   border: 1px solid transparent; background: transparent; color: var(--text-2);
