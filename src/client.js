@@ -592,14 +592,7 @@ window.__ModuleLoader__.load({
                         h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall')))
                     : installed && upToDate
                       ? h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
-                      : h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => installClick(item) }, t('install'))),
-          item.verified === false && item.repo
-            ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
-                st.copiedRepo === item.id ? t('copied') : t('copyUrl'))
-            : null,
-          (item.install && (item.install.method === 'manual' || item.install.method === 'desktop'))
-            ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => openDetail(item) }, t('installGuide'))
-            : null,
+                      : h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) }, t('install'))),
         )
       }
 
@@ -692,7 +685,7 @@ window.__ModuleLoader__.load({
             !upToDate && item.type === 'bundle'
               && !(item.install && (item.install.method === 'manual' || item.install.method === 'desktop' || item.install.method === 'git-clone'
                 || ((item.install.method === 'script' && item.install.os) || item.install.method === 'npm-global' || item.install.method === 'command')))
-              ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => installClick(item) },
+              ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) },
                   installed ? t('update') : t('install'))
               : null,
             item.type === 'bundle' && item.verified !== false

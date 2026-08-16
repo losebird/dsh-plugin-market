@@ -1,10 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="128" fill="#4176E6"/>
+  <!-- 尾鳍：上下两叶（旋转椭圆） -->
   <g fill="#ffffff">
-    <rect x="172" y="64" width="42" height="108" rx="18"/>
-    <rect x="298" y="64" width="42" height="108" rx="18"/>
-    <polygon points="96,152 416,152 352,408 160,408"/>
-    <rect x="216" y="380" width="80" height="82" rx="18"/>
+    <ellipse cx="128" cy="234" rx="66" ry="30" transform="rotate(-24 128 234)"/>
+    <ellipse cx="128" cy="306" rx="66" ry="30" transform="rotate(24 128 306)"/>
   </g>
-  <polygon points="150,216 362,216 322,344 190,344" fill="#4176E6"/>
+  <!-- 身体 -->
+  <path d="M150 270 C164 192 244 158 336 160 C428 162 464 214 456 264 C450 310 418 338 372 344 C300 352 200 340 160 304 C144 292 142 282 150 270 Z" fill="#ffffff"/>
+  <!-- 腹部浅色 -->
+  <path d="M176 296 C220 330 290 344 352 336 C394 330 422 312 438 288 C410 322 310 348 214 330 C196 326 184 314 176 296 Z" fill="#CFE0FF"/>
+  <!-- 胸鳍 -->
+  <ellipse cx="252" cy="332" rx="44" ry="20" fill="#CFE0FF" transform="rotate(-18 252 332)"/>
+  <!-- 背鳍 -->
+  <path d="M330 176 C340 148 356 136 372 132 C368 150 366 166 366 178 Z" fill="#CFE0FF"/>
+  <!-- 眼睛 -->
+  <circle cx="388" cy="244" r="14" fill="#4176E6"/>
+  <circle cx="393" cy="239" r="4.5" fill="#ffffff"/>
+  <!-- 嘴线 -->
+  <path d="M420 276 C444 274 452 270 458 266" stroke="#4176E6" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.55"/>
+  <!-- 喷水 -->
+  <path d="M448 150 C452 130 452 112 444 94" stroke="#ffffff" stroke-width="16" stroke-linecap="round" fill="none"/>
+  <circle cx="438" cy="82" r="8" fill="#ffffff"/>
+  <circle cx="462" cy="112" r="6" fill="#ffffff"/>
 </svg>

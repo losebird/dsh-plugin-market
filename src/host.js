@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.33',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.34',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',

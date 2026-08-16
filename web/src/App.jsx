@@ -7,7 +7,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
-const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.33'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.34'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -327,7 +327,6 @@ function Badges({ item, t }) {
 function Card({ item, onOpen, onToast, onShowCopied }) {
   const { t } = useLang()
   const [copied, setCopied] = useState(false)
-  const [urlCopied, setUrlCopied] = useState(false)
   const cmd = installCommand(item)
   const cmds = installCommands(item)
   const doCopy = async () => {
@@ -336,15 +335,6 @@ function Card({ item, onOpen, onToast, onShowCopied }) {
       onToast(t('toast.copied'))
       if (onShowCopied) onShowCopied(item, cmds)
       setTimeout(() => setCopied(false), 1600)
-    }
-  }
-  const doCopyUrl = async () => {
-    const url = 'https://github.com/' + item.repo
-    if (await copyText(url)) {
-      setUrlCopied(true)
-      onToast(t('toast.repo'))
-      if (onShowCopied) onShowCopied(item, null, url)
-      setTimeout(() => setUrlCopied(false), 1600)
     }
   }
   return (
@@ -378,11 +368,6 @@ function Card({ item, onOpen, onToast, onShowCopied }) {
         {item.type === 'bundle' && item.status !== 'unavailable' && !cmd && (
           <button className="btn btn-primary btn-sm" onClick={() => onShowCopied && onShowCopied(item, cmds, null, true)}>
             <Copy size={13} />{t('card.install')}
-          </button>
-        )}
-        {item.verified === false && item.repo && (
-          <button className="btn btn-ghost btn-sm" onClick={doCopyUrl} title={'https://github.com/' + item.repo}>
-            {urlCopied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.copyUrl')}</>}
           </button>
         )}
         <span className="spacer" />
@@ -622,6 +607,26 @@ function CopiedModal({ info, onClose, onOpenDetail }) {
   )
 }
 
+function WhaleMark({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 512 512" aria-hidden="true">
+      <g fill="#ffffff">
+        <ellipse cx="128" cy="234" rx="66" ry="30" transform="rotate(-24 128 234)" />
+        <ellipse cx="128" cy="306" rx="66" ry="30" transform="rotate(24 128 306)" />
+      </g>
+      <path d="M150 270 C164 192 244 158 336 160 C428 162 464 214 456 264 C450 310 418 338 372 344 C300 352 200 340 160 304 C144 292 142 282 150 270 Z" fill="#ffffff" />
+      <path d="M176 296 C220 330 290 344 352 336 C394 330 422 312 438 288 C410 322 310 348 214 330 C196 326 184 314 176 296 Z" fill="#CFE0FF" />
+      <ellipse cx="252" cy="332" rx="44" ry="20" fill="#CFE0FF" transform="rotate(-18 252 332)" />
+      <path d="M330 176 C340 148 356 136 372 132 C368 150 366 166 366 178 Z" fill="#CFE0FF" />
+      <circle cx="388" cy="244" r="14" fill="#4176E6" />
+      <circle cx="393" cy="239" r="4.5" fill="#ffffff" />
+      <path d="M448 150 C452 130 452 112 444 94" stroke="#ffffff" strokeWidth="16" strokeLinecap="round" fill="none" />
+      <circle cx="438" cy="82" r="8" fill="#ffffff" />
+      <circle cx="462" cy="112" r="6" fill="#ffffff" />
+    </svg>
+  )
+}
+
 /* ── 首页安装卡 ───────────────────────────────────── */
 function InstallStrip({ onToast }) {
   const { t } = useLang()
@@ -809,7 +814,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.33</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.34</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },
@@ -1128,7 +1133,7 @@ export default function App() {
       <nav className="nav">
         <div className="nav-inner shell">
           <a className="brand" href="#top" onClick={goHome}>
-            <span className="brand-mark"><Plug size={16} weight="bold" /></span>
+            <span className="brand-mark"><WhaleMark size={16} /></span>
             DSH Plugin Market
           </a>
           <div className="nav-links">
