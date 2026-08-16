@@ -59,7 +59,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.13',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.14',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -144,9 +144,26 @@ async function list() {
 }
 
 async function install(args) {
-  if (!args || typeof args !== 'object' || typeof args.id !== 'string' || typeof args.type !== 'string' || typeof args.spec !== 'string') {
+  if (!args || typeof args !== 'object' || typeof args.id !== 'string' || typeof args.type !== 'string') {
     return { ok: false, error: '参数错误' }
   }
+  // 安装方式分发：按插件自身声明的方法执行
+  const method = args.install && args.install.method ? args.install.method : (args.type === 'pack' ? 'pack' : 'dsh-plugin-add')
+  if (method === 'npm-global' || method === 'command') {
+    const cmd = (args.install && args.install.command) || (method === 'npm-global' ? 'npm install -g ' + (args.package || args.id) : '')
+    if (!cmd) return { ok: false, error: '缺少安装命令' }
+    const r = await runShell(cmd, 600000, { fullAccess: true })
+    if (!r.ok) return { ok: false, error: (r.stderr || '').trim() || '安装失败' }
+    const state = await readState()
+    const installed = state.installed || {}
+    installed[args.id] = { type: 'bundle', spec: args.spec || cmd, package: args.package || null, at: new Date().toISOString(), installCmd: cmd }
+    await writeState({ installed })
+    return { ok: true, message: '安装完成: ' + cmd }
+  }
+  if (method === 'desktop' || method === 'manual') {
+    return { ok: false, error: '该插件需按其仓库说明安装，请打开详情查看 README' }
+  }
+  if (typeof args.spec !== 'string') return { ok: false, error: '参数错误' }
   if (args.type === 'bundle') {
     if (!validBundleSpec(args.spec)) return { ok: false, error: '非法的安装源 spec' }
     const r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })

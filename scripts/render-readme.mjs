@@ -36,7 +36,7 @@ const v = items.filter((i) => i.verified !== false).length
 lines.push(`**${items.length}** 个插件 · **${v}** 个可一键安装`)
 lines.push('', '安装市场：', '')
 lines.push('```bash')
-lines.push('dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.13')
+lines.push('dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.14')
 lines.push('dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮')
 lines.push('```', '')
 lines.push('网站：https://www.dsh-plugin.shop · 仓库：https://github.com/losebird/dsh-plugin-market', '')
@@ -57,6 +57,7 @@ for (const [k, label] of CATS) {
     const marks = []
     if (it.verified === false) marks.push('未验证')
     if (it.type === 'pack') marks.push('扩展包')
+    if (it.install && (it.install.method === 'manual' || it.install.method === 'desktop')) marks.push('手动安装')
     if (it.version) marks.push(String(it.version))
     const markStr = marks.length > 0 ? ' · ' + marks.join(' · ') : ''
     lines.push(`- [${name}](${repo}) ${desc} ⭐ ${fmt(it.stars)} ⬇ ${fmt(it.downloads)}${markStr}`)

@@ -7,7 +7,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
-const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.13'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.14'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -59,6 +59,7 @@ const I18N = {
     'detail.packDownload': '下载扩展包 zip',
     'detail.packNote': '下载 zip 后在 DSH 插件市场弹窗中选择「从本地导入」，或手动解压到对应目录（skill 放 ~/.agents/skills/，preset 放 ~/.dsh/.agent-presets/）。',
     'detail.repo': '查看仓库', 'detail.unavailable': '该条目仓库已删除或转为私有',
+    'detail.manualNote': '该插件按其仓库说明安装，请参考下方项目说明。',
     'detail.unverified': '该仓库未声明 dsh.bundle.patch，一键安装不可用（直接 dsh plugin add 只会作为普通依赖安装、不会挂载插件）。请到仓库查看作者提供的手工安装方式。',
     'how.title': '工作原理',
     'how.sub': '没有私有后端。插件数据就是仓库里的 JSON 文件，每天由 GitHub Actions 自动采集、去重、合并，网站与 DSH 弹窗读的是同一份数据。',
@@ -134,6 +135,7 @@ const I18N = {
     'detail.packDownload': 'Download pack zip',
     'detail.packNote': 'Download the zip, then import it from the DSH Plugin Market modal, or extract manually (skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/).',
     'detail.repo': 'View repo', 'detail.unavailable': 'This repo has been deleted or made private',
+    'detail.manualNote': 'This plugin installs per its repo instructions; see the README below.',
     'detail.unverified': 'This repo does not declare dsh.bundle.patch, so one-click install is unavailable (dsh plugin add would only add it as a plain dependency). Check the repo for the author\'s manual install steps.',
     'how.title': 'How it works',
     'how.sub': 'No private backend. Plugin data is just JSON files in the repo, collected, deduplicated and merged by GitHub Actions daily. The website and the DSH modal read the same data.',
@@ -227,6 +229,9 @@ function fmtNum(n) {
 }
 
 function installCommand(item) {
+  const m = item.install && item.install.method
+  if (m === 'command' || m === 'npm-global') return item.install.command || ''
+  if (m === 'pack' || m === 'manual' || m === 'desktop') return ''
   return item.type === 'bundle' ? 'dsh plugin --profile web add ' + item.spec : ''
 }
 
@@ -383,7 +388,9 @@ function DetailModal({ item, onClose, onToast }) {
             {readme.status === 'ready' && <div className="readme" dangerouslySetInnerHTML={{ __html: readme.html }} />}
           </>
         )}
-        {item.type === 'bundle' && item.verified === false ? (
+        {item.type === 'bundle' && item.install && (item.install.method === 'manual' || item.install.method === 'desktop') ? (
+          <div className="strip strip-demo"><Warning size={15} /> {t('detail.manualNote')}</div>
+        ) : item.type === 'bundle' && item.verified === false ? (
           <div className="strip strip-demo"><Warning size={15} /> {t('detail.unverified')}</div>
         ) : item.type === 'bundle' ? (
           <>
@@ -603,7 +610,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.13</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.14</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },

@@ -45,6 +45,7 @@ window.__ModuleLoader__.load({
         mSearch: '搜索已安装…', mEmpty: '还没有通过插件市场或 dsh plugin add 安装的插件。',
         enable: '启用', disable: '禁用', enabledLabel: '已启用', disabledLabel: '已禁用',
         failedLabel: '加载失败', sourceMarket: '市场安装', sourceManual: '手动安装', elsewherePill: '在其他 profile',
+        installGuide: '安装说明', manualNote: '该插件按其仓库说明安装，请参考下方 README。',
         restartNote: '禁用/启用/删除在重启 dsh 后生效。',
       },
       en: {
@@ -71,6 +72,7 @@ window.__ModuleLoader__.load({
         mSearch: 'Search installed…', mEmpty: 'No plugins installed via the market or dsh plugin add yet.',
         enable: 'Enable', disable: 'Disable', enabledLabel: 'Enabled', disabledLabel: 'Disabled',
         failedLabel: 'Failed', sourceMarket: 'Market', sourceManual: 'Manual', elsewherePill: 'In another profile',
+        installGuide: 'Install guide', manualNote: 'This plugin installs per its repo instructions; see the README below.',
         restartNote: 'Disable / enable / remove take effect after restarting dsh.',
       },
     }
@@ -250,7 +252,7 @@ window.__ModuleLoader__.load({
       const runInstall = async (item) => {
         patch({ busy: Object.assign({}, store.busy, { [item.id]: 'install' }), error: null, notice: null })
         try {
-          const res = await api('install', { id: item.id, type: item.type, spec: item.spec, package: item.package || null })
+          const res = await api('install', { id: item.id, type: item.type, spec: item.spec, package: item.package || null, install: item.install || null })
           const ok = res && res.ok
           patch({
             busy: Object.assign({}, store.busy, { [item.id]: null }),
@@ -377,7 +379,9 @@ window.__ModuleLoader__.load({
                 ? h('span', { className: 'dshm-busy' }, t('offlineNote'))
                 : item.verified === false
                   ? h('span', { className: 'dshm-busy' }, t('unverNote'))
-                  : installed && !upToDate
+                  : item.install && (item.install.method === 'manual' || item.install.method === 'desktop')
+                    ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => openDetail(item) }, t('installGuide'))
+                    : installed && !upToDate
                     ? h('span', null,
                         h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('update')),
                         h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(item) }, t('uninstall')))
@@ -415,7 +419,7 @@ window.__ModuleLoader__.load({
             ? h('div', { className: 'dshm-card-tags' }, item.tags.map((tg) => h('span', { className: 'dshm-tag', key: tg }, tg)))
             : null,
           h('div', { className: 'dshm-card-actions' },
-            item.verified !== false && !upToDate
+            item.verified !== false && !upToDate && !(item.install && (item.install.method === 'manual' || item.install.method === 'desktop'))
               ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) },
                   installed ? t('update') : t('install'))
               : null,
@@ -434,6 +438,9 @@ window.__ModuleLoader__.load({
           ),
           item.verified === false
             ? h('div', { className: 'dshm-strip dshm-strip-err' }, t('unverNote'))
+            : null,
+          item.install && (item.install.method === 'manual' || item.install.method === 'desktop')
+            ? h('div', { className: 'dshm-strip dshm-strip-ok' }, t('manualNote'))
             : null,
           h('div', { className: 'dshm-readme-title' }, 'README'),
           st.readme === null

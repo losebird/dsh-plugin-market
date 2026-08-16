@@ -205,6 +205,18 @@ async function buildEntry(repo, prev) {
   if (!repo.topicSourced && !hasDshSignal && !hasDshDep) return null
   const verified = !!(pkg && pkg.dsh && pkg.dsh.bundle && pkg.dsh.bundle.patch)
 
+  // 安装方式判定：按插件自身特征给出（curated 可显式覆盖）
+  let install = null
+  if (verified) {
+    install = { method: 'dsh-plugin-add' }
+  } else if (pkg && pkg.bin) {
+    install = { method: 'npm-global', command: 'npm install -g ' + (pkg.name || '') }
+  } else if (pkg && (pkg.dependencies && pkg.dependencies.electron || pkg.devDependencies && pkg.devDependencies.electron)) {
+    install = { method: 'desktop' }
+  } else {
+    install = { method: 'manual' }
+  }
+
   const reuse = prev && prev.repo && prev.repo.toLowerCase() === repo.full_name.toLowerCase() && prev.status !== 'unavailable'
 
   let latest = null
@@ -269,6 +281,7 @@ async function buildEntry(repo, prev) {
     releasedAt: releasedAt,
     topicSourced: repo.topicSourced === true,
     verified: verified,
+    install: install,
     source: 'auto',
     auto: true,
   }
@@ -338,6 +351,11 @@ async function main() {
     if (Array.isArray(it.tags)) it.tags = cleanTags(it.tags)
     if (!('verified' in it)) it.verified = true
     if (!('source' in it)) it.source = 'curated'
+    if (!it.install) {
+      if (it.type === 'pack') it.install = { method: 'pack' }
+      else if (it.verified === false) it.install = { method: 'manual' }
+      else it.install = { method: 'dsh-plugin-add' }
+    }
   }
   all.sort((a, b) => (b.stars || 0) - (a.stars || 0))
 

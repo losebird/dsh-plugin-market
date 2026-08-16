@@ -8,8 +8,8 @@
       "type": "bundle",
       "package": "dsh-plugin-market",
       "repo": "losebird/dsh-plugin-market",
-      "spec": "github:losebird/dsh-plugin-market#v0.1.13",
-      "version": "v0.1.13",
+      "spec": "github:losebird/dsh-plugin-market#v0.1.14",
+      "version": "v0.1.14",
       "author": {
         "name": "losebird",
         "url": "https://github.com/losebird"
@@ -24,7 +24,10 @@
       "license": "MIT",
       "downloads": 0,
       "stars": 0,
-      "source": "curated"
+      "source": "curated",
+      "install": {
+        "method": "dsh-plugin-add"
+      }
     },
     {
       "id": "demo-hello",
@@ -53,7 +56,10 @@
         ],
         "presets": []
       },
-      "source": "curated"
+      "source": "curated",
+      "install": {
+        "method": "pack"
+      }
     }
   ]
 }
