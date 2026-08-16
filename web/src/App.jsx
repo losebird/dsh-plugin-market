@@ -36,7 +36,8 @@ const I18N = {
     'hero.statTotal': '个插件', 'hero.statVerified': '可一键安装', 'hero.statDaily': '数据来自 GitHub，每日自动采集',
     'hero.browse': '浏览目录', 'hero.upload': '上传插件',
     'install.title': '把插件市场装进你的 DSH',
-    'install.after': '重启后，侧栏 Settings 旁常驻「插件市场」按钮',
+    'install.after': '重启后，打开设置（Settings），里面会有「插件市场」入口',
+    'install.noDshA': '如果本地没有 dsh 命令，请到 ', 'install.noDshB': ' 查找答案。',
     'install.copy': '复制安装命令', 'install.copied': '已复制',
     'toast.copied': '安装命令已复制，粘贴到终端执行即可',
     'toast.repo': '项目地址已复制',
@@ -108,7 +109,7 @@ const I18N = {
     'footer.data': '数据源 github.com/{repo}，每日自动采集，全部可审计',
     'footer.install': '安装请在 DSH 应用内「插件市场」弹窗中完成',
     'faq.title': '常见问题',
-    'faq.q1': '如何安装插件市场？', 'faq.a1a': '在终端执行 ', 'faq.a1b': '，然后重启 dsh。重启后侧栏 Settings 旁常驻「插件市场」按钮。',
+    'faq.q1': '如何安装插件市场？', 'faq.a1a': '在终端执行 ', 'faq.a1b': '，然后重启 dsh。重启后打开设置（Settings），在设置面板里找到「插件市场」入口。',
     'faq.q2': '如何在 DSH 里安装插件？', 'faq.a2a': '打开插件市场弹窗，点卡片上的「安装」即可；也可以复制安装命令到终端执行 ', 'faq.a2b': '（把 spec 换成对应插件）。扩展包类插件先下载 zip，再在弹窗里导入。',
     'faq.q3': '为什么我的终端里没有 dsh 命令？', 'faq.a3a': '如果你是用 ', 'faq.a3b': ' 方式启动的，dsh 命令并没有安装到系统里。先全局安装 ', 'faq.a3c': '，之后 dsh 系列命令（dsh web、dsh plugin add 等）就都可用了。',
     'faq.q4': '为什么有些插件标着「未验证」？', 'faq.a4a': '它们的仓库没有声明 ', 'faq.a4b': '，直接 dsh plugin add 只会作为普通依赖安装、不会挂载成插件。请参考作者仓库的手工安装说明。',
@@ -125,7 +126,8 @@ const I18N = {
     'hero.statTotal': 'plugins', 'hero.statVerified': 'one-click install', 'hero.statDaily': 'from GitHub, collected daily',
     'hero.browse': 'Browse', 'hero.upload': 'Submit plugin',
     'install.title': 'Install the market into your DSH',
-    'install.after': 'After restart, a Plugin Market button stays beside Settings in the sidebar',
+    'install.after': 'After restart, open Settings — the Plugin Market entry is inside',
+    'install.noDshA': 'If the dsh command is missing on this machine, check the ', 'install.noDshB': ' for answers.',
     'install.copy': 'Copy install command', 'install.copied': 'Copied',
     'toast.copied': 'Install command copied. Paste it in your terminal to run.',
     'toast.repo': 'Repo URL copied',
@@ -197,7 +199,7 @@ const I18N = {
     'footer.data': 'Data source github.com/{repo}, collected daily, fully auditable',
     'footer.install': 'Install from the Plugin Market modal inside DSH',
     'faq.title': 'FAQ',
-    'faq.q1': 'How do I install the market itself?', 'faq.a1a': 'Run ', 'faq.a1b': ' in your terminal, then restart dsh. The Plugin Market button then stays beside Settings in the sidebar.',
+    'faq.q1': 'How do I install the market itself?', 'faq.a1a': 'Run ', 'faq.a1b': ' in your terminal, then restart dsh. Open Settings afterwards — the Plugin Market is a section inside Settings.',
     'faq.q2': 'How do I install a plugin?', 'faq.a2a': 'Open the market modal and click Install on a card, or copy the command and run ', 'faq.a2b': ' (replace with the plugin spec). For packs, download the zip and import it in the modal.',
     'faq.q3': 'Why is there no dsh command in my terminal?', 'faq.a3a': 'If you started dsh with ', 'faq.a3b': ', the dsh command is not installed on your system. Install it globally with ', 'faq.a3c': ', then all dsh commands (dsh web, dsh plugin add, etc.) become available.',
     'faq.q4': 'Why are some plugins marked Unverified?', 'faq.a4a': 'Their repos do not declare ', 'faq.a4b': ', so dsh plugin add would only add them as plain dependencies without mounting. Check the repo for manual install steps.',
@@ -634,13 +636,18 @@ function InstallStrip({ onToast }) {
     }
   }
   return (
-    <div className="hero-install">
-      <span className="hero-install-label"><Plug size={14} weight="fill" />{t('install.title')}</span>
-      <code>dsh plugin --profile web add {INSTALL_SPEC}</code>
-      <button className="btn btn-primary btn-sm" onClick={doCopy}>
-        {copied ? <><Check size={13} />{t('install.copied')}</> : <><Copy size={13} />{t('install.copy')}</>}
-      </button>
-    </div>
+    <>
+      <div className="hero-install">
+        <span className="hero-install-label"><Plug size={14} weight="fill" />{t('install.title')}</span>
+        <code>dsh plugin --profile web add {INSTALL_SPEC}</code>
+        <button className="btn btn-primary btn-sm" onClick={doCopy}>
+          {copied ? <><Check size={13} />{t('install.copied')}</> : <><Copy size={13} />{t('install.copy')}</>}
+        </button>
+      </div>
+      <p className="hero-install-note">
+        {t('install.noDshA')}<a href="#faq">FAQ</a>{t('install.noDshB')}
+      </p>
+    </>
   )
 }
 
@@ -809,7 +816,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.47</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>{'dsh plugin --profile web add ' + INSTALL_SPEC}</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },

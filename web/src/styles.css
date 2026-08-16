@@ -100,6 +100,8 @@ a:hover { text-decoration: underline; }
   background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
   padding: 8px 10px 8px 14px; font-size: 13px;
 }
+.hero-install-note { margin-top: 10px; font-size: 12.5px; color: var(--text-3); text-align: center; }
+.hero-install-note a { color: var(--accent); }
 .hero-install-label { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-weight: 550; }
 .hero-install code { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); }
 .badge-featured { color: var(--accent); border-color: rgba(77, 107, 254, 0.55); }
