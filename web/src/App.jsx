@@ -7,7 +7,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
-const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.42'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.43'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -610,22 +610,21 @@ function CopiedModal({ info, onClose, onOpenDetail }) {
 function WhaleMark({ size = 20 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 512 512" aria-hidden="true">
-      <g transform="translate(290 232) scale(1.1) translate(-290 -232)">
-        <g fill="#ffffff">
-          <ellipse cx="128" cy="234" rx="66" ry="30" transform="rotate(-24 128 234)" />
-          <ellipse cx="128" cy="306" rx="66" ry="30" transform="rotate(24 128 306)" />
+      <g transform="translate(256 276) scale(0.95) translate(-256 -276)">
+        <g fill="#7EC8F7">
+          <ellipse cx="392" cy="250" rx="58" ry="24" transform="rotate(24 392 250)" />
+          <ellipse cx="392" cy="318" rx="58" ry="24" transform="rotate(-24 392 318)" />
         </g>
-        <path d="M150 270 C164 192 244 158 336 160 C428 162 464 214 456 264 C450 310 418 338 372 344 C300 352 200 340 160 304 C144 292 142 282 150 270 Z" fill="#ffffff" />
-        <path d="M176 296 C220 330 290 344 352 336 C394 330 422 312 438 288 C410 322 310 348 214 330 C196 326 184 314 176 296 Z" fill="#CFE0FF" />
-        <ellipse cx="252" cy="332" rx="44" ry="20" fill="#CFE0FF" transform="rotate(-18 252 332)" />
-        <path d="M330 176 C340 148 356 136 372 132 C368 150 366 166 366 178 Z" fill="#CFE0FF" />
-        <circle cx="388" cy="244" r="14" fill="#4176E6" />
-        <circle cx="393" cy="239" r="4.5" fill="#ffffff" />
-        <path d="M420 276 C444 274 452 270 458 266" stroke="#4176E6" strokeWidth="6" strokeLinecap="round" fill="none" opacity="0.6" />
-        <rect x="424" y="46" width="26" height="102" rx="13" fill="#ffffff" />
-        <rect x="458" y="46" width="26" height="102" rx="13" fill="#ffffff" />
-        <circle cx="437" cy="30" r="7" fill="#ffffff" />
-        <circle cx="471" cy="30" r="7" fill="#ffffff" />
+        <ellipse cx="258" cy="292" rx="150" ry="108" fill="#7EC8F7" />
+        <path d="M108 292 A150 108 0 0 1 408 292 Z" fill="#6FB4EC" />
+        <ellipse cx="176" cy="336" rx="88" ry="50" fill="#ffffff" />
+        <path d="M196 314 C178 334 176 356 188 368 C202 362 212 348 218 328 Z" fill="#5FA9E8" />
+        <circle cx="126" cy="262" r="12" fill="#1E3A5F" />
+        <circle cx="122" cy="258" r="4" fill="#ffffff" />
+        <path d="M302 184 C302 154 296 130 282 110" stroke="#5FA9E8" strokeWidth="18" strokeLinecap="round" fill="none" />
+        <path d="M306 178 C314 154 326 138 342 126" stroke="#5FA9E8" strokeWidth="12" strokeLinecap="round" fill="none" />
+        <circle cx="276" cy="100" r="10" fill="#5FA9E8" />
+        <circle cx="350" cy="118" r="8" fill="#5FA9E8" />
       </g>
     </svg>
   )
@@ -818,7 +817,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.42</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.43</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },
