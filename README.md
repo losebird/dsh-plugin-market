@@ -4,12 +4,12 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**2261** 个插件 · **1659** 个可一键安装
+**2286** 个插件 · **1668** 个可一键安装
 
 安装市场：
 
 ```bash
-dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.36
+dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.50
 dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 ```
 
@@ -25,9 +25,9 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [通信与移动](#comm) (70)
 - [安全与权限](#auth) (117)
 - [技能与扩展](#skills) (66)
-- [市场与发现](#market) (139)
+- [市场与发现](#market) (140)
 - [趣味与个性](#fun) (26)
-- [其他](#other) (253)
+- [其他](#other) (277)
 
 ## 界面与主题
 
@@ -1938,6 +1938,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-session-cleaner](https://github.com/fountunt/dsh-session-cleaner) Delete DeepSeek Harness sessions from the running web runtime: live store detach, workspac ⭐ 4 ⬇ 0 · v1.0.2
 - [dsh-plugin-store](https://github.com/wink-run/dsh-plugin-store) deepseek harness  plugin store ⭐ 4 ⬇ 0 · 未验证 · git clone
 - [dsh-mcp-manager](https://github.com/Nichts0v0/dsh-mcp-manager) MCP server manager for DeepSeek Harness: manage MCP servers from the Web settings page, st ⭐ 3 ⬇ 0 · 未验证 · 手动安装
+- [dsh-plugin-market](https://github.com/TheYoungChen/dsh-plugin-market) DeepSeek Harness plugin market: browse the dsh-plugin GitHub topic and install plugins fro ⭐ 3 ⬇ 0 · v1.0.0
 - [dsh-vault](https://github.com/Ox0400/dsh-vault) Encrypted credential vault for DeepSeek Harness: store and retrieve usernames, emails, pho ⭐ 3 ⬇ 0 · v1.4.0
 - [dsh-checkpoint-rewind](https://github.com/PerryLink/dsh-checkpoint-rewind) Claude Code /rewind equivalent for DeepSeek Harness: git-first workspace file snapshots be ⭐ 3 ⬇ 0 · v0.4.0
 - [awesome-dsh-background-plugin](https://github.com/leavestring/awesome-dsh-background-plugin) DSH Web background settings plugin with local image upload and live preview. ⭐ 3 ⬇ 0 · 手动安装
@@ -1994,7 +1995,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-plugin-container](https://github.com/GHJIVHIDD/dsh-plugin-container) DeepSeek Harness 本地 Docker 容器管理部署级插件：提供「容器」页签、仅观察/干预双模式 UI、18 个 docker_* 智能体工具与只读实时 Shell  ⭐ 1 ⬇ 0 · v0.1.0
 - [dsh-zhipu-vision](https://github.com/xingling80/dsh-zhipu-vision) Zhipu (智谱) GLM-4V vision understanding for DSH: agent tool zhipu_vision (local image path  ⭐ 1 ⬇ 0 · 手动安装
 - [dsh-community-plugins](https://github.com/HubaKing/dsh-community-plugins) DSH 社区插件生态指南：注册「dsh-community-plugins」skill，让每个会话都知道本 harness 已内置插件市场（dshmarket / dsh-plug ⭐ 1 ⬇ 9 · v0.1.2
-- [DSH 插件市场](https://github.com/losebird/dsh-plugin-market) DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。 ⭐ 0 ⬇ 0 · v0.1.35
+- [DSH 插件市场](https://github.com/losebird/dsh-plugin-market) DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。 ⭐ 0 ⬇ 0 · v0.1.50
 - [dsh-market-fixtures](https://github.com/smarturchin0011/dsh-market-fixtures) DSH plugin marketplace test fixtures: catalog.json with demo dynamic plugins (pass/warn/re ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [dsh-desktop](https://github.com/LvsH13/dsh-desktop) DeepSeek Harness Windows desktop companion: tray icon (whale), desktop shortcut, login aut ⭐ 0 ⬇ 0
 - [dsh-plug-manager](https://github.com/Casually/deepseek-harness-plugs-manage) DeepSeek Harness 插件管理器：发现 GitHub dsh-plugin topic 下的插件仓库，通过 `dsh plugin` 安装/移除/更新 profile  ⭐ 0 ⬇ 0 · 手动安装
@@ -2322,6 +2323,30 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-diary](https://github.com/hyperMoss/dsh-diary) Diary plugin for DeepSeek Harness: daily markdown journal entries, custom templates, and a ⭐ 0 ⬇ 0
 - [dsh-mojian](https://github.com/shuaixiangzi/dsh-mojian) 墨间 · DeepSeek Harness 小说工坊。网页写作室 + dsh-plugin。 ⭐ 0 ⬇ 0 · 未验证
 - [deepseekharness-audio-notifier](https://github.com/ziphow/deepseekharness-audio-notifier) DeepseekHarness 任务完成提示音插件：任务完成时随机播放提示音，内置默认音频开箱即用，支持音频池/音量/开关与持久化设置（学习用 Demo） ⭐ 0 ⬇ 0 · 未验证 · 手动安装
+- [dsh-container](https://github.com/omdsh-dev/dsh-container) dsh-container ⭐ 0 ⬇ 0 · 未验证 · 手动安装
+- [dsh-tianshu-tui](https://github.com/omdsh-dev/dsh-tianshu-tui) dsh-tianshu-tui: an interactive TUI layer over the dsh-base profile, installable as a plug ⭐ 0 ⬇ 0 · 手动安装 · 0.1.2-rc.10
+- [dsh-whale-report](https://github.com/omdsh-dev/dsh-whale-report) 鲸鱼记事本 — 你的 Agent 年度/月度/周度/日报：从会话事件日志生成数据新闻官式报告，任意区间、定时生成。 ⭐ 0 ⬇ 0 · 手动安装 · 0.2.0
+- [dsh-browser4](https://github.com/omdsh-dev/dsh-browser4) Browser4 skills bundle for DeepSeek Harness — AI-native browser automation (browser4-cli)  ⭐ 0 ⬇ 0 · 官方脚本安装 · 4.13.3
+- [dsh-skill-stats](https://github.com/omdsh-dev/dsh-skill-stats) Skill usage statistics for DSH: counts every skill invocation across sessions (replay of e ⭐ 0 ⬇ 0 · git clone · 0.1.0
+- [dsh-root](https://github.com/omdsh-dev/dsh-science) dsh-science ⭐ 0 ⬇ 0 · 未验证 · git clone · 0.1.0-rc.5
+- [dsh-coding](https://github.com/omdsh-dev/dsh-coding) dsh-coding ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · 0.1.0
+- [deepseek-harness-desktop](https://github.com/omdsh-dev/deepseek-harness-desktop) deepseek-harness-desktop ⭐ 0 ⬇ 0 · 未验证 · 手动安装
+- [awesome-dsh-plugin](https://github.com/omdsh-dev/awesome-dsh-plugin) A curated list of DeepSeek Harness (dsh) plugins · DeepSeek Harness 插件精选列表 ⭐ 0 ⬇ 0 · 未验证 · 0.1.0
+- [dsh-usage-stats](https://github.com/omdsh-dev/dsh-usage-stats) Token usage heatmap, provider balances, and subscription quotas for the dsh web GUI ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · 0.1.2
+- [dsh-drag-and-drop](https://github.com/omdsh-dev/dsh-drag-and-drop) Drag local files into the DSH Web UI and insert their original filesystem paths without up ⭐ 0 ⬇ 0 · 0.1.5
+- [dsh-toybox](https://github.com/omdsh-dev/toybox) DSH 插件玩具箱 —— 构建链：TypeScript 源码（plugins/<id>/src/*.mts）→ 单文件 MCP 服务器产物（.dsh-plugin/server/* ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · 0.1.0-rc.2
+- [dsh-github-integration](https://github.com/omdsh-dev/dsh-github-integration) dsh-github-integration ⭐ 0 ⬇ 0 · 未验证 · 手动安装
+- [dsh-meep](https://github.com/omdsh-dev/dsh-meep) dsh-meep ⭐ 0 ⬇ 0 · 未验证 · 手动安装
+- [dsh-ui-whale](https://github.com/omdsh-dev/dsh-ui-whale) DSH Web UI 像素鲸鱼伙伴插件：会话标题栏常驻，平时眨眼/偶尔摆尾/动胸鳍，思考运行时持续动起来，回合完成头顶喷水，点击冒爱心，零核心改动。 ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · 0.3.3
+- [dsh-ui-progress](https://github.com/omdsh-dev/dsh-ui-progress) DSH Web UI 会话进度插件：输入框停靠区常驻会话进度条（todos 真实进度 / 无投影默认 100% / 中断橘红态 / 实时 token 生成速率），零核心改动。 ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · 0.9.1
+- [dsh-minigames](https://github.com/omdsh-dev/dsh-minigames) DSH Web UI 右侧小游戏面板：18 款离线小游戏，可扩展游戏注册表。等待模型回复或修 bug 时的摸鱼神器。 ⭐ 0 ⬇ 0 · git clone · 0.3.2
+- [dsh-bash-encoding](https://github.com/omdsh-dev/dsh-bash-encoding) DSH bash 输出编码自动识别插件：替换 ctx.bash，自管 spawn 收集原始字节，自动检测 UTF-16LE/UTF-8/GBK 等编码并正确解码，修复 WSL/Wi ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · 0.1.0
+- [dsh-paste-input](https://github.com/omdsh-dev/dsh-paste-input) DSH WebUI 文件输入增强：Ctrl+V 粘贴（带首次告知弹窗）与拖拽/选择文件，发送时复制进会话工作区临时目录 ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · 0.1.3
+- [dsh-input-history](https://github.com/omdsh-dev/dsh-input-history) DSH Web 输入历史插件：Ctrl+Up / Ctrl+Down 像终端一样召回与切换已发送消息，零核心改动 ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · 0.1.1
+- [dsh-sidechain](https://github.com/omdsh-dev/dsh-sidechain) DSH side-conversation plugin: /side and /btw start a side conversation in an ephemeral for ⭐ 0 ⬇ 0 · 0.6.3
+- [workflow](https://github.com/omdsh-dev/dsh_workflow) KodaX-parity dynamic workflow harness for DeepSeek Harness ⭐ 0 ⬇ 0 · 手动安装 · 0.1.2
+- [omdsh](https://github.com/omdsh-dev/omdsh) Private staging source for the Oh My DSH community distribution. ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · 0.0.0
+- [dsh-tool-browser](https://github.com/omdsh-dev/dsh-tool-browser) dsh-tool-browser ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 
 ---
 

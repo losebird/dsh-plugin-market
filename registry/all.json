@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16T06:36:35.805Z",
+  "updatedAt": "2026-08-16T11:37:19.516Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -23197,6 +23197,34 @@
       "source": "auto",
       "auto": true,
       "category": "session"
+    },
+    {
+      "id": "dsh-plugin-market",
+      "name": "dsh-plugin-market",
+      "type": "bundle",
+      "package": "dsh-plugin-market",
+      "repo": "TheYoungChen/dsh-plugin-market",
+      "spec": "github:TheYoungChen/dsh-plugin-market#v1.0.0",
+      "version": "v1.0.0",
+      "author": {
+        "name": "TheYoungChen",
+        "url": "https://github.com/TheYoungChen"
+      },
+      "description": "DeepSeek Harness plugin market: browse the dsh-plugin GitHub topic and install plugins from a panel above Settings.",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 3,
+      "releasedAt": "2026-08-16T02:54:00Z",
+      "topicSourced": true,
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "market"
     },
     {
       "id": "dsh-think-any-lang",
@@ -51297,8 +51325,8 @@
       "type": "bundle",
       "package": "dsh-plugin-market",
       "repo": "losebird/dsh-plugin-market",
-      "spec": "github:losebird/dsh-plugin-market#v0.1.35",
-      "version": "v0.1.35",
+      "spec": "github:losebird/dsh-plugin-market#v0.1.50",
+      "version": "v0.1.50",
       "author": {
         "name": "losebird",
         "url": "https://github.com/losebird"
@@ -68361,6 +68389,687 @@
         "source": "readme",
         "command": "git clone --recurse-submodules"
       }
+    },
+    {
+      "id": "dsh-container-dsh-container",
+      "name": "dsh-container",
+      "type": "bundle",
+      "package": null,
+      "repo": "omdsh-dev/dsh-container",
+      "spec": "github:omdsh-dev/dsh-container",
+      "version": null,
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "dsh-container",
+      "tags": [],
+      "license": "UNKNOWN",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "huiliyi37-dsh-tianshu-tui-dsh-tianshu-tui",
+      "name": "@huiliyi37/dsh-tianshu-tui",
+      "type": "bundle",
+      "package": "@huiliyi37/dsh-tianshu-tui",
+      "repo": "omdsh-dev/dsh-tianshu-tui",
+      "spec": "github:omdsh-dev/dsh-tianshu-tui",
+      "version": "0.1.2-rc.10",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "dsh-tianshu-tui: an interactive TUI layer over the dsh-base profile, installable as a plugin (`dsh plugin --profile tui add @huiliyi37/dsh-tianshu-tui`)",
+      "tags": [],
+      "license": "Apache-2.0",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": true,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-whale-report-dsh-whale-report",
+      "name": "dsh-whale-report",
+      "type": "bundle",
+      "package": "dsh-whale-report",
+      "repo": "omdsh-dev/dsh-whale-report",
+      "spec": "github:omdsh-dev/dsh-whale-report",
+      "version": "0.2.0",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "鲸鱼记事本 — 你的 Agent 年度/月度/周度/日报：从会话事件日志生成数据新闻官式报告，任意区间、定时生成。",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": true,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-browser4",
+      "name": "dsh-browser4",
+      "type": "bundle",
+      "package": "dsh-browser4",
+      "repo": "omdsh-dev/dsh-browser4",
+      "spec": "github:omdsh-dev/dsh-browser4",
+      "version": "4.13.3",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "Browser4 skills bundle for DeepSeek Harness — AI-native browser automation (browser4-cli) for autonomous agents, intelligent extraction, and large-scale web automation. Registers the Browser4 skills (browser4-cli, browser4-experience, browser4-plugin, scent-miner) into the DSH skill registry.",
+      "tags": [],
+      "license": "Apache-2.0",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": true,
+      "install": {
+        "method": "script",
+        "source": "readme",
+        "scriptUrl": "https://browser4.oss-cn-beijing.aliyuncs.com/scripts/install-browser4-cli.sh",
+        "os": {
+          "win32": "irm https://browser4.oss-cn-beijing.aliyuncs.com/scripts/install-browser4-cli.ps1 | iex",
+          "darwin": "curl -fsSL https://browser4.oss-cn-beijing.aliyuncs.com/scripts/install-browser4-cli.sh | bash",
+          "linux": "curl -fsSL https://browser4.oss-cn-beijing.aliyuncs.com/scripts/install-browser4-cli.sh | bash"
+        }
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-external-dsh-skill-stats",
+      "name": "@dsh-external/dsh-skill-stats",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-skill-stats",
+      "repo": "omdsh-dev/dsh-skill-stats",
+      "spec": "github:omdsh-dev/dsh-skill-stats",
+      "version": "0.1.0",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "Skill usage statistics for DSH: counts every skill invocation across sessions (replay of existing logs + live session/event subscription), detects zombie skills, and helps decide which skills to keep.",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": true,
+      "install": {
+        "method": "git-clone",
+        "source": "readme",
+        "command": "git clone git@github.com:chen-zz20/dsh-skill-stats.git"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "deepseek-ai-dsh-root-dsh-science",
+      "name": "@deepseek-ai/dsh-root",
+      "type": "bundle",
+      "package": "@deepseek-ai/dsh-root",
+      "repo": "omdsh-dev/dsh-science",
+      "spec": "github:omdsh-dev/dsh-science",
+      "version": "0.1.0-rc.5",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "dsh-science",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "git-clone",
+        "source": "readme",
+        "command": "git clone https://github.com/deepseek-ai/deepseek-harness.git"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-coding",
+      "name": "dsh-coding",
+      "type": "bundle",
+      "package": "dsh-coding",
+      "repo": "omdsh-dev/dsh-coding",
+      "spec": "github:omdsh-dev/dsh-coding",
+      "version": "0.1.0",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "dsh-coding",
+      "tags": [],
+      "license": "UNKNOWN",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "deepseek-harness-desktop-deepseek-harness-desktop",
+      "name": "deepseek-harness-desktop",
+      "type": "bundle",
+      "package": null,
+      "repo": "omdsh-dev/deepseek-harness-desktop",
+      "spec": "github:omdsh-dev/deepseek-harness-desktop",
+      "version": null,
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "deepseek-harness-desktop",
+      "tags": [],
+      "license": "UNKNOWN",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "awesome-dsh-plugin-awesome-dsh-plugin",
+      "name": "awesome-dsh-plugin",
+      "type": "bundle",
+      "package": "awesome-dsh-plugin",
+      "repo": "omdsh-dev/awesome-dsh-plugin",
+      "spec": "github:omdsh-dev/awesome-dsh-plugin",
+      "version": "0.1.0",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "A curated list of DeepSeek Harness (dsh) plugins · DeepSeek Harness 插件精选列表",
+      "tags": [],
+      "license": "CC0-1.0",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "dsh-plugin-add",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-usage-stats-dsh-usage-stats",
+      "name": "dsh-usage-stats",
+      "type": "bundle",
+      "package": "dsh-usage-stats",
+      "repo": "omdsh-dev/dsh-usage-stats",
+      "spec": "github:omdsh-dev/dsh-usage-stats",
+      "version": "0.1.2",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "Token usage heatmap, provider balances, and subscription quotas for the dsh web GUI",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "omdsh-dev-dsh-drag-and-drop-dsh-drag-and-drop",
+      "name": "@omdsh-dev/dsh-drag-and-drop",
+      "type": "bundle",
+      "package": "@omdsh-dev/dsh-drag-and-drop",
+      "repo": "omdsh-dev/dsh-drag-and-drop",
+      "spec": "github:omdsh-dev/dsh-drag-and-drop",
+      "version": "0.1.5",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "Drag local files into the DSH Web UI and insert their original filesystem paths without uploading or copying them",
+      "tags": [],
+      "license": "BSD-3-Clause",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-toybox",
+      "name": "dsh-toybox",
+      "type": "bundle",
+      "package": "dsh-toybox",
+      "repo": "omdsh-dev/toybox",
+      "spec": "github:omdsh-dev/toybox",
+      "version": "0.1.0-rc.2",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "DSH 插件玩具箱 —— 构建链：TypeScript 源码（plugins/<id>/src/*.mts）→ 单文件 MCP 服务器产物（.dsh-plugin/server/*.mjs）",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-github-integration",
+      "name": "dsh-github-integration",
+      "type": "bundle",
+      "package": null,
+      "repo": "omdsh-dev/dsh-github-integration",
+      "spec": "github:omdsh-dev/dsh-github-integration",
+      "version": null,
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "dsh-github-integration",
+      "tags": [],
+      "license": "UNKNOWN",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-meep",
+      "name": "dsh-meep",
+      "type": "bundle",
+      "package": null,
+      "repo": "omdsh-dev/dsh-meep",
+      "spec": "github:omdsh-dev/dsh-meep",
+      "version": null,
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "dsh-meep",
+      "tags": [],
+      "license": "UNKNOWN",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-external-dsh-ui-whale-dsh-ui-whale",
+      "name": "@dsh-external/dsh-ui-whale",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-ui-whale",
+      "repo": "omdsh-dev/dsh-ui-whale",
+      "spec": "github:omdsh-dev/dsh-ui-whale",
+      "version": "0.3.3",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "DSH Web UI 像素鲸鱼伙伴插件：会话标题栏常驻，平时眨眼/偶尔摆尾/动胸鳍，思考运行时持续动起来，回合完成头顶喷水，点击冒爱心，零核心改动。",
+      "tags": [],
+      "license": "BSD-3-Clause",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-external-dsh-ui-progress-dsh-ui-progress",
+      "name": "@dsh-external/dsh-ui-progress",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-ui-progress",
+      "repo": "omdsh-dev/dsh-ui-progress",
+      "spec": "github:omdsh-dev/dsh-ui-progress",
+      "version": "0.9.1",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "DSH Web UI 会话进度插件：输入框停靠区常驻会话进度条（todos 真实进度 / 无投影默认 100% / 中断橘红态 / 实时 token 生成速率），零核心改动。",
+      "tags": [],
+      "license": "BSD-3-Clause",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-external-dsh-minigames-dsh-minigames",
+      "name": "@dsh-external/dsh-minigames",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-minigames",
+      "repo": "omdsh-dev/dsh-minigames",
+      "spec": "github:omdsh-dev/dsh-minigames",
+      "version": "0.3.2",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "DSH Web UI 右侧小游戏面板：18 款离线小游戏，可扩展游戏注册表。等待模型回复或修 bug 时的摸鱼神器。",
+      "tags": [],
+      "license": "BSD-3-Clause",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": true,
+      "install": {
+        "method": "git-clone",
+        "source": "readme",
+        "command": "git clone https://github.com/omdsh-dev/dsh-minigames.git"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-external-dsh-bash-encoding-dsh-bash-encoding",
+      "name": "@dsh-external/dsh-bash-encoding",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-bash-encoding",
+      "repo": "omdsh-dev/dsh-bash-encoding",
+      "spec": "github:omdsh-dev/dsh-bash-encoding",
+      "version": "0.1.0",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "DSH bash 输出编码自动识别插件：替换 ctx.bash，自管 spawn 收集原始字节，自动检测 UTF-16LE/UTF-8/GBK 等编码并正确解码，修复 WSL/Windows 下 bash 工具的中文乱码。",
+      "tags": [],
+      "license": "BSD-3-Clause",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-community-dsh-paste-input-dsh-paste-input",
+      "name": "@dsh-community/dsh-paste-input",
+      "type": "bundle",
+      "package": "@dsh-community/dsh-paste-input",
+      "repo": "omdsh-dev/dsh-paste-input",
+      "spec": "github:omdsh-dev/dsh-paste-input",
+      "version": "0.1.3",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "DSH WebUI 文件输入增强：Ctrl+V 粘贴（带首次告知弹窗）与拖拽/选择文件，发送时复制进会话工作区临时目录",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-external-dsh-input-history-dsh-input-history",
+      "name": "@dsh-external/dsh-input-history",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-input-history",
+      "repo": "omdsh-dev/dsh-input-history",
+      "spec": "github:omdsh-dev/dsh-input-history",
+      "version": "0.1.1",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "DSH Web 输入历史插件：Ctrl+Up / Ctrl+Down 像终端一样召回与切换已发送消息，零核心改动",
+      "tags": [],
+      "license": "BSD-3-Clause",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-external-dsh-sidechain-dsh-sidechain",
+      "name": "@dsh-external/dsh-sidechain",
+      "type": "bundle",
+      "package": "@dsh-external/dsh-sidechain",
+      "repo": "omdsh-dev/dsh-sidechain",
+      "spec": "github:omdsh-dev/dsh-sidechain",
+      "version": "0.6.3",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "DSH side-conversation plugin: /side and /btw start a side conversation in an ephemeral fork of the current session (Codex /side & /btw semantics).",
+      "tags": [],
+      "license": "BSD-3-Clause",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-external-workflow-dsh_workflow",
+      "name": "@dsh-external/workflow",
+      "type": "bundle",
+      "package": "@dsh-external/workflow",
+      "repo": "omdsh-dev/dsh_workflow",
+      "spec": "github:omdsh-dev/dsh_workflow",
+      "version": "0.1.2",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "KodaX-parity dynamic workflow harness for DeepSeek Harness",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": true,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "omdsh-omdsh",
+      "name": "@omdsh/omdsh",
+      "type": "bundle",
+      "package": "@omdsh/omdsh",
+      "repo": "omdsh-dev/omdsh",
+      "spec": "github:omdsh-dev/omdsh",
+      "version": "0.0.0",
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "Private staging source for the Oh My DSH community distribution.",
+      "tags": [],
+      "license": "MIT",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
+    },
+    {
+      "id": "dsh-tool-browser",
+      "name": "dsh-tool-browser",
+      "type": "bundle",
+      "package": null,
+      "repo": "omdsh-dev/dsh-tool-browser",
+      "spec": "github:omdsh-dev/dsh-tool-browser",
+      "version": null,
+      "author": {
+        "name": "omdsh-dev",
+        "url": "https://github.com/omdsh-dev"
+      },
+      "description": "dsh-tool-browser",
+      "tags": [],
+      "license": "UNKNOWN",
+      "downloads": 0,
+      "stars": 0,
+      "releasedAt": null,
+      "topicSourced": false,
+      "verified": false,
+      "install": {
+        "method": "manual",
+        "source": "readme"
+      },
+      "source": "auto",
+      "auto": true,
+      "category": "other"
     }
   ]
 }
