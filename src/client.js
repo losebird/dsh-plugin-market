@@ -99,7 +99,7 @@ window.__ModuleLoader__.load({
 .dshm-viewbtn.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
 .dshm-toolbar { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; }
 .dshm-searchwrap { position:relative; min-width:0; }
-.dshm-search { width:100%; padding:7px 28px 7px 10px; border:1px solid ${BORDER}; border-radius:8px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); font-size:13px; }
+.dshm-search { width:100%; box-sizing:border-box; padding:7px 30px 7px 10px; border:1px solid ${BORDER}; border-radius:8px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); font-size:13px; }
 .dshm-search:focus { outline:none; border-color:var(--dsw-alias-brand-primary); }
 .dshm-searchclear { position:absolute; right:7px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--dsw-alias-label-secondary); cursor:pointer; font-size:16px; line-height:1; padding:2px 5px; border-radius:6px; }
 .dshm-searchclear:hover { color:var(--dsw-alias-label-primary); }
@@ -114,7 +114,7 @@ window.__ModuleLoader__.load({
 .dshm-chip { border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12px; padding:3px 11px; border-radius:999px; cursor:pointer; }
 .dshm-chip:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-brand-primary); }
 .dshm-chip.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
-.dshm-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:10px; align-content:start; }
+.dshm-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:12px; align-content:start; }
 .dshm-card { display:flex; flex-direction:column; gap:7px; padding:12px; border:1px solid ${BORDER}; border-radius:10px; background:var(--dsw-alias-bg-base); }
 .dshm-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
 .dshm-card-name { font-size:13px; font-weight:600; color:var(--dsw-alias-label-primary); }
@@ -503,14 +503,18 @@ window.__ModuleLoader__.load({
         )
       }
 
-      slots.inject('settings.plugins.tab', () => slots.register(
-        { name: 'settings.plugins.tab', id: 'market', order: -1, label: () => (store.lang === 'zh' ? '插件市场' : 'Plugin Market') },
-        () => {
+      slots.inject('settings.section', () => slots.register(
+        { name: 'settings.section', id: 'market', order: 17, label: () => (store.lang === 'zh' ? '插件市场' : 'Plugin Market') },
+        (props) => {
           const st = useStore()
           return h('div', { className: 'dshm-root' },
             h('button', {
               className: 'dshm-launch',
-              onClick: () => { patch({ open: true, detail: null }); if (st.items.length === 0 && !st.loading) refresh() },
+              onClick: () => {
+                if (props && typeof props.close === 'function') props.close()
+                patch({ open: true, detail: null })
+                if (st.items.length === 0 && !st.loading) refresh()
+              },
             },
               h('span', { className: 'dshm-launch-title' },
                 h('svg', { width: 16, height: 16, viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5 },
