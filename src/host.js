@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.32',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.33',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -564,7 +564,7 @@ function startRemove(args) {
 
 // ── 交给 DSH 安装/卸载（agentic）：启动一个子代理阅读项目 README 并按说明执行，
 //    需要用户选择/输入时用 ask_user_question 弹窗询问，危险命令走 DSH 审批栈 ─────
-function agentPrompt(kind, name, repo, spec) {
+function agentPrompt(kind, name, repo, spec, unverified) {
   if (kind === 'install') {
     return [
       '请阅读 GitHub 仓库 https://github.com/' + repo + ' 的 README（如有中文/英文多语言版本，选其一），',
@@ -577,6 +577,7 @@ function agentPrompt(kind, name, repo, spec) {
       '   弹窗询问用户，不要擅自替用户做决定；',
       '3. 危险命令交给 DSH 审批流程（正常执行即可，用户会审批）；',
       '4. 装完核对结果（dsh 插件列表/README 验证步骤），并在最终回复里给出：装了什么、装到哪、重启要求。',
+      unverified ? '注意：该插件未声明 dsh.bundle，可能无法作为 profile 插件挂载；按 README 尽力安装，若确实无法挂载，向用户说明原因和替代方案。' : '',
     ].join('\n')
   }
   return [
@@ -609,7 +610,7 @@ async function performAgenticTask(kind, args, job) {
   try {
     run = await subagents.start(provider, {
       label: (kind === 'install' ? '安装插件 ' : '卸载插件 ') + name,
-      prompt: [{ type: 'text', text: agentPrompt(kind, name, repo, args.spec || '') }],
+      prompt: [{ type: 'text', text: agentPrompt(kind, name, repo, args.spec || '', args.verified === true) }],
       parent,
       signal: new AbortController().signal,
       outputSchema: {

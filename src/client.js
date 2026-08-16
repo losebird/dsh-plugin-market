@@ -31,7 +31,7 @@ window.__ModuleLoader__.load({
         installing: '安装中…', uninstalling: '卸载中…', installed: '已安装', latestPill: '已是最新',
         copyUrl: '复制地址', copied: '已复制', copyCmd: '复制命令',
         auto: '自动收录', unver: '未验证', demo: '演示', offline: '已下线',
-        offlineNote: '仓库已下线，无法安装', unverNote: '未验证（缺 dsh.bundle 声明），无法一键安装',
+        offlineNote: '仓库已下线，无法安装', unverNote: '未验证（缺少 dsh.bundle 声明）：安装将由 DSH 阅读 README 执行，可能无法挂载，请留意 DSH 对话中的提示。',
         typeBundle: 'DSH 插件', typePack: '扩展包', downloads: '下载量', stars: '星标',
         loading: '加载中…', empty: '没有匹配的插件',
         sourceRemote: 'registry 实时', sourceDemo: '演示数据',
@@ -45,7 +45,7 @@ window.__ModuleLoader__.load({
         mSearch: '搜索已安装…', mEmpty: '还没有通过插件市场或 dsh plugin add 安装的插件。',
         enable: '启用', disable: '禁用', enabledLabel: '已启用', disabledLabel: '已禁用',
         failedLabel: '加载失败', sourceMarket: '市场安装', sourceManual: '手动安装', elsewherePill: '在其他 profile',
-        installGuide: '安装说明', manualNote: '该插件按其仓库说明安装，请参考下方 README。', migrate: '迁移到 web',
+        installGuide: '安装说明', manualNote: '该插件按项目 README 安装：点「安装」后由 DSH 自动执行，需要你选择时会在 DSH 对话中询问。', migrate: '迁移到 web',
         restartNote: '禁用/启用/删除在重启 dsh 后生效。',
         officialInstall: '官方安装方式（来自项目 README）',
         scriptNote: '一键安装将执行当前系统对应的官方脚本。',
@@ -69,7 +69,7 @@ window.__ModuleLoader__.load({
         installing: 'Installing…', uninstalling: 'Uninstalling…', installed: 'Installed', latestPill: 'Up to date',
         copyUrl: 'Copy URL', copied: 'Copied', copyCmd: 'Copy command',
         auto: 'Auto', unver: 'Unverified', demo: 'Demo', offline: 'Offline',
-        offlineNote: 'Repo offline, cannot install', unverNote: 'Unverified (missing dsh.bundle), one-click install unavailable',
+        offlineNote: 'Repo offline, cannot install', unverNote: 'Unverified (no dsh.bundle declaration): DSH will read the README and install it; mounting may fail, so watch the DSH conversation for notes.',
         typeBundle: 'DSH plugin', typePack: 'Pack', downloads: 'Downloads', stars: 'Stars',
         loading: 'Loading…', empty: 'No matching plugins',
         sourceRemote: 'registry live', sourceDemo: 'demo data',
@@ -83,7 +83,7 @@ window.__ModuleLoader__.load({
         mSearch: 'Search installed…', mEmpty: 'No plugins installed via the market or dsh plugin add yet.',
         enable: 'Enable', disable: 'Disable', enabledLabel: 'Enabled', disabledLabel: 'Disabled',
         failedLabel: 'Failed', sourceMarket: 'Market', sourceManual: 'Manual', elsewherePill: 'In another profile',
-        installGuide: 'Install guide', manualNote: 'This plugin installs per its repo instructions; see the README below.', migrate: 'Migrate to web',
+        installGuide: 'Install guide', manualNote: 'This plugin installs per its README: clicking Install hands it to DSH, which asks you in the conversation when a choice is needed.', migrate: 'Migrate to web',
         restartNote: 'Disable / enable / remove take effect after restarting dsh.',
         officialInstall: 'Official install (from the project README)',
         scriptNote: 'One-click install runs the official script for your current OS.',
@@ -415,7 +415,7 @@ window.__ModuleLoader__.load({
           setTimeout(() => { if (store.job && store.job.id && String(store.job.id).indexOf('local-') === 0) patch({ job: null }) }, 3000)
         }
         try {
-          const res = await api(route, { id: item.id, name: item.name || item.id, repo: item.repo, spec: item.spec || '', package: item.package || null })
+          const res = await api(route, { id: item.id, name: item.name || item.id, repo: item.repo, spec: item.spec || '', package: item.package || null, verified: item.verified === false })
           if (res && res.ok && res.job) {
             patch({ job: { id: res.job, name: shortName(item.name || item.id), kind: kind === 'install' ? 'install' : 'uninstall', status: 'running', lines: [], message: null, error: null } })
             pollJob(res.job, item)
@@ -428,6 +428,14 @@ window.__ModuleLoader__.load({
       }
       const runAgentInstall = (item) => runAgentTask('install', item)
       const runAgentUninstall = (item) => runAgentTask('uninstall', item)
+
+      // 安装入口统一叫「安装」：确定性方法（dsh-plugin-add/script/npm-global/git-clone 且已核实）
+      // 走市场流水线；manual/desktop 与未验证插件交给 DSH 读 README 安装
+      const installClick = (item) => {
+        const m = item.install && item.install.method
+        const deterministic = item.verified !== false && m !== 'manual' && m !== 'desktop'
+        return deterministic ? () => runInstall(item) : () => runAgentInstall(item)
+      }
 
       const copyRepo = (item) => {
         const url = 'https://github.com/' + item.repo
@@ -576,25 +584,21 @@ window.__ModuleLoader__.load({
               ? h('span', { className: 'dshm-busy' }, busy === 'uninstall' ? t('uninstalling') : t('installing'))
               : unavailable
                 ? h('span', { className: 'dshm-busy' }, t('offlineNote'))
-                : item.verified === false
-                  ? h('span', { className: 'dshm-busy' }, t('unverNote'))
-                  : item.install && (item.install.method === 'manual' || item.install.method === 'desktop')
-                    ? [
-                        h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runAgentInstall(item) }, t('agentInstall')),
-                        h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => openDetail(item) }, t('installGuide')),
-                      ]
-                    : installedRaw && installedRaw.source === 'other'
-                      ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('migrate'))
-                      : installed && !upToDate
+                : installedRaw && installedRaw.source === 'other'
+                  ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('migrate'))
+                  : installed && !upToDate
                     ? h('span', null,
                         h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('update')),
                         h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall')))
                     : installed && upToDate
                       ? h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
-                      : h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('install'))),
+                      : h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => installClick(item) }, t('install'))),
           item.verified === false && item.repo
             ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
                 st.copiedRepo === item.id ? t('copied') : t('copyUrl'))
+            : null,
+          (item.install && (item.install.method === 'manual' || item.install.method === 'desktop'))
+            ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => openDetail(item) }, t('installGuide'))
             : null,
         )
       }
@@ -607,8 +611,8 @@ window.__ModuleLoader__.load({
         const copyBtn = (cmd, key) => h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyTextCmd(cmd, key) },
           st.copiedRepo === key ? t('copied') : t('copyCmd'))
         const installBtn = (enabled) => (enabled && !upToDate)
-          ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) },
-              (installed ? t('update') : t('installNow')) + ' · ' + osLabel(store.os))
+          ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => (item.verified === false ? runAgentInstall(item) : runInstall(item)) },
+              (installed ? t('update') : (item.verified === false ? t('install') : t('installNow') + ' · ' + osLabel(store.os))))
           : null
         if (inst.method === 'script' && inst.os) {
           const oses = osKeysOf(inst)
@@ -624,7 +628,7 @@ window.__ModuleLoader__.load({
             h('code', { className: 'dshm-cmd' }, inst.os[sel]),
             h('div', { className: 'dshm-install-actions' },
               copyBtn(inst.os[sel], item.id + ':os:' + sel),
-              installBtn(item.verified !== false)),
+              installBtn(true)),
             h('div', { className: 'dshm-card-desc' }, t('scriptNote')),
           )
         }
@@ -634,7 +638,7 @@ window.__ModuleLoader__.load({
             h('code', { className: 'dshm-cmd' }, cmd),
             h('div', { className: 'dshm-install-actions' },
               copyBtn(cmd, item.id + ':os:npm'),
-              installBtn(item.verified !== false)),
+              installBtn(true)),
           )
         }
         if (inst.method === 'git-clone') {
@@ -644,7 +648,7 @@ window.__ModuleLoader__.load({
             h('code', { className: 'dshm-cmd' }, cmd),
             h('div', { className: 'dshm-install-actions' },
               copyBtn(cmd, item.id + ':os:clone'),
-              installBtn(item.verified !== false)),
+              installBtn(true)),
             h('div', { className: 'dshm-card-desc' }, t('cloneNote')),
           )
         }
@@ -653,7 +657,7 @@ window.__ModuleLoader__.load({
             h('div', { className: 'dshm-install-title' }, t('officialInstall')),
             h('div', { className: 'dshm-install-actions' },
               (item.repo && !upToDate)
-                ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runAgentInstall(item) }, t('agentInstall'))
+                ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runAgentInstall(item) }, installed ? t('update') : t('install'))
                 : null),
             h('div', { className: 'dshm-card-desc' }, t('agentNote')),
           )
@@ -685,10 +689,10 @@ window.__ModuleLoader__.load({
             ? h('div', { className: 'dshm-card-tags' }, item.tags.map((tg) => h('span', { className: 'dshm-tag', key: tg }, tg)))
             : null,
           h('div', { className: 'dshm-card-actions' },
-            item.verified !== false && !upToDate
+            !upToDate && item.type === 'bundle'
               && !(item.install && (item.install.method === 'manual' || item.install.method === 'desktop' || item.install.method === 'git-clone'
                 || ((item.install.method === 'script' && item.install.os) || item.install.method === 'npm-global' || item.install.method === 'command')))
-              ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) },
+              ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => installClick(item) },
                   installed ? t('update') : t('install'))
               : null,
             item.type === 'bundle' && item.verified !== false

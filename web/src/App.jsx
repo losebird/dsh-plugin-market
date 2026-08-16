@@ -7,7 +7,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
-const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.32'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.33'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -47,6 +47,11 @@ const I18N = {
     'copiedModal.gotIt': '知道了', 'copiedModal.viewDetail': '查看详情',
     'copiedModal.urlGuide1': '该插件未验证，市场不提供一键安装；',
     'copiedModal.urlGuide2': '打开详情页，把项目地址发给 DSH，让它按仓库说明帮你安装。',
+    'copiedModal.stepsTitle': '安装方式（按项目 README）',
+    'copiedModal.steps1': '① 在 DSH 应用内打开侧栏「插件市场」，找到该插件点「安装」；',
+    'copiedModal.steps2': '② DSH 会阅读项目 README 并自动执行安装；需要你选择或确认时，会在 DSH 对话中弹窗询问；',
+    'copiedModal.steps3': '③ 安装完成后按提示重启 DSH 生效。',
+    'copiedModal.stepsUnverified': '该插件未验证（未声明 dsh.bundle）：DSH 会按 README 尽力安装，若无法挂载会向你说明原因。',
     'dir.title': '插件目录', 'dir.count': '{n} 个条目',
     'dir.demo': 'registry 暂不可用，当前展示演示数据。',
     'dir.search': '搜索名称、简介或标签',
@@ -131,6 +136,11 @@ const I18N = {
     'copiedModal.gotIt': 'Got it', 'copiedModal.viewDetail': 'View details',
     'copiedModal.urlGuide1': 'This plugin is unverified, so one-click install is unavailable;',
     'copiedModal.urlGuide2': 'Open the details and send the project URL to DSH to install it per the repo instructions.',
+    'copiedModal.stepsTitle': 'Install method (from the project README)',
+    'copiedModal.steps1': '1. In DSH, open the Plugin Market and click Install on this plugin;',
+    'copiedModal.steps2': '2. DSH reads the project README and installs automatically; when your choice is needed, it asks you in the DSH conversation;',
+    'copiedModal.steps3': '3. Restart DSH after the install as prompted.',
+    'copiedModal.stepsUnverified': 'This plugin is unverified (no dsh.bundle): DSH will try its best per the README and explain if it cannot be mounted.',
     'dir.title': 'Plugin Directory', 'dir.count': '{n} entries',
     'dir.demo': 'Registry unavailable, showing demo data.',
     'dir.search': 'Search name, description or tags',
@@ -360,13 +370,18 @@ function Card({ item, onOpen, onToast, onShowCopied }) {
         <button className="btn btn-ghost btn-sm" onClick={() => onOpen(item)} disabled={item.status === 'unavailable'}>
           {t('card.detail')}<CaretRight size={13} />
         </button>
-        {cmd && item.verified !== false && (
+        {item.type !== 'pack' && item.status !== 'unavailable' && cmd && (
           <button className="btn btn-primary btn-sm" onClick={doCopy} title={cmd}>
             {copied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.install')}</>}
           </button>
         )}
+        {item.type === 'bundle' && item.status !== 'unavailable' && !cmd && (
+          <button className="btn btn-primary btn-sm" onClick={() => onShowCopied && onShowCopied(item, cmds, null, true)}>
+            <Copy size={13} />{t('card.install')}
+          </button>
+        )}
         {item.verified === false && item.repo && (
-          <button className="btn btn-primary btn-sm" onClick={doCopyUrl} title={'https://github.com/' + item.repo}>
+          <button className="btn btn-ghost btn-sm" onClick={doCopyUrl} title={'https://github.com/' + item.repo}>
             {urlCopied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.copyUrl')}</>}
           </button>
         )}
@@ -553,14 +568,14 @@ function DetailModal({ item, onClose, onToast }) {
 function CopiedModal({ info, onClose, onOpenDetail }) {
   const { t } = useLang()
   if (!info) return null
-  const { item, cmds, url } = info
+  const { item, cmds, url, steps } = info
   const osOptions = OS_KEYS.filter((k) => cmds && cmds[k])
   const det = detectOS()
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
-          <h3>{t('copiedModal.title')}</h3>
+          <h3>{steps ? t('copiedModal.stepsTitle') : t('copiedModal.title')}</h3>
           <button className="modal-close" onClick={onClose} aria-label="close"><X size={18} /></button>
         </div>
         <p className="card-desc" style={{ marginTop: 4 }}>{item.name}</p>
@@ -582,6 +597,13 @@ function CopiedModal({ info, onClose, onOpenDetail }) {
           <>
             <p className="card-desc">{t('copiedModal.urlGuide1')}</p>
             <p className="card-desc">{t('copiedModal.urlGuide2')}</p>
+          </>
+        ) : steps ? (
+          <>
+            <p className="card-desc">{t('copiedModal.steps1')}</p>
+            <p className="card-desc">{t('copiedModal.steps2')}</p>
+            <p className="card-desc">{t('copiedModal.steps3')}</p>
+            {item.verified === false && <p className="card-desc">{t('copiedModal.stepsUnverified')}</p>}
           </>
         ) : (
           <>
@@ -787,7 +809,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.32</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.33</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },
@@ -1136,7 +1158,7 @@ export default function App() {
       <main id="top">
         {view === 'home' ? (
           <Home items={items} status={status} onGoSubmit={goSubmit} onOpenDetail={setDetail} onToast={showToast}
-            onShowCopied={(item, cmds, url) => setCopiedInfo({ item, cmds, url })} />
+            onShowCopied={(item, cmds, url, steps) => setCopiedInfo({ item, cmds, url, steps })} />
         ) : (
           <SubmitPage onBack={goHome} />
         )}
