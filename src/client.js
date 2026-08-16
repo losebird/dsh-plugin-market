@@ -55,6 +55,7 @@ window.__ModuleLoader__.load({
         jobTitleUninstall: '卸载进度', jobRunningUninstall: '正在卸载…', jobDoneUninstall: '卸载完成', jobFailedUninstall: '卸载失败',
         jobAutoClose: '本窗口将在 3 秒后自动关闭', jobClose: '关闭',
         readmeLang: '语言', readmeDefault: '默认',
+        officialSite: '官网',
         agentInstall: '交给 DSH 安装', agentUninstall: '交给 DSH 卸载',
         agentNote: '点「安装」后，请求会发送给 DSH 会话：就像你在对话框里说“帮我装这个”一样，执行、提问与审批都在你的对话中进行。',
         agentNoteUninstall: '点「卸载」后，请求会发送给 DSH 会话：它会按项目说明卸载，需要确认时会在对话中问你。',
@@ -94,6 +95,7 @@ window.__ModuleLoader__.load({
         jobTitleUninstall: 'Uninstall progress', jobRunningUninstall: 'Uninstalling…', jobDoneUninstall: 'Uninstall complete', jobFailedUninstall: 'Uninstall failed',
         jobAutoClose: 'This window closes automatically in 3 seconds', jobClose: 'Close',
         readmeLang: 'Language', readmeDefault: 'Default',
+        officialSite: 'Website',
         agentInstall: 'Let DSH install', agentUninstall: 'Let DSH uninstall',
         agentNote: 'Clicking Install hands the request to your DSH session — exactly like asking in the chat: execution, questions and approvals happen in your conversation.',
         agentNoteUninstall: 'Clicking Uninstall hands the request to your DSH session, which follows the project instructions and asks you in the chat when confirmation is needed.',
@@ -115,7 +117,9 @@ window.__ModuleLoader__.load({
 .dshm-panel { position:relative; display:flex; flex-direction:column; width:min(1100px, 96vw); height:min(760px, 92vh); background:var(--dsw-alias-bg-layer-1); border:1px solid ${BORDER}; border-radius:16px; box-shadow:0 24px 64px rgba(0,0,0,0.4); overflow:hidden; }
 .dshm-head { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid ${BORDER}; }
 .dshm-title { font-size:15px; font-weight:600; color:var(--dsw-alias-label-primary); }
-.dshm-head-badges { flex:1; display:flex; gap:6px; }
+.dshm-head-badges { flex:1; display:flex; gap:6px; align-items:center; }
+.dshm-slogan { font-size:12px; font-weight:700; letter-spacing:0.04em; background:linear-gradient(90deg,#4176E6,#7ee2ff,#a78bfa,#ff8ac2,#4176E6); background-size:300% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; animation:dshm-slogan-flow 6s linear infinite; white-space:nowrap; }
+@keyframes dshm-slogan-flow { 0% { background-position:0% 50%; } 100% { background-position:300% 50%; } }
 .dshm-close { margin-left:auto; border:none; background:transparent; color:var(--dsw-alias-label-secondary); font-size:20px; cursor:pointer; line-height:1; padding:2px 6px; border-radius:6px; }
 .dshm-close:hover { color:var(--dsw-alias-label-primary); background:var(--dsw-alias-bg-layer-2); }
 .dshm-body { flex:1; overflow-y:auto; padding:14px 16px 16px; display:flex; flex-direction:column; gap:10px; }
@@ -1035,7 +1039,9 @@ window.__ModuleLoader__.load({
                   h('div', { className: 'dshm-title' }, t('title')),
                   h('div', { className: 'dshm-head-badges' },
                     h('span', { className: 'dshm-pill' }, st.source === 'remote' ? t('sourceRemote') : t('sourceDemo')),
+                    h('span', { className: 'dshm-slogan' }, 'Everything is a Plugin.'),
                   ),
+                  h('a', { className: 'dshm-viewbtn', href: 'https://www.dsh-plugin.shop/', target: '_blank', rel: 'noreferrer', title: t('officialSite') }, t('officialSite')),
                   h('button', { className: 'dshm-viewbtn', title: 'switch language', onClick: toggleLang }, t('langBtn')),
                   h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ open: false, detail: null }) }, '×'),
                 ),
