@@ -45,7 +45,7 @@ jobs:
             echo "## 安装"
             echo ''
             echo '```bash'
-            echo "dsh plugin --profile web add github:losebird/dsh-plugin-market#$TAG"
+            echo "dsh plugin --profile web add @ace-zone/dsh-market"
             echo '```'
             echo ''
             echo '安装后完全重启 DSH，设置里出现「插件市场」。'
