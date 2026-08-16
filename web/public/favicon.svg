@@ -1,27 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="128" fill="#ffffff"/>
+  <rect width="512" height="512" rx="128" fill="#4176E6"/>
   <g transform="translate(290 232) scale(1.1) translate(-290 -232)">
     <!-- 尾鳍：上下两叶 -->
-    <g fill="#4176E6">
+    <g fill="#ffffff">
       <ellipse cx="128" cy="234" rx="66" ry="30" transform="rotate(-24 128 234)"/>
       <ellipse cx="128" cy="306" rx="66" ry="30" transform="rotate(24 128 306)"/>
     </g>
     <!-- 身体 -->
-    <path d="M150 270 C164 192 244 158 336 160 C428 162 464 214 456 264 C450 310 418 338 372 344 C300 352 200 340 160 304 C144 292 142 282 150 270 Z" fill="#4176E6"/>
+    <path d="M150 270 C164 192 244 158 336 160 C428 162 464 214 456 264 C450 310 418 338 372 344 C300 352 200 340 160 304 C144 292 142 282 150 270 Z" fill="#ffffff"/>
     <!-- 腹部浅色 -->
-    <path d="M176 296 C220 330 290 344 352 336 C394 330 422 312 438 288 C410 322 310 348 214 330 C196 326 184 314 176 296 Z" fill="#A9C2F7"/>
+    <path d="M176 296 C220 330 290 344 352 336 C394 330 422 312 438 288 C410 322 310 348 214 330 C196 326 184 314 176 296 Z" fill="#CFE0FF"/>
     <!-- 胸鳍 -->
-    <ellipse cx="252" cy="332" rx="44" ry="20" fill="#A9C2F7" transform="rotate(-18 252 332)"/>
+    <ellipse cx="252" cy="332" rx="44" ry="20" fill="#CFE0FF" transform="rotate(-18 252 332)"/>
     <!-- 背鳍 -->
-    <path d="M330 176 C340 148 356 136 372 132 C368 150 366 166 366 178 Z" fill="#A9C2F7"/>
-    <!-- 眼睛（白圈+蓝瞳） -->
-    <circle cx="388" cy="244" r="14" fill="#ffffff"/>
-    <circle cx="393" cy="239" r="4.5" fill="#4176E6"/>
+    <path d="M330 176 C340 148 356 136 372 132 C368 150 366 166 366 178 Z" fill="#CFE0FF"/>
+    <!-- 眼睛（蓝圈+白瞳） -->
+    <circle cx="388" cy="244" r="14" fill="#4176E6"/>
+    <circle cx="393" cy="239" r="4.5" fill="#ffffff"/>
     <!-- 嘴线 -->
-    <path d="M420 276 C444 274 452 270 458 266" stroke="#ffffff" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.7"/>
-    <!-- 喷水 -->
-    <path d="M448 150 C452 130 452 112 444 94" stroke="#4176E6" stroke-width="16" stroke-linecap="round" fill="none"/>
-    <circle cx="440" cy="42" r="9" fill="#4176E6"/>
-    <circle cx="464" cy="66" r="6" fill="#4176E6"/>
+    <path d="M420 276 C444 274 452 270 458 266" stroke="#4176E6" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.6"/>
+    <!-- 喷水 = 插头双插脚 -->
+    <rect x="424" y="46" width="26" height="102" rx="13" fill="#ffffff"/>
+    <rect x="458" y="46" width="26" height="102" rx="13" fill="#ffffff"/>
+    <circle cx="437" cy="30" r="7" fill="#ffffff"/>
+    <circle cx="471" cy="30" r="7" fill="#ffffff"/>
   </g>
 </svg>
