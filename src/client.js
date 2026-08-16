@@ -23,6 +23,7 @@ window.__ModuleLoader__.load({
     const I18N = {
       zh: {
         title: '插件市场', viewMarket: '市场', viewManage: '已安装',
+        openMarket: '打开插件市场', openHint: '浏览、安装与管理你的 DSH 插件',
         tabVerified: '可一键安装', tabUnverified: '未验证',
         tabFeatured: '精选插件', tabNew: '最新发布', tabHandmade: '大神手作',
         search: '搜索插件…', refresh: '刷新', refreshing: '刷新中…', all: '全部',
@@ -48,6 +49,7 @@ window.__ModuleLoader__.load({
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
+        openMarket: 'Open Plugin Market', openHint: 'Browse, install and manage your DSH plugins',
         tabVerified: 'One-click install', tabUnverified: 'Unverified',
         tabFeatured: 'Featured', tabNew: 'New', tabHandmade: 'By Makers',
         search: 'Search plugins…', refresh: 'Refresh', refreshing: 'Refreshing…', all: 'All',
@@ -78,6 +80,19 @@ window.__ModuleLoader__.load({
 
     const CSS = `
 .dshm-root { display:flex; flex-direction:column; gap:8px; font-size:13px; color:var(--dsw-alias-label-primary); width:100%; max-width:none; }
+.dshm-launch { display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding:16px 18px; border:1px solid ${BORDER}; border-radius:12px; background:var(--dsw-alias-bg-base); cursor:pointer; width:100%; text-align:left; }
+.dshm-launch:hover { border-color:var(--dsw-alias-brand-primary); }
+.dshm-launch-title { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:650; color:var(--dsw-alias-brand-primary); }
+.dshm-launch-hint { font-size:12.5px; color:var(--dsw-alias-label-secondary); }
+.dshm-overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:auto; z-index:200; }
+.dshm-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.5); }
+.dshm-panel { position:relative; display:flex; flex-direction:column; width:min(1100px, 96vw); height:min(760px, 92vh); background:var(--dsw-alias-bg-layer-1); border:1px solid ${BORDER}; border-radius:12px; box-shadow:0 24px 64px rgba(0,0,0,0.4); overflow:hidden; }
+.dshm-head { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid ${BORDER}; }
+.dshm-title { font-size:15px; font-weight:600; color:var(--dsw-alias-label-primary); }
+.dshm-head-badges { flex:1; display:flex; gap:6px; }
+.dshm-close { margin-left:auto; border:none; background:transparent; color:var(--dsw-alias-label-secondary); font-size:20px; cursor:pointer; line-height:1; padding:2px 6px; border-radius:6px; }
+.dshm-close:hover { color:var(--dsw-alias-label-primary); background:var(--dsw-alias-bg-layer-2); }
+.dshm-body { flex:1; overflow-y:auto; padding:14px 16px 16px; display:flex; flex-direction:column; gap:10px; }
 .dshm-viewseg { display:flex; gap:10px; }
 .dshm-viewbtn { display:inline-flex; align-items:center; gap:6px; border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:13px; font-weight:550; padding:6px 16px; border-radius:8px; cursor:pointer; }
 .dshm-viewbtn:hover { color:var(--dsw-alias-label-primary); }
@@ -178,7 +193,7 @@ window.__ModuleLoader__.load({
         items: [], installed: {}, busy: {}, copiedRepo: null, detail: null, readme: null,
         q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
         view: 'market', mRows: [], mQ: '', mCat: null, mLoading: false,
-        notice: null, error: null, loading: false, source: 'demo',
+        notice: null, error: null, loading: false, source: 'demo', open: false,
       }
       const subs = new Set()
       const patch = (p) => { Object.assign(store, p); for (const f of subs) f() }
@@ -492,9 +507,28 @@ window.__ModuleLoader__.load({
         { name: 'settings.plugins.tab', id: 'market', order: -1, label: () => (store.lang === 'zh' ? '插件市场' : 'Plugin Market') },
         () => {
           const st = useStore()
-          useEffect(() => {
-            if (st.items.length === 0 && !st.loading) refresh()
-          }, [])
+          return h('div', { className: 'dshm-root' },
+            h('button', {
+              className: 'dshm-launch',
+              onClick: () => { patch({ open: true, detail: null }); if (st.items.length === 0 && !st.loading) refresh() },
+            },
+              h('span', { className: 'dshm-launch-title' },
+                h('svg', { width: 16, height: 16, viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5 },
+                  h('rect', { x: 1.5, y: 1.5, width: 13, height: 13, rx: 3 }),
+                  h('path', { d: 'M5.5 8h5M8 5.5v5', strokeLinecap: 'round' }),
+                ),
+                t('openMarket')),
+              h('span', { className: 'dshm-launch-hint' }, t('openHint')),
+            ),
+          )
+        },
+      ))
+
+      slots.inject('shell.overlay', () => slots.register(
+        { name: 'shell.overlay', id: 'plugin-market-window', order: 0 },
+        () => {
+          const st = useStore()
+          if (!st.open) return null
           const qv = (st.q || '').trim().toLowerCase()
           let base = st.items
           if (st.group === 'featured') {
@@ -528,62 +562,76 @@ window.__ModuleLoader__.load({
           const nCount = st.items.filter((it) => it.releasedAt).length
           const hCount = st.items.filter((it) => it.source === 'curated').length
 
-          if (st.detail) return DetailView(st)
-
-          return h('div', { className: 'dshm-root' },
-            h('div', { className: 'dshm-viewseg' },
-              h('button', { className: 'dshm-viewbtn' + (st.view === 'market' ? ' on' : ''), onClick: () => patch({ view: 'market', detail: null }) }, t('viewMarket') + ' ' + st.items.length),
-              h('button', {
-                className: 'dshm-viewbtn' + (st.view === 'manage' ? ' on' : ''),
-                onClick: () => { patch({ view: 'manage' }); loadInstalled() },
-              }, t('viewManage') + ' ' + st.mRows.length),
-              h('button', { className: 'dshm-viewbtn', title: 'switch language', onClick: toggleLang }, t('langBtn')),
-            ),
-            (st.error || st.notice)
-              ? h('div', { className: 'dshm-strip ' + (st.error ? 'dshm-strip-err' : 'dshm-strip-ok') }, st.error || st.notice)
-              : null,
-            st.view === 'manage'
-              ? ManageView(st)
-              : [
-                  h('div', { className: 'dshm-toolbar' },
-                    h('div', { className: 'dshm-searchwrap' },
-                      h('input', { className: 'dshm-search', placeholder: t('search'), value: st.q || '', onChange: (e) => patch({ q: e.target.value, page: 0 }) }),
-                      (st.q && st.q.length > 0)
-                        ? h('button', { className: 'dshm-searchclear', title: 'clear', onClick: () => patch({ q: '', page: 0 }) }, '×')
+          const body = st.detail
+            ? DetailView(st)
+            : h('div', { className: 'dshm-root' },
+                h('div', { className: 'dshm-viewseg' },
+                  h('button', { className: 'dshm-viewbtn' + (st.view === 'market' ? ' on' : ''), onClick: () => patch({ view: 'market', detail: null }) }, t('viewMarket') + ' ' + st.items.length),
+                  h('button', {
+                    className: 'dshm-viewbtn' + (st.view === 'manage' ? ' on' : ''),
+                    onClick: () => { patch({ view: 'manage' }); loadInstalled() },
+                  }, t('viewManage') + ' ' + st.mRows.length),
+                ),
+                (st.error || st.notice)
+                  ? h('div', { className: 'dshm-strip ' + (st.error ? 'dshm-strip-err' : 'dshm-strip-ok') }, st.error || st.notice)
+                  : null,
+                st.view === 'manage'
+                  ? ManageView(st)
+                  : [
+                      h('div', { className: 'dshm-toolbar' },
+                        h('div', { className: 'dshm-searchwrap' },
+                          h('input', { className: 'dshm-search', placeholder: t('search'), value: st.q || '', onChange: (e) => patch({ q: e.target.value, page: 0 }) }),
+                          (st.q && st.q.length > 0)
+                            ? h('button', { className: 'dshm-searchclear', title: 'clear', onClick: () => patch({ q: '', page: 0 }) }, '×')
+                            : null,
+                        ),
+                        h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => refresh() }, st.loading ? t('refreshing') : t('refresh')),
+                      ),
+                      h('div', { className: 'dshm-seg' },
+                        h('button', { className: 'dshm-seg-btn' + (st.group === 'verified' ? ' on' : ''), onClick: () => patch({ group: 'verified', cat: null, page: 0 }) }, t('tabVerified') + ' ' + vCount),
+                        h('button', { className: 'dshm-seg-btn' + (st.group === 'unverified' ? ' on' : ''), onClick: () => patch({ group: 'unverified', cat: null, page: 0 }) }, t('tabUnverified') + ' ' + uCount),
+                        h('button', { className: 'dshm-seg-btn' + (st.group === 'featured' ? ' on' : ''), onClick: () => patch({ group: 'featured', cat: null, page: 0 }) }, t('tabFeatured') + ' ' + fCount),
+                        h('button', { className: 'dshm-seg-btn' + (st.group === 'new' ? ' on' : ''), onClick: () => patch({ group: 'new', cat: null, page: 0 }) }, t('tabNew') + ' ' + nCount),
+                        h('button', { className: 'dshm-seg-btn' + (st.group === 'handmade' ? ' on' : ''), onClick: () => patch({ group: 'handmade', cat: null, page: 0 }) }, t('tabHandmade') + ' ' + hCount),
+                      ),
+                      cats.length > 0
+                        ? h('div', { className: 'dshm-cats' },
+                            h('button', { className: 'dshm-chip' + (st.cat === null ? ' on' : ''), onClick: () => patch({ cat: null, page: 0 }) }, t('all')),
+                            cats.map(([c, n]) => h('button', {
+                              className: 'dshm-chip' + (st.cat === c ? ' on' : ''),
+                              key: c,
+                              onClick: () => patch({ cat: st.cat === c ? null : c, page: 0 }),
+                            }, (CATEGORIES[c] || CATEGORIES.other)[store.lang] + ' ' + n)),
+                          )
                         : null,
-                    ),
-                    h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => refresh() }, st.loading ? t('refreshing') : t('refresh')),
-                  ),
-                  h('div', { className: 'dshm-seg' },
-                    h('button', { className: 'dshm-seg-btn' + (st.group === 'verified' ? ' on' : ''), onClick: () => patch({ group: 'verified', cat: null, page: 0 }) }, t('tabVerified') + ' ' + vCount),
-                    h('button', { className: 'dshm-seg-btn' + (st.group === 'unverified' ? ' on' : ''), onClick: () => patch({ group: 'unverified', cat: null, page: 0 }) }, t('tabUnverified') + ' ' + uCount),
-                    h('button', { className: 'dshm-seg-btn' + (st.group === 'featured' ? ' on' : ''), onClick: () => patch({ group: 'featured', cat: null, page: 0 }) }, t('tabFeatured') + ' ' + fCount),
-                    h('button', { className: 'dshm-seg-btn' + (st.group === 'new' ? ' on' : ''), onClick: () => patch({ group: 'new', cat: null, page: 0 }) }, t('tabNew') + ' ' + nCount),
-                    h('button', { className: 'dshm-seg-btn' + (st.group === 'handmade' ? ' on' : ''), onClick: () => patch({ group: 'handmade', cat: null, page: 0 }) }, t('tabHandmade') + ' ' + hCount),
-                  ),
-                  cats.length > 0
-                    ? h('div', { className: 'dshm-cats' },
-                        h('button', { className: 'dshm-chip' + (st.cat === null ? ' on' : ''), onClick: () => patch({ cat: null, page: 0 }) }, t('all')),
-                        cats.map(([c, n]) => h('button', {
-                          className: 'dshm-chip' + (st.cat === c ? ' on' : ''),
-                          key: c,
-                          onClick: () => patch({ cat: st.cat === c ? null : c, page: 0 }),
-                        }, (CATEGORIES[c] || CATEGORIES.other)[store.lang] + ' ' + n)),
-                      )
-                    : null,
-                  st.loading
-                    ? h('div', { className: 'dshm-empty' }, t('loading'))
-                    : filtered.length === 0
-                      ? h('div', { className: 'dshm-empty' }, t('empty'))
-                      : h('div', { className: 'dshm-grid' }, pageItems.map((it) => Card(it, st))),
-                  totalPages > 1
-                    ? h('div', { className: 'dshm-pager' },
-                        h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', disabled: safePage <= 0, onClick: () => patch({ page: safePage - 1 }) }, '← ' + t('pagerPrev')),
-                        h('span', { className: 'dshm-pager-info' }, t('page', { p: safePage + 1, total: totalPages })),
-                        h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', disabled: safePage >= totalPages - 1, onClick: () => patch({ page: safePage + 1 }) }, t('pagerNext') + ' →'),
-                      )
-                    : null,
-                ],
+                      st.loading
+                        ? h('div', { className: 'dshm-empty' }, t('loading'))
+                        : filtered.length === 0
+                          ? h('div', { className: 'dshm-empty' }, t('empty'))
+                          : h('div', { className: 'dshm-grid' }, pageItems.map((it) => Card(it, st))),
+                      totalPages > 1
+                        ? h('div', { className: 'dshm-pager' },
+                            h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', disabled: safePage <= 0, onClick: () => patch({ page: safePage - 1 }) }, '← ' + t('pagerPrev')),
+                            h('span', { className: 'dshm-pager-info' }, t('page', { p: safePage + 1, total: totalPages })),
+                            h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', disabled: safePage >= totalPages - 1, onClick: () => patch({ page: safePage + 1 }) }, t('pagerNext') + ' →'),
+                          )
+                        : null,
+                    ],
+              )
+
+          return h('div', { className: 'dshm-overlay', role: 'dialog' },
+            h('div', { className: 'dshm-backdrop', onClick: () => patch({ open: false, detail: null }) }),
+            h('div', { className: 'dshm-panel' },
+              h('div', { className: 'dshm-head' },
+                h('div', { className: 'dshm-title' }, t('title')),
+                h('div', { className: 'dshm-head-badges' },
+                  h('span', { className: 'dshm-pill' }, st.source === 'remote' ? t('sourceRemote') : t('sourceDemo')),
+                ),
+                h('button', { className: 'dshm-viewbtn', title: 'switch language', onClick: toggleLang }, t('langBtn')),
+                h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ open: false, detail: null }) }, '×'),
+              ),
+              h('div', { className: 'dshm-body' }, body),
+            ),
           )
         },
       ))
