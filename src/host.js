@@ -30,21 +30,39 @@ async function writeProfileManifest(m) {
 // 放行 pnpm 构建脚本：写入 dangerouslyAllowAllBuilds（官方全局开关，命中即放行）
 // 此前写入的列表格式 allowBuilds 对 git 依赖无效（pnpm 要求 <name>@<resolutionId>: true 映射键），
 // 这里统一重建 pnpm 段，用官方开关兜底。用户在弹窗点击安装即授权。
-async function allowBuild() {
+// 放行 pnpm 构建脚本：把 pnpm 报错里要求的“精确 depPath 键”(包名@codeload-tarball-URL)
+// 以映射格式写入 pnpm.allowBuilds，并保留此前已写入的键；dangerouslyAllowAllBuilds 作双保险。
+async function allowBuild(extraKeys = []) {
   const p = join(DSH_HOME, 'profiles', 'web', 'pnpm-workspace.yaml')
   let text = ''
   try { text = await readFile(p, 'utf8') } catch {}
   const lines = text.split('\n')
+  const keys = new Set()
   const pnpmIdx = lines.findIndex((l) => /^pnpm\s*:/.test(l))
   if (pnpmIdx !== -1) {
+    // 找出旧 pnpm: 段的边界，收集其中已放行的键，重建时保留
     let endIdx = pnpmIdx + 1
     while (endIdx < lines.length && (/^\s/.test(lines[endIdx]) || lines[endIdx].trim() === '')) endIdx++
     if (endIdx < lines.length && lines[endIdx - 1] === '') endIdx--
+    for (let i = pnpmIdx + 1; i < endIdx; i++) {
+      const m = /^\s{4}([^\s#]+): true\s*$/.exec(lines[i])
+      if (m && m[1].includes('@')) keys.add(m[1])
+    }
     lines.splice(pnpmIdx, endIdx - pnpmIdx)
     text = lines.join('\n')
   }
+  for (const k of extraKeys) {
+    if (typeof k === 'string' && k.includes('@') && k.length < 400 && !/\s/.test(k)) keys.add(k)
+  }
   text = text.replace(/\s*$/, '')
-  text += (text ? '\n' : '') + 'pnpm:\n  dangerouslyAllowAllBuilds: true\n'
+  let section = 'pnpm:\n  dangerouslyAllowAllBuilds: true\n  allowBuilds:'
+  if (keys.size === 0) {
+    section += ' {}\n'
+  } else {
+    section += '\n'
+    for (const k of [...keys].sort()) section += '    ' + k + ': true\n'
+  }
+  text += (text ? '\n' : '') + section
   await writeFile(p, text)
   return true
 }
@@ -81,7 +99,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.23',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.24',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -196,7 +214,16 @@ async function install(args) {
       const combined = ((r.stdout || '') + '\n' + (r.stderr || '')).replace(/\u001b\[[0-9;]*m/g, '').replace(/\[.*?m/g, '')
       const hintBlocked = /allowBuilds|prepare script|approve-builds|Ignored build scripts/i.test(combined)
       if (hintBlocked) {
-        try { await allowBuild() } catch {}
+        // 从 pnpm 报错提示里解析它要求的精确 allowBuilds 键（形如
+        // "  dsh-better-sidebar@https://codeload.github.com/...: true"），写入后重试
+        const exactKeys = []
+        const norm = combined.replace(/\r/g, '')
+        const keyRe = /allowBuilds:\s*\n\s{2,}([^\s#]+): true/g
+        let km
+        while ((km = keyRe.exec(norm)) !== null) {
+          if (km[1] && km[1].includes('@') && !exactKeys.includes(km[1])) exactKeys.push(km[1])
+        }
+        try { await allowBuild(exactKeys) } catch {}
         r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
         if (!r.ok) {
           const tailOut = ((r.stdout || '').trim()).slice(-900)
