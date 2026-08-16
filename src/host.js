@@ -218,7 +218,8 @@ async function install(args) {
         // "  dsh-better-sidebar@https://codeload.github.com/...: true"），写入后重试
         const exactKeys = []
         const norm = combined.replace(/\r/g, '')
-        const keyRe = /allowBuilds:\s*\n\s{2,}([^\s#]+): true/g
+        // 兼容两种打印形式：dsh-better-sidebar@https://...: true 或 "dsh-better-sidebar@https://...": true
+        const keyRe = /allowBuilds:\s*\n\s{2,}["']?([^\s#]+?)["']?: true/g
         let km
         while ((km = keyRe.exec(norm)) !== null) {
           if (km[1] && km[1].includes('@') && !exactKeys.includes(km[1])) exactKeys.push(km[1])
