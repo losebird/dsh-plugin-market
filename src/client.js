@@ -53,6 +53,7 @@ window.__ModuleLoader__.load({
         installNow: '一键安装', currentOs: '当前系统',
         jobTitle: '安装进度', jobRunning: '正在安装…', jobDone: '安装完成', jobFailed: '安装失败',
         jobAutoClose: '本窗口将在 3 秒后自动关闭', jobClose: '关闭',
+        readmeLang: '语言', readmeDefault: '默认',
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
@@ -86,6 +87,7 @@ window.__ModuleLoader__.load({
         installNow: 'Install now', currentOs: 'current OS',
         jobTitle: 'Install progress', jobRunning: 'Installing…', jobDone: 'Install complete', jobFailed: 'Install failed',
         jobAutoClose: 'This window closes automatically in 3 seconds', jobClose: 'Close',
+        readmeLang: 'Language', readmeDefault: 'Default',
       },
     }
 
@@ -229,7 +231,7 @@ window.__ModuleLoader__.load({
         q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
         view: 'market', mRows: [], mQ: '', mCat: null, mLoading: false,
         notice: null, error: null, loading: false, source: 'demo', open: false,
-        os: 'darwin', osTab: null, job: null,
+        os: 'darwin', osTab: null, job: null, readmeVariants: [], readmeVariant: 'README.md',
       }
       const subs = new Set()
       const patch = (p) => { Object.assign(store, p); for (const f of subs) f() }
@@ -299,7 +301,13 @@ window.__ModuleLoader__.load({
           try {
             const j = await api('job?id=' + encodeURIComponent(id))
             if (!j || !j.ok) {
-              patch({ job: Object.assign({}, store.job, { status: 'error', error: (j && j.error) || '任务查询失败', message: null }) })
+              const err = (j && j.error) || '任务查询失败'
+              patch({
+                busy: Object.assign({}, store.busy, { [item.id]: null }),
+                job: Object.assign({}, store.job, { status: 'error', error: err, message: null, lines: ((store.job && store.job.lines) || []).concat(err) }),
+                error: err,
+              })
+              setTimeout(() => { if (store.job && store.job.id === id) patch({ job: null }) }, 3000)
               return
             }
             const next = {
@@ -339,12 +347,22 @@ window.__ModuleLoader__.load({
             pollJob(res.job, item)
             return
           }
+          // 立即失败（参数校验/来源守卫等）：同样弹进度窗口显示失败原因，3 秒后自动关闭
+          const err = (res && res.error) || t('errOp')
           patch({
             busy: Object.assign({}, store.busy, { [item.id]: null }),
-            error: (res && res.error) || t('errOp'),
+            job: { id: 'local-' + Date.now(), name: shortName(item.name), status: 'error', lines: [err], message: null, error: err },
+            error: err,
           })
+          setTimeout(() => { if (store.job && store.job.id && String(store.job.id).indexOf('local-') === 0) patch({ job: null }) }, 3000)
         } catch (e) {
-          patch({ busy: Object.assign({}, store.busy, { [item.id]: null }), error: String(e && e.message ? e.message : e) })
+          const err = String(e && e.message ? e.message : e)
+          patch({
+            busy: Object.assign({}, store.busy, { [item.id]: null }),
+            job: { id: 'local-' + Date.now(), name: shortName(item.name), status: 'error', lines: [err], message: null, error: err },
+            error: err,
+          })
+          setTimeout(() => { if (store.job && store.job.id && String(store.job.id).indexOf('local-') === 0) patch({ job: null }) }, 3000)
         }
       }
 
@@ -391,18 +409,36 @@ window.__ModuleLoader__.load({
         } catch {}
       }
 
+      const variantLabel = (f) => {
+        const lf = String(f || '').toLowerCase()
+        if (lf === 'readme.md') return t('readmeDefault')
+        if (/en/.test(lf)) return 'English'
+        if (/zh|cn/.test(lf)) return '中文'
+        return f
+      }
+
+      const loadReadme = (repo, file) => {
+        patch({ readme: null })
+        api('readme?repo=' + encodeURIComponent(repo) + '&file=' + encodeURIComponent(file)).then((res) => {
+          if (res && res.ok && typeof res.html === 'string') patch({ readme: res.html })
+          else patch({ readme: 'error' })
+        }).catch(() => patch({ readme: 'error' }))
+      }
+
       const openDetail = (item) => {
-        patch({ detail: item, readme: null })
+        patch({ detail: item, readme: null, readmeVariants: [], readmeVariant: 'README.md', osTab: null })
         if (item.repo) {
-          api('readme?repo=' + encodeURIComponent(item.repo)).then((res) => {
-            if (res && res.ok && typeof res.html === 'string') patch({ readme: res.html })
-            else patch({ readme: 'error' })
-          }).catch(() => patch({ readme: 'error' }))
+          loadReadme(item.repo, 'README.md')
+          api('readme-variants?repo=' + encodeURIComponent(item.repo)).then((res) => {
+            if (res && res.ok && Array.isArray(res.variants) && res.variants.length > 1) {
+              patch({ readmeVariants: res.variants })
+            }
+          }).catch(() => {})
         } else {
           patch({ readme: 'none' })
         }
       }
-      const closeDetail = () => patch({ detail: null, readme: null })
+      const closeDetail = () => patch({ detail: null, readme: null, readmeVariants: [] })
 
       const doToggle = async (row) => {
         const res = await api('toggle', { name: row.name, enabled: !row.enabled })
@@ -592,7 +628,15 @@ window.__ModuleLoader__.load({
             ? h('div', { className: 'dshm-strip dshm-strip-ok' }, t('manualNote'))
             : null,
           InstallPanel(st, item),
-          h('div', { className: 'dshm-readme-title' }, 'README'),
+          st.readmeVariants && st.readmeVariants.length > 1
+            ? h('div', { className: 'dshm-ostabs', style: { marginTop: '4px' } },
+                st.readmeVariants.map((f) => h('button', {
+                  key: f,
+                  className: 'dshm-seg-btn' + (f === st.readmeVariant ? ' on' : ''),
+                  onClick: () => { patch({ readmeVariant: f }); loadReadme(item.repo, f) },
+                }, variantLabel(f))))
+            : null,
+          h('div', { className: 'dshm-readme-title' }, 'README' + (st.readmeVariant && st.readmeVariant.toLowerCase() !== 'readme.md' ? ' · ' + st.readmeVariant : '')),
           st.readme === null
             ? h('div', { className: 'dshm-empty' }, t('readmeLoading'))
             : st.readme === 'error'

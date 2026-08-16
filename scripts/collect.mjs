@@ -298,15 +298,25 @@ async function buildEntry(repo, prev) {
   // bundle 都能直接 dsh plugin add（如要求自行构建 tarball 后本地安装的）。
   // README 拉取失败时沿用上一轮结论，避免网络抖动误伤已有数据。
   let readme = null
-  try {
-    const rr = await fetch('https://raw.githubusercontent.com/' + repo.full_name + '/HEAD/README.md', {
-      headers: { 'user-agent': 'dsh-plugin-market-collector' },
-      signal: AbortSignal.timeout(8000),
-    })
-    if (rr.ok) readme = await rr.text()
-  } catch {}
+  for (const f of ['README.md', 'readme.md']) {
+    try {
+      const rr = await fetch('https://raw.githubusercontent.com/' + repo.full_name + '/HEAD/' + f, {
+        headers: { 'user-agent': 'dsh-plugin-market-collector' },
+        signal: AbortSignal.timeout(8000),
+      })
+      if (rr.ok) { readme = await rr.text(); break }
+    } catch { break }
+  }
   let install = detectInstallFromReadme(readme)
-  if (!install && readme === null && prev && prev.install) install = prev.install
+  if (!install && readme === null && prev && prev.install) {
+    // README 全部拉取失败：沿用旧结论；但未经 README 核实的历史启发式
+    // dsh-plugin-add（source: 'pkg'）一律降级为 manual，宁可保守不可装坏
+    if (prev.install.method === 'dsh-plugin-add' && prev.install.source !== 'readme') {
+      install = { method: 'manual', source: 'readme' }
+    } else {
+      install = prev.install
+    }
+  }
   if (!install) {
     if (pkg && pkg.bin) {
       install = { method: 'npm-global', command: 'npm install -g ' + (pkg.name || ''), source: 'pkg' }

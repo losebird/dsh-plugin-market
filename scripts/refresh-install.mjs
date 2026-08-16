@@ -21,14 +21,16 @@ const loadJson = (rel, fallback) => {
 }
 
 async function fetchReadme(repo) {
-  try {
-    const res = await fetch('https://raw.githubusercontent.com/' + repo + '/HEAD/README.md', {
-      headers: { 'user-agent': 'dsh-plugin-market-collector' },
-      signal: AbortSignal.timeout(8000),
-    })
-    if (!res.ok) return null
-    return await res.text()
-  } catch { return null }
+  for (const f of ['README.md', 'readme.md']) {
+    try {
+      const res = await fetch('https://raw.githubusercontent.com/' + repo + '/HEAD/' + f, {
+        headers: { 'user-agent': 'dsh-plugin-market-collector' },
+        signal: AbortSignal.timeout(8000),
+      })
+      if (res.ok) return await res.text()
+    } catch { return null }
+  }
+  return null
 }
 
 async function main() {
@@ -52,7 +54,11 @@ async function main() {
         // 保留原有 command/spec 信息，识别结果按字段合并
         it.install = { ...(it.install || {}), ...next }
       } else if (readme === null) {
-        // README 拉取失败：沿用旧结论
+        // README 拉取失败：未经 README 核实的历史启发式 dsh-plugin-add 降级为 manual
+        if (it.install && it.install.method === 'dsh-plugin-add' && it.install.source !== 'readme') {
+          changed++
+          it.install = { method: 'manual', source: 'readme' }
+        }
       } else if (it.type === 'pack' || (it.install && it.install.method === 'pack')) {
         // pack 条目不受影响
       } else if (it.install && (it.install.method === 'npm-global' || it.install.method === 'desktop')) {

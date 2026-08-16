@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowLeft, CaretRight, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
   GithubLogo, MagnifyingGlass, Moon, Package, Plug, Sparkle, Star, Sun, UploadSimple, UserCircle, Warning, X,
@@ -7,7 +7,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
-const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.28'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.29'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -61,6 +61,7 @@ const I18N = {
     'detail.author': '作者', 'detail.version': '版本', 'detail.category': '分类', 'detail.license': '许可', 'detail.downloads': '下载',
     'detail.intro': '简介', 'detail.readme': '项目说明', 'detail.readmeLoading': '加载项目说明中…',
     'detail.readmeError': '项目 README 加载失败，', 'detail.readmeLink': '去仓库查看',
+    'detail.readmeDefault': '默认',
     'detail.copy': '复制', 'detail.copied': '已复制',
     'detail.bundleNote': '安装方式来自项目 README。在 DSH 应用内打开侧栏「插件市场」弹窗点安装，会自动执行当前系统的命令；安装后重启 DSH 生效。',
     'detail.packDownload': '下载扩展包 zip',
@@ -144,6 +145,7 @@ const I18N = {
     'detail.author': 'Author', 'detail.version': 'Version', 'detail.category': 'Category', 'detail.license': 'License', 'detail.downloads': 'Downloads',
     'detail.intro': 'About', 'detail.readme': 'README', 'detail.readmeLoading': 'Loading README…',
     'detail.readmeError': 'Failed to load README. ', 'detail.readmeLink': 'View on GitHub',
+    'detail.readmeDefault': 'Default',
     'detail.copy': 'Copy', 'detail.copied': 'Copied',
     'detail.bundleNote': 'Install steps come from the project README. In DSH, open the Plugin Market modal and click install — it runs the command for your current OS. Restart DSH to take effect.',
     'detail.packDownload': 'Download pack zip',
@@ -244,6 +246,21 @@ function fmtNum(n) {
 
 const OS_KEYS = ['darwin', 'linux', 'win32']
 const osName = (k) => ({ darwin: 'macOS', linux: 'Linux', win32: 'Windows' }[k] || k)
+
+// 详情页可切换的 README 语言变体
+const README_VARIANTS = [
+  'README.md', 'readme.md',
+  'README_EN.md', 'README.EN.md', 'README.en.md', 'README_en.md',
+  'README_zh.md', 'README_ZH.md', 'README.zh.md', 'README_zh-CN.md', 'README_zh_CN.md',
+  'README_CN.md', 'README.CN.md', 'README.zh-CN.md', 'README.zh_CN.md',
+]
+function readmeVariantLabel(f, t) {
+  const lf = String(f || '').toLowerCase()
+  if (lf === 'readme.md') return t('detail.readmeDefault')
+  if (/en/.test(lf)) return 'English'
+  if (/zh|cn/.test(lf)) return '中文'
+  return f
+}
 
 function detectOS() {
   try {
@@ -363,6 +380,9 @@ function DetailModal({ item, onClose, onToast }) {
   const { t, lang } = useLang()
   const [copied, setCopied] = useState(false)
   const [readme, setReadme] = useState({ status: 'idle' })
+  const [variants, setVariants] = useState([])
+  const [variant, setVariant] = useState('README.md')
+  const readmeCache = useRef({})
   const cmds = installCommands(item)
   const osOptions = OS_KEYS.filter((k) => cmds[k])
   const [osSel, setOsSel] = useState(() => detectOS())
@@ -380,22 +400,66 @@ function DetailModal({ item, onClose, onToast }) {
     let alive = true
     if (!item.repo) { setReadme({ status: 'none' }); return }
     setReadme({ status: 'loading' })
+    readmeCache.current = {}
     const base = 'https://raw.githubusercontent.com/' + item.repo + '/HEAD/'
+    const renderHtml = (text) => {
+      const renderer = new marked.Renderer()
+      renderer.image = ({ href, title, text: alt }) => {
+        const src = /^https?:/i.test(href || '') ? href : base + (href || '').replace(/^\.\//, '')
+        return '<img src="' + src + '" alt="' + (alt || '') + '"' + (title ? ' title="' + title + '"' : '') + ' loading="lazy">'
+      }
+      return DOMPurify.sanitize(marked.parse(text, { renderer }))
+    }
     fetch(base + 'README.md')
       .then((res) => { if (!res.ok) throw new Error(String(res.status)); return res.text() })
       .then((text) => {
         if (!alive) return
+        const html = renderHtml(text)
+        readmeCache.current['README.md'] = html
+        setReadme({ status: 'ready', html })
+      })
+      .catch(() => { if (alive) setReadme({ status: 'error' }) })
+    // 探测多语言 README 变体（HEAD 优先，CORS 拒绝时退回 GET 探测）
+    const seen = new Set()
+    Promise.all(README_VARIANTS.map(async (f) => {
+      const key = f.toLowerCase()
+      if (seen.has(key)) return null
+      seen.add(key)
+      try {
+        const r = await fetch(base + f, { method: 'HEAD' })
+        if (r.ok) return f
+        const r2 = await fetch(base + f, { method: 'GET', signal: AbortSignal.timeout(6000) })
+        if (!r2.ok) return null
+        await r2.text()
+        return f
+      } catch { return null }
+    })).then((found) => {
+      if (!alive) return
+      const v = found.filter(Boolean)
+      if (v.length > 1) setVariants(v)
+    })
+    return () => { alive = false }
+  }, [item.repo])
+
+  const selectVariant = (f) => {
+    setVariant(f)
+    if (readmeCache.current[f]) { setReadme({ status: 'ready', html: readmeCache.current[f] }); return }
+    setReadme({ status: 'loading' })
+    const base = 'https://raw.githubusercontent.com/' + item.repo + '/HEAD/'
+    fetch(base + f)
+      .then((res) => { if (!res.ok) throw new Error(String(res.status)); return res.text() })
+      .then((text) => {
         const renderer = new marked.Renderer()
         renderer.image = ({ href, title, text: alt }) => {
           const src = /^https?:/i.test(href || '') ? href : base + (href || '').replace(/^\.\//, '')
           return '<img src="' + src + '" alt="' + (alt || '') + '"' + (title ? ' title="' + title + '"' : '') + ' loading="lazy">'
         }
         const html = DOMPurify.sanitize(marked.parse(text, { renderer }))
+        readmeCache.current[f] = html
         setReadme({ status: 'ready', html })
       })
-      .catch(() => { if (alive) setReadme({ status: 'error' }) })
-    return () => { alive = false }
-  }, [item.repo])
+      .catch(() => setReadme({ status: 'error' }))
+  }
 
   const catLabel = (CATEGORIES[item.category] || CATEGORIES.other)[lang]
   return (
@@ -425,7 +489,14 @@ function DetailModal({ item, onClose, onToast }) {
         )}
         {item.repo && (
           <>
-            <h4 className="readme-title">{t('detail.readme')}</h4>
+            <h4 className="readme-title">{t('detail.readme')}{variant.toLowerCase() !== 'readme.md' ? ' · ' + variant : ''}</h4>
+            {variants.length > 1 && (
+              <div className="install-tabs">
+                {variants.map((f) => (
+                  <button key={f} className={'os-tab' + (f === variant ? ' on' : '')} onClick={() => selectVariant(f)}>{readmeVariantLabel(f, t)}</button>
+                ))}
+              </div>
+            )}
             {readme.status === 'loading' && <div className="readme-state"><CircleNotch size={14} className="spin" /> {t('detail.readmeLoading')}</div>}
             {readme.status === 'error' && (
               <div className="readme-state">
@@ -716,7 +787,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.28</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.29</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },

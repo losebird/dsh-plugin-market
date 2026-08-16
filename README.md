@@ -9,7 +9,7 @@
 安装市场：
 
 ```bash
-dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.28
+dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.29
 dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 ```
 
@@ -316,7 +316,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-mcp](https://github.com/ArvinQi/dsh-mcp) MCP 管理界面 + tool search：可视化配置/启停/刷新 MCP 服务器与工具勾选，按需检索（tool search）热注入；工具列表稳定命中缓存、不撑爆上下文。Dee ⭐ 2 ⬇ 0 · 未验证 · v1.0.0
 - [dsh-web-preview-float](https://github.com/WJNCT55555/dsh-web-preview-float) DSH Web UI 悬浮预览插件：两个可拖拽/拉伸/缩小的独立悬浮窗（预览 iframe + 代码文件树），只依赖官方扩展点，不改 DSH 核心。 ⭐ 2 ⬇ 0 · 手动安装
 - [dsh-learning-mode](https://github.com/CHplus0/dsh-learning-mode) A DeepSeek Harness (DSH) agent preset that teaches while coding — concrete scenario-ground ⭐ 2 ⬇ 0 · 未验证
-- [dsh-think-flow-flow](https://github.com/lynkas/dsh-think-flow-flow) DeepSeek Harness client plugin: constant-rate typewriter reveal for assistant output and r ⭐ 2 ⬇ 0
+- [dsh-think-flow-flow](https://github.com/lynkas/dsh-think-flow-flow) DeepSeek Harness client plugin: constant-rate typewriter reveal for assistant output and r ⭐ 2 ⬇ 0 · 手动安装
 - [dsh-plugins](https://github.com/TiankunDai/dsh-vision-LMstudio) DSH (DeepSeek Harness) 社区插件集合：dsh-lmstudio-vision（本地 LM Studio 视觉识别）等。每个插件是符合 dsh-web-ui 插 ⭐ 1 ⬇ 0 · 未验证 · 手动安装
 - [dsh-liquid-theme](https://github.com/more-nico/dshLiquidTheme) macOS-style floating Liquid Glass theme for DeepSeek Harness Web UI ⭐ 1 ⬇ 0
 - [dsh-view-modes](https://github.com/NigelYao/dsh-view-modes) DshViewModes for DSH Web: Verbose / Normal / Summary conversation display with semantic pr ⭐ 1 ⬇ 0
@@ -812,7 +812,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-file-memory](https://github.com/ICCuse/dsh-file-memory) File-backed working memory tools for DeepSeek Harness: memorize/recall key premises verbat ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-premise-guard](https://github.com/ICCuse/dsh-premise-guard) Post-compaction premise-drift guard plugin for DeepSeek Harness: after a compaction summar ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-memoria](https://github.com/jiayan-xu/dsh-memoria) memoria memory backend for dsh: registers memoria_observe / memoria_remember / memoria_sea ⭐ 0 ⬇ 0
-- [dsh-memoria-extra](https://github.com/jiayan-xu/dsh-memoria-extra) memoria advanced tools for dsh: memoria_context / recent_decisions / health / allowed_ns / ⭐ 0 ⬇ 0
+- [dsh-memoria-extra](https://github.com/jiayan-xu/dsh-memoria-extra) memoria advanced tools for dsh: memoria_context / recent_decisions / health / allowed_ns / ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-plugin-recall](https://github.com/truelove-dreamer/dsh-plugin-recall) DeepSeek Harness plugin: cross-session memory for the model. Full-text search all past ses ⭐ 0 ⬇ 0
 - [dsh-memory-director](https://github.com/ljsysfurryACE/dsh-memory-director) MemoryDirector plugin for DeepSeek Harness: LLM-driven remember/forget across turns (the o ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-compaction](https://github.com/ljsysfurryACE/dsh-compaction) AgentFrame compaction backend for DeepSeek Harness: semantic + physical KV compression (28 ⭐ 0 ⬇ 0 · 手动安装
@@ -823,7 +823,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-vision-subagent](https://github.com/ruby1304/dsh-vision-subagent) Vision for text-only DeepSeek Harness agents: delegate image reading to a one-shot subagen ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-agent-conductor](https://github.com/akqwpeter-prog/dsh-agent-conductor) In-session cross-agent dispatch for DeepSeek Harness: the conductor_dispatch tool and an a ⭐ 0 ⬇ 0
 - [dsh-context-proxy](https://github.com/EvilIrving/dsh-context-proxy) Thin on-demand context-retrieval layer for DeepSeek Harness: context_query / context_slice ⭐ 0 ⬇ 0
-- [dsh-codebase-memory](https://github.com/jiayan-xu/dsh-codebase-memory) codebase-memory-mcp bridge for dsh: semantic code-graph search over indexed repositories ( ⭐ 0 ⬇ 0
+- [dsh-codebase-memory](https://github.com/jiayan-xu/dsh-codebase-memory) codebase-memory-mcp bridge for dsh: semantic code-graph search over indexed repositories ( ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-funnel](https://github.com/YuanyuanMa03/dsh-funnel) Curate tool output before it enters the model's context: keep error/warning lines and head ⭐ 0 ⬇ 0
 - [cot-lint](https://github.com/YuanyuanMa03/cot-lint) Lint your repo for chain-of-thought leakage — the session-transcript residue AI assistants ⭐ 0 ⬇ 0
 - [dsh-ci-context](https://github.com/lucas-ward/dsh-ci-context) Privacy-focused CI execution context for DeepSeek Harness agents ⭐ 0 ⬇ 0 · 手动安装 · v0.1.1
@@ -957,7 +957,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-harness-ops](https://github.com/fakechris/dsh-harness-ops) DSH 运维工具箱：升级、重启、故障都不用操心。① 官方每日快照 A/B 双槽轮换——旧插件迁移+构建+验收全过才原子切换，一键回滚，旧版本永远兜底；② 守护 10s 自动拉起 w ⭐ 9 ⬇ 0 · 未验证 · git clone · v0.3.0
 - [internalcot](https://github.com/morluto/internalcot) Make agents show their full chain of thought with persistent, visible working notes. ⭐ 9 ⬇ 0 · 未验证 · 手动安装 · v0.2.3
 - [dsh-desk](https://github.com/majiayu000/dsh-desk) Installable Tauri desktop distribution for DeepSeek Harness with a bundled runtime and dai ⭐ 8 ⬇ 64 · 未验证 · 手动安装 · v0.1.0-alpha.10
-- [creght-skills](https://github.com/creght-dev/skills) DeepSeek Harness bundle that registers the Creght skill pack on ctx.skills. ⭐ 8 ⬇ 0 · v1.0.0
+- [creght-skills](https://github.com/creght-dev/skills) DeepSeek Harness bundle that registers the Creght skill pack on ctx.skills. ⭐ 8 ⬇ 0 · 手动安装 · v1.0.0
 - [dsh-plugin-development](https://github.com/w2112515/dsh-plugin-development) Portable Agent Skill for developing and auditing DeepSeek Harness plugins, with an optiona ⭐ 8 ⬇ 10 · 手动安装 · v0.2.0-beta.1
 - [dsh-cockpit](https://github.com/Lxiayu/DshCockpit) Desktop shell for DeepSeek Harness (dsh web): double-click to launch, tray resident, embed ⭐ 8 ⬇ 10 · 未验证 · git clone · v0.2.0
 - [dsh-phone](https://github.com/railgun0325/dsh-phone) 让 DeepSeek Harness 的 agent 跑在手机里，通过 Magisk root 原生操作安卓系统（截图/点击/滑动/开应用）+ 移动端布局 + WebView AP ⭐ 8 ⬇ 76 · 未验证 · 手动安装 · v0.2.4
@@ -1474,7 +1474,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-paste-to-path](https://github.com/Johnny-xuan/dsh-paste-to-path) A universal path-backed attachment dock for DeepSeek Harness. ⭐ 0 ⬇ 0
 - [dsh-wash-calendar](https://github.com/zimai233/dsh-wash-calendar) Recurring habit scheduling calendar for DeepSeek Harness. Turn last-wash dates and interva ⭐ 0 ⬇ 0
 - [dsh-image-search](https://github.com/zimai233/dsh-image-search) Multi-engine reverse image search aggregator for DeepSeek Harness. Turn one public image U ⭐ 0 ⬇ 0 · 手动安装
-- [dsh-nuphus-mcp](https://github.com/jiayan-xu/dsh-nuphus-mcp) nuphus-mcp bridge for dsh: desktop + browser automation (36 tools) via a persistent stdio  ⭐ 0 ⬇ 0
+- [dsh-nuphus-mcp](https://github.com/jiayan-xu/dsh-nuphus-mcp) nuphus-mcp bridge for dsh: desktop + browser automation (36 tools) via a persistent stdio  ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-unsloth-hands](https://github.com/MicroHEROX/dsh-unsloth-hands) Unsloth for DeepSeek Harness - a pure-client tool plugin that connects the harness online  ⭐ 0 ⬇ 0 · v0.1.0
 - [dsh-tool-gitbash](https://github.com/buhuikongpan/dsh-win-gitbash) Model-facing Git Bash tool for Windows (replaces pwsh/WSL-bash) ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-open-with](https://github.com/ChuanTianML/dsh-open-with) Open registered DeepSeek Harness workspaces in detected or configured local editors from t ⭐ 0 ⬇ 0 · v0.1.1
@@ -1484,7 +1484,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-file-preview-workspace](https://github.com/UndeadSheep/dsh-file-preview) 👀 A floating file-preview plugin for DeepSeek Harness — your clumsy book-maid peeks at wo ⭐ 0 ⬇ 0 · 未验证
 - [dsh-kb-rag](https://github.com/YuMu247/dsh-kb-rag) Local-first RAG knowledge tools for DSH: kb_query / kb_ingest / kb_crawl / kb_related, bac ⭐ 0 ⬇ 0 · 手动安装
 - [openin](https://github.com/tk-wxy/openin) openin ⭐ 0 ⬇ 0 · 未验证 · 手动安装
-- [dsh-path-browser](https://github.com/dkjsiogu/dsh-path-browser) DeepSeek Harness plugin: browse host files and folders in the Web composer and insert thei ⭐ 0 ⬇ 2 · v0.1.1
+- [dsh-path-browser](https://github.com/dkjsiogu/dsh-path-browser) DeepSeek Harness plugin: browse host files and folders in the Web composer and insert thei ⭐ 0 ⬇ 2 · 手动安装 · v0.1.1
 - [deepseek-peak](https://github.com/YMRYMR/deepseek-peak) A small live widget that shows whether DeepSeek's V4 API is in peak (2x) or off-peak prici ⭐ 0 ⬇ 0 · 未验证
 - [dsh-plugin-trust-center](https://github.com/TonyWang-hub/dsh-plugin-trust-center) Evidence-first inspection, compatibility verification, and quarantine tooling for DeepSeek ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · v0.1.0
 - [dsh-discovery](https://github.com/EricXu20266/dsh-discovery) DSH plugin discovery browser — search and browse community plugins on GitHub without one-c ⭐ 0 ⬇ 0
@@ -1804,7 +1804,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-egress-guard](https://github.com/tancheng33/dsh-egress-guard) Runtime security gate for DeepSeek Harness: egress host allowlist, secret redaction in too ⭐ 0 ⬇ 0
 - [dsh-notion-mcp](https://github.com/mingzeng21/dsh-notion) Connect DeepSeek Harness (dsh) to Notion via the official Notion MCP (OAuth + PKCE) ⭐ 0 ⬇ 0
 - [dsh-plugin-sentinel](https://github.com/BotonJ/dsh-plugin-sentinel) DSH 插件安检机 — install-time static security auditor for DeepSeek Harness plugin bundles. Zero ⭐ 0 ⬇ 0
-- [dsh-ocr-review](https://github.com/jiayan-xu/dsh-ocr-review) Local OpenCodeReview (ocr) gate for dsh: ocr_review tool runs AI code review on a workspac ⭐ 0 ⬇ 0
+- [dsh-ocr-review](https://github.com/jiayan-xu/dsh-ocr-review) Local OpenCodeReview (ocr) gate for dsh: ocr_review tool runs AI code review on a workspac ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-shield](https://github.com/x2802490130-prog/dsh-shield) 脱手模式安全网：删除目录先进回收站、删除链接绝不跟随。零审批、零弹窗。 ⭐ 0 ⬇ 0 · 手动安装
 - [plugin-lab](https://github.com/omdsh-dev/omdsh-plugin-lab) DSH privacy-first plugin health, confirmed category summaries and aggregate fix flywheel ⭐ 0 ⬇ 3 · 手动安装 · v0.4.5
 - [dsh-careful-full-access](https://github.com/zdjmrq/dsh-command-guard) DSH plugin: careful-full-access-only command guard — static tiering, WhatIf scope resoluti ⭐ 0 ⬇ 0 · 未验证 · 手动安装
@@ -1994,7 +1994,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-plugin-container](https://github.com/GHJIVHIDD/dsh-plugin-container) DeepSeek Harness 本地 Docker 容器管理部署级插件：提供「容器」页签、仅观察/干预双模式 UI、18 个 docker_* 智能体工具与只读实时 Shell  ⭐ 1 ⬇ 0 · v0.1.0
 - [dsh-zhipu-vision](https://github.com/xingling80/dsh-zhipu-vision) Zhipu (智谱) GLM-4V vision understanding for DSH: agent tool zhipu_vision (local image path  ⭐ 1 ⬇ 0 · 手动安装
 - [dsh-community-plugins](https://github.com/HubaKing/dsh-community-plugins) DSH 社区插件生态指南：注册「dsh-community-plugins」skill，让每个会话都知道本 harness 已内置插件市场（dshmarket / dsh-plug ⭐ 1 ⬇ 9 · v0.1.2
-- [DSH 插件市场](https://github.com/losebird/dsh-plugin-market) DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。 ⭐ 0 ⬇ 0 · v0.1.27
+- [DSH 插件市场](https://github.com/losebird/dsh-plugin-market) DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。 ⭐ 0 ⬇ 0 · v0.1.28
 - [dsh-market-fixtures](https://github.com/smarturchin0011/dsh-market-fixtures) DSH plugin marketplace test fixtures: catalog.json with demo dynamic plugins (pass/warn/re ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [dsh-desktop](https://github.com/LvsH13/dsh-desktop) DeepSeek Harness Windows desktop companion: tray icon (whale), desktop shortcut, login aut ⭐ 0 ⬇ 0
 - [dsh-plug-manager](https://github.com/Casually/deepseek-harness-plugs-manage) DeepSeek Harness 插件管理器：发现 GitHub dsh-plugin topic 下的插件仓库，通过 `dsh plugin` 安装/移除/更新 profile  ⭐ 0 ⬇ 0 · 手动安装
@@ -2190,7 +2190,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-k12-lesson-builder](https://github.com/shyboy/dsh-k12-lesson-builder) DeepSeek Harness plugin for synchronized K12 English PPTX and DOCX lesson materials ⭐ 2 ⬇ 1 · 手动安装 · v0.1.1
 - [math-copy](https://github.com/Blackspace2/dsh-math-copy) Interactive LaTeX copy affordances for DeepSeek Harness math output ⭐ 2 ⬇ 0
 - [adhd-one](https://github.com/xydadada/adhd-one) An unofficial, batteries-included Windows desktop for DeepSeek Harness. ⭐ 2 ⬇ 35 · 未验证 · 手动安装 · v0.1.0
-- [dsh-sound-effects](https://github.com/JasonJin2006/dsh-sound-effects-plugin) Configurable event sounds for DeepSeek Harness ⭐ 2 ⬇ 0
+- [dsh-sound-effects](https://github.com/JasonJin2006/dsh-sound-effects-plugin) Configurable event sounds for DeepSeek Harness ⭐ 2 ⬇ 0 · 手动安装
 - [dsh-music](https://github.com/xiekai886/dsh-MusicPlayer) 这是一个可以让你边对话边听歌的 DeepSeek Harness 插件：折叠/展开两种可自由拖动的悬浮窗口形态，利用 Meting API 等解析源接入网易云音乐，支持歌单导入和按 ⭐ 2 ⬇ 0 · 手动安装
 - [dsh-whale-animation](https://github.com/LeemanCheung/dsh-whale-animation) Persistent DeepSeek-inspired whale-dive and reactive-water animation for the Harness Web t ⭐ 2 ⬇ 0
 - [dsh-ex-setting](https://github.com/omdsh-dev/ex-setting) Automatic Web settings and composition configuration bundle for DSH ⭐ 2 ⬇ 0 · 手动安装

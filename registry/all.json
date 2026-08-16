@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16T04:46:57.864Z",
+  "updatedAt": "2026-08-16T04:59:30.879Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -10786,8 +10786,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -35754,8 +35754,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -40425,8 +40425,8 @@
       "category": "ui",
       "status": "unavailable",
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       }
     },
     {
@@ -51337,8 +51337,8 @@
       "type": "bundle",
       "package": "dsh-plugin-market",
       "repo": "losebird/dsh-plugin-market",
-      "spec": "github:losebird/dsh-plugin-market#v0.1.27",
-      "version": "v0.1.27",
+      "spec": "github:losebird/dsh-plugin-market#v0.1.28",
+      "version": "v0.1.28",
       "author": {
         "name": "losebird",
         "url": "https://github.com/losebird"
@@ -57992,8 +57992,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -58798,8 +58798,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -58826,8 +58826,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -60053,8 +60053,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -61276,8 +61276,8 @@
       "auto": true,
       "category": "tools",
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       }
     },
     {

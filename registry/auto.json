@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16T04:46:57.836Z",
+  "updatedAt": "2026-08-16T04:59:30.852Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -23125,8 +23125,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -33190,8 +33190,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -35891,8 +35891,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -35919,8 +35919,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -37028,8 +37028,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -40509,8 +40509,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -55075,8 +55075,8 @@
       "auto": true,
       "category": "tools",
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       }
     },
     {
@@ -68297,8 +68297,8 @@
       "category": "ui",
       "status": "unavailable",
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "pkg"
+        "method": "manual",
+        "source": "readme"
       }
     },
     {

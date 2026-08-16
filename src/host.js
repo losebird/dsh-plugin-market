@@ -15,6 +15,14 @@ const PRESETS_ROOT = join(homedir(), '.dsh', '.agent-presets')
 const DSH_HOME = process.env.DSH_HOME || join(homedir(), '.dsh')
 const PROFILE_MANIFEST = join(DSH_HOME, 'profiles', 'web', 'package.json')
 
+// 详情页可切换的 README 语言变体（探测顺序即展示顺序，README.md 固定优先）
+const README_VARIANTS = [
+  'README.md', 'readme.md',
+  'README_EN.md', 'README.EN.md', 'README.en.md', 'README_en.md',
+  'README_zh.md', 'README_ZH.md', 'README.zh.md', 'README_zh-CN.md', 'README_zh_CN.md',
+  'README_CN.md', 'README.CN.md', 'README.zh-CN.md', 'README.zh_CN.md',
+]
+
 async function readProfileManifest() {
   try {
     return JSON.parse(await readFile(PROFILE_MANIFEST, 'utf8'))
@@ -127,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.28',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.29',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -250,6 +258,12 @@ async function performInstall(args, job) {
   if (typeof args.spec !== 'string') return finishJob(job, { status: 'error', error: '参数错误' })
   if (args.type === 'bundle') {
     if (!validBundleSpec(args.spec)) return finishJob(job, { status: 'error', error: '非法的安装源 spec' })
+    // 安全守卫：安装方式必须是 README 核实过的（或 curated 手工维护）。
+    // 历史启发式（source: 'pkg'）标记的 dsh-plugin-add 一律阻止，避免装坏环境
+    const instSource = args.install && args.install.source
+    if (args.install && args.install.method === 'dsh-plugin-add' && instSource === 'pkg') {
+      return finishJob(job, { status: 'error', error: '该插件的安装方式未经项目 README 核实，已阻止一键安装。请打开详情按 README 操作' })
+    }
     // 点击安装即授权：预先放行构建脚本，避免 pnpm 拦截一轮
     appendJobLine(job, '正在预放行构建脚本（pnpm allowBuilds）…')
     try { await allowBuild() } catch {}
@@ -722,10 +736,12 @@ export default {
         if (pathname === '/plugin-market/readme' && req.method === 'GET') {
           const url = new URL(req.url, 'http://x')
           const repo = url.searchParams.get('repo') || ''
+          const fileParam = url.searchParams.get('file') || 'README.md'
           if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return json(res, 400, { ok: false, error: 'bad repo' })
+          if (!/^readme[.\-_a-z0-9]*\.md$/i.test(fileParam) || fileParam.length > 64) return json(res, 400, { ok: false, error: 'bad file' })
           try {
             const base = 'https://raw.githubusercontent.com/' + repo + '/HEAD/'
-            const r = await fetch(base + 'README.md', { signal: AbortSignal.timeout(8000) })
+            const r = await fetch(base + fileParam, { signal: AbortSignal.timeout(8000) })
             if (!r.ok) return json(res, 200, { ok: false, error: 'no readme' })
             let text = await r.text()
             text = text.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (m, alt, src) => {
@@ -736,10 +752,29 @@ export default {
               .replace(/<script[\s\S]*?<\/script>/gi, '')
               .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
               .replace(/javascript:/gi, '')
-            return json(res, 200, { ok: true, html: safe })
+            return json(res, 200, { ok: true, html: safe, file: fileParam })
           } catch (e) {
             return json(res, 200, { ok: false, error: String(e && e.message ? e.message : e) })
           }
+        }
+        if (pathname === '/plugin-market/readme-variants' && req.method === 'GET') {
+          const url = new URL(req.url, 'http://x')
+          const repo = url.searchParams.get('repo') || ''
+          if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return json(res, 400, { ok: false, error: 'bad repo' })
+          const base = 'https://raw.githubusercontent.com/' + repo + '/HEAD/'
+          const variants = []
+          const seen = new Set()
+          await Promise.all(README_VARIANTS.map(async (f) => {
+            const key = f.toLowerCase()
+            if (seen.has(key)) return
+            seen.add(key)
+            try {
+              const r = await fetch(base + f, { method: 'HEAD', signal: AbortSignal.timeout(6000) })
+              if (r.ok) variants.push(f)
+            } catch {}
+          }))
+          variants.sort((a, b) => (a.toLowerCase() === 'readme.md' ? -1 : b.toLowerCase() === 'readme.md' ? 1 : 0))
+          return json(res, 200, { ok: true, variants })
         }
         json(res, 404, { ok: false, error: 'not found' })
       } catch (e) {
