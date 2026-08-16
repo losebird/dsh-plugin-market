@@ -81,7 +81,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.22',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.23',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -192,18 +192,9 @@ async function install(args) {
     try { await allowBuild() } catch {}
     let r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
     if (!r.ok) {
-      // 失败重试：按 CLI 提示关键词与 pnpm 输出收集包名 → 放行 → 重试一次
+      // 失败重试：命中 pnpm/CLI 构建拦截提示 → 放行 → 重试一次
       const combined = ((r.stdout || '') + '\n' + (r.stderr || '')).replace(/\u001b\[[0-9;]*m/g, '').replace(/\[.*?m/g, '')
       const hintBlocked = /allowBuilds|prepare script|approve-builds|Ignored build scripts/i.test(combined)
-      const names = []
-      if (pkgNamePre) names.push(pkgNamePre)
-      const m = combined.match(/Ignored build scripts:?\s*([^\n]+)/i)
-      if (m && m[1]) {
-        for (const s of m[1].split(/[,\s]+/)) {
-          const n = s.trim().replace(/"|'/g, '').replace(/@[^@/]+$/, '')
-          if (/^[@\w./-]+$/.test(n) && n !== 'Run' && !names.includes(n)) names.push(n)
-        }
-      }
       if (hintBlocked) {
         try { await allowBuild() } catch {}
         r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
