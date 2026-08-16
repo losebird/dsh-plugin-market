@@ -27,12 +27,11 @@ async function writeProfileManifest(m) {
   await writeFile(PROFILE_MANIFEST, JSON.stringify(m, null, 2) + '\n')
 }
 
-// 放行 pnpm 构建脚本：写入 dangerouslyAllowAllBuilds（官方全局开关，命中即放行）
-// 此前写入的列表格式 allowBuilds 对 git 依赖无效（pnpm 要求 <name>@<resolutionId>: true 映射键），
-// 这里统一重建 pnpm 段，用官方开关兜底。用户在弹窗点击安装即授权。
-// 放行 pnpm 构建脚本：把 pnpm 报错里要求的“精确 depPath 键”(包名@codeload-tarball-URL)
-// 以映射格式写入 pnpm.allowBuilds，保留此前已写入的键与用户自定义的其他 pnpm 设置；
-// dangerouslyAllowAllBuilds 作双保险。只重写 allowBuilds/dangerouslyAllowAllBuilds 两处。
+// 放行 pnpm 构建脚本（pnpm-workspace.yaml 顶层设置 —— pnpm 10.4+ 读取顶层键，
+// 我们曾误写进 "pnpm:" 嵌套段导致整段被忽略；这里同时完成旧格式迁移与清理）。
+// 机制：dangerouslyAllowAllBuilds: true 为全局开关，覆盖 git 依赖 prepare 与普通依赖
+// install/postinstall 两阶段；allowBuilds 映射写入 pnpm 报错要求的精确 depPath 键
+// （<包名>@<codeload-tarball-URL>）作为双保险。用户在弹窗点击安装即授权。
 async function allowBuild(extraKeys = []) {
   const p = join(DSH_HOME, 'profiles', 'web', 'pnpm-workspace.yaml')
   let text = ''
@@ -42,56 +41,55 @@ async function allowBuild(extraKeys = []) {
   for (const k of extraKeys) {
     if (typeof k === 'string' && k.includes('@') && k.length < 400 && !/\s/.test(k)) keys.add(k)
   }
-  // 定位 pnpm: 段（无则视为文件尾）
-  let pnpmIdx = lines.findIndex((l) => /^pnpm\s*:/.test(l))
-  const hasPnpm = pnpmIdx !== -1
-  if (!hasPnpm) pnpmIdx = lines.length
-  let endIdx = pnpmIdx + 1
-  while (endIdx < lines.length && (/^\s/.test(lines[endIdx]) || lines[endIdx].trim() === '')) endIdx++
-  // 收集旧 allowBuilds 键，并标记待删行（旧 allowBuilds 块 + 旧 dangerouslyAllowAllBuilds 行）
   const skip = new Set()
-  let inAllowBuilds = false
-  for (let i = pnpmIdx + 1; i < endIdx; i++) {
-    const line = lines[i]
-    if (/^\s{2}allowBuilds\s*:/.test(line)) { inAllowBuilds = true; skip.add(i); continue }
-    if (/^\s{2}dangerouslyAllowAllBuilds\s*:/.test(line)) { skip.add(i); continue }
-    if (inAllowBuilds) {
-      if (/^\s{4}\S/.test(line)) {
-        const m = /^\s{4}["']?([^\s#]+?)["']?\s*:\s*true\s*$/.exec(line)
-        if (m && m[1].includes('@')) keys.add(m[1])
-        skip.add(i)
-        continue
-      }
-      inAllowBuilds = false
+  // 1) 顶层 allowBuilds 块：收集键并标记删除（重建时合并）
+  for (let i = 0; i < lines.length; i++) {
+    if (!/^allowBuilds\s*:/.test(lines[i])) continue
+    skip.add(i)
+    let j = i + 1
+    while (j < lines.length && (/^\s{2}\S/.test(lines[j]) || lines[j].trim() === '')) {
+      skip.add(j)
+      const m = /^\s{2}["']?([^\s#]+?)["']?\s*:\s*true\s*$/.exec(lines[j])
+      if (m && m[1].includes('@')) keys.add(m[1])
+      j++
     }
   }
-  const head = lines.slice(0, pnpmIdx)
-  const tail = lines.slice(endIdx)
-  while (head.length && head[head.length - 1].trim() === '') head.pop()
-  let body = 'pnpm:\n'
-  if (hasPnpm) {
-    // 保留旧段中未被删的行（用户自定义设置），只去掉行尾空格与段内空行
+  // 2) 顶层 dangerouslyAllowAllBuilds 行：标记删除（重建）
+  for (let i = 0; i < lines.length; i++) {
+    if (/^dangerouslyAllowAllBuilds\s*:/.test(lines[i])) skip.add(i)
+  }
+  // 3) 旧版误写的 "pnpm:" 段：若只含我们写过的 allowBuilds/dangerouslyAllowAllBuilds，
+  //    整体删除并把其中的键迁移到顶层；若含其他内容则原样保留
+  const pnpmIdx = lines.findIndex((l) => /^pnpm\s*:/.test(l))
+  if (pnpmIdx !== -1) {
+    let endIdx = pnpmIdx + 1
+    while (endIdx < lines.length && (/^\s/.test(lines[endIdx]) || lines[endIdx].trim() === '')) endIdx++
+    let ours = true
     for (let i = pnpmIdx + 1; i < endIdx; i++) {
-      if (skip.has(i)) continue
-      const l = lines[i].replace(/\s+$/, '')
+      const l = lines[i].trim()
       if (l === '') continue
-      body += l + '\n'
+      const isHeader = /^allowBuilds\s*:|^dangerouslyAllowAllBuilds\s*:/.test(l)
+      const isEntry = /@.*:\s*true\s*$/.test(l)
+      if (!isHeader && !isEntry) { ours = false; break }
+      if (isEntry) {
+        const m = /^["']?([^\s#]+?)["']?\s*:\s*true\s*$/.exec(l)
+        if (m && m[1].includes('@')) keys.add(m[1])
+      }
     }
+    if (ours) for (let i = pnpmIdx; i < endIdx; i++) skip.add(i)
   }
-  body += '  dangerouslyAllowAllBuilds: true\n'
-  if (keys.size === 0) {
-    body += '  allowBuilds: {}\n'
-  } else {
-    body += '  allowBuilds:\n'
-    for (const k of [...keys].sort()) body += '    ' + k + ': true\n'
+  // 4) 重建：保留未标记行，末尾追加顶层设置
+  const kept = []
+  for (let i = 0; i < lines.length; i++) if (!skip.has(i)) kept.push(lines[i])
+  while (kept.length && kept[kept.length - 1].trim() === '') kept.pop()
+  let body = 'dangerouslyAllowAllBuilds: true\n'
+  if (keys.size > 0) {
+    body += 'allowBuilds:\n'
+    for (const k of [...keys].sort()) body += '  ' + k + ': true\n'
   }
-  let out = head.join('\n')
+  let out = kept.join('\n')
   if (out && !out.endsWith('\n')) out += '\n'
   out += (out ? '\n' : '') + body
-  if (tail.length) {
-    let t = tail.join('\n').replace(/^\n+/, '')
-    if (t) out += '\n' + t
-  }
   if (!out.endsWith('\n')) out += '\n'
   await writeFile(p, out)
   return true
@@ -129,7 +127,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.24',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.25',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
