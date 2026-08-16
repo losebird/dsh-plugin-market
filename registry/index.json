@@ -8,7 +8,7 @@
       "type": "bundle",
       "package": "dsh-plugin-market",
       "repo": "losebird/dsh-plugin-market",
-      "spec": "github:losebird/dsh-plugin-market#v0.1.52",
+      "spec": "@ace-zone/dsh-market",
       "version": "v0.1.52",
       "author": {
         "name": "losebird",
