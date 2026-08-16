@@ -1,6 +1,6 @@
-// dsh-plugin-market 浏览器半片：设置 → 插件 → 插件市场（AMD bundle，由 client-modules 提供）
+// dsh-market 浏览器半片：设置 → 插件 → 插件市场（AMD bundle，由 client-modules 提供）
 window.__ModuleLoader__.load({
-  id: 'dsh-plugin-market',
+  id: 'dsh-market',
   factory: (require) => {
     const React = require('react')
     const { useState, useEffect } = React
@@ -222,7 +222,7 @@ window.__ModuleLoader__.load({
 .dshm-manage-name { font-size:13.5px; font-weight:600; color:var(--dsw-alias-label-primary); }
 .dshm-manage-actions { margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; }
 `
-    if (typeof document !== 'undefined' && document.querySelector('style[data-plugin-css="dsh-plugin-market"]') === null) {
+    if (typeof document !== 'undefined' && document.querySelector('style[data-plugin-css="dsh-market"]') === null) {
       const tag = document.createElement('style')
       tag.setAttribute('data-plugin-css', 'dsh-plugin-market')
       tag.textContent = CSS

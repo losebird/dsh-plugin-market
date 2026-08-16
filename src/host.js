@@ -1,4 +1,4 @@
-// dsh-plugin-market host 半片：REST API + 安装/卸载执行
+// dsh-market host 半片：REST API + 安装/卸载执行
 // /plugin-market/list      GET   → { source, notice, items, installed }
 // /plugin-market/install   POST  → { ok, message | error }
 // /plugin-market/uninstall POST  → { ok, message | error }
@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.51',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.52',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -939,7 +939,7 @@ export default {
   apply(ctx) {
     const webServer = ctx.webServer
     const shell = ctx.shell
-    console.log('[dsh-plugin-market] host apply: webServer=' + (webServer !== undefined) + ' shell=' + (shell !== undefined))
+    console.log('[dsh-market] host apply: webServer=' + (webServer !== undefined) + ' shell=' + (shell !== undefined))
     runShell.shellService = shell
     runShell.sandboxPolicyService = ctx.get('sandboxPolicy')
     installedRows.loader = ctx.loader

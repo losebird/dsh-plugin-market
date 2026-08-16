@@ -1,0 +1,27 @@
+name: Publish to npm
+
+# 每次 push/force-push v* 标签自动发布到 npm（dsh-market）；
+# 需要仓库 Secrets 里配置 NPM_TOKEN（npm Access Token，Classic，类型 Publish）
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
