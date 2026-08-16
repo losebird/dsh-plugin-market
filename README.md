@@ -9,7 +9,7 @@
 安装市场：
 
 ```bash
-dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.50
+dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.51
 dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 ```
 

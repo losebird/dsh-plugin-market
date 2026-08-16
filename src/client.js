@@ -278,6 +278,19 @@ window.__ModuleLoader__.load({
         if (inst.method === 'npm-global' || inst.method === 'command' || inst.method === 'git-clone') return inst.command || ''
         return 'dsh plugin --profile web add ' + item.spec
       }
+      // 版本号提取：兼容 github:owner/repo#v1.2.3、owner/repo#v1.2.3、name@1.2.3、v1.2.3 等写法
+      const verOf = (s) => {
+        const m = /#v?([0-9][\w.-]*)$|@([0-9][\w.-]*)$|^v?([0-9][\w.-]*)$/.exec(String(s || ''))
+        return m ? (m[1] || m[2] || m[3]) : null
+      }
+      // 更新判定：同一版本以不同安装源形式装过（npm 包名 vs git 标签）不应误报“可更新”
+      const isUpToDate = (item, installed) => {
+        if (!item || !installed || item.type !== 'bundle') return false
+        const a = verOf(item.spec)
+        const b = verOf(installed.spec)
+        if (a && b) return a === b
+        return installed.spec === item.spec
+      }
       const toggleLang = () => {
         const next = store.lang === 'zh' ? 'en' : 'zh'
         patch({ lang: next })
@@ -558,7 +571,7 @@ window.__ModuleLoader__.load({
         const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
         const busy = st.busy && st.busy[item.id]
         const unavailable = item.status === 'unavailable'
-        const upToDate = !!installed && item.type === 'bundle' && installed.spec === item.spec
+        const upToDate = isUpToDate(item, installed)
         return h('div', { className: 'dshm-card', key: item.id },
           h('div', { className: 'dshm-card-top' },
             h('div', { className: 'dshm-card-name' }, shortName(item.name)),
@@ -606,7 +619,7 @@ window.__ModuleLoader__.load({
                   ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('migrate'))
                   : installed && !upToDate
                     ? h('span', null,
-                        h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('update')),
+                        h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) }, t('update')),
                         h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall')))
                     : installed && upToDate
                       ? h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
@@ -618,7 +631,7 @@ window.__ModuleLoader__.load({
         const inst = item.install || {}
         const installedRaw = st.installed && st.installed[item.id]
         const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
-        const upToDate = !!installed && item.type === 'bundle' && installed.spec === item.spec
+        const upToDate = isUpToDate(item, installed)
         const copyBtn = (cmd, key) => h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyTextCmd(cmd, key) },
           st.copiedRepo === key ? t('copied') : t('copyCmd'))
         const installBtn = (enabled) => (enabled && !upToDate)
@@ -680,7 +693,7 @@ window.__ModuleLoader__.load({
         const item = st.detail
         const installedRaw = st.installed && st.installed[item.id]
         const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
-        const upToDate = !!installed && item.type === 'bundle' && installed.spec === item.spec
+        const upToDate = isUpToDate(item, installed)
         return h('div', { className: 'dshm-detail' },
           h('div', { className: 'dshm-detail-head' },
             h('button', { className: 'dshm-backbtn', onClick: closeDetail }, '← ' + t('back')),
@@ -792,7 +805,7 @@ window.__ModuleLoader__.load({
                   rows.map((row) => {
                     const item = st.items.find((it) => it.package === row.name)
                     const installed = item && st.installed[item.id]
-                    const upToDate = installed && item.type === 'bundle' && installed.spec === item.spec
+                    const upToDate = isUpToDate(item, installed)
                     const isOther = row.source === 'other'
                     return h('div', { className: 'dshm-manage-row', key: row.id || row.name },
                       h('div', { className: 'dshm-manage-name' }, shortName(row.name)),
@@ -808,7 +821,7 @@ window.__ModuleLoader__.load({
                           : [
                               h('button', { className: 'dshm-btn ' + (row.enabled ? 'dshm-btn-warn' : 'dshm-btn-success') + ' dshm-btn-sm', onClick: () => doToggle(row) }, row.enabled ? t('disable') : t('enable')),
                               item && installed && !upToDate
-                                ? h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: () => runInstall(item) }, t('update'))
+                                ? h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: installClick(item) }, t('update'))
                                 : null,
                               item && item.repo
                                 ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => runAgentUninstall(item) }, t('agentUninstall'))
