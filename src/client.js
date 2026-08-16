@@ -822,9 +822,14 @@ window.__ModuleLoader__.load({
         { name: 'settings.section', id: 'market', order: 17, label: () => (store.lang === 'zh' ? '插件市场' : 'Plugin Market') },
         (props) => {
           const st = useStore()
-          // 通过 settings.section 的标准 prop 拿到当前会话 id，供“交给 DSH 安装/卸载”精确投递
-          const sessionSnap = props && typeof props.useSessions === 'function' ? props.useSessions() : null
-          const currentSid = sessionSnap && sessionSnap.current ? sessionSnap.current : null
+          // 通过 settings.section 的标准 prop 拿到当前会话 id，供“交给 DSH 安装/卸载”精确投递。
+          // useSessions 是带 selector 的 hook：useSessions((s) => s.current)；异常时静默降级，绝不阻塞窗口打开
+          let currentSid = null
+          try {
+            currentSid = props && typeof props.useSessions === 'function'
+              ? props.useSessions((s) => (s && s.current) || null)
+              : null
+          } catch {}
           useEffect(() => {
             if (currentSid && currentSid !== st.sessionId) patch({ sessionId: currentSid })
             if (props && typeof props.close === 'function') props.close()
