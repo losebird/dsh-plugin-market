@@ -77,13 +77,13 @@ window.__ModuleLoader__.load({
     const BORDER = 'color-mix(in srgb, var(--dsw-alias-label-secondary) 55%, var(--dsw-alias-border-l2))'
 
     const CSS = `
-.dshm-root { display:flex; flex-direction:column; gap:10px; font-size:13px; color:var(--dsw-alias-label-primary); }
+.dshm-root { display:flex; flex-direction:column; gap:8px; font-size:13px; color:var(--dsw-alias-label-primary); width:100%; max-width:none; }
 .dshm-viewseg { display:flex; gap:10px; }
 .dshm-viewbtn { display:inline-flex; align-items:center; gap:6px; border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:13px; font-weight:550; padding:6px 16px; border-radius:8px; cursor:pointer; }
 .dshm-viewbtn:hover { color:var(--dsw-alias-label-primary); }
 .dshm-viewbtn.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
-.dshm-toolbar { display:flex; gap:8px; }
-.dshm-searchwrap { position:relative; flex:1; min-width:0; }
+.dshm-toolbar { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; }
+.dshm-searchwrap { position:relative; min-width:0; }
 .dshm-search { width:100%; padding:7px 28px 7px 10px; border:1px solid ${BORDER}; border-radius:8px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); font-size:13px; }
 .dshm-search:focus { outline:none; border-color:var(--dsw-alias-brand-primary); }
 .dshm-searchclear { position:absolute; right:7px; top:50%; transform:translateY(-50%); border:none; background:transparent; color:var(--dsw-alias-label-secondary); cursor:pointer; font-size:16px; line-height:1; padding:2px 5px; border-radius:6px; }
@@ -99,10 +99,10 @@ window.__ModuleLoader__.load({
 .dshm-chip { border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12px; padding:3px 11px; border-radius:999px; cursor:pointer; }
 .dshm-chip:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-brand-primary); }
 .dshm-chip.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
-.dshm-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:12px; align-content:start; }
-.dshm-card { display:flex; flex-direction:column; gap:8px; padding:14px; border:1px solid ${BORDER}; border-radius:10px; background:var(--dsw-alias-bg-base); }
+.dshm-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:10px; align-content:start; }
+.dshm-card { display:flex; flex-direction:column; gap:7px; padding:12px; border:1px solid ${BORDER}; border-radius:10px; background:var(--dsw-alias-bg-base); }
 .dshm-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
-.dshm-card-name { font-size:13.5px; font-weight:600; color:var(--dsw-alias-label-primary); }
+.dshm-card-name { font-size:13px; font-weight:600; color:var(--dsw-alias-label-primary); }
 .dshm-card-badges { display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
 .dshm-pill { font-size:11px; padding:2px 7px; border-radius:999px; border:1px solid ${BORDER}; color:var(--dsw-alias-label-secondary); white-space:nowrap; }
 .dshm-pill-auto { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
@@ -119,7 +119,7 @@ window.__ModuleLoader__.load({
 .dshm-card-stats { display:flex; gap:12px; font-size:12px; color:var(--dsw-alias-label-secondary); }
 .dshm-stat-type { margin-left:auto; }
 .dshm-card-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-.dshm-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-primary); font-size:12.5px; cursor:pointer; text-decoration:none; }
+.dshm-btn { display:inline-flex; align-items:center; gap:6px; flex:none; white-space:nowrap; padding:6px 14px; border-radius:8px; border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-primary); font-size:12.5px; cursor:pointer; text-decoration:none; }
 .dshm-btn:hover { border-color:var(--dsw-alias-brand-primary); }
 .dshm-btn-primary { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
 .dshm-btn-primary:hover { opacity:0.9; }
