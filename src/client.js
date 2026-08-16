@@ -51,6 +51,8 @@ window.__ModuleLoader__.load({
         scriptNote: '一键安装将执行当前系统对应的官方脚本。',
         cloneNote: '克隆仓库后按其 README 步骤构建，市场不代为执行。',
         installNow: '一键安装', currentOs: '当前系统',
+        jobTitle: '安装进度', jobRunning: '正在安装…', jobDone: '安装完成', jobFailed: '安装失败',
+        jobAutoClose: '本窗口将在 3 秒后自动关闭', jobClose: '关闭',
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
@@ -82,6 +84,8 @@ window.__ModuleLoader__.load({
         scriptNote: 'One-click install runs the official script for your current OS.',
         cloneNote: 'Clone the repo and follow its README steps; the market does not run it for you.',
         installNow: 'Install now', currentOs: 'current OS',
+        jobTitle: 'Install progress', jobRunning: 'Installing…', jobDone: 'Install complete', jobFailed: 'Install failed',
+        jobAutoClose: 'This window closes automatically in 3 seconds', jobClose: 'Close',
       },
     }
 
@@ -179,6 +183,11 @@ window.__ModuleLoader__.load({
 .dshm-ostabs { display:flex; gap:6px; flex-wrap:wrap; }
 .dshm-cmd { display:block; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.6; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); padding:8px 10px; border-radius:8px; overflow-wrap:anywhere; white-space:pre-wrap; }
 .dshm-install-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.dshm-job-overlay { z-index:300; }
+.dshm-jobpanel { position:relative; display:flex; flex-direction:column; width:min(560px, 94vw); background:var(--dsw-alias-bg-layer-1); border:1px solid ${BORDER}; border-radius:16px; box-shadow:0 24px 64px rgba(0,0,0,0.4); overflow:hidden; }
+.dshm-jobbody { max-height:min(340px, 40vh); overflow-y:auto; padding:12px 16px; background:var(--dsw-alias-bg-layer-2); }
+.dshm-joblog { margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.65; color:var(--dsw-alias-label-secondary); white-space:pre-wrap; overflow-wrap:anywhere; }
+.dshm-jobfoot { display:flex; flex-direction:column; gap:8px; padding:12px 16px 14px; }
 .dshm-readme { color:var(--dsw-alias-label-secondary); font-size:13px; line-height:1.7; overflow-wrap:anywhere; }
 .dshm-readme h1, .dshm-readme h2, .dshm-readme h3, .dshm-readme h4 { color:var(--dsw-alias-label-primary); font-size:14.5px; margin:12px 0 6px; }
 .dshm-readme p { margin:6px 0; }
@@ -220,7 +229,7 @@ window.__ModuleLoader__.load({
         q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
         view: 'market', mRows: [], mQ: '', mCat: null, mLoading: false,
         notice: null, error: null, loading: false, source: 'demo', open: false,
-        os: 'darwin', osTab: null,
+        os: 'darwin', osTab: null, job: null,
       }
       const subs = new Set()
       const patch = (p) => { Object.assign(store, p); for (const f of subs) f() }
@@ -283,19 +292,57 @@ window.__ModuleLoader__.load({
         }
       }
 
+      const jobTimers = new Map()
+
+      const pollJob = async (id, item) => {
+        const tick = async () => {
+          try {
+            const j = await api('job?id=' + encodeURIComponent(id))
+            if (!j || !j.ok) {
+              patch({ job: Object.assign({}, store.job, { status: 'error', error: (j && j.error) || '任务查询失败', message: null }) })
+              return
+            }
+            const next = {
+              id: id,
+              name: store.job ? store.job.name : shortName(item.name),
+              status: j.status,
+              lines: Array.isArray(j.lines) ? j.lines : [],
+              message: j.message || null,
+              error: j.error || null,
+            }
+            patch({ job: next })
+            if (j.status === 'done' || j.status === 'error') {
+              jobTimers.delete(id)
+              patch({ busy: Object.assign({}, store.busy, { [item.id]: null }) })
+              patch({ notice: j.status === 'done' ? (j.message || t('msgInstalled')) : null, error: j.status === 'error' ? (j.error || t('errOp')) : null })
+              await refresh()
+              await loadInstalled()
+              setTimeout(() => {
+                if (store.job && store.job.id === id) patch({ job: null })
+              }, 3000)
+            } else {
+              jobTimers.set(id, setTimeout(() => tick(), 400))
+            }
+          } catch (e) {
+            patch({ job: Object.assign({}, store.job, { status: 'error', error: String(e && e.message ? e.message : e), message: null }) })
+          }
+        }
+        tick()
+      }
+
       const runInstall = async (item) => {
         patch({ busy: Object.assign({}, store.busy, { [item.id]: 'install' }), error: null, notice: null })
         try {
           const res = await api('install', { id: item.id, type: item.type, spec: item.spec, package: item.package || null, install: item.install || null })
-          const ok = res && res.ok
+          if (res && res.ok && res.job) {
+            patch({ job: { id: res.job, name: shortName(item.name), status: 'running', lines: [], message: null, error: null } })
+            pollJob(res.job, item)
+            return
+          }
           patch({
             busy: Object.assign({}, store.busy, { [item.id]: null }),
-            notice: ok
-              ? t('msgInstalled') + '，' + t('msgRestart') + '。' + (item.type === 'bundle' ? t('msgUseBundle') : t('msgUsePack'))
-              : null,
-            error: ok ? null : ((res && res.error) || t('errOp')),
+            error: (res && res.error) || t('errOp'),
           })
-          if (ok) { await refresh(); await loadInstalled() }
         } catch (e) {
           patch({ busy: Object.assign({}, store.busy, { [item.id]: null }), error: String(e && e.message ? e.message : e) })
         }
@@ -657,11 +704,49 @@ window.__ModuleLoader__.load({
         },
       ))
 
+      function JobDialogView(st, jobRef) {
+        const j = st.job
+        if (!j) return null
+        const running = j.status === 'running'
+        return h('div', { className: 'dshm-overlay dshm-job-overlay', role: 'dialog' },
+          h('div', { className: 'dshm-backdrop' }),
+          h('div', { className: 'dshm-jobpanel' },
+            h('div', { className: 'dshm-head' },
+              h('div', { className: 'dshm-title' }, t('jobTitle') + ' · ' + (j.name || '')),
+              running
+                ? h('span', { className: 'dshm-pill dshm-pill-auto' }, t('jobRunning'))
+                : j.status === 'done'
+                  ? h('span', { className: 'dshm-pill dshm-pill-on' }, t('jobDone'))
+                  : h('span', { className: 'dshm-pill dshm-pill-off' }, t('jobFailed')),
+              !running
+                ? h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ job: null }) }, '×')
+                : null,
+            ),
+            h('div', { className: 'dshm-jobbody', ref: jobRef },
+              h('pre', { className: 'dshm-joblog' }, (j.lines && j.lines.length > 0) ? j.lines.join('\n') : t('jobRunning')),
+            ),
+            !running
+              ? h('div', { className: 'dshm-jobfoot' },
+                  j.status === 'done'
+                    ? h('div', { className: 'dshm-strip dshm-strip-ok' }, j.message || t('msgInstalled'))
+                    : h('div', { className: 'dshm-strip dshm-strip-err' }, j.error || t('errOp')),
+                  h('div', { className: 'dshm-card-desc' }, t('jobAutoClose')),
+                )
+              : null,
+          ),
+        )
+      }
+
       slots.inject('shell.overlay', () => slots.register(
         { name: 'shell.overlay', id: 'plugin-market-window', order: 0 },
         () => {
           const st = useStore()
-          if (!st.open) return null
+          const jobRef = React.useRef(null)
+          useEffect(() => {
+            if (jobRef.current) jobRef.current.scrollTop = jobRef.current.scrollHeight
+          }, [(st.job && st.job.lines && st.job.lines.length) || 0])
+          const jobOverlay = st.job ? JobDialogView(st, jobRef) : null
+          if (!st.open) return jobOverlay
           const qv = (st.q || '').trim().toLowerCase()
           let base = st.items
           if (st.group === 'featured') {
@@ -752,19 +837,22 @@ window.__ModuleLoader__.load({
                     ],
               )
 
-          return h('div', { className: 'dshm-overlay', role: 'dialog' },
-            h('div', { className: 'dshm-backdrop', onClick: () => patch({ open: false, detail: null }) }),
-            h('div', { className: 'dshm-panel' },
-              h('div', { className: 'dshm-head' },
-                h('div', { className: 'dshm-title' }, t('title')),
-                h('div', { className: 'dshm-head-badges' },
-                  h('span', { className: 'dshm-pill' }, st.source === 'remote' ? t('sourceRemote') : t('sourceDemo')),
+          return h(React.Fragment, null,
+            h('div', { className: 'dshm-overlay', role: 'dialog' },
+              h('div', { className: 'dshm-backdrop', onClick: () => patch({ open: false, detail: null }) }),
+              h('div', { className: 'dshm-panel' },
+                h('div', { className: 'dshm-head' },
+                  h('div', { className: 'dshm-title' }, t('title')),
+                  h('div', { className: 'dshm-head-badges' },
+                    h('span', { className: 'dshm-pill' }, st.source === 'remote' ? t('sourceRemote') : t('sourceDemo')),
+                  ),
+                  h('button', { className: 'dshm-viewbtn', title: 'switch language', onClick: toggleLang }, t('langBtn')),
+                  h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ open: false, detail: null }) }, '×'),
                 ),
-                h('button', { className: 'dshm-viewbtn', title: 'switch language', onClick: toggleLang }, t('langBtn')),
-                h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ open: false, detail: null }) }, '×'),
+                h('div', { className: 'dshm-body' }, body),
               ),
-              h('div', { className: 'dshm-body' }, body),
             ),
+            jobOverlay,
           )
         },
       ))

@@ -127,7 +127,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.26',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.27',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -211,51 +211,49 @@ async function list() {
   return { source, notice, items: finalItems, installed, os: process.platform }
 }
 
-async function install(args) {
-  if (!args || typeof args !== 'object' || typeof args.id !== 'string' || typeof args.type !== 'string') {
-    return { ok: false, error: '参数错误' }
-  }
+async function performInstall(args, job) {
   // 安装方式分发：按插件自身声明的方法执行
   const method = args.install && args.install.method ? args.install.method : (args.type === 'pack' ? 'pack' : 'dsh-plugin-add')
   if (method === 'npm-global' || method === 'command') {
     const cmd = (args.install && args.install.command) || (method === 'npm-global' ? 'npm install -g ' + (args.package || args.id) : '')
-    if (!cmd) return { ok: false, error: '缺少安装命令' }
-    const r = await runShell(cmd, 600000, { fullAccess: true })
-    if (!r.ok) return { ok: false, error: (r.stderr || '').trim() || '安装失败' }
+    if (!cmd) return finishJob(job, { status: 'error', error: '缺少安装命令' })
+    const r = await runShellLogged(job, cmd, 600000, { fullAccess: true })
+    if (!r.ok) return finishJob(job, { status: 'error', error: (r.stderr || '').trim() || '安装失败' })
     const state = await readState()
     const installed = state.installed || {}
     installed[args.id] = { type: 'bundle', spec: args.spec || cmd, package: args.package || null, at: new Date().toISOString(), installCmd: cmd }
     await writeState({ installed })
-    return { ok: true, message: '安装完成: ' + cmd }
+    return finishJob(job, { status: 'done', message: '安装完成: ' + cmd })
   }
   if (method === 'script') {
     // 官方脚本安装：按当前系统选择 README 记录的命令（darwin/linux 共用 bash 脚本，win32 走 PowerShell）
     const osCmds = (args.install && args.install.os) || {}
     let cmd = osCmds[process.platform]
     if (!cmd && process.platform !== 'win32') cmd = osCmds.darwin || osCmds.linux
-    if (!cmd) return { ok: false, error: '该项目没有适配当前系统（' + process.platform + '）的安装脚本，请打开详情按 README 手动安装' }
+    if (!cmd) return finishJob(job, { status: 'error', error: '该项目没有适配当前系统（' + process.platform + '）的安装脚本，请打开详情按 README 手动安装' })
     let execCmd = cmd
     if (process.platform === 'win32') execCmd = 'powershell -NoProfile -ExecutionPolicy Bypass -Command "' + String(cmd).replace(/"/g, '\\"') + '"'
-    const r = await runShell(execCmd, 600000, { fullAccess: true })
+    const r = await runShellLogged(job, execCmd, 600000, { fullAccess: true })
     if (!r.ok) {
       const tail = ((r.stderr || r.stdout || '').trim()).slice(-1200)
-      return { ok: false, error: '安装脚本执行失败: ' + (tail || '未知错误') }
+      return finishJob(job, { status: 'error', error: '安装脚本执行失败: ' + (tail || '未知错误') })
     }
     const state = await readState()
     const installed = state.installed || {}
     installed[args.id] = { type: 'bundle', spec: args.spec || cmd, package: args.package || null, at: new Date().toISOString(), installCmd: cmd }
     await writeState({ installed })
-    return { ok: true, message: '安装完成（项目官方脚本）: ' + cmd }
+    return finishJob(job, { status: 'done', message: '安装完成（项目官方脚本）: ' + cmd })
   }
   if (method === 'desktop' || method === 'manual' || method === 'git-clone') {
-    return { ok: false, error: '该插件需按其仓库说明安装，请打开详情查看 README' }
+    return finishJob(job, { status: 'error', error: '该插件需按其仓库说明安装，请打开详情查看 README' })
   }
-  if (typeof args.spec !== 'string') return { ok: false, error: '参数错误' }
+  if (typeof args.spec !== 'string') return finishJob(job, { status: 'error', error: '参数错误' })
   if (args.type === 'bundle') {
-    if (!validBundleSpec(args.spec)) return { ok: false, error: '非法的安装源 spec' }
+    if (!validBundleSpec(args.spec)) return finishJob(job, { status: 'error', error: '非法的安装源 spec' })
     // 点击安装即授权：预先放行构建脚本，避免 pnpm 拦截一轮
+    appendJobLine(job, '正在预放行构建脚本（pnpm allowBuilds）…')
     try { await allowBuild() } catch {}
-    let r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
+    let r = await runShellLogged(job, 'dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
     if (!r.ok) {
       // 失败重试：命中 pnpm/CLI 构建拦截提示 → 放行 → 重试一次
       const combined = ((r.stdout || '') + '\n' + (r.stderr || '')).replace(/\u001b\[[0-9;]*m/g, '').replace(/\[.*?m/g, '')
@@ -271,18 +269,19 @@ async function install(args) {
         while ((km = keyRe.exec(norm)) !== null) {
           if (km[1] && km[1].includes('@') && !exactKeys.includes(km[1])) exactKeys.push(km[1])
         }
+        appendJobLine(job, '检测到 pnpm 构建脚本拦截，已解析 ' + exactKeys.length + ' 个放行键，正在重试…')
         try { await allowBuild(exactKeys) } catch {}
-        r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
+        r = await runShellLogged(job, 'dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
         if (!r.ok) {
           const tailOut = ((r.stdout || '').trim()).slice(-900)
           const tailErr = ((r.stderr || '').trim()).slice(-900)
           let yamlDump = ''
           try { yamlDump = await readFile(join(DSH_HOME, 'profiles', 'web', 'pnpm-workspace.yaml'), 'utf8') } catch (e) { yamlDump = '(读取失败: ' + e.message + ')' }
-          return { ok: false, error: '已自动放行构建脚本（' + exactKeys.length + ' 个键），但重试仍失败。\n--- pnpm-workspace.yaml ---\n' + yamlDump.trim() + '\n--- stdout ---\n' + tailOut + '\n--- stderr ---\n' + tailErr }
+          return finishJob(job, { status: 'error', error: '已自动放行构建脚本（' + exactKeys.length + ' 个键），但重试仍失败。\n--- pnpm-workspace.yaml ---\n' + yamlDump.trim() + '\n--- stdout ---\n' + tailOut + '\n--- stderr ---\n' + tailErr })
         }
       } else {
         const tail = combined.trim().slice(-1800)
-        return { ok: false, error: '安装失败: ' + (tail || 'dsh plugin add 失败') }
+        return finishJob(job, { status: 'error', error: '安装失败: ' + (tail || 'dsh plugin add 失败') })
       }
     }
     // 自动迁移：若同名包存在于其他 profile，从中移除，避免“装了却不生效”
@@ -313,52 +312,52 @@ async function install(args) {
     }
     await writeState({ installed })
     const migrateNote = migratedFrom.length > 0 ? '（已自动从其他 profile 迁移: ' + migratedFrom.join(', ') + '）' : ''
-    return { ok: true, message: '已安装到 web profile，重启 dsh 后生效' + migrateNote }
+    return finishJob(job, { status: 'done', message: '已安装到 web profile，重启 dsh 后生效' + migrateNote })
   }
   if (args.type === 'pack') {
     const url = args.spec
-    if (!/^(https:\/\/|file:\/\/)[^\s'"]+$/.test(url)) return { ok: false, error: '非法的下载地址' }
+    if (!/^(https:\/\/|file:\/\/)[^\s'"]+$/.test(url)) return finishJob(job, { status: 'error', error: '非法的下载地址' })
     const tmp = join(STATE_DIR, '.tmp-' + process.pid + '-' + Date.now())
     const tmpQ = q(tmp)
     const dl = url.startsWith('https://')
       ? 'curl -fsSL --max-time 300 ' + q(url) + ' -o ' + tmpQ + '/pkg.zip'
       : 'cp ' + q(url.slice(7)) + ' ' + tmpQ + '/pkg.zip'
-    const r1 = await runShell('rm -rf ' + tmpQ + ' && mkdir -p ' + tmpQ + ' && ' + dl, 330000, { fullAccess: true })
-    if (!r1.ok) return { ok: false, error: '下载失败: ' + ((r1.stderr || '').trim() || '未知错误') }
-    const r2 = await runShell('cd ' + tmpQ + ' && unzip -o -q pkg.zip && test -f manifest.json', 60000, { fullAccess: true })
-    if (!r2.ok) return { ok: false, error: '压缩包校验失败（缺少 manifest.json 或解压出错）' }
+    const r1 = await runShellLogged(job, 'rm -rf ' + tmpQ + ' && mkdir -p ' + tmpQ + ' && ' + dl, 330000, { fullAccess: true })
+    if (!r1.ok) return finishJob(job, { status: 'error', error: '下载失败: ' + ((r1.stderr || '').trim() || '未知错误') })
+    const r2 = await runShellLogged(job, 'cd ' + tmpQ + ' && unzip -o -q pkg.zip && test -f manifest.json', 60000, { fullAccess: true })
+    if (!r2.ok) return finishJob(job, { status: 'error', error: '压缩包校验失败（缺少 manifest.json 或解压出错）' })
     let manifest
     try {
       manifest = JSON.parse(await readFile(join(tmp, 'manifest.json'), 'utf8'))
     } catch {
-      return { ok: false, error: 'manifest.json 解析失败' }
+      return finishJob(job, { status: 'error', error: 'manifest.json 解析失败' })
     }
     const packs = Array.isArray(manifest.skills) ? manifest.skills.map(String) : []
     const presets = Array.isArray(manifest.presets) ? manifest.presets.map(String) : []
-    if (packs.length === 0 && presets.length === 0) return { ok: false, error: 'manifest 未声明任何 skill 或 preset' }
+    if (packs.length === 0 && presets.length === 0) return finishJob(job, { status: 'error', error: 'manifest 未声明任何 skill 或 preset' })
     for (const id of [...packs, ...presets]) {
-      if (!/^[a-z0-9][a-z0-9._-]*$/.test(id)) return { ok: false, error: '非法目录 id: ' + id }
+      if (!/^[a-z0-9][a-z0-9._-]*$/.test(id)) return finishJob(job, { status: 'error', error: '非法目录 id: ' + id })
     }
     const state = await readState()
     const installed = state.installed || {}
     const conflicts = []
     for (const id of packs) if (!(id in installed)) conflicts.push('skill ' + id)
     for (const id of presets) if (!(id in installed)) conflicts.push('preset ' + id)
-    if (conflicts.length > 0) return { ok: false, error: '目标目录已存在且非本市场管理，拒绝覆盖: ' + conflicts.join(', ') }
+    if (conflicts.length > 0) return finishJob(job, { status: 'error', error: '目标目录已存在且非本市场管理，拒绝覆盖: ' + conflicts.join(', ') })
     // 更新模式：先删除本市场管理的旧目录
     try {
       for (const id of packs) await rm(join(SKILLS_ROOT, id), { recursive: true, force: true })
       for (const id of presets) await rm(join(PRESETS_ROOT, id), { recursive: true, force: true })
       for (const id of packs) {
         await mkdir(SKILLS_ROOT, { recursive: true })
-        await runShell('cp -R ' + q(join(tmp, 'skills', id)) + ' ' + q(SKILLS_ROOT) + '/', 60000, { fullAccess: true })
+        await runShellLogged(job, 'cp -R ' + q(join(tmp, 'skills', id)) + ' ' + q(SKILLS_ROOT) + '/', 60000, { fullAccess: true })
       }
       for (const id of presets) {
         await mkdir(PRESETS_ROOT, { recursive: true })
-        await runShell('cp -R ' + q(join(tmp, 'presets', id)) + ' ' + q(PRESETS_ROOT) + '/', 60000, { fullAccess: true })
+        await runShellLogged(job, 'cp -R ' + q(join(tmp, 'presets', id)) + ' ' + q(PRESETS_ROOT) + '/', 60000, { fullAccess: true })
       }
     } catch (e) {
-      return { ok: false, error: '写入失败: ' + String(e && e.message ? e.message : e) }
+      return finishJob(job, { status: 'error', error: '写入失败: ' + String(e && e.message ? e.message : e) })
     } finally {
       await rm(tmp, { recursive: true, force: true }).catch(() => {})
     }
@@ -368,9 +367,22 @@ async function install(args) {
     const what = []
     if (packs.length > 0) what.push('skill: ' + packs.join(', '))
     if (presets.length > 0) what.push('preset: ' + presets.join(', '))
-    return { ok: true, message: '已安装 ' + what.join('；') + (presets.length > 0 ? '（preset 需在新会话预设列表中选择后生效）' : '') }
+    return finishJob(job, { status: 'done', message: '已安装 ' + what.join('；') + (presets.length > 0 ? '（preset 需在新会话预设列表中选择后生效）' : '') })
   }
-  return { ok: false, error: '未知条目类型' }
+  return finishJob(job, { status: 'error', error: '未知条目类型' })
+}
+
+// 启动安装任务：校验参数 → 建任务 → 后台执行（路由立即返回 job id，客户端轮询进度）
+function startInstall(args) {
+  if (!args || typeof args !== 'object' || typeof args.id !== 'string' || typeof args.type !== 'string') {
+    return { ok: false, error: '参数错误' }
+  }
+  const job = newJob(args)
+  appendJobLine(job, '开始安装: ' + args.id)
+  performInstall(args, job).catch((e) => {
+    finishJob(job, { status: 'error', error: String(e && e.message ? e.message : e) })
+  })
+  return { ok: true, job: job.id }
 }
 
 async function uninstall(args) {
@@ -439,40 +451,177 @@ async function runShell(command, timeoutMs, opts = {}) {
   }
 }
 
+// ── 安装任务注册表（进度弹窗轮询用） ─────────────────────────────────────────
+const installJobs = new Map()
+let jobSeq = 0
+const MAX_JOB_LINES = 400
+
+function newJob(args) {
+  const id = 'j' + Date.now().toString(36) + '-' + (++jobSeq)
+  const job = { id, args, proc: null, lines: [], status: 'running', message: null, error: null, at: Date.now() }
+  installJobs.set(id, job)
+  // 只保留最近 50 个任务；运行中的不清理
+  while (installJobs.size > 50) {
+    const first = installJobs.keys().next().value
+    if (first === undefined) break
+    if (installJobs.get(first).status === 'running') break
+    installJobs.delete(first)
+  }
+  return job
+}
+
+function appendJobLines(job, delta) {
+  if (!job || typeof delta !== 'string' || delta.length === 0) return
+  const clean = delta.replace(/\u001b\[[0-9;]*m/g, '').replace(/\r/g, '')
+  const parts = clean.split('\n')
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i].length === 0) continue
+    job.lines.push(parts[i].slice(0, 500))
+    if (job.lines.length > MAX_JOB_LINES) job.lines.splice(0, job.lines.length - MAX_JOB_LINES)
+  }
+}
+
+function appendJobLine(job, text) {
+  appendJobLines(job, String(text) + '\n')
+}
+
+function pumpJob(job) {
+  if (!job || !job.proc) return
+  try {
+    const o = job.proc.readOutput()
+    if (o && typeof o.delta === 'string') appendJobLines(job, o.delta)
+  } catch {}
+}
+
+function finishJob(job, { status, message, error }) {
+  job.status = status
+  job.message = message || null
+  job.error = error || null
+  job.proc = null
+  appendJobLine(job, (status === 'done' ? '✔ ' : '✖ ') + (message || error || '结束'))
+  return { ok: status === 'done', message, error }
+}
+
+// 流式 shell 执行：start + 增量读输出，写入任务日志供进度弹窗轮询；
+// 同时累积完整输出（供失败分析/重试判定），带自有超时（start 不应用 timeout）。
+async function runShellLogged(job, command, timeoutMs, opts = {}) {
+  const shell = runShell.shellService
+  if (!shell) {
+    appendJobLine(job, 'shell 服务不可用')
+    return { ok: false, stdout: '', stderr: 'shell 服务不可用' }
+  }
+  appendJobLine(job, '▶ ' + command)
+  let request = { command, timeoutMs: timeoutMs || 60000, stdoutMaxBytes: 400000 }
+  if (opts.fullAccess) {
+    let workspaceRoot
+    try {
+      const sp = runShell.sandboxPolicyService
+      const standing = sp ? sp.resolve({}) : null
+      workspaceRoot = standing ? standing.workspaceRoot : undefined
+    } catch {}
+    request = {
+      ...request,
+      sandboxPolicy: { mode: 'danger-full-access', ...(workspaceRoot ? { workspaceRoot } : {}) },
+    }
+  }
+  let spec
+  try {
+    spec = shell.resolve(request)
+  } catch (e) {
+    appendJobLine(job, 'shell.resolve 失败: ' + String(e))
+    return { ok: false, stdout: '', stderr: 'shell.resolve 失败: ' + String(e) }
+  }
+  let proc
+  try {
+    proc = shell.start(spec)
+  } catch (e) {
+    appendJobLine(job, 'shell.start 失败: ' + String(e))
+    return { ok: false, stdout: '', stderr: 'shell.start 失败: ' + String(e) }
+  }
+  job.proc = proc
+  let collected = ''
+  const timer = setInterval(() => {
+    try {
+      const o = proc.readOutput()
+      if (o && typeof o.delta === 'string' && o.delta.length > 0) {
+        collected = (collected + o.delta).slice(-400000)
+        appendJobLines(job, o.delta)
+      }
+    } catch {}
+  }, 250)
+  const timeoutTimer = timeoutMs ? setTimeout(() => { try { proc.kill() } catch {} }, timeoutMs) : null
+  await proc.done
+  clearInterval(timer)
+  if (timeoutTimer) clearTimeout(timeoutTimer)
+  try {
+    const o = proc.readOutput()
+    if (o && typeof o.delta === 'string' && o.delta.length > 0) {
+      collected = (collected + o.delta).slice(-400000)
+      appendJobLines(job, o.delta)
+    }
+  } catch {}
+  const ok = proc.status === 'completed' && proc.exitCode === 0
+  appendJobLine(job, ok ? '✔ 命令完成 (exit 0)' : '✖ 命令结束: ' + (proc.signal ? '被信号 ' + proc.signal + ' 终止' : 'exit code ' + proc.exitCode))
+  return { ok, stdout: collected, stderr: '' }
+}
+
 // ── 插件管理：已安装列表 / 禁用启用 / 删除 ──────────────────────────────────
+const INTERNAL_RE = /^(@deepseek-ai\/|cordis:|typert:|schemastery:|cosmokit:|minato:|reggol:|yakumo:)/i
 async function installedRows() {
   const manifest = await readProfileManifest()
-  const { bundles } = profileInstalled(manifest)
+  const { deps, bundles } = profileInstalled(manifest)
   const state = await readState()
   const marketInstalled = state.installed || {}
   const loader = installedRows.loader
   const entries = loader ? loader.entries() : []
+  const marketRecFor = (name) => Object.values(marketInstalled).find((r) => r && (r.package === name || r.spec === name))
   const rows = []
+  const seenNames = new Set()
+  // 1) loader 当前挂载/认识的条目
   for (const e of entries) {
     const name = e.options && e.options.name
     const rowId = e.options && e.options.id
     if (!name) continue
-    if (name.startsWith('@deepseek-ai/')) continue
-    if (/^(cordis|typert|schemastery|cosmokit|minato|reggol|yakumo)(:|$)/i.test(name)) continue
-    const inBundles = bundles.has(name)
-    const marketRec = Object.values(marketInstalled).find((r) => r && (r.package === name || r.spec === name))
+    if (INTERNAL_RE.test(name)) continue
+    const marketRec = marketRecFor(name)
     rows.push({
       id: rowId || name,
       name: name,
-      enabled: inBundles,
+      enabled: bundles.has(name),
       disabled: !!e.disabled,
       failed: !!(e.fiber && e.fiber.error),
       source: marketRec ? 'market' : 'manual',
       at: marketRec && marketRec.at ? marketRec.at : null,
     })
+    seenNames.add(name)
   }
-  // 其他 profile 里装着的包也列出来（标记来源，客户端提供迁移）
+  // 2) profile 依赖里已安装、但未挂载的包（典型：被禁用的 bundle 重启后不在 loader 里），
+  //    保留在列表中，enabled=false，用户可一键重新启用
+  for (const name of deps) {
+    if (seenNames.has(name)) continue
+    if (INTERNAL_RE.test(name)) continue
+    const marketRec = marketRecFor(name)
+    rows.push({
+      id: name, name: name,
+      enabled: false, disabled: false, failed: false, notMounted: true,
+      source: marketRec ? 'market' : 'manual',
+      at: marketRec && marketRec.at ? marketRec.at : null,
+    })
+    seenNames.add(name)
+  }
+  // 3) 市场状态里记录的安装（脚本安装/未 reconcile 的包），与上面去重合并
+  for (const rec of Object.values(marketInstalled)) {
+    const name = rec && (rec.package || rec.spec)
+    if (!name || seenNames.has(name)) continue
+    if (INTERNAL_RE.test(name)) continue
+    rows.push({ id: name, name: name, enabled: bundles.has(name), disabled: false, failed: false, notMounted: true, source: 'market', at: rec.at || null })
+    seenNames.add(name)
+  }
+  // 4) 其他 profile 里装着的包也列出来（标记来源，客户端提供迁移）
   const otherMap = await otherProfileMap()
-  const seenNames = new Set(rows.map((r) => r.name))
   for (const [pkg, profs] of otherMap.entries()) {
     if (seenNames.has(pkg)) continue
-    if (pkg.startsWith('@deepseek-ai/')) continue
-    if (/^(cordis|typert|schemastery|cosmokit|minato|reggol|yakumo)(:|$)/i.test(pkg)) continue
+    if (INTERNAL_RE.test(pkg)) continue
     rows.push({ id: pkg, name: pkg, enabled: false, disabled: false, failed: false, source: 'other', profile: profs[0], at: null })
   }
   return rows
@@ -545,7 +694,15 @@ export default {
         if (pathname === '/plugin-market/list' && req.method === 'GET') return json(res, 200, await list())
         if (pathname === '/plugin-market/install' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')
-          return json(res, 200, await install(body))
+          return json(res, 200, startInstall(body))
+        }
+        if (pathname === '/plugin-market/job' && req.method === 'GET') {
+          const url = new URL(req.url, 'http://x')
+          const id = url.searchParams.get('id') || ''
+          const job = installJobs.get(id)
+          if (!job) return json(res, 200, { ok: false, error: '任务不存在' })
+          pumpJob(job)
+          return json(res, 200, { ok: true, id: job.id, status: job.status, lines: job.lines, message: job.message, error: job.error })
         }
         if (pathname === '/plugin-market/uninstall' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')

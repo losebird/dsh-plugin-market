@@ -291,6 +291,13 @@ a:hover { text-decoration: underline; }
 .os-tab { border: 1px solid var(--border); background: transparent; color: var(--text-3); font: inherit; font-size: 12px; padding: 3px 12px; border-radius: 999px; cursor: pointer; }
 .os-tab:hover { color: var(--text); border-color: var(--accent); }
 .os-tab.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.modal-sm { max-width: 560px; }
+.copied-cmds { display: flex; flex-direction: column; gap: 8px; margin: 6px 0; }
+.copied-cmd { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; }
+.copied-cmd.on { border-color: var(--accent); }
+.copied-cmd .copied-os { font-size: 12px; color: var(--text-3); }
+.copied-cmd.on .copied-os { color: var(--accent); font-weight: 600; }
+.copied-cmd code { font-family: var(--font-mono); font-size: 12px; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; }
 
 .readme-title { font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: var(--text-3); margin-top: 4px; }
 .readme-state { color: var(--text-3); font-size: 13px; padding: 10px 0; display: flex; align-items: center; gap: 8px; }
