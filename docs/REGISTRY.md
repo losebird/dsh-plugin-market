@@ -51,7 +51,12 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
 }
 ```
 
-`install.method` 判定优先级（`scripts/collect.mjs`）：项目 README「安装」章节里的官方方式 > 包特征启发式（`dsh.bundle.patch` → dsh-plugin-add；`bin` → npm-global；electron → desktop；否则 manual）。README 识别顺序：脚本安装（`curl|bash` / `irm|iex`，按 OS 记录）> `dsh plugin add` > `npm -g` > `git clone`。
+`install.method` 判定规则（`scripts/collect.mjs`）：
+
+1. 只在 README 的「安装类」章节内识别（install/安装/快速开始/Quick Start 等；`Target installation experience`、Roadmap 等未来/规划标题跳过）。识别顺序：脚本安装（`curl|bash` / `irm|iex`，按 OS 记录）> `dsh plugin add` > `npm -g` > `git clone`。
+2. `dsh plugin add` 仅当 README 给出**可远程安装**的 spec（`github:` / `git+https` / `https` / npm 包名）才采用；本地 tarball（`/path/x.tgz`、`file:`、相对路径）说明项目要求自行构建后本地安装，一律拒绝。
+3. **verified（声明了 `dsh.bundle.patch`）不再默认 dsh-plugin-add**——不是所有 bundle 都能直接 `dsh plugin add` 装上。
+4. README 未写明可自动识别方式 → `manual`（按仓库说明安装，市场展示 README）；README 拉取失败才沿用上一轮结论。包特征启发式仅保留 `bin` → npm-global、electron → desktop。
 
 ## pack（扩展包）zip 布局
 

@@ -51,12 +51,18 @@ async function main() {
         if (!it.install || it.install.method !== next.method) changed++
         // 保留原有 command/spec 信息，识别结果按字段合并
         it.install = { ...(it.install || {}), ...next }
-      } else if (!it.install) {
-        it.install = it.verified === false
-          ? { method: 'manual', source: 'pkg' }
-          : { method: 'dsh-plugin-add', source: 'pkg' }
+      } else if (readme === null) {
+        // README 拉取失败：沿用旧结论
+      } else if (it.type === 'pack' || (it.install && it.install.method === 'pack')) {
+        // pack 条目不受影响
+      } else if (it.install && (it.install.method === 'npm-global' || it.install.method === 'desktop')) {
+        // 包特征启发式（bin/electron）保留
+      } else if (!it.install || it.install.method !== 'manual') {
+        // README 未写明可自动识别的安装方式 → 不再默认 dsh-plugin-add，改按仓库说明手动安装
+        changed++
+        it.install = { method: 'manual', source: 'readme' }
       } else if (!it.install.source) {
-        it.install.source = 'pkg'
+        it.install.source = 'readme'
       }
       done++
       if (done % 200 === 0) console.log('[refresh-install] ' + done + '/' + auto.length)

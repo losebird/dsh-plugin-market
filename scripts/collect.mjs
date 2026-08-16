@@ -204,21 +204,45 @@ export function installSection(readme) {
   }
   return null
 }
+// 全部“安装类”章节（按出现顺序），排除未来/规划类标题（如 “Target installation experience”
+// 这种尚未实现的安装方式，不能当作真实安装方法）
+export function installSections(readme) {
+  const heads = []
+  const re = /^#{1,4}\s+(.+)$/gm
+  let m
+  while ((m = re.exec(readme))) heads.push({ idx: m.index, text: m[1] })
+  const out = []
+  for (let i = 0; i < heads.length; i++) {
+    if (!/install|安装|quick ?start|快速开始|getting started|deploy|部署|setup/i.test(heads[i].text)) continue
+    if (/target|roadmap|plan(?:ned)?|future|todo|wishlist|即将|未来|规划|愿景/i.test(heads[i].text)) continue
+    out.push({ text: heads[i].text, content: readme.slice(heads[i].idx, i + 1 < heads.length ? heads[i + 1].idx : readme.length) })
+  }
+  return out
+}
+// dsh plugin add 的 spec 校验：只认“可远程安装”的目标（github:/git+/https 或 npm 包名）。
+// 本地 tarball（/path/x.tgz、./x.tgz、file:、~ 开头）说明项目要求自行构建后本地安装，
+// 这类不能一键装，必须拒绝。
+function validAddArg(arg) {
+  if (/^(github:|git\+https?:\/\/|https?:\/\/)/i.test(arg)) return true
+  if (/^file:|^[./~]|\.(?:tgz|tar\.gz)$/i.test(arg)) return false
+  return /^@?[\w.-]+(?:\/[\w.-]+)?$/.test(arg)
+}
 export function detectInstallFromReadme(readme) {
   if (typeof readme !== 'string' || readme.length < 40) return null
-  const scope = installSection(readme)
-  const os = {}
-  for (const text of [scope, readme]) {
-    if (!text) continue
-    const strict = text === readme // 全文兜底扫描：要求 raw.githubusercontent 脚本 URL
+  const sections = installSections(readme)
+  // 有安装章节 → 只在这些章节内识别（避免把开发/规划章节误当安装方式）；无章节 → 全文兜底
+  const scopes = sections.length > 0 ? sections.map((s) => s.content) : [readme]
+  // 1) 脚本安装：curl|bash / irm|iex（无安装章节的全文兜底要求 raw.githubusercontent 的 .sh/.ps1）
+  for (const text of scopes) {
+    const strict = sections.length === 0
     const strictOk = (url) => strict ? /^https:\/\/raw\.githubusercontent\.com\/[^\s|'"]+\.(sh|ps1)\b/i.test(url) : /^https?:/i.test(url)
+    const os = {}
     let m = /irm\s+(\S+?)\s*\|\s*iex\b/i.exec(text)
     if (m && strictOk(m[1])) os.win32 = 'irm ' + m[1] + ' | iex'
     m = /(curl\s+(?:-\S+\s+)*(\S+?)\s*\|\s*(?:sudo\s+)?(?:ba)?sh\b)/i.exec(text)
     if (m) {
       const cmd = m[1].trim()
-      const url = m[2]
-      if (strictOk(url)) { os.darwin = cmd; os.linux = cmd }
+      if (strictOk(m[2])) { os.darwin = cmd; os.linux = cmd }
     } else {
       m = /(wget\s+(?:-\S+\s+)*(\S+?)\s*(?:-O\s*-\s*)?\|\s*(?:sudo\s+)?(?:ba)?sh\b)/i.exec(text)
       if (m) {
@@ -226,20 +250,28 @@ export function detectInstallFromReadme(readme) {
         if (strictOk(m[2])) { os.darwin = cmd; os.linux = cmd }
       }
     }
-    if (os.win32 || os.darwin || os.linux) break
+    if (os.win32 || os.darwin || os.linux) {
+      const urlCmd = os.darwin || os.linux || os.win32
+      const um = /\s(\S+?)\s*\|/.exec(urlCmd)
+      return { method: 'script', source: 'readme', scriptUrl: um ? um[1] : null, os }
+    }
   }
-  if (os.win32 || os.darwin || os.linux) {
-    const urlCmd = os.darwin || os.linux || os.win32
-    const um = /\s(\S+?)\s*\|/.exec(urlCmd)
-    return { method: 'script', source: 'readme', scriptUrl: um ? um[1] : null, os }
+  // 2) dsh plugin add（按章节顺序；spec 必须可远程安装）
+  const addRe = /dsh\s+plugin(?:\s+--profile\s+\S+)?\s+(?:add|i)\s+(\S+)/i
+  for (const text of scopes) {
+    const m = addRe.exec(text)
+    if (m && validAddArg(m[1].replace(/[;'"`]+$/, ''))) return { method: 'dsh-plugin-add', source: 'readme' }
   }
-  if (/dsh\s+plugin(?:\s+--profile\s+\S+)?\s+add\s+\S+/i.test(readme)) {
-    return { method: 'dsh-plugin-add', source: 'readme' }
+  // 3) npm install -g
+  for (const text of scopes) {
+    const m = /npm\s+(?:install|i)\s+(?:-g|--global)\s+(\S+)/i.exec(text)
+    if (m) return { method: 'npm-global', source: 'readme', command: 'npm install -g ' + m[1].replace(/[;'"`]+$/, '') }
   }
-  const npmM = /npm\s+(?:install|i)\s+(?:-g|--global)\s+(\S+)/i.exec(readme)
-  if (npmM) return { method: 'npm-global', source: 'readme', command: 'npm install -g ' + npmM[1].replace(/[;'"`]+$/, '') }
-  const cloneM = /git\s+clone\s+(?:--depth\s+\S+\s+)?(\S+)/i.exec(readme)
-  if (cloneM) return { method: 'git-clone', source: 'readme', command: 'git clone ' + cloneM[1].replace(/[;'"`]+$/, '') }
+  // 4) git clone
+  for (const text of scopes) {
+    const m = /git\s+clone\s+(?:--depth\s+\S+\s+)?(\S+)/i.exec(text)
+    if (m) return { method: 'git-clone', source: 'readme', command: 'git clone ' + m[1].replace(/[;'"`]+$/, '') }
+  }
   return null
 }
 
@@ -261,8 +293,10 @@ async function buildEntry(repo, prev) {
   if (!repo.topicSourced && !hasDshSignal && !hasDshDep) return null
   const verified = !!(pkg && pkg.dsh && pkg.dsh.bundle && pkg.dsh.bundle.patch)
 
-  // 安装方式判定：优先取项目 README 写明的官方安装方式，其次按包特征启发式；
-  // 上一轮已识别出 README 安装方式的仓库，若本轮 README 拉取失败则沿用旧结论
+  // 安装方式判定：优先取项目 README 写明的官方安装方式，其次按包特征启发式。
+  // 关键原则：verified（声明了 dsh.bundle）不再默认 dsh-plugin-add——不是所有
+  // bundle 都能直接 dsh plugin add（如要求自行构建 tarball 后本地安装的）。
+  // README 拉取失败时沿用上一轮结论，避免网络抖动误伤已有数据。
   let readme = null
   try {
     const rr = await fetch('https://raw.githubusercontent.com/' + repo.full_name + '/HEAD/README.md', {
@@ -272,16 +306,15 @@ async function buildEntry(repo, prev) {
     if (rr.ok) readme = await rr.text()
   } catch {}
   let install = detectInstallFromReadme(readme)
-  if (!install && prev && prev.install && prev.install.source === 'readme') install = prev.install
+  if (!install && readme === null && prev && prev.install) install = prev.install
   if (!install) {
-    if (verified) {
-      install = { method: 'dsh-plugin-add', source: 'pkg' }
-    } else if (pkg && pkg.bin) {
+    if (pkg && pkg.bin) {
       install = { method: 'npm-global', command: 'npm install -g ' + (pkg.name || ''), source: 'pkg' }
     } else if (pkg && (pkg.dependencies && pkg.dependencies.electron || pkg.devDependencies && pkg.devDependencies.electron)) {
       install = { method: 'desktop', source: 'pkg' }
     } else {
-      install = { method: 'manual', source: 'pkg' }
+      // README 未写明可自动识别的安装方式（本地构建/手动步骤等）→ 按仓库说明安装
+      install = { method: 'manual', source: 'readme' }
     }
   }
 

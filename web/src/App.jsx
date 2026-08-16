@@ -7,7 +7,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
-const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.27'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.28'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -45,6 +45,8 @@ const I18N = {
     'copiedModal.guide1': '在 DSH 内打开侧栏「插件市场」，找到该插件点一键安装（推荐）；',
     'copiedModal.guide2': '或把命令粘贴到终端直接执行（已在剪贴板）。',
     'copiedModal.gotIt': '知道了', 'copiedModal.viewDetail': '查看详情',
+    'copiedModal.urlGuide1': '该插件未验证，市场不提供一键安装；',
+    'copiedModal.urlGuide2': '打开详情页，把项目地址发给 DSH，让它按仓库说明帮你安装。',
     'dir.title': '插件目录', 'dir.count': '{n} 个条目',
     'dir.demo': 'registry 暂不可用，当前展示演示数据。',
     'dir.search': '搜索名称、简介或标签',
@@ -126,6 +128,8 @@ const I18N = {
     'copiedModal.guide1': 'In DSH, open the Plugin Market and click install on this plugin (recommended);',
     'copiedModal.guide2': 'or paste the command into your terminal (already on your clipboard).',
     'copiedModal.gotIt': 'Got it', 'copiedModal.viewDetail': 'View details',
+    'copiedModal.urlGuide1': 'This plugin is unverified, so one-click install is unavailable;',
+    'copiedModal.urlGuide2': 'Open the details and send the project URL to DSH to install it per the repo instructions.',
     'dir.title': 'Plugin Directory', 'dir.count': '{n} entries',
     'dir.demo': 'Registry unavailable, showing demo data.',
     'dir.search': 'Search name, description or tags',
@@ -308,9 +312,11 @@ function Card({ item, onOpen, onToast, onShowCopied }) {
     }
   }
   const doCopyUrl = async () => {
-    if (await copyText('https://github.com/' + item.repo)) {
+    const url = 'https://github.com/' + item.repo
+    if (await copyText(url)) {
       setUrlCopied(true)
       onToast(t('toast.repo'))
+      if (onShowCopied) onShowCopied(item, null, url)
       setTimeout(() => setUrlCopied(false), 1600)
     }
   }
@@ -476,7 +482,7 @@ function DetailModal({ item, onClose, onToast }) {
 function CopiedModal({ info, onClose, onOpenDetail }) {
   const { t } = useLang()
   if (!info) return null
-  const { item, cmds } = info
+  const { item, cmds, url } = info
   const osOptions = OS_KEYS.filter((k) => cmds && cmds[k])
   const det = detectOS()
   return (
@@ -487,7 +493,9 @@ function CopiedModal({ info, onClose, onOpenDetail }) {
           <button className="modal-close" onClick={onClose} aria-label="close"><X size={18} /></button>
         </div>
         <p className="card-desc" style={{ marginTop: 4 }}>{item.name}</p>
-        {cmds && cmds.any ? (
+        {url ? (
+          <div className="install-box"><code>{url}</code></div>
+        ) : cmds && cmds.any ? (
           <div className="install-box"><code>{cmds.any}</code></div>
         ) : osOptions.length > 0 ? (
           <div className="copied-cmds">
@@ -499,8 +507,17 @@ function CopiedModal({ info, onClose, onOpenDetail }) {
             ))}
           </div>
         ) : null}
-        <p className="card-desc">{t('copiedModal.guide1')}</p>
-        <p className="card-desc">{t('copiedModal.guide2')}</p>
+        {url ? (
+          <>
+            <p className="card-desc">{t('copiedModal.urlGuide1')}</p>
+            <p className="card-desc">{t('copiedModal.urlGuide2')}</p>
+          </>
+        ) : (
+          <>
+            <p className="card-desc">{t('copiedModal.guide1')}</p>
+            <p className="card-desc">{t('copiedModal.guide2')}</p>
+          </>
+        )}
         <div className="card-actions">
           <button className="btn btn-primary btn-sm" onClick={onClose}>{t('copiedModal.gotIt')}</button>
           {onOpenDetail && (
@@ -699,7 +716,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.27</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.28</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },
@@ -1048,7 +1065,7 @@ export default function App() {
       <main id="top">
         {view === 'home' ? (
           <Home items={items} status={status} onGoSubmit={goSubmit} onOpenDetail={setDetail} onToast={showToast}
-            onShowCopied={(item, cmds) => setCopiedInfo({ item, cmds })} />
+            onShowCopied={(item, cmds, url) => setCopiedInfo({ item, cmds, url })} />
         ) : (
           <SubmitPage onBack={goHome} />
         )}
