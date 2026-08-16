@@ -56,8 +56,9 @@ window.__ModuleLoader__.load({
         jobAutoClose: '本窗口将在 3 秒后自动关闭', jobClose: '关闭',
         readmeLang: '语言', readmeDefault: '默认',
         agentInstall: '交给 DSH 安装', agentUninstall: '交给 DSH 卸载',
-        agentNote: 'DSH 会阅读项目 README 并按说明自动安装；需要你选择或确认时会在 DSH 对话中弹窗询问。',
-        agentNoteUninstall: 'DSH 会按项目 README 的卸载说明（或从各 profile 移除）自动卸载，需要确认时弹窗询问。',
+        agentNote: 'DSH 会阅读项目 README 并在此窗口内自动执行安装；需要你选择或确认时，会在此窗口内询问。',
+        agentNoteUninstall: 'DSH 会按项目 README 的卸载说明（或从各 profile 移除）自动卸载，需要确认时在此窗口内询问。',
+        jobCancel: '取消', jobAnswerPlaceholder: '输入你的回答，回车提交…', jobSubmit: '提交',
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
@@ -94,8 +95,9 @@ window.__ModuleLoader__.load({
         jobAutoClose: 'This window closes automatically in 3 seconds', jobClose: 'Close',
         readmeLang: 'Language', readmeDefault: 'Default',
         agentInstall: 'Let DSH install', agentUninstall: 'Let DSH uninstall',
-        agentNote: 'DSH reads the project README and installs per its instructions; when your choice or input is needed, it asks you in the DSH conversation.',
-        agentNoteUninstall: 'DSH follows the README uninstall steps (or removes it from every profile) and asks you when confirmation is needed.',
+        agentNote: 'DSH reads the project README and runs the install right in this window; when your choice or input is needed, it asks you here.',
+        agentNoteUninstall: 'DSH follows the README uninstall steps (or removes it from every profile) and asks you in this window when confirmation is needed.',
+        jobCancel: 'Cancel', jobAnswerPlaceholder: 'Type your answer and press Enter…', jobSubmit: 'Submit',
       },
     }
 
@@ -198,6 +200,9 @@ window.__ModuleLoader__.load({
 .dshm-jobbody { max-height:min(340px, 40vh); overflow-y:auto; padding:12px 16px; background:var(--dsw-alias-bg-layer-2); }
 .dshm-joblog { margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.65; color:var(--dsw-alias-label-secondary); white-space:pre-wrap; overflow-wrap:anywhere; }
 .dshm-jobfoot { display:flex; flex-direction:column; gap:8px; padding:12px 16px 14px; }
+.dshm-jobquestion { display:flex; flex-direction:column; gap:8px; padding:12px 16px; border-top:1px solid ${BORDER}; background:var(--dsw-alias-bg-base); }
+.dshm-jobq-options { display:flex; gap:8px; flex-wrap:wrap; }
+.dshm-jobq-input { display:flex; gap:8px; align-items:center; }
 .dshm-readme { color:var(--dsw-alias-label-secondary); font-size:13px; line-height:1.7; overflow-wrap:anywhere; }
 .dshm-readme h1, .dshm-readme h2, .dshm-readme h3, .dshm-readme h4 { color:var(--dsw-alias-label-primary); font-size:14.5px; margin:12px 0 6px; }
 .dshm-readme p { margin:6px 0; }
@@ -326,6 +331,7 @@ window.__ModuleLoader__.load({
               lines: Array.isArray(j.lines) ? j.lines : [],
               message: j.message || null,
               error: j.error || null,
+              question: j.question || null,
             }
             patch({ job: next })
             if (j.status === 'done' || j.status === 'error') {
@@ -839,6 +845,13 @@ window.__ModuleLoader__.load({
         if (!j) return null
         const running = j.status === 'running'
         const isUn = j.kind === 'uninstall'
+        const answerQuestion = (answer) => {
+          patch({ job: Object.assign({}, store.job, { question: null }) })
+          api('job-answer', { id: j.id, answer }).catch(() => {})
+        }
+        const cancelJob = () => {
+          api('job-cancel', { id: j.id }).catch(() => {})
+        }
         return h('div', { className: 'dshm-overlay dshm-job-overlay', role: 'dialog' },
           h('div', { className: 'dshm-backdrop' }),
           h('div', { className: 'dshm-jobpanel' },
@@ -849,6 +862,9 @@ window.__ModuleLoader__.load({
                 : j.status === 'done'
                   ? h('span', { className: 'dshm-pill dshm-pill-on' }, t(isUn ? 'jobDoneUninstall' : 'jobDone'))
                   : h('span', { className: 'dshm-pill dshm-pill-off' }, t(isUn ? 'jobFailedUninstall' : 'jobFailed')),
+              running
+                ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: cancelJob }, t('jobCancel'))
+                : null,
               !running
                 ? h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ job: null }) }, '×')
                 : null,
@@ -856,6 +872,32 @@ window.__ModuleLoader__.load({
             h('div', { className: 'dshm-jobbody', ref: jobRef },
               h('pre', { className: 'dshm-joblog' }, (j.lines && j.lines.length > 0) ? j.lines.join('\n') : t(isUn ? 'jobRunningUninstall' : 'jobRunning')),
             ),
+            j.question
+              ? h('div', { className: 'dshm-jobquestion' },
+                  h('div', { className: 'dshm-install-title' }, '❓ ' + (j.question.text || '请确认')),
+                  h('div', { className: 'dshm-jobq-options' },
+                    (j.question.options || []).map((opt) => h('button', {
+                      key: opt,
+                      className: 'dshm-seg-btn',
+                      onClick: () => answerQuestion(opt),
+                    }, opt)),
+                    (j.question.options || []).length === 0
+                      ? h('div', { className: 'dshm-jobq-input' },
+                          h('input', {
+                            className: 'dshm-search',
+                            placeholder: t('jobAnswerPlaceholder'),
+                            onKeyDown: (e) => { if (e.key === 'Enter' && e.target.value.trim()) answerQuestion(e.target.value.trim()) },
+                            ref: (el) => {
+                              if (el) {
+                                el.dataset.jobInput = j.id
+                                setTimeout(() => { if (el.dataset.jobInput === j.id) el.focus() }, 50)
+                              }
+                            },
+                          }),
+                          h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: (e) => { const inp = e.target.previousSibling; if (inp && inp.value && inp.value.trim()) answerQuestion(inp.value.trim()) } }, t('jobSubmit')))
+                      : null),
+                )
+              : null,
             !running
               ? h('div', { className: 'dshm-jobfoot' },
                   j.status === 'done'

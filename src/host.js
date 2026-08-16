@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.34',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.35',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -563,82 +563,167 @@ function startRemove(args) {
 }
 
 // ── 交给 DSH 安装/卸载（agentic）：启动一个子代理阅读项目 README 并按说明执行，
-//    需要用户选择/输入时用 ask_user_question 弹窗询问，危险命令走 DSH 审批栈 ─────
+//    需要用户选择/输入时用弹窗询问，全部执行过程都在市场的进度窗口内完成 ─────
 function agentPrompt(kind, name, repo, spec, unverified) {
   if (kind === 'install') {
     return [
-      '请阅读 GitHub 仓库 https://github.com/' + repo + ' 的 README（如有中文/英文多语言版本，选其一），',
-      '严格按作者写明的安装步骤，把插件「' + name + '」安装到本机的 DSH 环境：',
+      '你是 DSH 插件市场的安装助手。用户点击了「安装」，你现在要在用户本机把插件「' + name + '」安装到 DSH。',
       '',
-      '1. 优先装入 DSH web profile（~/.dsh/profiles/web）。可用 dsh plugin --profile web add … 安装；',
-      '   若 pnpm 拦截构建脚本，先在该 profile 的 pnpm-workspace.yaml 顶层写 dangerouslyAllowAllBuilds: true',
-      '   （以及 allowBuilds 映射键），再重试。安装 spec 参考：' + (spec || 'README 中写明的 spec') + '；',
-      '2. 凡是需要用户选择、确认或提供信息（账号、路径、安装选项等）的地方，用 ask_user_question 工具',
-      '   弹窗询问用户，不要擅自替用户做决定；',
-      '3. 危险命令交给 DSH 审批流程（正常执行即可，用户会审批）；',
-      '4. 装完核对结果（dsh 插件列表/README 验证步骤），并在最终回复里给出：装了什么、装到哪、重启要求。',
-      unverified ? '注意：该插件未声明 dsh.bundle，可能无法作为 profile 插件挂载；按 README 尽力安装，若确实无法挂载，向用户说明原因和替代方案。' : '',
+      '规则：',
+      '1. 严格按项目 README 写明的安装步骤执行；优先装入 DSH web profile（~/.dsh/profiles/web），',
+      '   可用 dsh plugin --profile web add … 安装；若 pnpm 拦截构建脚本，先在该 profile 的 pnpm-workspace.yaml',
+      '   顶层写 dangerouslyAllowAllBuilds: true（以及 allowBuilds 映射键）再重试。安装 spec 参考：' + (spec || 'README 中写明的 spec') + '；',
+      '2. 每执行一步用 run_command；需要用户选择、确认或提供信息（账号、路径、选项）时用 ask_user 弹窗询问，',
+      '   绝不擅自替用户决定；',
+      '3. 只执行安装所必需的命令；禁止删除用户数据、禁止修改系统级配置；临时文件放在 /tmp；',
+      '4. 装完核对结果（dsh 插件列表/README 验证步骤），最后用 report_result 报告：ok、装了什么、装到哪、重启要求。',
+      unverified ? '注意：该插件未声明 dsh.bundle，可能无法作为 profile 插件挂载；按 README 尽力安装，若确实无法挂载，用 report_result 报告 ok=false 并说明原因和替代方案。' : '',
     ].join('\n')
   }
   return [
-    '请阅读 GitHub 仓库 https://github.com/' + repo + ' 的 README，查找关于卸载/移除「' + name + '」的说明；',
+    '你是 DSH 插件市场的卸载助手。用户点击了「卸载」，你现在要在用户本机把插件「' + name + '」从 DSH 卸载干净。',
     '',
-    '1. 若 README 有卸载步骤，按说明执行；',
-    '2. 若没有，则从 DSH 的所有 profile 中移除该包（对每个装有它的 profile 执行 dsh plugin --profile <profile> remove <name>），',
-    '   并删除其残留的配置/数据目录（先向用户确认再删）；',
-    '3. 需要用户选择或确认的地方，用 ask_user_question 工具弹窗询问；危险命令走 DSH 审批流程；',
-    '4. 完成后在最终回复里总结：删除了什么、从哪些 profile、是否需要重启 DSH。',
+    '规则：',
+    '1. 先按项目 README 的卸载说明执行；若没有，则对每个装有它的 profile 执行 dsh plugin --profile <profile> remove <name>；',
+    '2. 删除残留的配置/数据目录前必须用 ask_user 向用户确认；',
+    '3. 只执行卸载所必需的命令；禁止删除与卸载无关的数据；',
+    '4. 完成后用 report_result 报告：ok、删除了什么、从哪些 profile、是否需要重启 DSH。',
   ].join('\n')
 }
 
 async function performAgenticTask(kind, args, job) {
-  const subagents = performAgenticTask.subagents
-  const agents = performAgenticTask.agents
-  if (!subagents || !agents) return finishJob(job, { status: 'error', error: '当前 DSH 缺少子代理服务，无法启动该任务' })
-  const parent = (typeof agents.currentInitiator === 'function' ? agents.currentInitiator() : undefined) || (Array.isArray(agents.roots()) ? agents.roots()[0] : undefined)
-  if (!parent) return finishJob(job, { status: 'error', error: '找不到当前会话 Agent，无法启动该任务（请先在 DSH 会话中使用插件市场）' })
-  let providers = []
-  try { providers = subagents.list() } catch {}
-  const provider = providers.includes('spawn') ? 'spawn' : (providers[0] || '')
-  if (!provider) return finishJob(job, { status: 'error', error: '当前 DSH 没有可用的子代理 provider' })
+  const llm = performAgenticTask.llm
+  const agentDefaultModel = performAgenticTask.agentDefaultModel
+  if (!llm) return finishJob(job, { status: 'error', error: '当前 DSH 缺少模型服务，无法执行该任务' })
+  let selection = null
+  try { selection = agentDefaultModel ? agentDefaultModel.currentSelection() : null } catch {}
+  if (!selection || !selection.provider || !selection.model) {
+    return finishJob(job, { status: 'error', error: '未选择模型，请先在 DSH 中选择模型后重试' })
+  }
   const name = args.name || args.id || ''
   const repo = args.repo || ''
   if (!name || !repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) return finishJob(job, { status: 'error', error: '参数错误（缺少插件名或仓库地址）' })
-  appendJobLine(job, '启动 DSH ' + (kind === 'install' ? '安装' : '卸载') + '任务: ' + name)
-  appendJobLine(job, '请切换到 DSH 对话查看执行过程；需要你选择/确认时，DSH 会弹窗询问')
-  let run
-  try {
-    run = await subagents.start(provider, {
-      label: (kind === 'install' ? '安装插件 ' : '卸载插件 ') + name,
-      prompt: [{ type: 'text', text: agentPrompt(kind, name, repo, args.spec || '', args.verified === true) }],
-      parent,
-      signal: new AbortController().signal,
-      outputSchema: {
+
+  // 读取 README（大小写两种主名），内容直接交给模型
+  const base = 'https://raw.githubusercontent.com/' + repo + '/HEAD/'
+  let readmeText = ''
+  for (const f of ['README.md', 'readme.md']) {
+    try {
+      const r = await fetch(base + f, { signal: AbortSignal.timeout(8000) })
+      if (r.ok) { readmeText = '=== ' + f + ' ===\n' + (await r.text()).slice(0, 60000); break }
+    } catch {}
+  }
+  appendJobLine(job, readmeText ? '已读取项目 README，开始按说明执行…' : 'README 读取失败，按通用流程执行…')
+  const userText =
+    (kind === 'install' ? '请安装插件「' + name + '」（仓库 https://github.com/' + repo + '）到本机 DSH。' : '请卸载插件「' + name + '」（仓库 https://github.com/' + repo + '）。') +
+    (readmeText ? '\n\n项目 README 如下：\n' + readmeText : '') +
+    (args.spec ? '\n\n安装 spec 参考：' + args.spec : '') +
+    (args.verified === true ? '\n\n注意：该插件未声明 dsh.bundle，可能无法作为 profile 插件挂载；按 README 尽力安装，若确实无法挂载，用 report_result 报告 ok=false 并说明原因。' : '')
+  const messages = [{ role: 'user', content: [{ type: 'text', text: userText }] }]
+  const tools = [
+    {
+      name: 'run_command',
+      description: '在本机执行一条 shell 命令（输出实时显示在安装进度窗口）。仅用于安装/卸载所必需的命令；每次只执行一个动作，等结果再继续。',
+      parameters: { type: 'object', properties: { command: { type: 'string', description: '要执行的 shell 命令' } }, required: ['command'], additionalProperties: false },
+    },
+    {
+      name: 'ask_user',
+      description: '需要用户选择、确认或提供信息（账号、路径、安装选项等）时，在安装进度窗口弹窗询问用户并等待回答。不要擅自替用户做决定。',
+      parameters: {
         type: 'object',
-        properties: { ok: { type: 'boolean' }, summary: { type: 'string' } },
-        required: ['ok'],
+        properties: { question: { type: 'string' }, options: { type: 'array', items: { type: 'string' }, description: '2-6 个可选项；开放式问题传空数组' } },
+        required: ['question', 'options'],
         additionalProperties: false,
       },
-    })
-  } catch (e) {
-    return finishJob(job, { status: 'error', error: '启动 DSH ' + (kind === 'install' ? '安装' : '卸载') + '任务失败: ' + String(e && e.message ? e.message : e) })
-  }
+    },
+    {
+      name: 'report_result',
+      description: '任务结束时调用：报告最终结果。',
+      parameters: { type: 'object', properties: { ok: { type: 'boolean' }, summary: { type: 'string' } }, required: ['ok', 'summary'], additionalProperties: false },
+    },
+  ]
+  const controller = new AbortController()
+  job.abort = () => { try { controller.abort() } catch {} }
+  const hardTimeout = setTimeout(() => { try { controller.abort() } catch {} }, 30 * 60 * 1000)
   try {
-    const result = await run.result
-    const s = (result && result.structured && typeof result.structured === 'object') ? result.structured : {}
-    if (result && result.stopReason === 'completed' && s.ok === true) {
-      const summary = String(s.summary || (kind === 'install' ? '安装完成' : '卸载完成'))
-      appendJobLine(job, summary)
-      return finishJob(job, { status: 'done', message: summary })
+    for (let step = 0; step < 50; step++) {
+      const textBlocks = []
+      const toolCalls = []
+      try {
+        const stream = llm.stream({
+          provider: selection.provider,
+          model: selection.model,
+          reasoningEffort: selection.reasoningEffort,
+          messages,
+          system: agentPrompt(kind, name, repo, args.spec || '', args.verified === true),
+          tools,
+          signal: controller.signal,
+        })
+        for await (const chunk of stream) {
+          if (chunk.type === 'block-end' && chunk.block) {
+            if (chunk.block.type === 'tool-call') toolCalls.push(chunk.block)
+            else if (chunk.block.type === 'text' && chunk.block.text) {
+              textBlocks.push({ type: 'text', text: chunk.block.text })
+              appendJobLines(job, chunk.block.text)
+            }
+          }
+        }
+      } catch (e) {
+        if (controller.signal.aborted) return finishJob(job, { status: 'error', error: '任务已被取消' })
+        return finishJob(job, { status: 'error', error: '模型调用失败: ' + String(e && e.message ? e.message : e) })
+      }
+      messages.push({
+        role: 'assistant',
+        content: [...textBlocks, ...toolCalls.map((tc) => ({ type: 'tool-call', id: tc.id, name: tc.name, arguments: tc.arguments }))],
+      })
+      if (toolCalls.length === 0) {
+        const lastText = textBlocks.map((b) => b.text).join(' ').trim().slice(0, 1000)
+        return finishJob(job, { status: 'done', message: lastText || (kind === 'install' ? '安装完成' : '卸载完成') })
+      }
+      const resultBlocks = []
+      for (const tc of toolCalls) {
+        let payload = {}
+        try { payload = JSON.parse(tc.arguments || '{}') } catch {}
+        let output = '工具执行出错'
+        try {
+          if (tc.name === 'run_command') {
+            const cmd = typeof payload.command === 'string' ? payload.command.trim() : ''
+            if (!cmd || cmd.length > 4000) output = '命令参数非法'
+            else {
+              const r = await runShellLogged(job, cmd, 900000, { fullAccess: true })
+              output = (r.ok ? '[成功] ' : '[失败] ') + (((r.stdout || '') + (r.stderr || '')).slice(-6000) || '（无输出）')
+            }
+          } else if (tc.name === 'ask_user') {
+            const question = String(payload.question || '请确认').slice(0, 400)
+            const options = (Array.isArray(payload.options) ? payload.options : []).map(String).slice(0, 6).filter(Boolean)
+            job.question = { text: question, options }
+            appendJobLine(job, '❓ ' + question + (options.length > 0 ? '（等待用户选择）' : '（等待用户输入）'))
+            await new Promise((resolve) => { job._answerResolver = resolve })
+            job.question = null
+            const answer = job.pendingAnswer || '（用户未作答）'
+            job.pendingAnswer = null
+            output = '用户回答: ' + answer
+          } else if (tc.name === 'report_result') {
+            const ok = payload.ok === true
+            const summary = String(payload.summary || '').slice(0, 1000)
+            appendJobLine(job, summary)
+            return finishJob(job, { status: ok ? 'done' : 'error', message: ok ? summary : null, error: ok ? null : (summary || '任务未成功') })
+          }
+        } catch (e) {
+          output = '工具执行异常: ' + String(e && e.message ? e.message : e)
+        }
+        resultBlocks.push({ type: 'tool-result', toolCallId: tc.id, content: [{ type: 'text', text: output.slice(0, 8000) }], isError: false })
+      }
+      messages.push({ role: 'user', content: resultBlocks })
     }
-    const outText = ((result && result.output) || [])
-      .map((b) => (b && typeof b.text === 'string' ? b.text : ''))
-      .join(' ')
-      .trim()
-      .slice(0, 800)
-    return finishJob(job, { status: 'error', error: 'DSH 任务未成功完成（' + (result && result.stopReason ? result.stopReason : '未知') + '）' + (outText ? '：' + outText : '') + (s.summary ? '（' + s.summary + '）' : '') })
+    return finishJob(job, { status: 'error', error: '步骤数超限，任务中止' })
+  } catch (e) {
+    return finishJob(job, { status: 'error', error: '任务中止: ' + String(e && e.message ? e.message : e) })
   } finally {
-    try { await run.dispose() } catch {}
+    clearTimeout(hardTimeout)
+    job.abort = null
+    job._answerResolver = null
+    job.question = null
   }
 }
 
@@ -967,8 +1052,8 @@ export default {
     runShell.shellService = shell
     runShell.sandboxPolicyService = ctx.get('sandboxPolicy')
     installedRows.loader = ctx.loader
-    performAgenticTask.subagents = ctx.get('subagents')
-    performAgenticTask.agents = ctx.get('agents')
+    performAgenticTask.llm = ctx.get('llm')
+    performAgenticTask.agentDefaultModel = ctx.get('agentDefaultModel')
 
   ctx.effect(() => webServer.register({
     kind: 'prefix',
@@ -987,7 +1072,25 @@ export default {
           const job = installJobs.get(id)
           if (!job) return json(res, 200, { ok: false, error: '任务不存在' })
           pumpJob(job)
-          return json(res, 200, { ok: true, id: job.id, status: job.status, lines: job.lines, message: job.message, error: job.error })
+          return json(res, 200, { ok: true, id: job.id, status: job.status, lines: job.lines, message: job.message, error: job.error, question: job.question || null })
+        }
+        if (pathname === '/plugin-market/job-answer' && req.method === 'POST') {
+          const body = JSON.parse((await readBody(req)) || '{}')
+          const job = installJobs.get(String(body.id || ''))
+          if (!job || typeof job._answerResolver !== 'function') return json(res, 200, { ok: false, error: '任务不存在或未在等待回答' })
+          job.pendingAnswer = String(body.answer || '').slice(0, 500) || '（未作答）'
+          const resolve = job._answerResolver
+          job._answerResolver = null
+          job.question = null
+          resolve()
+          return json(res, 200, { ok: true })
+        }
+        if (pathname === '/plugin-market/job-cancel' && req.method === 'POST') {
+          const body = JSON.parse((await readBody(req)) || '{}')
+          const job = installJobs.get(String(body.id || ''))
+          if (!job) return json(res, 200, { ok: false, error: '任务不存在' })
+          if (typeof job.abort === 'function') { try { job.abort() } catch {} }
+          return json(res, 200, { ok: true })
         }
         if (pathname === '/plugin-market/uninstall' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')

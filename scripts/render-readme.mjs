@@ -36,7 +36,7 @@ const v = items.filter((i) => i.verified !== false).length
 lines.push(`**${items.length}** 个插件 · **${v}** 个可一键安装`)
 lines.push('', '安装市场：', '')
 lines.push('```bash')
-lines.push('dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.34')
+lines.push('dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.35')
 lines.push('dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮')
 lines.push('```', '')
 lines.push('网站：https://www.dsh-plugin.shop · 仓库：https://github.com/losebird/dsh-plugin-market', '')
