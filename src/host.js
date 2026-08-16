@@ -59,7 +59,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.17',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.18',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -348,6 +348,15 @@ async function installedRows() {
       source: marketRec ? 'market' : 'manual',
       at: marketRec && marketRec.at ? marketRec.at : null,
     })
+  }
+  // 其他 profile 里装着的包也列出来（标记来源，客户端提供迁移）
+  const otherMap = await otherProfileMap()
+  const seenNames = new Set(rows.map((r) => r.name))
+  for (const [pkg, profs] of otherMap.entries()) {
+    if (seenNames.has(pkg)) continue
+    if (pkg.startsWith('@deepseek-ai/')) continue
+    if (/^(cordis|typert|schemastery|cosmokit|minato|reggol|yakumo)(:|$)/i.test(pkg)) continue
+    rows.push({ id: pkg, name: pkg, enabled: false, disabled: false, failed: false, source: 'other', profile: profs[0], at: null })
   }
   return rows
 }

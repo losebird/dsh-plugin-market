@@ -45,7 +45,7 @@ window.__ModuleLoader__.load({
         mSearch: '搜索已安装…', mEmpty: '还没有通过插件市场或 dsh plugin add 安装的插件。',
         enable: '启用', disable: '禁用', enabledLabel: '已启用', disabledLabel: '已禁用',
         failedLabel: '加载失败', sourceMarket: '市场安装', sourceManual: '手动安装', elsewherePill: '在其他 profile',
-        installGuide: '安装说明', manualNote: '该插件按其仓库说明安装，请参考下方 README。',
+        installGuide: '安装说明', manualNote: '该插件按其仓库说明安装，请参考下方 README。', migrate: '迁移到 web',
         restartNote: '禁用/启用/删除在重启 dsh 后生效。',
       },
       en: {
@@ -72,7 +72,7 @@ window.__ModuleLoader__.load({
         mSearch: 'Search installed…', mEmpty: 'No plugins installed via the market or dsh plugin add yet.',
         enable: 'Enable', disable: 'Disable', enabledLabel: 'Enabled', disabledLabel: 'Disabled',
         failedLabel: 'Failed', sourceMarket: 'Market', sourceManual: 'Manual', elsewherePill: 'In another profile',
-        installGuide: 'Install guide', manualNote: 'This plugin installs per its repo instructions; see the README below.',
+        installGuide: 'Install guide', manualNote: 'This plugin installs per its repo instructions; see the README below.', migrate: 'Migrate to web',
         restartNote: 'Disable / enable / remove take effect after restarting dsh.',
       },
     }
@@ -117,9 +117,10 @@ window.__ModuleLoader__.load({
 .dshm-chip:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-brand-primary); }
 .dshm-chip.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
 .dshm-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:12px; align-content:start; }
-.dshm-card { display:flex; flex-direction:column; gap:6px; padding:12px; border:1px solid ${BORDER}; border-radius:12px; background:var(--dsw-alias-bg-base); }
+.dshm-card { display:flex; flex-direction:column; gap:8px; padding:14px; border:1px solid ${BORDER}; border-radius:12px; background:var(--dsw-alias-bg-base); transition:border-color 120ms ease, transform 120ms ease; }
+.dshm-card:hover { border-color:var(--dsw-alias-brand-primary); transform:translateY(-2px); }
 .dshm-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
-.dshm-card-name { font-size:13px; font-weight:600; color:var(--dsw-alias-label-primary); }
+.dshm-card-name { font-size:15px; font-weight:700; letter-spacing:-0.01em; color:var(--dsw-alias-brand-primary); }
 .dshm-card-badges { display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
 .dshm-pill { font-size:11px; padding:2px 7px; border-radius:999px; border:1px solid ${BORDER}; color:var(--dsw-alias-label-secondary); white-space:nowrap; }
 .dshm-pill-auto { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
@@ -131,7 +132,7 @@ window.__ModuleLoader__.load({
 .dshm-pill-cat { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
 .dshm-card-author { font-size:12px; color:var(--dsw-alias-label-secondary); }
 .dshm-card-author a { color:var(--dsw-alias-brand-primary); text-decoration:none; }
-.dshm-card-desc { font-size:12px; color:var(--dsw-alias-label-secondary); line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.dshm-card-desc { font-size:12.5px; color:var(--dsw-alias-label-secondary); line-height:1.55; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .dshm-card-tags { display:flex; gap:6px; flex-wrap:wrap; }
 .dshm-tag { font-size:11px; padding:1px 8px; border-radius:999px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-secondary); }
 .dshm-card-stats { display:flex; gap:12px; font-size:12px; color:var(--dsw-alias-label-secondary); }
@@ -141,6 +142,10 @@ window.__ModuleLoader__.load({
 .dshm-btn:hover { background:var(--dsw-alias-button-floating-hover); }
 .dshm-btn-primary { background:var(--dsw-alias-brand-primary); color:#fff; }
 .dshm-btn-primary:hover { opacity:0.92; }
+.dshm-btn-warn { background:transparent; color:var(--dsw-alias-state-warn-primary); border:1px solid var(--dsw-alias-state-warn-primary); }
+.dshm-btn-warn:hover { background:color-mix(in srgb, var(--dsw-alias-state-warn-primary) 14%, transparent); }
+.dshm-btn-success { background:transparent; color:var(--dsw-alias-state-success-primary); border:1px solid var(--dsw-alias-state-success-primary); }
+.dshm-btn-success:hover { background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 14%, transparent); }
 .dshm-btn-danger { background:transparent; color:var(--dsw-alias-state-error-primary); }
 .dshm-btn-danger:hover { background:var(--dsw-alias-interactive-bg-hover); color:var(--dsw-alias-state-error-primary); }
 .dshm-btn-ghost { background:transparent; color:var(--dsw-alias-label-secondary); }
@@ -382,7 +387,9 @@ window.__ModuleLoader__.load({
                   ? h('span', { className: 'dshm-busy' }, t('unverNote'))
                   : item.install && (item.install.method === 'manual' || item.install.method === 'desktop')
                     ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => openDetail(item) }, t('installGuide'))
-                    : installed && !upToDate
+                    : installedRaw && installedRaw.source === 'other'
+                      ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('migrate'))
+                      : installed && !upToDate
                     ? h('span', null,
                         h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('update')),
                         h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(item) }, t('uninstall')))
@@ -499,18 +506,25 @@ window.__ModuleLoader__.load({
                     const item = st.items.find((it) => it.package === row.name)
                     const installed = item && st.installed[item.id]
                     const upToDate = installed && item.type === 'bundle' && installed.spec === item.spec
+                    const isOther = row.source === 'other'
                     return h('div', { className: 'dshm-manage-row', key: row.id || row.name },
                       h('div', { className: 'dshm-manage-name' }, shortName(row.name)),
                       h('span', { className: 'dshm-pill' }, row.name),
-                      h('span', { className: 'dshm-pill ' + (row.enabled ? 'dshm-pill-on' : 'dshm-pill-warn') }, row.enabled ? t('enabledLabel') : t('disabledLabel')),
+                      h('span', { className: 'dshm-pill ' + (isOther ? 'dshm-pill-warn' : (row.enabled ? 'dshm-pill-on' : 'dshm-pill-warn')) }, isOther ? (t('elsewherePill') + (row.profile ? ' ' + row.profile : '')) : (row.enabled ? t('enabledLabel') : t('disabledLabel'))),
                       row.failed ? h('span', { className: 'dshm-pill dshm-pill-off' }, t('failedLabel')) : null,
                       h('span', { className: 'dshm-pill ' + (row.source === 'market' ? 'dshm-pill-on' : '') }, row.source === 'market' ? t('sourceMarket') : t('sourceManual')),
                       h('div', { className: 'dshm-manage-actions' },
-                        h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => doToggle(row) }, row.enabled ? t('disable') : t('enable')),
-                        item && installed && !upToDate
-                          ? h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: () => runInstall(item) }, t('update'))
-                          : null,
-                        h('button', { className: 'dshm-btn dshm-btn-danger dshm-btn-sm', onClick: () => doRemove(row) }, t('remove')),
+                        isOther
+                          ? (item
+                              ? h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: () => runInstall(item) }, t('migrate'))
+                              : null)
+                          : [
+                              h('button', { className: 'dshm-btn ' + (row.enabled ? 'dshm-btn-warn' : 'dshm-btn-success') + ' dshm-btn-sm', onClick: () => doToggle(row) }, row.enabled ? t('disable') : t('enable')),
+                              item && installed && !upToDate
+                                ? h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: () => runInstall(item) }, t('update'))
+                                : null,
+                              h('button', { className: 'dshm-btn dshm-btn-danger dshm-btn-sm', onClick: () => doRemove(row) }, t('remove')),
+                            ],
                       ),
                     )
                   }),
