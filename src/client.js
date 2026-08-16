@@ -116,11 +116,11 @@ window.__ModuleLoader__.load({
 .dshm-chip { border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12px; padding:3px 11px; border-radius:999px; cursor:pointer; }
 .dshm-chip:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-brand-primary); }
 .dshm-chip.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
-.dshm-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:12px; align-content:start; }
-.dshm-card { display:flex; flex-direction:column; gap:8px; padding:14px; border:1px solid ${BORDER}; border-radius:12px; background:var(--dsw-alias-bg-base); transition:border-color 120ms ease, transform 120ms ease; }
-.dshm-card:hover { border-color:var(--dsw-alias-brand-primary); transform:translateY(-2px); }
+.dshm-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:14px; align-content:start; }
+.dshm-card { display:flex; flex-direction:column; gap:10px; padding:16px; border:1px solid ${BORDER}; border-radius:12px; background:var(--dsw-alias-bg-base); transition:border-color 120ms ease, transform 120ms ease; }
+.dshm-card:hover { border-color:var(--dsw-alias-border-l2); transform:translateY(-2px); }
 .dshm-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
-.dshm-card-name { font-size:15px; font-weight:700; letter-spacing:-0.01em; color:var(--dsw-alias-brand-primary); }
+.dshm-card-name { font-size:17px; font-weight:700; letter-spacing:-0.01em; line-height:1.3; color:var(--dsw-alias-brand-primary); }
 .dshm-card-badges { display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
 .dshm-pill { font-size:11px; padding:2px 7px; border-radius:999px; border:1px solid ${BORDER}; color:var(--dsw-alias-label-secondary); white-space:nowrap; }
 .dshm-pill-auto { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
@@ -130,12 +130,13 @@ window.__ModuleLoader__.load({
 .dshm-pill-unver { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
 .dshm-pill-warn { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
 .dshm-pill-cat { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
-.dshm-card-author { font-size:12px; color:var(--dsw-alias-label-secondary); }
+.dshm-card-author { font-size:12.5px; color:var(--dsw-alias-label-secondary); }
 .dshm-card-author a { color:var(--dsw-alias-brand-primary); text-decoration:none; }
-.dshm-card-desc { font-size:12.5px; color:var(--dsw-alias-label-secondary); line-height:1.55; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.dshm-card-desc { font-size:13px; color:var(--dsw-alias-label-secondary); line-height:1.55; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; flex:1; }
 .dshm-card-tags { display:flex; gap:6px; flex-wrap:wrap; }
 .dshm-tag { font-size:11px; padding:1px 8px; border-radius:999px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-secondary); }
-.dshm-card-stats { display:flex; gap:12px; font-size:12px; color:var(--dsw-alias-label-secondary); }
+.dshm-card-stats { display:flex; gap:14px; font-size:12.5px; color:var(--dsw-alias-label-secondary); }
+.dshm-card-stats span { display:inline-flex; align-items:center; gap:5px; }
 .dshm-stat-type { margin-left:auto; }
 .dshm-card-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 .dshm-btn { display:inline-flex; align-items:center; gap:6px; flex:none; white-space:nowrap; padding:7px 16px; border-radius:12px; border:none; background:var(--dsw-alias-button-elevated-fill); color:var(--dsw-alias-label-primary); font:inherit; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; }
@@ -150,8 +151,10 @@ window.__ModuleLoader__.load({
 .dshm-btn-danger:hover { background:var(--dsw-alias-interactive-bg-hover); color:var(--dsw-alias-state-error-primary); }
 .dshm-btn-ghost { background:transparent; color:var(--dsw-alias-label-secondary); }
 .dshm-btn-ghost:hover { background:var(--dsw-alias-interactive-bg-hover); color:var(--dsw-alias-label-primary); }
+.dshm-btn-outline { background:transparent; border:1px solid var(--dsw-alias-border-l2); color:var(--dsw-alias-label-secondary); border-radius:10px; }
+.dshm-btn-outline:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-label-secondary); }
 .dshm-btn:disabled { opacity:0.5; cursor:not-allowed; }
-.dshm-btn-sm { padding:5px 12px; font-size:12px; border-radius:10px; }
+.dshm-btn-sm { padding:6px 14px; font-size:13px; border-radius:10px; }
 .dshm-busy { font-size:12px; color:var(--dsw-alias-label-secondary); }
 .dshm-empty { padding:32px; text-align:center; color:var(--dsw-alias-label-secondary); font-size:13px; }
 .dshm-pager { display:flex; align-items:center; justify-content:center; gap:14px; padding:10px 0 4px; }
@@ -373,12 +376,19 @@ window.__ModuleLoader__.load({
             ? h('div', { className: 'dshm-card-tags' }, item.tags.map((tg) => h('span', { className: 'dshm-tag', key: tg }, tg)))
             : null,
           h('div', { className: 'dshm-card-stats' },
-            h('span', { title: t('stars') }, '★ ' + fmtNum(item.stars)),
-            (item.downloads || 0) > 0 ? h('span', { title: t('downloads') }, '⬇ ' + fmtNum(item.downloads)) : null,
+            h('span', { title: t('downloads') },
+              h('svg', { width: 14, height: 14, viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' },
+                h('path', { d: 'M8 2v7.5M4.5 7L8 10.5 11.5 7M2.5 13.5h11' })),
+              fmtNum(item.downloads)),
+            h('span', { title: t('stars') },
+              h('svg', { width: 14, height: 14, viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinejoin: 'round' },
+                h('path', { d: 'M8 1.8l2 4.2 4.6.6-3.4 3.2.9 4.5L8 12.1l-4.1 2.2.9-4.5L1.4 6.6l4.6-.6z' })),
+              fmtNum(item.stars)),
+            item.version ? h('span', null, item.version) : null,
             h('span', { className: 'dshm-stat-type' }, item.type === 'bundle' ? t('typeBundle') : t('typePack')),
           ),
           h('div', { className: 'dshm-card-actions' },
-            h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => openDetail(item) }, t('detailBtn')),
+            h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => openDetail(item) }, t('detailBtn')),
             busy
               ? h('span', { className: 'dshm-busy' }, busy === 'uninstall' ? t('uninstalling') : t('installing'))
               : unavailable
@@ -392,9 +402,9 @@ window.__ModuleLoader__.load({
                       : installed && !upToDate
                     ? h('span', null,
                         h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('update')),
-                        h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(item) }, t('uninstall')))
+                        h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall')))
                     : installed && upToDate
-                      ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(item) }, t('uninstall'))
+                      ? h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
                       : h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('install'))),
           item.verified === false && item.repo
             ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyRepo(item), title: 'https://github.com/' + item.repo },
@@ -436,7 +446,7 @@ window.__ModuleLoader__.load({
                   st.copiedRepo === item.id + ':cmd' ? t('copied') : t('copyCmd'))
               : null,
             installed
-              ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => runUninstall(item) }, t('uninstall'))
+              ? h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
               : null,
             item.verified === false
               ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => copyRepo(item) },
