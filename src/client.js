@@ -55,6 +55,9 @@ window.__ModuleLoader__.load({
         jobTitleUninstall: '卸载进度', jobRunningUninstall: '正在卸载…', jobDoneUninstall: '卸载完成', jobFailedUninstall: '卸载失败',
         jobAutoClose: '本窗口将在 3 秒后自动关闭', jobClose: '关闭',
         readmeLang: '语言', readmeDefault: '默认',
+        agentInstall: '交给 DSH 安装', agentUninstall: '交给 DSH 卸载',
+        agentNote: 'DSH 会阅读项目 README 并按说明自动安装；需要你选择或确认时会在 DSH 对话中弹窗询问。',
+        agentNoteUninstall: 'DSH 会按项目 README 的卸载说明（或从各 profile 移除）自动卸载，需要确认时弹窗询问。',
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
@@ -90,6 +93,9 @@ window.__ModuleLoader__.load({
         jobTitleUninstall: 'Uninstall progress', jobRunningUninstall: 'Uninstalling…', jobDoneUninstall: 'Uninstall complete', jobFailedUninstall: 'Uninstall failed',
         jobAutoClose: 'This window closes automatically in 3 seconds', jobClose: 'Close',
         readmeLang: 'Language', readmeDefault: 'Default',
+        agentInstall: 'Let DSH install', agentUninstall: 'Let DSH uninstall',
+        agentNote: 'DSH reads the project README and installs per its instructions; when your choice or input is needed, it asks you in the DSH conversation.',
+        agentNoteUninstall: 'DSH follows the README uninstall steps (or removes it from every profile) and asks you when confirmation is needed.',
       },
     }
 
@@ -397,6 +403,32 @@ window.__ModuleLoader__.load({
         }
       }
 
+      const runAgentTask = async (kind, item) => {
+        const route = kind === 'install' ? 'agent-install' : 'agent-uninstall'
+        patch({ busy: Object.assign({}, store.busy, { [item.id]: 'install' }), error: null, notice: null })
+        const openErrorDialog = (err) => {
+          patch({
+            busy: Object.assign({}, store.busy, { [item.id]: null }),
+            job: { id: 'local-' + Date.now(), name: shortName(item.name || item.id), kind: kind === 'install' ? 'install' : 'uninstall', status: 'error', lines: [err], message: null, error: err },
+            error: err,
+          })
+          setTimeout(() => { if (store.job && store.job.id && String(store.job.id).indexOf('local-') === 0) patch({ job: null }) }, 3000)
+        }
+        try {
+          const res = await api(route, { id: item.id, name: item.name || item.id, repo: item.repo, spec: item.spec || '', package: item.package || null })
+          if (res && res.ok && res.job) {
+            patch({ job: { id: res.job, name: shortName(item.name || item.id), kind: kind === 'install' ? 'install' : 'uninstall', status: 'running', lines: [], message: null, error: null } })
+            pollJob(res.job, item)
+            return
+          }
+          openErrorDialog((res && res.error) || t('errOp'))
+        } catch (e) {
+          openErrorDialog(String(e && e.message ? e.message : e))
+        }
+      }
+      const runAgentInstall = (item) => runAgentTask('install', item)
+      const runAgentUninstall = (item) => runAgentTask('uninstall', item)
+
       const copyRepo = (item) => {
         const url = 'https://github.com/' + item.repo
         try {
@@ -547,7 +579,10 @@ window.__ModuleLoader__.load({
                 : item.verified === false
                   ? h('span', { className: 'dshm-busy' }, t('unverNote'))
                   : item.install && (item.install.method === 'manual' || item.install.method === 'desktop')
-                    ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => openDetail(item) }, t('installGuide'))
+                    ? [
+                        h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runAgentInstall(item) }, t('agentInstall')),
+                        h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => openDetail(item) }, t('installGuide')),
+                      ]
                     : installedRaw && installedRaw.source === 'other'
                       ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('migrate'))
                       : installed && !upToDate
@@ -613,6 +648,16 @@ window.__ModuleLoader__.load({
             h('div', { className: 'dshm-card-desc' }, t('cloneNote')),
           )
         }
+        if (inst.method === 'manual' || inst.method === 'desktop') {
+          return h('div', { className: 'dshm-installpanel' },
+            h('div', { className: 'dshm-install-title' }, t('officialInstall')),
+            h('div', { className: 'dshm-install-actions' },
+              (item.repo && !upToDate)
+                ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runAgentInstall(item) }, t('agentInstall'))
+                : null),
+            h('div', { className: 'dshm-card-desc' }, t('agentNote')),
+          )
+        }
         return null
       }
 
@@ -652,6 +697,9 @@ window.__ModuleLoader__.load({
               : null,
             installed
               ? h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
+              : null,
+            installed && item.repo
+              ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => runAgentUninstall(item) }, t('agentUninstall'))
               : null,
             item.verified === false
               ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => copyRepo(item) },
@@ -746,6 +794,9 @@ window.__ModuleLoader__.load({
                               h('button', { className: 'dshm-btn ' + (row.enabled ? 'dshm-btn-warn' : 'dshm-btn-success') + ' dshm-btn-sm', onClick: () => doToggle(row) }, row.enabled ? t('disable') : t('enable')),
                               item && installed && !upToDate
                                 ? h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: () => runInstall(item) }, t('update'))
+                                : null,
+                              item && item.repo
+                                ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => runAgentUninstall(item) }, t('agentUninstall'))
                                 : null,
                               h('button', { className: 'dshm-btn dshm-btn-danger dshm-btn-sm', onClick: () => doRemove(row) }, t('remove')),
                             ],

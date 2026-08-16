@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.31',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.32',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -562,6 +562,103 @@ function startRemove(args) {
   return { ok: true, job: job.id }
 }
 
+// ── 交给 DSH 安装/卸载（agentic）：启动一个子代理阅读项目 README 并按说明执行，
+//    需要用户选择/输入时用 ask_user_question 弹窗询问，危险命令走 DSH 审批栈 ─────
+function agentPrompt(kind, name, repo, spec) {
+  if (kind === 'install') {
+    return [
+      '请阅读 GitHub 仓库 https://github.com/' + repo + ' 的 README（如有中文/英文多语言版本，选其一），',
+      '严格按作者写明的安装步骤，把插件「' + name + '」安装到本机的 DSH 环境：',
+      '',
+      '1. 优先装入 DSH web profile（~/.dsh/profiles/web）。可用 dsh plugin --profile web add … 安装；',
+      '   若 pnpm 拦截构建脚本，先在该 profile 的 pnpm-workspace.yaml 顶层写 dangerouslyAllowAllBuilds: true',
+      '   （以及 allowBuilds 映射键），再重试。安装 spec 参考：' + (spec || 'README 中写明的 spec') + '；',
+      '2. 凡是需要用户选择、确认或提供信息（账号、路径、安装选项等）的地方，用 ask_user_question 工具',
+      '   弹窗询问用户，不要擅自替用户做决定；',
+      '3. 危险命令交给 DSH 审批流程（正常执行即可，用户会审批）；',
+      '4. 装完核对结果（dsh 插件列表/README 验证步骤），并在最终回复里给出：装了什么、装到哪、重启要求。',
+    ].join('\n')
+  }
+  return [
+    '请阅读 GitHub 仓库 https://github.com/' + repo + ' 的 README，查找关于卸载/移除「' + name + '」的说明；',
+    '',
+    '1. 若 README 有卸载步骤，按说明执行；',
+    '2. 若没有，则从 DSH 的所有 profile 中移除该包（对每个装有它的 profile 执行 dsh plugin --profile <profile> remove <name>），',
+    '   并删除其残留的配置/数据目录（先向用户确认再删）；',
+    '3. 需要用户选择或确认的地方，用 ask_user_question 工具弹窗询问；危险命令走 DSH 审批流程；',
+    '4. 完成后在最终回复里总结：删除了什么、从哪些 profile、是否需要重启 DSH。',
+  ].join('\n')
+}
+
+async function performAgenticTask(kind, args, job) {
+  const subagents = performAgenticTask.subagents
+  const agents = performAgenticTask.agents
+  if (!subagents || !agents) return finishJob(job, { status: 'error', error: '当前 DSH 缺少子代理服务，无法启动该任务' })
+  const parent = (typeof agents.currentInitiator === 'function' ? agents.currentInitiator() : undefined) || (Array.isArray(agents.roots()) ? agents.roots()[0] : undefined)
+  if (!parent) return finishJob(job, { status: 'error', error: '找不到当前会话 Agent，无法启动该任务（请先在 DSH 会话中使用插件市场）' })
+  let providers = []
+  try { providers = subagents.list() } catch {}
+  const provider = providers.includes('spawn') ? 'spawn' : (providers[0] || '')
+  if (!provider) return finishJob(job, { status: 'error', error: '当前 DSH 没有可用的子代理 provider' })
+  const name = args.name || args.id || ''
+  const repo = args.repo || ''
+  if (!name || !repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) return finishJob(job, { status: 'error', error: '参数错误（缺少插件名或仓库地址）' })
+  appendJobLine(job, '启动 DSH ' + (kind === 'install' ? '安装' : '卸载') + '任务: ' + name)
+  appendJobLine(job, '请切换到 DSH 对话查看执行过程；需要你选择/确认时，DSH 会弹窗询问')
+  let run
+  try {
+    run = await subagents.start(provider, {
+      label: (kind === 'install' ? '安装插件 ' : '卸载插件 ') + name,
+      prompt: [{ type: 'text', text: agentPrompt(kind, name, repo, args.spec || '') }],
+      parent,
+      signal: new AbortController().signal,
+      outputSchema: {
+        type: 'object',
+        properties: { ok: { type: 'boolean' }, summary: { type: 'string' } },
+        required: ['ok'],
+        additionalProperties: false,
+      },
+    })
+  } catch (e) {
+    return finishJob(job, { status: 'error', error: '启动 DSH ' + (kind === 'install' ? '安装' : '卸载') + '任务失败: ' + String(e && e.message ? e.message : e) })
+  }
+  try {
+    const result = await run.result
+    const s = (result && result.structured && typeof result.structured === 'object') ? result.structured : {}
+    if (result && result.stopReason === 'completed' && s.ok === true) {
+      const summary = String(s.summary || (kind === 'install' ? '安装完成' : '卸载完成'))
+      appendJobLine(job, summary)
+      return finishJob(job, { status: 'done', message: summary })
+    }
+    const outText = ((result && result.output) || [])
+      .map((b) => (b && typeof b.text === 'string' ? b.text : ''))
+      .join(' ')
+      .trim()
+      .slice(0, 800)
+    return finishJob(job, { status: 'error', error: 'DSH 任务未成功完成（' + (result && result.stopReason ? result.stopReason : '未知') + '）' + (outText ? '：' + outText : '') + (s.summary ? '（' + s.summary + '）' : '') })
+  } finally {
+    try { await run.dispose() } catch {}
+  }
+}
+
+function startAgentInstall(args) {
+  if (!args || typeof args !== 'object') return { ok: false, error: '参数错误' }
+  const job = newJob(args)
+  performAgenticTask('install', args, job).catch((e) => {
+    finishJob(job, { status: 'error', error: String(e && e.message ? e.message : e) })
+  })
+  return { ok: true, job: job.id }
+}
+
+function startAgentUninstall(args) {
+  if (!args || typeof args !== 'object') return { ok: false, error: '参数错误' }
+  const job = newJob(args)
+  performAgenticTask('uninstall', args, job).catch((e) => {
+    finishJob(job, { status: 'error', error: String(e && e.message ? e.message : e) })
+  })
+  return { ok: true, job: job.id }
+}
+
 // 宿主 shell 服务封装（resolve → run，容错）
 // 注意：DSH shell 服务的 stdout/stderr 是 { text, truncated } 对象而非字符串；
 // 安装/卸载类命令需要越出会话工作区写用户目录，显式携带 danger-full-access
@@ -869,6 +966,8 @@ export default {
     runShell.shellService = shell
     runShell.sandboxPolicyService = ctx.get('sandboxPolicy')
     installedRows.loader = ctx.loader
+    performAgenticTask.subagents = ctx.get('subagents')
+    performAgenticTask.agents = ctx.get('agents')
 
   ctx.effect(() => webServer.register({
     kind: 'prefix',
@@ -903,6 +1002,14 @@ export default {
         if (pathname === '/plugin-market/remove' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')
           return json(res, 200, startRemove(body))
+        }
+        if (pathname === '/plugin-market/agent-install' && req.method === 'POST') {
+          const body = JSON.parse((await readBody(req)) || '{}')
+          return json(res, 200, startAgentInstall(body))
+        }
+        if (pathname === '/plugin-market/agent-uninstall' && req.method === 'POST') {
+          const body = JSON.parse((await readBody(req)) || '{}')
+          return json(res, 200, startAgentUninstall(body))
         }
         if (pathname === '/plugin-market/readme' && req.method === 'GET') {
           const url = new URL(req.url, 'http://x')
