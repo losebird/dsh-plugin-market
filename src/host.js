@@ -31,39 +31,69 @@ async function writeProfileManifest(m) {
 // 此前写入的列表格式 allowBuilds 对 git 依赖无效（pnpm 要求 <name>@<resolutionId>: true 映射键），
 // 这里统一重建 pnpm 段，用官方开关兜底。用户在弹窗点击安装即授权。
 // 放行 pnpm 构建脚本：把 pnpm 报错里要求的“精确 depPath 键”(包名@codeload-tarball-URL)
-// 以映射格式写入 pnpm.allowBuilds，并保留此前已写入的键；dangerouslyAllowAllBuilds 作双保险。
+// 以映射格式写入 pnpm.allowBuilds，保留此前已写入的键与用户自定义的其他 pnpm 设置；
+// dangerouslyAllowAllBuilds 作双保险。只重写 allowBuilds/dangerouslyAllowAllBuilds 两处。
 async function allowBuild(extraKeys = []) {
   const p = join(DSH_HOME, 'profiles', 'web', 'pnpm-workspace.yaml')
   let text = ''
   try { text = await readFile(p, 'utf8') } catch {}
   const lines = text.split('\n')
   const keys = new Set()
-  const pnpmIdx = lines.findIndex((l) => /^pnpm\s*:/.test(l))
-  if (pnpmIdx !== -1) {
-    // 找出旧 pnpm: 段的边界，收集其中已放行的键，重建时保留
-    let endIdx = pnpmIdx + 1
-    while (endIdx < lines.length && (/^\s/.test(lines[endIdx]) || lines[endIdx].trim() === '')) endIdx++
-    if (endIdx < lines.length && lines[endIdx - 1] === '') endIdx--
-    for (let i = pnpmIdx + 1; i < endIdx; i++) {
-      const m = /^\s{4}([^\s#]+): true\s*$/.exec(lines[i])
-      if (m && m[1].includes('@')) keys.add(m[1])
-    }
-    lines.splice(pnpmIdx, endIdx - pnpmIdx)
-    text = lines.join('\n')
-  }
   for (const k of extraKeys) {
     if (typeof k === 'string' && k.includes('@') && k.length < 400 && !/\s/.test(k)) keys.add(k)
   }
-  text = text.replace(/\s*$/, '')
-  let section = 'pnpm:\n  dangerouslyAllowAllBuilds: true\n  allowBuilds:'
-  if (keys.size === 0) {
-    section += ' {}\n'
-  } else {
-    section += '\n'
-    for (const k of [...keys].sort()) section += '    ' + k + ': true\n'
+  // 定位 pnpm: 段（无则视为文件尾）
+  let pnpmIdx = lines.findIndex((l) => /^pnpm\s*:/.test(l))
+  const hasPnpm = pnpmIdx !== -1
+  if (!hasPnpm) pnpmIdx = lines.length
+  let endIdx = pnpmIdx + 1
+  while (endIdx < lines.length && (/^\s/.test(lines[endIdx]) || lines[endIdx].trim() === '')) endIdx++
+  // 收集旧 allowBuilds 键，并标记待删行（旧 allowBuilds 块 + 旧 dangerouslyAllowAllBuilds 行）
+  const skip = new Set()
+  let inAllowBuilds = false
+  for (let i = pnpmIdx + 1; i < endIdx; i++) {
+    const line = lines[i]
+    if (/^\s{2}allowBuilds\s*:/.test(line)) { inAllowBuilds = true; skip.add(i); continue }
+    if (/^\s{2}dangerouslyAllowAllBuilds\s*:/.test(line)) { skip.add(i); continue }
+    if (inAllowBuilds) {
+      if (/^\s{4}\S/.test(line)) {
+        const m = /^\s{4}["']?([^\s#]+?)["']?\s*:\s*true\s*$/.exec(line)
+        if (m && m[1].includes('@')) keys.add(m[1])
+        skip.add(i)
+        continue
+      }
+      inAllowBuilds = false
+    }
   }
-  text += (text ? '\n' : '') + section
-  await writeFile(p, text)
+  const head = lines.slice(0, pnpmIdx)
+  const tail = lines.slice(endIdx)
+  while (head.length && head[head.length - 1].trim() === '') head.pop()
+  let body = 'pnpm:\n'
+  if (hasPnpm) {
+    // 保留旧段中未被删的行（用户自定义设置），只去掉行尾空格与段内空行
+    for (let i = pnpmIdx + 1; i < endIdx; i++) {
+      if (skip.has(i)) continue
+      const l = lines[i].replace(/\s+$/, '')
+      if (l === '') continue
+      body += l + '\n'
+    }
+  }
+  body += '  dangerouslyAllowAllBuilds: true\n'
+  if (keys.size === 0) {
+    body += '  allowBuilds: {}\n'
+  } else {
+    body += '  allowBuilds:\n'
+    for (const k of [...keys].sort()) body += '    ' + k + ': true\n'
+  }
+  let out = head.join('\n')
+  if (out && !out.endsWith('\n')) out += '\n'
+  out += (out ? '\n' : '') + body
+  if (tail.length) {
+    let t = tail.join('\n').replace(/^\n+/, '')
+    if (t) out += '\n' + t
+  }
+  if (!out.endsWith('\n')) out += '\n'
+  await writeFile(p, out)
   return true
 }
 
