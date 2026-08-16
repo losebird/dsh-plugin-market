@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.37',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.38',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -563,20 +563,21 @@ function startRemove(args) {
 }
 
 // ── 交给 DSH 安装/卸载：把请求作为一条用户消息投递给当前 DSH 会话（agent.followup），
-//    与用户在对话框里说“帮我装 X”完全同一条路径——执行、提问、审批都在用户自己的对话里进行 ─────
+//    与用户在对话框里说“帮我装 X”完全同一条路径——执行、提问、审批都在用户自己的对话里进行。
+//    消息用自然口语撰写：就是用户本人会说的话，不堆技术模板。 ─────
 function agentUserText(kind, name, repo, spec, unverified) {
   if (kind === 'install') {
-    return '（插件市场：用户点击了「安装」）请把插件「' + name + '」安装到本机的 DSH。\n' +
-      '1. 先阅读 https://github.com/' + repo + ' 的 README（安装章节或 INSTALL.md），严格按作者写明的步骤执行；\n' +
-      '2. 优先装入 DSH web profile（~/.dsh/profiles/web，可用 dsh plugin --profile web add …；若 pnpm 拦截构建脚本，先在该 profile 的 pnpm-workspace.yaml 顶层写 dangerouslyAllowAllBuilds: true 及 allowBuilds 键再重试）。安装 spec 参考：' + (spec || 'README 中写明') + '；\n' +
-      '3. 需要我选择、确认或提供信息（账号、API key、路径、安装选项）时直接问我，不要擅自决定；写入 ~/.dsh 等目录需要提权时走正常审批流程；\n' +
-      '4. 装完核对结果，并告诉我：装了什么、装到哪、重启要求。' +
-      (unverified ? '\n注意：该插件未声明 dsh.bundle，可能无法作为 profile 插件挂载；按 README 尽力安装，若确实无法挂载，请说明原因和替代方案。' : '')
+    let s = '（我刚在插件市场点了「安装」）帮我把「' + name + '」装到我的 DSH 上吧。\n' +
+      '仓库在 https://github.com/' + repo + ' ，你按它 README 或 INSTALL.md 的步骤装就行，优先装进 web profile；' +
+      (spec ? '安装源可以试试 ' + spec + '；' : '') +
+      '如果 pnpm 拦构建脚本，放行一下再装。\n' +
+      '有需要我选择、确认或提供信息（账号、key、路径）的地方直接问我，装完告诉我装好没、要不要重启。'
+    if (unverified) s += '\n这个插件没声明 dsh.bundle，可能挂载不上，你尽力按 README 装，装不上就跟我说原因和别的办法。'
+    return s
   }
-  return '（插件市场：用户点击了「卸载」）请把插件「' + name + '」从本机 DSH 卸载干净。\n' +
-    '1. 先看 https://github.com/' + repo + ' 的 README 有无卸载说明，有则按说明执行；\n' +
-    '2. 没有卸载说明的话，对每个装有它的 profile 执行 dsh plugin --profile <profile> remove <name>；删除残留的配置/数据目录前先问我确认；\n' +
-    '3. 完成后告诉我：删除了什么、从哪些 profile、是否需要重启 DSH。'
+  return '（我刚在插件市场点了「卸载」）帮我把「' + name + '」从我的 DSH 卸载干净。\n' +
+    '仓库在 https://github.com/' + repo + ' ，先看看它 README 有没有卸载说明；删残留文件之前先问我一声。\n' +
+    '弄完告诉我删了哪些、要不要重启。'
 }
 
 async function performAgenticTask(kind, args, job) {
