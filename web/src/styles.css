@@ -9,7 +9,7 @@
   --text: #17181c;
   --text-2: #4b5058;
   --text-3: #7c828c;
-  --accent: #0a8f5f;
+  --accent: #4d6bfe;
   --accent-ink: #ffffff;
   --warn: #b7791f;
   --error: #dc2626;
@@ -22,19 +22,19 @@
 }
 
 [data-theme='dark'] {
-  --bg: #0b0b0e;
-  --panel: #131318;
-  --panel-2: #1a1a21;
-  --border: #26262e;
-  --border-2: #34343e;
-  --text: #f4f4f6;
-  --text-2: #a2a2ad;
-  --text-3: #6d6d78;
-  --accent: #34d399;
-  --accent-ink: #04281c;
-  --warn: #fbbf24;
-  --error: #f87171;
-  --nav-bg: rgba(11, 11, 14, 0.86);
+  --bg: #101113;
+  --panel: #1f2126;
+  --panel-2: #26282c;
+  --border: #26282c;
+  --border-2: #34383e;
+  --text: #e6e8ea;
+  --text-2: #a8adb3;
+  --text-3: #81858c;
+  --accent: #4d6bfe;
+  --accent-ink: #ffffff;
+  --warn: #febc2e;
+  --error: #ff5f57;
+  --nav-bg: rgba(16, 17, 19, 0.88);
   --term-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
@@ -88,7 +88,7 @@ a:hover { text-decoration: underline; }
 .hero-stats .dot { color: var(--text-3); }
 .hero-slogan {
   margin-top: 0; font-size: 13.5px; font-weight: 700; letter-spacing: 0.04em;
-  background: linear-gradient(90deg, #0a8f5f, #2f7ce0, #a855f7, #f59e0b, #ef4444, #0a8f5f);
+  background: linear-gradient(90deg, #4d6bfe, #679efe, #a855f7, #679efe, #4d6bfe);
   background-size: 300% 100%;
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
@@ -102,7 +102,7 @@ a:hover { text-decoration: underline; }
 }
 .hero-install-label { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-weight: 550; }
 .hero-install code { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); }
-.badge-featured { color: var(--accent); border-color: rgba(52, 211, 153, 0.55); }
+.badge-featured { color: var(--accent); border-color: rgba(77, 107, 254, 0.55); }
 
 .btn {
   display: inline-flex; align-items: center; gap: 8px; border-radius: var(--radius-sm);
@@ -233,7 +233,7 @@ a:hover { text-decoration: underline; }
 .card-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; color: var(--accent); }
 .badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
 .badge { font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border-2); color: var(--text-2); white-space: nowrap; }
-.badge-cat { color: var(--accent); border-color: rgba(52, 211, 153, 0.45); }
+.badge-cat { color: var(--accent); border-color: rgba(77, 107, 254, 0.45); }
 .chip-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); margin-left: 4px; }
 .badge-auto { color: var(--warn); border-color: rgba(251, 191, 36, 0.45); }
 .badge-pack { color: var(--accent); border-color: rgba(52, 211, 153, 0.45); }
