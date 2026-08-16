@@ -2,7 +2,7 @@
 // /plugin-market/list      GET   → { source, notice, items, installed }
 // /plugin-market/install   POST  → { ok, message | error }
 // /plugin-market/uninstall POST  → { ok, message | error }
-import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, rm, readdir } from 'node:fs/promises'
 import { marked } from 'marked'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
@@ -33,13 +33,33 @@ function profileInstalled(manifest) {
   return { deps, bundles }
 }
 
+// 扫描其他 profile（排除 web），返回 包名 → [profile 名] 映射
+async function otherProfileMap() {
+  const map = new Map()
+  let dirs = []
+  try { dirs = await readdir(join(DSH_HOME, 'profiles')) } catch { return map }
+  for (const d of dirs) {
+    if (d === 'web' || d.startsWith('-')) continue
+    try {
+      const m = JSON.parse(await readFile(join(DSH_HOME, 'profiles', d, 'package.json'), 'utf8'))
+      const names = new Set(Object.keys(m.dependencies || {}))
+      for (const b of (m.dsh && m.dsh.profile && m.dsh.profile.bundles) || []) names.add(b)
+      for (const n of names) {
+        if (!map.has(n)) map.set(n, [])
+        map.get(n).push(d)
+      }
+    } catch {}
+  }
+  return map
+}
+
 const DEMO_ITEMS = [
   {
     id: 'dsh-plugin-market',
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.12',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.13',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -110,10 +130,14 @@ async function list() {
   // 手动安装（dsh plugin add）识别：profile 依赖/bundles 里有这个包名 → 标记已安装
   const manifest = await readProfileManifest()
   const { deps, bundles } = profileInstalled(manifest)
+  const otherMap = await otherProfileMap()
   for (const it of finalItems) {
     if (!it.package) continue
     if ((deps.has(it.package) || bundles.has(it.package)) && !(it.id in installed)) {
       installed[it.id] = { type: 'bundle', spec: it.spec || '', package: it.package, source: 'manual' }
+    } else if (!(it.id in installed) && otherMap.has(it.package)) {
+      // 装在其他 profile：标记来源，市场安装时自动迁移
+      installed[it.id] = { type: 'bundle', spec: it.spec || '', package: it.package, source: 'other', profile: otherMap.get(it.package)[0] }
     }
   }
   return { source, notice, items: finalItems, installed }
@@ -127,16 +151,35 @@ async function install(args) {
     if (!validBundleSpec(args.spec)) return { ok: false, error: '非法的安装源 spec' }
     const r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
     if (!r.ok) return { ok: false, error: (r.stderr || '').trim() || 'dsh plugin add 失败' }
+    // 自动迁移：若同名包存在于其他 profile，从中移除，避免“装了却不生效”
+    const migratedFrom = []
+    const pkgName = typeof args.package === 'string' && args.package ? args.package : null
+    if (pkgName) {
+      const otherMap = await otherProfileMap()
+      for (const prof of (otherMap.get(pkgName) || [])) {
+        try {
+          const p = join(DSH_HOME, 'profiles', prof, 'package.json')
+          const m = JSON.parse(await readFile(p, 'utf8'))
+          if (m.dependencies && m.dependencies[pkgName]) delete m.dependencies[pkgName]
+          const bl = (m.dsh && m.dsh.profile && m.dsh.profile.bundles) || []
+          const idx = bl.indexOf(pkgName)
+          if (idx !== -1) bl.splice(idx, 1)
+          await writeFile(p, JSON.stringify(m, null, 2) + '\n')
+          migratedFrom.push(prof)
+        } catch {}
+      }
+    }
     const state = await readState()
     const installed = state.installed || {}
     installed[args.id] = {
       type: 'bundle',
       spec: args.spec,
-      package: typeof args.package === 'string' && args.package ? args.package : args.id,
+      package: pkgName || args.id,
       at: new Date().toISOString(),
     }
     await writeState({ installed })
-    return { ok: true, message: '已安装到 web profile，重启 dsh 后生效' }
+    const migrateNote = migratedFrom.length > 0 ? '（已自动从其他 profile 迁移: ' + migratedFrom.join(', ') + '）' : ''
+    return { ok: true, message: '已安装到 web profile，重启 dsh 后生效' + migrateNote }
   }
   if (args.type === 'pack') {
     const url = args.spec

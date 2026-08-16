@@ -44,7 +44,7 @@ window.__ModuleLoader__.load({
         errOp: '操作失败', langBtn: 'EN',
         mSearch: '搜索已安装…', mEmpty: '还没有通过插件市场或 dsh plugin add 安装的插件。',
         enable: '启用', disable: '禁用', enabledLabel: '已启用', disabledLabel: '已禁用',
-        failedLabel: '加载失败', sourceMarket: '市场安装', sourceManual: '手动安装',
+        failedLabel: '加载失败', sourceMarket: '市场安装', sourceManual: '手动安装', elsewherePill: '在其他 profile',
         restartNote: '禁用/启用/删除在重启 dsh 后生效。',
       },
       en: {
@@ -70,7 +70,7 @@ window.__ModuleLoader__.load({
         errOp: 'Operation failed', langBtn: '中文',
         mSearch: 'Search installed…', mEmpty: 'No plugins installed via the market or dsh plugin add yet.',
         enable: 'Enable', disable: 'Disable', enabledLabel: 'Enabled', disabledLabel: 'Disabled',
-        failedLabel: 'Failed', sourceMarket: 'Market', sourceManual: 'Manual',
+        failedLabel: 'Failed', sourceMarket: 'Market', sourceManual: 'Manual', elsewherePill: 'In another profile',
         restartNote: 'Disable / enable / remove take effect after restarting dsh.',
       },
     }
@@ -125,6 +125,7 @@ window.__ModuleLoader__.load({
 .dshm-pill-demo { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
 .dshm-pill-off { color:var(--dsw-alias-state-error-primary); border-color:currentColor; }
 .dshm-pill-unver { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
+.dshm-pill-warn { color:var(--dsw-alias-state-warn-primary); border-color:currentColor; }
 .dshm-pill-cat { color:var(--dsw-alias-brand-primary); border-color:currentColor; }
 .dshm-card-author { font-size:12px; color:var(--dsw-alias-label-secondary); }
 .dshm-card-author a { color:var(--dsw-alias-brand-primary); text-decoration:none; }
@@ -138,7 +139,8 @@ window.__ModuleLoader__.load({
 .dshm-btn:hover { border-color:var(--dsw-alias-brand-primary); }
 .dshm-btn-primary { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
 .dshm-btn-primary:hover { opacity:0.9; }
-.dshm-btn-danger { background:var(--dsw-alias-state-error-primary); border-color:var(--dsw-alias-state-error-primary); color:#fff; }
+.dshm-btn-danger { background:transparent; color:var(--dsw-alias-state-error-primary); border-color:var(--dsw-alias-state-error-primary); }
+.dshm-btn-danger:hover { background:color-mix(in srgb, var(--dsw-alias-state-error-primary) 12%, transparent); color:var(--dsw-alias-state-error-primary); }
 .dshm-btn-ghost { color:var(--dsw-alias-label-secondary); }
 .dshm-btn:disabled { opacity:0.5; cursor:not-allowed; }
 .dshm-btn-sm { padding:4px 12px; font-size:12px; }
@@ -332,7 +334,8 @@ window.__ModuleLoader__.load({
       }
 
       function Card(item, st) {
-        const installed = st.installed && st.installed[item.id]
+        const installedRaw = st.installed && st.installed[item.id]
+        const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
         const busy = st.busy && st.busy[item.id]
         const unavailable = item.status === 'unavailable'
         const upToDate = !!installed && item.type === 'bundle' && installed.spec === item.spec
@@ -346,6 +349,9 @@ window.__ModuleLoader__.load({
               item.demo ? h('span', { className: 'dshm-pill dshm-pill-demo' }, t('demo')) : null,
               item.verified === false ? h('span', { className: 'dshm-pill dshm-pill-unver' }, t('unver')) : null,
               unavailable ? h('span', { className: 'dshm-pill dshm-pill-off' }, t('offline')) : null,
+              installedRaw && installedRaw.source === 'other'
+                ? h('span', { className: 'dshm-pill dshm-pill-warn' }, t('elsewherePill') + (installedRaw.profile ? ' ' + installedRaw.profile : ''))
+                : null,
               upToDate ? h('span', { className: 'dshm-pill dshm-pill-on' }, t('latestPill')) : null,
               installed && !upToDate ? h('span', { className: 'dshm-pill dshm-pill-on' }, t('installed')) : null,
             ),
@@ -387,7 +393,8 @@ window.__ModuleLoader__.load({
 
       function DetailView(st) {
         const item = st.detail
-        const installed = st.installed && st.installed[item.id]
+        const installedRaw = st.installed && st.installed[item.id]
+        const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
         const upToDate = !!installed && item.type === 'bundle' && installed.spec === item.spec
         return h('div', { className: 'dshm-detail' },
           h('div', { className: 'dshm-detail-head' },
@@ -487,7 +494,7 @@ window.__ModuleLoader__.load({
                     return h('div', { className: 'dshm-manage-row', key: row.id || row.name },
                       h('div', { className: 'dshm-manage-name' }, shortName(row.name)),
                       h('span', { className: 'dshm-pill' }, row.name),
-                      h('span', { className: 'dshm-pill ' + (row.enabled ? 'dshm-pill-on' : 'dshm-pill-off') }, row.enabled ? t('enabledLabel') : t('disabledLabel')),
+                      h('span', { className: 'dshm-pill ' + (row.enabled ? 'dshm-pill-on' : 'dshm-pill-warn') }, row.enabled ? t('enabledLabel') : t('disabledLabel')),
                       row.failed ? h('span', { className: 'dshm-pill dshm-pill-off' }, t('failedLabel')) : null,
                       h('span', { className: 'dshm-pill dshm-pill-auto' }, row.source === 'market' ? t('sourceMarket') : t('sourceManual')),
                       h('div', { className: 'dshm-manage-actions' },
