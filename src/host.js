@@ -353,6 +353,20 @@ async function performInstall(args, job) {
   if (typeof args.spec !== 'string') return finishJob(job, { status: 'error', error: '参数错误' })
   if (args.type === 'bundle') {
     if (!validBundleSpec(args.spec)) return finishJob(job, { status: 'error', error: '非法的安装源 spec' })
+    // 旧名迁移：市场包名从 dsh-plugin-market 改为 @ace-zone/dsh-market 后，
+    // 直接 add 新名会与旧依赖并存、loader 可能重复挂载导致启动崩溃。
+    // 安装/更新市场自身时，先移除旧名依赖再装新名。
+    const isMarketSelf = args.package === '@ace-zone/dsh-market' || args.package === 'dsh-plugin-market'
+      || /losebird\/dsh-plugin-market|dsh-plugin-market#/.test(String(args.spec || ''))
+    if (isMarketSelf) {
+      const manifest0 = await readProfileManifest()
+      const deps0 = (manifest0 && manifest0.dependencies) || {}
+      if (deps0['dsh-plugin-market']) {
+        appendJobLine(job, '检测到旧版包名 dsh-plugin-market，先移除再安装 @ace-zone/dsh-market …')
+        const rmRes = await runShellLogged(job, 'dsh plugin --profile web remove dsh-plugin-market', 300000, { fullAccess: true })
+        if (!rmRes.ok) appendJobLine(job, '旧名移除未成功（继续安装新名，稍后可手动清理）')
+      }
+    }
     // 安全守卫：安装方式必须是 README 核实过的（或 curated 手工维护）。
     // 历史启发式（source: 'pkg'）标记的 dsh-plugin-add 一律阻止，避免装坏环境
     const instSource = args.install && args.install.source
