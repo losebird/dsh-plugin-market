@@ -2,7 +2,7 @@
 // /plugin-market/list      GET   → { source, notice, items, installed }
 // /plugin-market/install   POST  → { ok, message | error }
 // /plugin-market/uninstall POST  → { ok, message | error }
-import { readFile, writeFile, mkdir, rm, readdir } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, rm, readdir, stat } from 'node:fs/promises'
 import { marked } from 'marked'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.29',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.30',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -252,7 +252,90 @@ async function performInstall(args, job) {
     await writeState({ installed })
     return finishJob(job, { status: 'done', message: '安装完成（项目官方脚本）: ' + cmd })
   }
-  if (method === 'desktop' || method === 'manual' || method === 'git-clone') {
+  if (method === 'git-clone') {
+    // 全自动构建安装：克隆 → 按锁文件选包管理器装依赖 → 有 build 脚本则构建 →
+    // pack 成 tarball → dsh plugin --profile web add <本地 tarball>（与项目 README 文档一致）
+    if (process.platform === 'win32') {
+      return finishJob(job, { status: 'error', error: '当前系统暂不支持自动构建安装，请打开详情按 README 手动安装' })
+    }
+    const cloneCmd = (args.install && args.install.command) || ''
+    const urlM = /git\s+clone\s+(?:--depth\s+\S+\s+)?(\S+)/i.exec(cloneCmd)
+    const repoUrl = urlM ? urlM[1].replace(/[;'"`]+$/, '') : ''
+    if (!/^(https?|git|ssh):\/\//i.test(repoUrl) && !/^git@/.test(repoUrl)) {
+      return finishJob(job, { status: 'error', error: '无法从安装说明中解析仓库地址，请打开详情按 README 手动安装' })
+    }
+    const tmp = join(STATE_DIR, '.tmp-clone-' + process.pid + '-' + Date.now())
+    const tmpQ = q(tmp)
+    try {
+      const r1 = await runShellLogged(job, 'rm -rf ' + tmpQ + ' && mkdir -p ' + tmpQ, 30000, { fullAccess: true })
+      if (!r1.ok) return finishJob(job, { status: 'error', error: '创建临时目录失败' })
+      const r2 = await runShellLogged(job, 'git clone --depth 1 ' + q(repoUrl) + ' ' + tmpQ + '/src', 600000, { fullAccess: true })
+      if (!r2.ok) return finishJob(job, { status: 'error', error: '克隆仓库失败，请检查网络后重试' })
+      // 按锁文件选包管理器（无锁文件时优先 pnpm）
+      const hasFile = async (f) => { try { await stat(join(tmp, 'src', f)); return true } catch { return false } }
+      let pm = 'npm'
+      if (await hasFile('pnpm-lock.yaml')) pm = 'pnpm'
+      else if (await hasFile('yarn.lock')) pm = 'yarn'
+      else if (await hasFile('package-lock.json')) pm = 'npm'
+      else {
+        const which = await runShellLogged(job, 'command -v pnpm', 15000, {})
+        pm = which.ok ? 'pnpm' : 'npm'
+      }
+      appendJobLine(job, '使用包管理器: ' + pm)
+      const installCmd = pm === 'npm' ? 'npm install --no-audit --no-fund' : (pm === 'pnpm' ? 'pnpm install' : 'yarn install')
+      const r3 = await runShellLogged(job, 'cd ' + tmpQ + '/src && ' + installCmd, 900000, { fullAccess: true })
+      if (!r3.ok) return finishJob(job, { status: 'error', error: '安装依赖失败（' + pm + '），完整输出见上方日志' })
+      let pkgJson = {}
+      try { pkgJson = JSON.parse(await readFile(join(tmp, 'src', 'package.json'), 'utf8')) } catch {}
+      const buildName = pkgJson.scripts && pkgJson.scripts.build ? 'build' : (pkgJson.scripts && pkgJson.scripts.dist ? 'dist' : null)
+      if (buildName) {
+        const r4 = await runShellLogged(job, 'cd ' + tmpQ + '/src && ' + (pm === 'npm' ? 'npm run ' : pm === 'pnpm' ? 'pnpm run ' : 'yarn ') + buildName, 900000, { fullAccess: true })
+        if (!r4.ok) return finishJob(job, { status: 'error', error: '构建失败（' + buildName + '），完整输出见上方日志' })
+      }
+      const r5 = await runShellLogged(job, 'cd ' + tmpQ + '/src && ' + (pm === 'pnpm' ? 'pnpm pack' : 'npm pack'), 300000, { fullAccess: true })
+      if (!r5.ok) return finishJob(job, { status: 'error', error: '打包 tarball 失败，完整输出见上方日志' })
+      // npm/pnpm pack 输出中取最后出现的 tarball 文件名（末尾一行即产物名）
+      let tgzName = null
+      const tgzRe = /([\w@][\w@./-]*\.tgz)/g
+      let tm
+      while ((tm = tgzRe.exec(r5.stdout || '')) !== null) tgzName = tm[1]
+      if (!tgzName) return finishJob(job, { status: 'error', error: '未在打包输出中找到 tarball 文件名，请打开详情按 README 手动安装' })
+      tgzName = tgzName.split('/').pop()
+      if (!/^[\w@.-]+\.tgz$/.test(tgzName)) return finishJob(job, { status: 'error', error: 'tarball 文件名异常，请打开详情按 README 手动安装' })
+      const tgzPath = join(tmp, 'src', tgzName)
+      const pkgName = pkgJson.name || args.package || args.id
+      appendJobLine(job, '通过 dsh plugin add 安装本地 tarball: ' + tgzName)
+      try { await allowBuild() } catch {}
+      let r6 = await runShellLogged(job, 'dsh plugin --profile web add ' + q(tgzPath), 300000, { fullAccess: true })
+      if (!r6.ok) {
+        const combined = ((r6.stdout || '') + '\n' + (r6.stderr || '')).replace(/\u001b\[[0-9;]*m/g, '').replace(/\[.*?m/g, '')
+        const hintBlocked = /allowBuilds|prepare script|approve-builds|Ignored build scripts/i.test(combined)
+        if (hintBlocked) {
+          const exactKeys = []
+          const norm = combined.replace(/\r/g, '')
+          const keyRe = /allowBuilds:\s*\n\s{2,}["']?([^\s#]+?)["']?: true/g
+          let km
+          while ((km = keyRe.exec(norm)) !== null) {
+            if (km[1] && km[1].includes('@') && !exactKeys.includes(km[1])) exactKeys.push(km[1])
+          }
+          appendJobLine(job, '检测到 pnpm 构建脚本拦截，已解析 ' + exactKeys.length + ' 个放行键，正在重试…')
+          try { await allowBuild(exactKeys) } catch {}
+          r6 = await runShellLogged(job, 'dsh plugin --profile web add ' + q(tgzPath), 300000, { fullAccess: true })
+          if (!r6.ok) return finishJob(job, { status: 'error', error: '本地 tarball 安装仍失败，完整输出见上方日志' })
+        } else {
+          return finishJob(job, { status: 'error', error: '本地 tarball 安装失败，完整输出见上方日志' })
+        }
+      }
+      const state = await readState()
+      const installed = state.installed || {}
+      installed[args.id] = { type: 'bundle', spec: args.spec || repoUrl, package: pkgName, at: new Date().toISOString(), installCmd: cloneCmd }
+      await writeState({ installed })
+      return finishJob(job, { status: 'done', message: '已按项目 README 自动构建并安装到 web profile（' + pkgName + '），重启 dsh 后生效' })
+    } finally {
+      await rm(tmp, { recursive: true, force: true }).catch(() => {})
+    }
+  }
+  if (method === 'desktop' || method === 'manual') {
     return finishJob(job, { status: 'error', error: '该插件需按其仓库说明安装，请打开详情查看 README' })
   }
   if (typeof args.spec !== 'string') return finishJob(job, { status: 'error', error: '参数错误' })
@@ -407,11 +490,12 @@ async function uninstall(args) {
   if (!rec) return { ok: false, error: '该条目不是本市场安装的' }
   if (rec.type === 'bundle') {
     const name = typeof rec.package === 'string' && rec.package ? rec.package : args.id
-    const r = await runShell('dsh plugin --profile web remove ' + q(name), 300000, { fullAccess: true })
-    if (!r.ok) return { ok: false, error: ((r.stderr || '').trim() || 'dsh plugin remove 失败') }
+    const res = await removeFromAllProfiles(name)
+    if (!res.ok) return { ok: false, error: res.error }
     delete installed[args.id]
     await writeState({ installed })
-    return { ok: true, message: '已卸载 ' + name + '，重启 dsh 后生效' }
+    const where = res.cleaned.length > 0 ? res.cleaned.join(', ') : 'web'
+    return { ok: true, message: '已从 ' + where + ' 卸载 ' + name + '，重启 dsh 后生效' }
   }
   if (rec.type === 'pack') {
     const root = rec.kind === 'preset' ? PRESETS_ROOT : SKILLS_ROOT
@@ -588,6 +672,14 @@ async function installedRows() {
   const marketInstalled = state.installed || {}
   const loader = installedRows.loader
   const entries = loader ? loader.entries() : []
+  const otherMap = await otherProfileMap()
+  const loaderNames = new Set()
+  for (const e of entries) {
+    const name = e.options && e.options.name
+    if (name) loaderNames.add(name)
+  }
+  // 包是否确实还在某处：web deps/bundles、其他 profile、loader 挂载
+  const inProfileOrLoader = (name) => deps.has(name) || bundles.has(name) || otherMap.has(name) || loaderNames.has(name)
   const marketRecFor = (name) => Object.values(marketInstalled).find((r) => r && (r.package === name || r.spec === name))
   const rows = []
   const seenNames = new Set()
@@ -623,16 +715,35 @@ async function installedRows() {
     })
     seenNames.add(name)
   }
-  // 3) 市场状态里记录的安装（脚本安装/未 reconcile 的包），与上面去重合并
-  for (const rec of Object.values(marketInstalled)) {
+  // 3) 市场状态记录：只在包确实还装在某个地方时才展示；已消失的过期记录自动清理
+  //    （否则用户在 DSH 设置/CLI 里删掉的插件会被这条记录“复活”）
+  let stateDirty = false
+  for (const [k, rec] of Object.entries(marketInstalled)) {
     const name = rec && (rec.package || rec.spec)
     if (!name || seenNames.has(name)) continue
     if (INTERNAL_RE.test(name)) continue
+    let stillInstalled = false
+    if (rec.type === 'pack') {
+      // pack 类：目录存在即算安装
+      const root = rec.kind === 'preset' ? PRESETS_ROOT : SKILLS_ROOT
+      stillInstalled = await (async () => { try { await stat(join(root, k)); return true } catch { return false } })()
+    } else if (rec.installCmd) {
+      // 官方脚本 / npm -g 安装：无法廉价校验（且校验命令可能被沙箱拦），保留记录，
+      // 由市场的卸载/删除路径负责同步清理
+      stillInstalled = true
+    } else {
+      stillInstalled = inProfileOrLoader(name)
+    }
+    if (!stillInstalled) {
+      delete marketInstalled[k]
+      stateDirty = true
+      continue
+    }
     rows.push({ id: name, name: name, enabled: bundles.has(name), disabled: false, failed: false, notMounted: true, source: 'market', at: rec.at || null })
     seenNames.add(name)
   }
+  if (stateDirty) await writeState({ installed: marketInstalled })
   // 4) 其他 profile 里装着的包也列出来（标记来源，客户端提供迁移）
-  const otherMap = await otherProfileMap()
   for (const [pkg, profs] of otherMap.entries()) {
     if (seenNames.has(pkg)) continue
     if (INTERNAL_RE.test(pkg)) continue
@@ -656,11 +767,31 @@ async function togglePlugin(args) {
   return { ok: true, message: (enabled ? '已启用 ' : '已禁用 ') + name + '，重启 dsh 后生效' }
 }
 
+// 从所有 profile 中移除包（web 及装有它的其他 profile），返回清理的 profile 列表。
+// 统一走 dsh CLI（pnpm remove + bundles reconcile），避免残留导致已安装列表“复活”。
+async function removeFromAllProfiles(name) {
+  const cleaned = []
+  const webManifest = await readProfileManifest()
+  const webDeps = new Set(Object.keys((webManifest && webManifest.dependencies) || {}))
+  const webBundles = new Set((webManifest && webManifest.dsh && webManifest.dsh.profile && webManifest.dsh.profile.bundles) || [])
+  if (webDeps.has(name) || webBundles.has(name)) {
+    const r = await runShell('dsh plugin --profile web remove ' + q(name), 300000, { fullAccess: true })
+    if (!r.ok) return { ok: false, error: (r.stderr || '').trim() || 'dsh plugin remove 失败' }
+    cleaned.push('web')
+  }
+  const otherMap = await otherProfileMap()
+  for (const prof of (otherMap.get(name) || [])) {
+    const r = await runShell('dsh plugin --profile ' + q(prof) + ' remove ' + q(name), 300000, { fullAccess: true })
+    if (r.ok) cleaned.push(prof)
+  }
+  return { ok: true, cleaned }
+}
+
 async function removePlugin(args) {
   const name = args && args.name
   if (!name) return { ok: false, error: '参数错误' }
-  const r = await runShell('dsh plugin --profile web remove ' + q(name), 300000, { fullAccess: true })
-  if (!r.ok) return { ok: false, error: (r.stderr || '').trim() || 'dsh plugin remove 失败' }
+  const res = await removeFromAllProfiles(name)
+  if (!res.ok) return res
   const state = await readState()
   const installed = state.installed || {}
   for (const k of Object.keys(installed)) {
@@ -668,7 +799,8 @@ async function removePlugin(args) {
     if (rec && (rec.package === name || rec.spec === name || k === name)) delete installed[k]
   }
   await writeState({ installed })
-  return { ok: true, message: '已卸载 ' + name + '，重启 dsh 后生效' }
+  const where = res.cleaned.length > 0 ? res.cleaned.join(', ') : 'web'
+  return { ok: true, message: '已从 ' + where + ' 卸载 ' + name + '，重启 dsh 后生效' }
 }
 
 const readBody = (req) => new Promise((resolve, reject) => {

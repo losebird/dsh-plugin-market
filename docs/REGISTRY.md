@@ -51,6 +51,8 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
 }
 ```
 
+`git-clone` 在 DSH 弹窗中全自动执行：克隆 → 装依赖 → 构建 → pack → `dsh plugin --profile web add <本地 tarball>` → 清理临时目录（win32 暂不支持，提示按 README 手动安装）。
+
 `install.method` 判定规则（`scripts/collect.mjs`）：
 
 1. 只在 README 的「安装类」章节内识别（install/安装/快速开始/Quick Start 等；`Target installation experience`、Roadmap 等未来/规划标题跳过）。识别顺序：脚本安装（`curl|bash` / `irm|iex`，按 OS 记录）> `dsh plugin add` > `npm -g` > `git clone`。

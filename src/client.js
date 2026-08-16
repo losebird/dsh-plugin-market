@@ -49,7 +49,7 @@ window.__ModuleLoader__.load({
         restartNote: '禁用/启用/删除在重启 dsh 后生效。',
         officialInstall: '官方安装方式（来自项目 README）',
         scriptNote: '一键安装将执行当前系统对应的官方脚本。',
-        cloneNote: '克隆仓库后按其 README 步骤构建，市场不代为执行。',
+        cloneNote: '一键安装将自动克隆、构建并安装到 web profile（需数分钟）。',
         installNow: '一键安装', currentOs: '当前系统',
         jobTitle: '安装进度', jobRunning: '正在安装…', jobDone: '安装完成', jobFailed: '安装失败',
         jobAutoClose: '本窗口将在 3 秒后自动关闭', jobClose: '关闭',
@@ -83,7 +83,7 @@ window.__ModuleLoader__.load({
         restartNote: 'Disable / enable / remove take effect after restarting dsh.',
         officialInstall: 'Official install (from the project README)',
         scriptNote: 'One-click install runs the official script for your current OS.',
-        cloneNote: 'Clone the repo and follow its README steps; the market does not run it for you.',
+        cloneNote: 'One-click install clones, builds and installs into the web profile automatically (takes a few minutes).',
         installNow: 'Install now', currentOs: 'current OS',
         jobTitle: 'Install progress', jobRunning: 'Installing…', jobDone: 'Install complete', jobFailed: 'Install failed',
         jobAutoClose: 'This window closes automatically in 3 seconds', jobClose: 'Close',
@@ -511,7 +511,7 @@ window.__ModuleLoader__.load({
                 ? h('span', { className: 'dshm-busy' }, t('offlineNote'))
                 : item.verified === false
                   ? h('span', { className: 'dshm-busy' }, t('unverNote'))
-                  : item.install && (item.install.method === 'manual' || item.install.method === 'desktop' || item.install.method === 'git-clone')
+                  : item.install && (item.install.method === 'manual' || item.install.method === 'desktop')
                     ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => openDetail(item) }, t('installGuide'))
                     : installedRaw && installedRaw.source === 'other'
                       ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('migrate'))
@@ -570,8 +570,11 @@ window.__ModuleLoader__.load({
         if (inst.method === 'git-clone') {
           const cmd = inst.command || ''
           return h('div', { className: 'dshm-installpanel' },
+            h('div', { className: 'dshm-install-title' }, t('officialInstall')),
             h('code', { className: 'dshm-cmd' }, cmd),
-            h('div', { className: 'dshm-install-actions' }, copyBtn(cmd, item.id + ':os:clone')),
+            h('div', { className: 'dshm-install-actions' },
+              copyBtn(cmd, item.id + ':os:clone'),
+              installBtn(item.verified !== false)),
             h('div', { className: 'dshm-card-desc' }, t('cloneNote')),
           )
         }
