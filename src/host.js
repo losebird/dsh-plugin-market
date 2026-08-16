@@ -27,6 +27,41 @@ async function writeProfileManifest(m) {
   await writeFile(PROFILE_MANIFEST, JSON.stringify(m, null, 2) + '\n')
 }
 
+// 把包名写入 profile 的 pnpm.allowBuilds（解除 prepare 脚本拦截）
+async function allowBuild(name) {
+  const p = join(DSH_HOME, 'profiles', 'web', 'pnpm-workspace.yaml')
+  let text = ''
+  try { text = await readFile(p, 'utf8') } catch {}
+  const target = '- ' + name
+  const lines = text.split('\n')
+  if (lines.some((l) => l.trim() === target)) return true
+  const pnpmIdx = lines.findIndex((l) => /^pnpm\s*:/.test(l))
+  if (pnpmIdx === -1) {
+    if (text.trim()) text = text.replace(/\s*$/, '\n')
+    text += 'pnpm:\n  allowBuilds:\n    - ' + name + '\n'
+  } else {
+    const allowIdx = lines.findIndex((l, i) => i > pnpmIdx && /^\s{2}allowBuilds\s*:/.test(l))
+    if (allowIdx === -1) {
+      let end = lines.length
+      for (let i = pnpmIdx + 1; i < lines.length; i++) {
+        if (/^\S/.test(lines[i])) { end = i; break }
+      }
+      lines.splice(end, 0, '  allowBuilds:', '    - ' + name)
+      text = lines.join('\n')
+    } else {
+      let end = lines.length
+      for (let i = allowIdx + 1; i < lines.length; i++) {
+        const l = lines[i]
+        if (/^\S/.test(l) || /^  \S/.test(l)) { end = i; break }
+      }
+      lines.splice(end, 0, '    - ' + name)
+      text = lines.join('\n')
+    }
+  }
+  await writeFile(p, text)
+  return true
+}
+
 function profileInstalled(manifest) {
   const deps = new Set(Object.keys((manifest && manifest.dependencies) || {}))
   const bundles = new Set((manifest && manifest.dsh && manifest.dsh.profile && manifest.dsh.profile.bundles) || [])
@@ -59,7 +94,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.19',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.20',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -166,8 +201,20 @@ async function install(args) {
   if (typeof args.spec !== 'string') return { ok: false, error: '参数错误' }
   if (args.type === 'bundle') {
     if (!validBundleSpec(args.spec)) return { ok: false, error: '非法的安装源 spec' }
-    const r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
-    if (!r.ok) return { ok: false, error: (r.stderr || '').trim() || 'dsh plugin add 失败' }
+    let r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
+    if (!r.ok) {
+      // pnpm 拦截 git 托管插件的 prepare 脚本：解析包名 → 自动写 allowBuilds → 重试
+      const combined = ((r.stdout || '') + '\n' + (r.stderr || '')).replace(/\[.*?m/g, '')
+      const m = combined.match(/Ignored build scripts:?\s*([^\n.]+)/i)
+      const names = m && m[1] ? m[1].split(/[,\s]+/).map((s) => s.trim().replace(/@[^@/]*$/, '')).filter((s) => /^[@\w./-]+$/.test(s) && s !== 'Run') : []
+      if (names.length > 0) {
+        for (const n of names) { try { await allowBuild(n) } catch {} }
+        r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
+        if (!r.ok) return { ok: false, error: '已自动允许构建脚本（' + names.join(', ') + '）但重试仍失败: ' + ((r.stderr || '').trim() || (r.stdout || '').trim() || '未知错误') }
+      } else {
+        return { ok: false, error: (r.stderr || '').trim() || (r.stdout || '').trim() || 'dsh plugin add 失败' }
+      }
+    }
     // 自动迁移：若同名包存在于其他 profile，从中移除，避免“装了却不生效”
     const migratedFrom = []
     const pkgName = typeof args.package === 'string' && args.package ? args.package : null
