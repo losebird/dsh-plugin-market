@@ -259,7 +259,9 @@ async function install(args) {
         if (!r.ok) {
           const tailOut = ((r.stdout || '').trim()).slice(-900)
           const tailErr = ((r.stderr || '').trim()).slice(-900)
-          return { ok: false, error: '已自动放行构建脚本，但重试仍失败。\n--- stdout ---\n' + tailOut + '\n--- stderr ---\n' + tailErr }
+          let yamlDump = ''
+          try { yamlDump = await readFile(join(DSH_HOME, 'profiles', 'web', 'pnpm-workspace.yaml'), 'utf8') } catch (e) { yamlDump = '(读取失败: ' + e.message + ')' }
+          return { ok: false, error: '已自动放行构建脚本（' + exactKeys.length + ' 个键），但重试仍失败。\n--- pnpm-workspace.yaml ---\n' + yamlDump.trim() + '\n--- stdout ---\n' + tailOut + '\n--- stderr ---\n' + tailErr }
         }
       } else {
         const tail = combined.trim().slice(-1800)
