@@ -187,6 +187,62 @@ async function collectCandidates() {
   return [...byRepo.values()]
 }
 
+// ── README 安装方式识别 ──────────────────────────────────────────────────────
+// 从项目 README 提取官方安装方式，优先于包特征启发式：
+// script（curl|bash、irm|iex，按 OS 记录命令）> dsh plugin add > npm -g > git clone
+// 先取“安装”类章节内查找；章节内找不到再全文（此时脚本 URL 必须指向
+// raw.githubusercontent 的 .sh/.ps1，防止把 nvm 之类的开发环境脚本误当安装方式）
+export function installSection(readme) {
+  const heads = []
+  const re = /^#{1,4}\s+(.+)$/gm
+  let m
+  while ((m = re.exec(readme))) heads.push({ idx: m.index, text: m[1] })
+  for (let i = 0; i < heads.length; i++) {
+    if (/install|安装|quick ?start|快速开始|getting started|deploy|部署|setup/i.test(heads[i].text)) {
+      return readme.slice(heads[i].idx, i + 1 < heads.length ? heads[i + 1].idx : readme.length)
+    }
+  }
+  return null
+}
+export function detectInstallFromReadme(readme) {
+  if (typeof readme !== 'string' || readme.length < 40) return null
+  const scope = installSection(readme)
+  const os = {}
+  for (const text of [scope, readme]) {
+    if (!text) continue
+    const strict = text === readme // 全文兜底扫描：要求 raw.githubusercontent 脚本 URL
+    const strictOk = (url) => strict ? /^https:\/\/raw\.githubusercontent\.com\/[^\s|'"]+\.(sh|ps1)\b/i.test(url) : /^https?:/i.test(url)
+    let m = /irm\s+(\S+?)\s*\|\s*iex\b/i.exec(text)
+    if (m && strictOk(m[1])) os.win32 = 'irm ' + m[1] + ' | iex'
+    m = /(curl\s+(?:-\S+\s+)*(\S+?)\s*\|\s*(?:sudo\s+)?(?:ba)?sh\b)/i.exec(text)
+    if (m) {
+      const cmd = m[1].trim()
+      const url = m[2]
+      if (strictOk(url)) { os.darwin = cmd; os.linux = cmd }
+    } else {
+      m = /(wget\s+(?:-\S+\s+)*(\S+?)\s*(?:-O\s*-\s*)?\|\s*(?:sudo\s+)?(?:ba)?sh\b)/i.exec(text)
+      if (m) {
+        const cmd = m[1].trim()
+        if (strictOk(m[2])) { os.darwin = cmd; os.linux = cmd }
+      }
+    }
+    if (os.win32 || os.darwin || os.linux) break
+  }
+  if (os.win32 || os.darwin || os.linux) {
+    const urlCmd = os.darwin || os.linux || os.win32
+    const um = /\s(\S+?)\s*\|/.exec(urlCmd)
+    return { method: 'script', source: 'readme', scriptUrl: um ? um[1] : null, os }
+  }
+  if (/dsh\s+plugin(?:\s+--profile\s+\S+)?\s+add\s+\S+/i.test(readme)) {
+    return { method: 'dsh-plugin-add', source: 'readme' }
+  }
+  const npmM = /npm\s+(?:install|i)\s+(?:-g|--global)\s+(\S+)/i.exec(readme)
+  if (npmM) return { method: 'npm-global', source: 'readme', command: 'npm install -g ' + npmM[1].replace(/[;'"`]+$/, '') }
+  const cloneM = /git\s+clone\s+(?:--depth\s+\S+\s+)?(\S+)/i.exec(readme)
+  if (cloneM) return { method: 'git-clone', source: 'readme', command: 'git clone ' + cloneM[1].replace(/[;'"`]+$/, '') }
+  return null
+}
+
 // ── 单仓库 → 条目 ──────────────────────────────────────────────────────────
 // verified 采用官方判据：package.json 里声明了 dsh.bundle.patch（与 dsh plugin
 // add 的挂载判定 exportsPatch 一致）。topic 来源的仓库即使无声明也收录，
@@ -205,16 +261,28 @@ async function buildEntry(repo, prev) {
   if (!repo.topicSourced && !hasDshSignal && !hasDshDep) return null
   const verified = !!(pkg && pkg.dsh && pkg.dsh.bundle && pkg.dsh.bundle.patch)
 
-  // 安装方式判定：按插件自身特征给出（curated 可显式覆盖）
-  let install = null
-  if (verified) {
-    install = { method: 'dsh-plugin-add' }
-  } else if (pkg && pkg.bin) {
-    install = { method: 'npm-global', command: 'npm install -g ' + (pkg.name || '') }
-  } else if (pkg && (pkg.dependencies && pkg.dependencies.electron || pkg.devDependencies && pkg.devDependencies.electron)) {
-    install = { method: 'desktop' }
-  } else {
-    install = { method: 'manual' }
+  // 安装方式判定：优先取项目 README 写明的官方安装方式，其次按包特征启发式；
+  // 上一轮已识别出 README 安装方式的仓库，若本轮 README 拉取失败则沿用旧结论
+  let readme = null
+  try {
+    const rr = await fetch('https://raw.githubusercontent.com/' + repo.full_name + '/HEAD/README.md', {
+      headers: { 'user-agent': 'dsh-plugin-market-collector' },
+      signal: AbortSignal.timeout(8000),
+    })
+    if (rr.ok) readme = await rr.text()
+  } catch {}
+  let install = detectInstallFromReadme(readme)
+  if (!install && prev && prev.install && prev.install.source === 'readme') install = prev.install
+  if (!install) {
+    if (verified) {
+      install = { method: 'dsh-plugin-add', source: 'pkg' }
+    } else if (pkg && pkg.bin) {
+      install = { method: 'npm-global', command: 'npm install -g ' + (pkg.name || ''), source: 'pkg' }
+    } else if (pkg && (pkg.dependencies && pkg.dependencies.electron || pkg.devDependencies && pkg.devDependencies.electron)) {
+      install = { method: 'desktop', source: 'pkg' }
+    } else {
+      install = { method: 'manual', source: 'pkg' }
+    }
   }
 
   const reuse = prev && prev.repo && prev.repo.toLowerCase() === repo.full_name.toLowerCase() && prev.status !== 'unavailable'
@@ -367,7 +435,11 @@ async function main() {
   console.log('[collect] 分类分布: ' + JSON.stringify(byCat))
 }
 
-main().catch((e) => {
-  console.error('[collect] 运行失败: ' + (e && e.message ? e.message : e))
-  process.exit(1)
-})
+// 作为模块被 import 时（如 scripts/refresh-install.mjs）不自动执行主流程
+import { pathToFileURL } from 'node:url'
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((e) => {
+    console.error('[collect] 运行失败: ' + (e && e.message ? e.message : e))
+    process.exit(1)
+  })
+}

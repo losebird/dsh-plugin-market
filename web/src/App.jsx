@@ -7,7 +7,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
-const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.25'
+const INSTALL_SPEC = 'github:losebird/dsh-plugin-market#v0.1.26'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
@@ -55,7 +55,7 @@ const I18N = {
     'detail.intro': '简介', 'detail.readme': '项目说明', 'detail.readmeLoading': '加载项目说明中…',
     'detail.readmeError': '项目 README 加载失败，', 'detail.readmeLink': '去仓库查看',
     'detail.copy': '复制', 'detail.copied': '已复制',
-    'detail.bundleNote': '在 DSH 应用内打开侧栏「插件市场」弹窗点安装即可，安装后重启 DSH 生效。',
+    'detail.bundleNote': '安装方式来自项目 README。在 DSH 应用内打开侧栏「插件市场」弹窗点安装，会自动执行当前系统的命令；安装后重启 DSH 生效。',
     'detail.packDownload': '下载扩展包 zip',
     'detail.packNote': '下载 zip 后在 DSH 插件市场弹窗中选择「从本地导入」，或手动解压到对应目录（skill 放 ~/.agents/skills/，preset 放 ~/.dsh/.agent-presets/）。',
     'detail.repo': '查看仓库', 'detail.unavailable': '该条目仓库已删除或转为私有',
@@ -131,7 +131,7 @@ const I18N = {
     'detail.intro': 'About', 'detail.readme': 'README', 'detail.readmeLoading': 'Loading README…',
     'detail.readmeError': 'Failed to load README. ', 'detail.readmeLink': 'View on GitHub',
     'detail.copy': 'Copy', 'detail.copied': 'Copied',
-    'detail.bundleNote': 'Open the Plugin Market modal in DSH and click install. Restart DSH to take effect.',
+    'detail.bundleNote': 'Install steps come from the project README. In DSH, open the Plugin Market modal and click install — it runs the command for your current OS. Restart DSH to take effect.',
     'detail.packDownload': 'Download pack zip',
     'detail.packNote': 'Download the zip, then import it from the DSH Plugin Market modal, or extract manually (skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/).',
     'detail.repo': 'View repo', 'detail.unavailable': 'This repo has been deleted or made private',
@@ -228,11 +228,37 @@ function fmtNum(n) {
   return String(n)
 }
 
+const OS_KEYS = ['darwin', 'linux', 'win32']
+const osName = (k) => ({ darwin: 'macOS', linux: 'Linux', win32: 'Windows' }[k] || k)
+
+function detectOS() {
+  try {
+    const p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || ''
+    if (/win/i.test(p)) return 'win32'
+    if (/mac/i.test(p)) return 'darwin'
+    return 'linux'
+  } catch { return 'darwin' }
+}
+
+function installCommands(item) {
+  // 返回 { darwin/linux/win32 → 命令 }；无 OS 差异时返回 { any: 命令 }
+  const inst = item.install || {}
+  const m = inst.method
+  if (m === 'script' && inst.os) {
+    const out = {}
+    for (const k of OS_KEYS) if (inst.os[k]) out[k] = inst.os[k]
+    return out
+  }
+  if (m === 'npm-global' || m === 'command' || m === 'git-clone') return { any: inst.command || '' }
+  if (m === 'pack' || m === 'manual' || m === 'desktop') return {}
+  return item.type === 'bundle' ? { any: 'dsh plugin --profile web add ' + item.spec } : {}
+}
+
 function installCommand(item) {
-  const m = item.install && item.install.method
-  if (m === 'command' || m === 'npm-global') return item.install.command || ''
-  if (m === 'pack' || m === 'manual' || m === 'desktop') return ''
-  return item.type === 'bundle' ? 'dsh plugin --profile web add ' + item.spec : ''
+  const cmds = installCommands(item)
+  if (cmds.any) return cmds.any
+  if (cmds.darwin || cmds.linux || cmds.win32) return cmds[detectOS()] || cmds.darwin || cmds.linux || cmds.win32 || ''
+  return ''
 }
 
 const shortName = (n) => String(n || '').split('/').pop() || String(n || '')
@@ -319,9 +345,13 @@ function DetailModal({ item, onClose, onToast }) {
   const { t, lang } = useLang()
   const [copied, setCopied] = useState(false)
   const [readme, setReadme] = useState({ status: 'idle' })
-  const cmd = installCommand(item)
+  const cmds = installCommands(item)
+  const osOptions = OS_KEYS.filter((k) => cmds[k])
+  const [osSel, setOsSel] = useState(() => detectOS())
+  const effOs = osOptions.includes(osSel) ? osSel : osOptions[0]
+  const shownCmd = cmds.any || cmds[effOs] || ''
   const doCopy = async () => {
-    if (await copyText(cmd)) {
+    if (await copyText(shownCmd)) {
       setCopied(true)
       onToast(t('toast.copied'))
       setTimeout(() => setCopied(false), 1600)
@@ -388,14 +418,21 @@ function DetailModal({ item, onClose, onToast }) {
             {readme.status === 'ready' && <div className="readme" dangerouslySetInnerHTML={{ __html: readme.html }} />}
           </>
         )}
-        {item.type === 'bundle' && item.install && (item.install.method === 'manual' || item.install.method === 'desktop') ? (
+        {item.type === 'bundle' && item.install && (item.install.method === 'manual' || item.install.method === 'desktop' || item.install.method === 'git-clone') ? (
           <div className="strip strip-demo"><Warning size={15} /> {t('detail.manualNote')}</div>
         ) : item.type === 'bundle' && item.verified === false ? (
           <div className="strip strip-demo"><Warning size={15} /> {t('detail.unverified')}</div>
-        ) : item.type === 'bundle' ? (
+        ) : item.type === 'bundle' && shownCmd ? (
           <>
             <div className="install-box">
-              <code>{cmd}</code>
+              {osOptions.length > 1 && (
+                <div className="install-tabs">
+                  {osOptions.map((k) => (
+                    <button key={k} className={'os-tab' + (k === effOs ? ' on' : '')} onClick={() => setOsSel(k)}>{osName(k)}</button>
+                  ))}
+                </div>
+              )}
+              <code>{shownCmd}</code>
               <button className="btn btn-primary btn-sm" onClick={doCopy}>{copied ? t('detail.copied') : t('detail.copy')}</button>
             </div>
             <p className="card-desc">{t('detail.bundleNote')}</p>
@@ -610,7 +647,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast }) {
 function Faq() {
   const { t } = useLang()
   const items = [
-    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.25</code>{t('faq.a1b')}</> },
+    { q: t('faq.q1'), a: <>{t('faq.a1a')}<code>dsh plugin --profile web add github:losebird/dsh-plugin-market#v0.1.26</code>{t('faq.a1b')}</> },
     { q: t('faq.q2'), a: <>{t('faq.a2a')}<code>{'dsh plugin --profile web add <spec>'}</code>{t('faq.a2b')}</> },
     { q: t('faq.q3'), a: <>{t('faq.a3a')}<code>npx @deepseek-ai/dsh web</code>{t('faq.a3b')}<code>npm install -g @deepseek-ai/dsh</code>{t('faq.a3c')}</> },
     { q: t('faq.q4'), a: <>{t('faq.a4a')}<code>dsh.bundle.patch</code>{t('faq.a4b')}</> },

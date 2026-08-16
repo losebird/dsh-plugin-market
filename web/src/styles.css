@@ -285,8 +285,12 @@ a:hover { text-decoration: underline; }
 .meta-row { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--text-3); }
 .meta-row span { display: inline-flex; gap: 5px; align-items: center; }
 .long-desc { color: var(--text-2); font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
-.install-box { background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; display: flex; gap: 10px; align-items: center; }
-.install-box code { flex: 1; font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); overflow-x: auto; white-space: nowrap; }
+.install-box { background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.install-box code { flex: 1; min-width: 220px; font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); overflow-x: auto; white-space: nowrap; }
+.install-tabs { display: flex; gap: 6px; width: 100%; }
+.os-tab { border: 1px solid var(--border); background: transparent; color: var(--text-3); font: inherit; font-size: 12px; padding: 3px 12px; border-radius: 999px; cursor: pointer; }
+.os-tab:hover { color: var(--text); border-color: var(--accent); }
+.os-tab.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
 
 .readme-title { font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: var(--text-3); margin-top: 4px; }
 .readme-state { color: var(--text-3); font-size: 13px; padding: 10px 0; display: flex; align-items: center; gap: 8px; }

@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-market",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "description": "DSH 社区插件市场：侧栏按钮 + 卡片弹窗 + 一键安装（bundle 走 dsh plugin add，pack 走 zip 落盘）",
   "type": "module",
   "main": "src/host.js",

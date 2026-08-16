@@ -127,7 +127,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.25',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.26',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -208,7 +208,7 @@ async function list() {
       installed[it.id] = { type: 'bundle', spec: it.spec || '', package: it.package, source: 'other', profile: otherMap.get(it.package)[0] }
     }
   }
-  return { source, notice, items: finalItems, installed }
+  return { source, notice, items: finalItems, installed, os: process.platform }
 }
 
 async function install(args) {
@@ -228,7 +228,26 @@ async function install(args) {
     await writeState({ installed })
     return { ok: true, message: '安装完成: ' + cmd }
   }
-  if (method === 'desktop' || method === 'manual') {
+  if (method === 'script') {
+    // 官方脚本安装：按当前系统选择 README 记录的命令（darwin/linux 共用 bash 脚本，win32 走 PowerShell）
+    const osCmds = (args.install && args.install.os) || {}
+    let cmd = osCmds[process.platform]
+    if (!cmd && process.platform !== 'win32') cmd = osCmds.darwin || osCmds.linux
+    if (!cmd) return { ok: false, error: '该项目没有适配当前系统（' + process.platform + '）的安装脚本，请打开详情按 README 手动安装' }
+    let execCmd = cmd
+    if (process.platform === 'win32') execCmd = 'powershell -NoProfile -ExecutionPolicy Bypass -Command "' + String(cmd).replace(/"/g, '\\"') + '"'
+    const r = await runShell(execCmd, 600000, { fullAccess: true })
+    if (!r.ok) {
+      const tail = ((r.stderr || r.stdout || '').trim()).slice(-1200)
+      return { ok: false, error: '安装脚本执行失败: ' + (tail || '未知错误') }
+    }
+    const state = await readState()
+    const installed = state.installed || {}
+    installed[args.id] = { type: 'bundle', spec: args.spec || cmd, package: args.package || null, at: new Date().toISOString(), installCmd: cmd }
+    await writeState({ installed })
+    return { ok: true, message: '安装完成（项目官方脚本）: ' + cmd }
+  }
+  if (method === 'desktop' || method === 'manual' || method === 'git-clone') {
     return { ok: false, error: '该插件需按其仓库说明安装，请打开详情查看 README' }
   }
   if (typeof args.spec !== 'string') return { ok: false, error: '参数错误' }

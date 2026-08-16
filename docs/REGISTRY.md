@@ -36,9 +36,22 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
   "verified": true,   // 可安装判据：package.json 声明了 dsh.bundle.patch（与 dsh plugin add 一致）
   // 未验证（false）的条目仍会展示，但禁用一键安装；curated 条目默认为 true
   "status": "unavailable", // 可选：仓库已删/私有，禁用安装按钮但保留条目
-  "contents": { "skills": ["demo-hello"], "presets": [] } // pack 条目声明 zip 内的目录
+  "contents": { "skills": ["demo-hello"], "presets": [] }, // pack 条目声明 zip 内的目录
+  "install": {                        // 安装方式（collector 从 README 识别，curated 可显式覆盖）
+    "method": "script",               // script | dsh-plugin-add | npm-global | git-clone | desktop | manual | pack
+    "source": "readme",               // readme（项目 README 写明）| pkg（包特征启发式）| curated
+    "os": {                           // method=script 时按系统分命令；DSH 弹窗一键安装按当前系统执行
+      "darwin": "curl -fsSL https://raw.githubusercontent.com/o/r/main/scripts/install.sh | bash",
+      "linux": "curl -fsSL https://raw.githubusercontent.com/o/r/main/scripts/install.sh | bash",
+      "win32": "irm https://raw.githubusercontent.com/o/r/main/scripts/install.ps1 | iex"
+    },
+    "scriptUrl": "https://raw.githubusercontent.com/o/r/main/scripts/install.sh",
+    "command": "npm install -g x"     // npm-global / git-clone 的展示命令
+  }
 }
 ```
+
+`install.method` 判定优先级（`scripts/collect.mjs`）：项目 README「安装」章节里的官方方式 > 包特征启发式（`dsh.bundle.patch` → dsh-plugin-add；`bin` → npm-global；electron → desktop；否则 manual）。README 识别顺序：脚本安装（`curl|bash` / `irm|iex`，按 OS 记录）> `dsh plugin add` > `npm -g` > `git clone`。
 
 ## pack（扩展包）zip 布局
 

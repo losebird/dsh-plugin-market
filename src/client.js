@@ -47,6 +47,10 @@ window.__ModuleLoader__.load({
         failedLabel: '加载失败', sourceMarket: '市场安装', sourceManual: '手动安装', elsewherePill: '在其他 profile',
         installGuide: '安装说明', manualNote: '该插件按其仓库说明安装，请参考下方 README。', migrate: '迁移到 web',
         restartNote: '禁用/启用/删除在重启 dsh 后生效。',
+        officialInstall: '官方安装方式（来自项目 README）',
+        scriptNote: '一键安装将执行当前系统对应的官方脚本。',
+        cloneNote: '克隆仓库后按其 README 步骤构建，市场不代为执行。',
+        installNow: '一键安装', currentOs: '当前系统',
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
@@ -74,6 +78,10 @@ window.__ModuleLoader__.load({
         failedLabel: 'Failed', sourceMarket: 'Market', sourceManual: 'Manual', elsewherePill: 'In another profile',
         installGuide: 'Install guide', manualNote: 'This plugin installs per its repo instructions; see the README below.', migrate: 'Migrate to web',
         restartNote: 'Disable / enable / remove take effect after restarting dsh.',
+        officialInstall: 'Official install (from the project README)',
+        scriptNote: 'One-click install runs the official script for your current OS.',
+        cloneNote: 'Clone the repo and follow its README steps; the market does not run it for you.',
+        installNow: 'Install now', currentOs: 'current OS',
       },
     }
 
@@ -166,6 +174,11 @@ window.__ModuleLoader__.load({
 .dshm-detail-name { font-size:15px; font-weight:650; color:var(--dsw-alias-label-primary); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .dshm-detail-meta { display:flex; gap:14px; flex-wrap:wrap; font-size:12.5px; color:var(--dsw-alias-label-secondary); }
 .dshm-readme-title { font-size:12px; font-weight:600; color:var(--dsw-alias-label-secondary); letter-spacing:0.04em; margin-top:6px; }
+.dshm-installpanel { display:flex; flex-direction:column; gap:8px; padding:12px 14px; border:1px solid ${BORDER}; border-radius:12px; background:var(--dsw-alias-bg-base); margin-top:4px; }
+.dshm-install-title { font-size:12.5px; font-weight:650; color:var(--dsw-alias-brand-primary); }
+.dshm-ostabs { display:flex; gap:6px; flex-wrap:wrap; }
+.dshm-cmd { display:block; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.6; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); padding:8px 10px; border-radius:8px; overflow-wrap:anywhere; white-space:pre-wrap; }
+.dshm-install-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 .dshm-readme { color:var(--dsw-alias-label-secondary); font-size:13px; line-height:1.7; overflow-wrap:anywhere; }
 .dshm-readme h1, .dshm-readme h2, .dshm-readme h3, .dshm-readme h4 { color:var(--dsw-alias-label-primary); font-size:14.5px; margin:12px 0 6px; }
 .dshm-readme p { margin:6px 0; }
@@ -207,6 +220,7 @@ window.__ModuleLoader__.load({
         q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
         view: 'market', mRows: [], mQ: '', mCat: null, mLoading: false,
         notice: null, error: null, loading: false, source: 'demo', open: false,
+        os: 'darwin', osTab: null,
       }
       const subs = new Set()
       const patch = (p) => { Object.assign(store, p); for (const f of subs) f() }
@@ -226,6 +240,16 @@ window.__ModuleLoader__.load({
       }
       const catLabel = (item) => (CATEGORIES[item.category] || CATEGORIES.other)[store.lang]
       const shortName = (n) => String(n || '').split('/').pop() || String(n || '')
+      const osLabel = (os) => ({ darwin: 'macOS', linux: 'Linux', win32: 'Windows' }[os] || String(os))
+      const osKeysOf = (inst) => ['darwin', 'linux', 'win32'].filter((k) => inst && inst.os && inst.os[k])
+      const installCmdFor = (item, os) => {
+        const inst = item.install || {}
+        if (inst.method === 'script' && inst.os) {
+          return inst.os[os] || (os !== 'win32' ? (inst.os.darwin || inst.os.linux) : null) || inst.os.win32 || ''
+        }
+        if (inst.method === 'npm-global' || inst.method === 'command' || inst.method === 'git-clone') return inst.command || ''
+        return 'dsh plugin --profile web add ' + item.spec
+      }
       const toggleLang = () => {
         const next = store.lang === 'zh' ? 'en' : 'zh'
         patch({ lang: next })
@@ -241,6 +265,7 @@ window.__ModuleLoader__.load({
             installed: (res && res.installed && typeof res.installed === 'object') ? res.installed : {},
             source: (res && res.source) || 'demo',
             notice: (res && res.notice) || null,
+            os: (res && res.os) || 'darwin',
             loading: false,
           })
         } catch (e) {
@@ -302,10 +327,18 @@ window.__ModuleLoader__.load({
         } catch {}
       }
       const doCopyCmd = (item) => {
-        const cmd = 'dsh plugin --profile web add ' + item.spec
+        const cmd = installCmdFor(item, store.os)
         try {
           navigator.clipboard.writeText(cmd).then(() => {
             patch({ copiedRepo: item.id + ':cmd' })
+            setTimeout(() => patch({ copiedRepo: null }), 1600)
+          }).catch(() => {})
+        } catch {}
+      }
+      const copyTextCmd = (text, key) => {
+        try {
+          navigator.clipboard.writeText(text).then(() => {
+            patch({ copiedRepo: key })
             setTimeout(() => patch({ copiedRepo: null }), 1600)
           }).catch(() => {})
         } catch {}
@@ -395,7 +428,7 @@ window.__ModuleLoader__.load({
                 ? h('span', { className: 'dshm-busy' }, t('offlineNote'))
                 : item.verified === false
                   ? h('span', { className: 'dshm-busy' }, t('unverNote'))
-                  : item.install && (item.install.method === 'manual' || item.install.method === 'desktop')
+                  : item.install && (item.install.method === 'manual' || item.install.method === 'desktop' || item.install.method === 'git-clone')
                     ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => openDetail(item) }, t('installGuide'))
                     : installedRaw && installedRaw.source === 'other'
                       ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('migrate'))
@@ -411,6 +444,55 @@ window.__ModuleLoader__.load({
                 st.copiedRepo === item.id ? t('copied') : t('copyUrl'))
             : null,
         )
+      }
+
+      function InstallPanel(st, item) {
+        const inst = item.install || {}
+        const installedRaw = st.installed && st.installed[item.id]
+        const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
+        const upToDate = !!installed && item.type === 'bundle' && installed.spec === item.spec
+        const copyBtn = (cmd, key) => h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyTextCmd(cmd, key) },
+          st.copiedRepo === key ? t('copied') : t('copyCmd'))
+        const installBtn = (enabled) => (enabled && !upToDate)
+          ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) },
+              (installed ? t('update') : t('installNow')) + ' · ' + osLabel(store.os))
+          : null
+        if (inst.method === 'script' && inst.os) {
+          const oses = osKeysOf(inst)
+          const sel = oses.includes(st.osTab) ? st.osTab : (oses.includes(store.os) ? store.os : oses[0])
+          return h('div', { className: 'dshm-installpanel' },
+            h('div', { className: 'dshm-install-title' }, t('officialInstall')),
+            h('div', { className: 'dshm-ostabs' },
+              oses.map((k) => h('button', {
+                key: k,
+                className: 'dshm-seg-btn' + (k === sel ? ' on' : ''),
+                onClick: () => patch({ osTab: k }),
+              }, osLabel(k) + (k === store.os ? ' · ' + t('currentOs') : '')))),
+            h('code', { className: 'dshm-cmd' }, inst.os[sel]),
+            h('div', { className: 'dshm-install-actions' },
+              copyBtn(inst.os[sel], item.id + ':os:' + sel),
+              installBtn(item.verified !== false)),
+            h('div', { className: 'dshm-card-desc' }, t('scriptNote')),
+          )
+        }
+        if (inst.method === 'npm-global' || inst.method === 'command') {
+          const cmd = inst.command || ''
+          return h('div', { className: 'dshm-installpanel' },
+            h('code', { className: 'dshm-cmd' }, cmd),
+            h('div', { className: 'dshm-install-actions' },
+              copyBtn(cmd, item.id + ':os:npm'),
+              installBtn(item.verified !== false)),
+          )
+        }
+        if (inst.method === 'git-clone') {
+          const cmd = inst.command || ''
+          return h('div', { className: 'dshm-installpanel' },
+            h('code', { className: 'dshm-cmd' }, cmd),
+            h('div', { className: 'dshm-install-actions' }, copyBtn(cmd, item.id + ':os:clone')),
+            h('div', { className: 'dshm-card-desc' }, t('cloneNote')),
+          )
+        }
+        return null
       }
 
       function DetailView(st) {
@@ -437,7 +519,9 @@ window.__ModuleLoader__.load({
             ? h('div', { className: 'dshm-card-tags' }, item.tags.map((tg) => h('span', { className: 'dshm-tag', key: tg }, tg)))
             : null,
           h('div', { className: 'dshm-card-actions' },
-            item.verified !== false && !upToDate && !(item.install && (item.install.method === 'manual' || item.install.method === 'desktop'))
+            item.verified !== false && !upToDate
+              && !(item.install && (item.install.method === 'manual' || item.install.method === 'desktop' || item.install.method === 'git-clone'
+                || ((item.install.method === 'script' && item.install.os) || item.install.method === 'npm-global' || item.install.method === 'command')))
               ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) },
                   installed ? t('update') : t('install'))
               : null,
@@ -460,6 +544,7 @@ window.__ModuleLoader__.load({
           item.install && (item.install.method === 'manual' || item.install.method === 'desktop')
             ? h('div', { className: 'dshm-strip dshm-strip-ok' }, t('manualNote'))
             : null,
+          InstallPanel(st, item),
           h('div', { className: 'dshm-readme-title' }, 'README'),
           st.readme === null
             ? h('div', { className: 'dshm-empty' }, t('readmeLoading'))
