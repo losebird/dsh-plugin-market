@@ -1,0 +1,77 @@
+name: Release
+
+# 每次 push/force-push v* 标签时自动创建或更新对应 Release；
+# 也支持手动触发（默认处理最新标签，用于补发历史版本）
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine tag
+        id: tag
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          else
+            TAG="$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.' | head -1)"
+          fi
+          if [[ -z "$TAG" ]]; then
+            echo "没有找到 v* 标签，跳过"
+            exit 0
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Build release notes
+        id: notes
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          git fetch --tags --force origin
+          PREV="$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.' | grep -v "^$TAG$" | head -1 || true)"
+          {
+            echo "## 安装"
+            echo ''
+            echo '```bash'
+            echo "dsh plugin --profile web add github:losebird/dsh-plugin-market#$TAG"
+            echo '```'
+            echo ''
+            echo '安装后完全重启 DSH，设置里出现「插件市场」。'
+            echo ''
+            echo '## 变更'
+            echo ''
+            if [[ -n "$PREV" ]]; then
+              git log --oneline "$PREV..$TAG" -- | sed 's/^/- /'
+            else
+              git log --oneline -20 "$TAG" -- | sed 's/^/- /'
+            fi
+            echo ''
+            echo '网站：https://www.dsh-plugin.shop'
+          } > /tmp/notes.md
+          cat /tmp/notes.md
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          # force-push 场景：删除旧 Release（标签保留）后重建，指向最新提交
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release delete "$TAG" --yes
+          fi
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file /tmp/notes.md \
+            --latest
