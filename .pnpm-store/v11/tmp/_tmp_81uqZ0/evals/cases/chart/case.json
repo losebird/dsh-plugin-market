@@ -1,0 +1,20 @@
+{
+    "id": "chart",
+    "title": "Model intelligence-vs-cost scatter plot",
+    "category": "chart",
+    "image": "assets/demo-codex-chart.png",
+    "provider": null,
+    "model": null,
+    "prompt": null,
+    "expect": {
+        "mustTranscribe": [
+            "Artificial Analysis Intelligence Index",
+            "Cost per task",
+            "DeepSeek",
+            "128"
+        ],
+        "numbers": [],
+        "regionTypes": ["chart"],
+        "notes": "A dense scatter plot. The axes titles and at least one plotted series must be transcribed, and the layout should mark a chart region."
+    }
+}

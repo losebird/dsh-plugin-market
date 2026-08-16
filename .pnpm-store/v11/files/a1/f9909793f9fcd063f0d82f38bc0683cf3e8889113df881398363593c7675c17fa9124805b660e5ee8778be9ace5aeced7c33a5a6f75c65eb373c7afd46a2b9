@@ -1,0 +1,20 @@
+{
+    "id": "diagram",
+    "title": "Four-step flow diagram",
+    "category": "diagram",
+    "image": "assets/flow.en.png",
+    "provider": null,
+    "model": null,
+    "prompt": null,
+    "expect": {
+        "mustTranscribe": [
+            "Text-only model",
+            "modlens skill",
+            "Vision engine",
+            "Structured evidence"
+        ],
+        "numbers": [],
+        "regionTypes": [],
+        "notes": "A clean four-box flow. Every box title must be transcribed in reading order."
+    }
+}

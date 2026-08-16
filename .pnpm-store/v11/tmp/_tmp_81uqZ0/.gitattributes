@@ -1,0 +1,10 @@
+# Normalize line endings to LF on checkout across every platform, so tooling
+# (Biome, the test fixtures, the build) sees the same bytes on Windows as it
+# does on macOS and Linux. Without this, actions/checkout converts text files
+# to CRLF on windows-latest and `biome check` fails on the line endings alone.
+* text=auto eol=lf
+
+# Image assets are binary and must never be line-ending normalized.
+*.png binary
+*.jpg binary
+*.jpeg binary

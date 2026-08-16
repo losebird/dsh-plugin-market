@@ -94,7 +94,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.20',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.21',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -201,18 +201,30 @@ async function install(args) {
   if (typeof args.spec !== 'string') return { ok: false, error: '参数错误' }
   if (args.type === 'bundle') {
     if (!validBundleSpec(args.spec)) return { ok: false, error: '非法的安装源 spec' }
+    // 点击安装即授权：预先放行构建脚本，避免 pnpm 拦截一轮
+    const pkgNamePre = typeof args.package === 'string' && args.package ? args.package : null
+    if (pkgNamePre) { try { await allowBuild(pkgNamePre) } catch {} }
     let r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
     if (!r.ok) {
-      // pnpm 拦截 git 托管插件的 prepare 脚本：解析包名 → 自动写 allowBuilds → 重试
-      const combined = ((r.stdout || '') + '\n' + (r.stderr || '')).replace(/\[.*?m/g, '')
-      const m = combined.match(/Ignored build scripts:?\s*([^\n.]+)/i)
-      const names = m && m[1] ? m[1].split(/[,\s]+/).map((s) => s.trim().replace(/@[^@/]*$/, '')).filter((s) => /^[@\w./-]+$/.test(s) && s !== 'Run') : []
-      if (names.length > 0) {
+      // 失败重试：按 CLI 提示关键词与 pnpm 输出收集包名 → 放行 → 重试一次
+      const combined = ((r.stdout || '') + '\n' + (r.stderr || '')).replace(/\u001b\[[0-9;]*m/g, '').replace(/\[.*?m/g, '')
+      const hintBlocked = /allowBuilds|prepare script|approve-builds|Ignored build scripts/i.test(combined)
+      const names = []
+      if (pkgNamePre) names.push(pkgNamePre)
+      const m = combined.match(/Ignored build scripts:?\s*([^\n]+)/i)
+      if (m && m[1]) {
+        for (const s of m[1].split(/[,\s]+/)) {
+          const n = s.trim().replace(/"|'/g, '').replace(/@[^@/]+$/, '')
+          if (/^[@\w./-]+$/.test(n) && n !== 'Run' && !names.includes(n)) names.push(n)
+        }
+      }
+      if (hintBlocked && names.length > 0) {
         for (const n of names) { try { await allowBuild(n) } catch {} }
         r = await runShell('dsh plugin --profile web add ' + q(args.spec), 300000, { fullAccess: true })
-        if (!r.ok) return { ok: false, error: '已自动允许构建脚本（' + names.join(', ') + '）但重试仍失败: ' + ((r.stderr || '').trim() || (r.stdout || '').trim() || '未知错误') }
+        if (!r.ok) return { ok: false, error: '已自动放行构建脚本（' + names.join(', ') + '）但重试仍失败: ' + ((r.stderr || '').trim() || (r.stdout || '').trim() || '未知错误') }
       } else {
-        return { ok: false, error: (r.stderr || '').trim() || (r.stdout || '').trim() || 'dsh plugin add 失败' }
+        const tail = combined.trim().slice(-1800)
+        return { ok: false, error: '安装失败: ' + (tail || 'dsh plugin add 失败') }
       }
     }
     // 自动迁移：若同名包存在于其他 profile，从中移除，避免“装了却不生效”
@@ -338,7 +350,7 @@ async function uninstall(args) {
 async function runShell(command, timeoutMs, opts = {}) {
   const shell = runShell.shellService
   if (!shell) return { ok: false, stdout: '', stderr: 'shell 服务不可用' }
-  let request = { command, timeoutMs: timeoutMs || 60000 }
+  let request = { command, timeoutMs: timeoutMs || 60000, stdoutMaxBytes: 400000 }
   if (opts.fullAccess) {
     let workspaceRoot
     try {

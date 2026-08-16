@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        # 22.19 is the floor (see package.json engines: undici 8's own requirement);
+        # unflagged there, so paste recovery works without a runtime guard. The
+        # floor runs as that EXACT version — a bare "22" resolves to the latest
+        # 22.x and would let a dependency on newer-than-floor behavior slip by.
+        # Windows runs the same suite; the POSIX-only cases (subprocess signals,
+        # permission bits, JSONL home layouts) are guarded with describe.skipIf.
+        node-version: ['22.19', 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build

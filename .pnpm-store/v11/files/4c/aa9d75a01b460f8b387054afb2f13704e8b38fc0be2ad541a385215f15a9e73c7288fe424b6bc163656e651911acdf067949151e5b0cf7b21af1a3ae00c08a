@@ -1,0 +1,15 @@
+{
+    "id": "banner",
+    "title": "Project banner (stylized watercolor)",
+    "category": "branding",
+    "image": "assets/banner.jpg",
+    "provider": null,
+    "model": null,
+    "prompt": null,
+    "expect": {
+        "mustTranscribe": ["MODLENS", "plug-in vision for text-only LLMs"],
+        "numbers": [],
+        "regionTypes": [],
+        "notes": "A stylized logo baseline: the wordmark and tagline must be read despite the textured, hand-drawn rendering."
+    }
+}

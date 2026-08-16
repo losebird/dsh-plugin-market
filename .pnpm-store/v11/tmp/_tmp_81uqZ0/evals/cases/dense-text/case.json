@@ -1,0 +1,23 @@
+{
+    "id": "dense-text",
+    "title": "Dense bilingual tweet screenshot",
+    "category": "dense-text, multilingual",
+    "image": "assets/demo-codex-app.png",
+    "provider": null,
+    "model": null,
+    "prompt": null,
+    "expect": {
+        "mustTranscribe": [
+            "Erling Haaland",
+            "No caption needed",
+            "Jordan",
+            "2.9K",
+            "270K",
+            "5M",
+            "互动数据"
+        ],
+        "numbers": [],
+        "regionTypes": [],
+        "notes": "A dense screenshot with both English (the tweet) and Chinese (the assistant panel). Engagement counts and both languages must be transcribed."
+    }
+}
