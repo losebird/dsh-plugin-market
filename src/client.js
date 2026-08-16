@@ -1,6 +1,6 @@
 // dsh-market 浏览器半片：设置 → 插件 → 插件市场（AMD bundle，由 client-modules 提供）
 window.__ModuleLoader__.load({
-  id: 'dsh-market',
+  id: '@ace-zone/dsh-market',
   factory: (require) => {
     const React = require('react')
     const { useState, useEffect } = React
