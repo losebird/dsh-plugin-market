@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.30',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.31',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -271,18 +271,30 @@ async function performInstall(args, job) {
       if (!r1.ok) return finishJob(job, { status: 'error', error: '创建临时目录失败' })
       const r2 = await runShellLogged(job, 'git clone --depth 1 ' + q(repoUrl) + ' ' + tmpQ + '/src', 600000, { fullAccess: true })
       if (!r2.ok) return finishJob(job, { status: 'error', error: '克隆仓库失败，请检查网络后重试' })
-      // 按锁文件选包管理器（无锁文件时优先 pnpm）
+      // 按锁文件选包管理器；无锁文件时优先 pnpm（node 侧查常见路径，不走 shell 探测）
       const hasFile = async (f) => { try { await stat(join(tmp, 'src', f)); return true } catch { return false } }
+      const pmPaths = [
+        '/opt/homebrew/bin/pnpm', '/usr/local/bin/pnpm', '/usr/bin/pnpm',
+        join(homedir(), 'Library', 'pnpm', 'pnpm'),
+        join(homedir(), '.local', 'share', 'pnpm', 'pnpm'),
+        ...(process.env.PATH || '').split(':').filter(Boolean).map((d) => join(d, 'pnpm')),
+      ]
       let pm = 'npm'
       if (await hasFile('pnpm-lock.yaml')) pm = 'pnpm'
       else if (await hasFile('yarn.lock')) pm = 'yarn'
       else if (await hasFile('package-lock.json')) pm = 'npm'
       else {
-        const which = await runShellLogged(job, 'command -v pnpm', 15000, {})
-        pm = which.ok ? 'pnpm' : 'npm'
+        let hasPnpm = false
+        for (const p of pmPaths) {
+          try { await stat(p); hasPnpm = true; break } catch {}
+        }
+        pm = hasPnpm ? 'pnpm' : 'npm'
       }
       appendJobLine(job, '使用包管理器: ' + pm)
-      const installCmd = pm === 'npm' ? 'npm install --no-audit --no-fund' : (pm === 'pnpm' ? 'pnpm install' : 'yarn install')
+      // npm 时强制用临时目录当缓存，绕开本机 ~/.npm 缓存损坏（root-owned 问题）
+      const installCmd = pm === 'npm'
+        ? 'npm install --no-audit --no-fund --cache ' + tmpQ + '/npm-cache'
+        : (pm === 'pnpm' ? 'pnpm install' : 'yarn install')
       const r3 = await runShellLogged(job, 'cd ' + tmpQ + '/src && ' + installCmd, 900000, { fullAccess: true })
       if (!r3.ok) return finishJob(job, { status: 'error', error: '安装依赖失败（' + pm + '），完整输出见上方日志' })
       let pkgJson = {}
@@ -292,7 +304,7 @@ async function performInstall(args, job) {
         const r4 = await runShellLogged(job, 'cd ' + tmpQ + '/src && ' + (pm === 'npm' ? 'npm run ' : pm === 'pnpm' ? 'pnpm run ' : 'yarn ') + buildName, 900000, { fullAccess: true })
         if (!r4.ok) return finishJob(job, { status: 'error', error: '构建失败（' + buildName + '），完整输出见上方日志' })
       }
-      const r5 = await runShellLogged(job, 'cd ' + tmpQ + '/src && ' + (pm === 'pnpm' ? 'pnpm pack' : 'npm pack'), 300000, { fullAccess: true })
+      const r5 = await runShellLogged(job, 'cd ' + tmpQ + '/src && ' + (pm === 'pnpm' ? 'pnpm pack' : (pm === 'npm' ? 'npm pack --cache ' + tmpQ + '/npm-cache' : 'yarn pack --filename ' + tmpQ + '/pkg.tgz')), 300000, { fullAccess: true })
       if (!r5.ok) return finishJob(job, { status: 'error', error: '打包 tarball 失败，完整输出见上方日志' })
       // npm/pnpm pack 输出中取最后出现的 tarball 文件名（末尾一行即产物名）
       let tgzName = null
@@ -482,33 +494,72 @@ function startInstall(args) {
   return { ok: true, job: job.id }
 }
 
-async function uninstall(args) {
-  if (!args || typeof args !== 'object' || typeof args.id !== 'string') return { ok: false, error: '参数错误' }
+// 卸载任务：走 dsh CLI（pnpm remove + bundles reconcile）逐个 profile 清理，进度入 job
+async function performUninstall(args, job) {
   const state = await readState()
   const installed = state.installed || {}
   const rec = installed[args.id]
-  if (!rec) return { ok: false, error: '该条目不是本市场安装的' }
+  if (!rec) return finishJob(job, { status: 'error', error: '该条目不是本市场安装的' })
   if (rec.type === 'bundle') {
     const name = typeof rec.package === 'string' && rec.package ? rec.package : args.id
-    const res = await removeFromAllProfiles(name)
-    if (!res.ok) return { ok: false, error: res.error }
+    appendJobLine(job, '正在从各 profile 卸载: ' + name)
+    const res = await removeFromAllProfiles(name, job)
+    if (!res.ok) return finishJob(job, { status: 'error', error: res.error })
     delete installed[args.id]
     await writeState({ installed })
     const where = res.cleaned.length > 0 ? res.cleaned.join(', ') : 'web'
-    return { ok: true, message: '已从 ' + where + ' 卸载 ' + name + '，重启 dsh 后生效' }
+    return finishJob(job, { status: 'done', message: '已从 ' + where + ' 卸载 ' + name + '，重启 dsh 后生效' })
   }
   if (rec.type === 'pack') {
     const root = rec.kind === 'preset' ? PRESETS_ROOT : SKILLS_ROOT
     try {
       await rm(join(root, args.id), { recursive: true, force: true })
     } catch (e) {
-      return { ok: false, error: '删除失败: ' + String(e && e.message ? e.message : e) }
+      return finishJob(job, { status: 'error', error: '删除失败: ' + String(e && e.message ? e.message : e) })
     }
     delete installed[args.id]
     await writeState({ installed })
-    return { ok: true, message: '已卸载 ' + args.id }
+    return finishJob(job, { status: 'done', message: '已卸载 ' + args.id })
   }
-  return { ok: false, error: '未知安装类型' }
+  return finishJob(job, { status: 'error', error: '未知安装类型' })
+}
+
+function startUninstall(args) {
+  if (!args || typeof args !== 'object' || typeof args.id !== 'string') return { ok: false, error: '参数错误' }
+  const job = newJob(args)
+  appendJobLine(job, '开始卸载: ' + args.id)
+  performUninstall(args, job).catch((e) => {
+    finishJob(job, { status: 'error', error: String(e && e.message ? e.message : e) })
+  })
+  return { ok: true, job: job.id }
+}
+
+// 管理页“删除”：从所有 profile 移除 + 清市场记录，进度入 job
+async function performRemove(args, job) {
+  const name = args && args.name
+  if (!name) return finishJob(job, { status: 'error', error: '参数错误' })
+  appendJobLine(job, '正在从各 profile 卸载: ' + name)
+  const res = await removeFromAllProfiles(name, job)
+  if (!res.ok) return finishJob(job, { status: 'error', error: res.error })
+  const state = await readState()
+  const installed = state.installed || {}
+  for (const k of Object.keys(installed)) {
+    const rec = installed[k]
+    if (rec && (rec.package === name || rec.spec === name || k === name)) delete installed[k]
+  }
+  await writeState({ installed })
+  const where = res.cleaned.length > 0 ? res.cleaned.join(', ') : 'web'
+  return finishJob(job, { status: 'done', message: '已从 ' + where + ' 卸载 ' + name + '，重启 dsh 后生效' })
+}
+
+function startRemove(args) {
+  if (!args || typeof args !== 'object' || typeof args.name !== 'string' || !args.name) return { ok: false, error: '参数错误' }
+  const job = newJob(args)
+  appendJobLine(job, '开始删除: ' + args.name)
+  performRemove(args, job).catch((e) => {
+    finishJob(job, { status: 'error', error: String(e && e.message ? e.message : e) })
+  })
+  return { ok: true, job: job.id }
 }
 
 // 宿主 shell 服务封装（resolve → run，容错）
@@ -769,38 +820,26 @@ async function togglePlugin(args) {
 
 // 从所有 profile 中移除包（web 及装有它的其他 profile），返回清理的 profile 列表。
 // 统一走 dsh CLI（pnpm remove + bundles reconcile），避免残留导致已安装列表“复活”。
-async function removeFromAllProfiles(name) {
+async function removeFromAllProfiles(name, job) {
   const cleaned = []
   const webManifest = await readProfileManifest()
   const webDeps = new Set(Object.keys((webManifest && webManifest.dependencies) || {}))
   const webBundles = new Set((webManifest && webManifest.dsh && webManifest.dsh.profile && webManifest.dsh.profile.bundles) || [])
   if (webDeps.has(name) || webBundles.has(name)) {
-    const r = await runShell('dsh plugin --profile web remove ' + q(name), 300000, { fullAccess: true })
+    const r = job
+      ? await runShellLogged(job, 'dsh plugin --profile web remove ' + q(name), 300000, { fullAccess: true })
+      : await runShell('dsh plugin --profile web remove ' + q(name), 300000, { fullAccess: true })
     if (!r.ok) return { ok: false, error: (r.stderr || '').trim() || 'dsh plugin remove 失败' }
     cleaned.push('web')
   }
   const otherMap = await otherProfileMap()
   for (const prof of (otherMap.get(name) || [])) {
-    const r = await runShell('dsh plugin --profile ' + q(prof) + ' remove ' + q(name), 300000, { fullAccess: true })
+    const r = job
+      ? await runShellLogged(job, 'dsh plugin --profile ' + q(prof) + ' remove ' + q(name), 300000, { fullAccess: true })
+      : await runShell('dsh plugin --profile ' + q(prof) + ' remove ' + q(name), 300000, { fullAccess: true })
     if (r.ok) cleaned.push(prof)
   }
   return { ok: true, cleaned }
-}
-
-async function removePlugin(args) {
-  const name = args && args.name
-  if (!name) return { ok: false, error: '参数错误' }
-  const res = await removeFromAllProfiles(name)
-  if (!res.ok) return res
-  const state = await readState()
-  const installed = state.installed || {}
-  for (const k of Object.keys(installed)) {
-    const rec = installed[k]
-    if (rec && (rec.package === name || rec.spec === name || k === name)) delete installed[k]
-  }
-  await writeState({ installed })
-  const where = res.cleaned.length > 0 ? res.cleaned.join(', ') : 'web'
-  return { ok: true, message: '已从 ' + where + ' 卸载 ' + name + '，重启 dsh 后生效' }
 }
 
 const readBody = (req) => new Promise((resolve, reject) => {
@@ -852,7 +891,7 @@ export default {
         }
         if (pathname === '/plugin-market/uninstall' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')
-          return json(res, 200, await uninstall(body))
+          return json(res, 200, startUninstall(body))
         }
         if (pathname === '/plugin-market/installed' && req.method === 'GET') {
           return json(res, 200, { ok: true, rows: await installedRows() })
@@ -863,7 +902,7 @@ export default {
         }
         if (pathname === '/plugin-market/remove' && req.method === 'POST') {
           const body = JSON.parse((await readBody(req)) || '{}')
-          return json(res, 200, await removePlugin(body))
+          return json(res, 200, startRemove(body))
         }
         if (pathname === '/plugin-market/readme' && req.method === 'GET') {
           const url = new URL(req.url, 'http://x')

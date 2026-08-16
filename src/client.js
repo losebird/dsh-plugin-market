@@ -52,6 +52,7 @@ window.__ModuleLoader__.load({
         cloneNote: '一键安装将自动克隆、构建并安装到 web profile（需数分钟）。',
         installNow: '一键安装', currentOs: '当前系统',
         jobTitle: '安装进度', jobRunning: '正在安装…', jobDone: '安装完成', jobFailed: '安装失败',
+        jobTitleUninstall: '卸载进度', jobRunningUninstall: '正在卸载…', jobDoneUninstall: '卸载完成', jobFailedUninstall: '卸载失败',
         jobAutoClose: '本窗口将在 3 秒后自动关闭', jobClose: '关闭',
         readmeLang: '语言', readmeDefault: '默认',
       },
@@ -86,6 +87,7 @@ window.__ModuleLoader__.load({
         cloneNote: 'One-click install clones, builds and installs into the web profile automatically (takes a few minutes).',
         installNow: 'Install now', currentOs: 'current OS',
         jobTitle: 'Install progress', jobRunning: 'Installing…', jobDone: 'Install complete', jobFailed: 'Install failed',
+        jobTitleUninstall: 'Uninstall progress', jobRunningUninstall: 'Uninstalling…', jobDoneUninstall: 'Uninstall complete', jobFailedUninstall: 'Uninstall failed',
         jobAutoClose: 'This window closes automatically in 3 seconds', jobClose: 'Close',
         readmeLang: 'Language', readmeDefault: 'Default',
       },
@@ -313,6 +315,7 @@ window.__ModuleLoader__.load({
             const next = {
               id: id,
               name: store.job ? store.job.name : shortName(item.name),
+              kind: store.job ? store.job.kind : 'install',
               status: j.status,
               lines: Array.isArray(j.lines) ? j.lines : [],
               message: j.message || null,
@@ -322,7 +325,8 @@ window.__ModuleLoader__.load({
             if (j.status === 'done' || j.status === 'error') {
               jobTimers.delete(id)
               patch({ busy: Object.assign({}, store.busy, { [item.id]: null }) })
-              patch({ notice: j.status === 'done' ? (j.message || t('msgInstalled')) : null, error: j.status === 'error' ? (j.error || t('errOp')) : null })
+              const isUninstall = next.kind === 'uninstall'
+              patch({ notice: j.status === 'done' ? (j.message || (isUninstall ? t('msgUninstalled') : t('msgInstalled'))) : null, error: j.status === 'error' ? (j.error || t('errOp')) : null })
               await refresh()
               await loadInstalled()
               setTimeout(() => {
@@ -370,15 +374,26 @@ window.__ModuleLoader__.load({
         patch({ busy: Object.assign({}, store.busy, { [item.id]: 'uninstall' }), error: null, notice: null })
         try {
           const res = await api('uninstall', { id: item.id, type: item.type, package: item.package || null })
-          const ok = res && res.ok
+          if (res && res.ok && res.job) {
+            patch({ job: { id: res.job, name: shortName(item.name), kind: 'uninstall', status: 'running', lines: [], message: null, error: null } })
+            pollJob(res.job, item)
+            return
+          }
+          const err = (res && res.error) || t('errOp')
           patch({
             busy: Object.assign({}, store.busy, { [item.id]: null }),
-            notice: ok ? t('msgUninstalled') + '，' + t('msgRestart') : null,
-            error: ok ? null : ((res && res.error) || t('errOp')),
+            job: { id: 'local-' + Date.now(), name: shortName(item.name), kind: 'uninstall', status: 'error', lines: [err], message: null, error: err },
+            error: err,
           })
-          if (ok) { await refresh(); await loadInstalled() }
+          setTimeout(() => { if (store.job && store.job.id && String(store.job.id).indexOf('local-') === 0) patch({ job: null }) }, 3000)
         } catch (e) {
-          patch({ busy: Object.assign({}, store.busy, { [item.id]: null }), error: String(e && e.message ? e.message : e) })
+          const err = String(e && e.message ? e.message : e)
+          patch({
+            busy: Object.assign({}, store.busy, { [item.id]: null }),
+            job: { id: 'local-' + Date.now(), name: shortName(item.name), kind: 'uninstall', status: 'error', lines: [err], message: null, error: err },
+            error: err,
+          })
+          setTimeout(() => { if (store.job && store.job.id && String(store.job.id).indexOf('local-') === 0) patch({ job: null }) }, 3000)
         }
       }
 
@@ -447,10 +462,30 @@ window.__ModuleLoader__.load({
         if (ok) await loadInstalled()
       }
       const doRemove = async (row) => {
-        const res = await api('remove', { name: row.name })
-        const ok = res && res.ok
-        patch({ notice: ok ? (res.message || t('msgUninstalled')) : null, error: ok ? null : ((res && res.error) || t('errOp')) })
-        if (ok) { await loadInstalled(); await refresh() }
+        patch({ busy: Object.assign({}, store.busy, { [row.name]: 'uninstall' }), error: null, notice: null })
+        try {
+          const res = await api('remove', { name: row.name })
+          if (res && res.ok && res.job) {
+            patch({ job: { id: res.job, name: shortName(row.name), kind: 'uninstall', status: 'running', lines: [], message: null, error: null } })
+            pollJob(res.job, { id: row.name, name: row.name, type: 'bundle', package: row.name, spec: row.name, install: null })
+            return
+          }
+          const err = (res && res.error) || t('errOp')
+          patch({
+            busy: Object.assign({}, store.busy, { [row.name]: null }),
+            job: { id: 'local-' + Date.now(), name: shortName(row.name), kind: 'uninstall', status: 'error', lines: [err], message: null, error: err },
+            error: err,
+          })
+          setTimeout(() => { if (store.job && store.job.id && String(store.job.id).indexOf('local-') === 0) patch({ job: null }) }, 3000)
+        } catch (e) {
+          const err = String(e && e.message ? e.message : e)
+          patch({
+            busy: Object.assign({}, store.busy, { [row.name]: null }),
+            job: { id: 'local-' + Date.now(), name: shortName(row.name), kind: 'uninstall', status: 'error', lines: [err], message: null, error: err },
+            error: err,
+          })
+          setTimeout(() => { if (store.job && store.job.id && String(store.job.id).indexOf('local-') === 0) patch({ job: null }) }, 3000)
+        }
       }
 
       const fmtNum = (n) => {
@@ -755,27 +790,28 @@ window.__ModuleLoader__.load({
         const j = st.job
         if (!j) return null
         const running = j.status === 'running'
+        const isUn = j.kind === 'uninstall'
         return h('div', { className: 'dshm-overlay dshm-job-overlay', role: 'dialog' },
           h('div', { className: 'dshm-backdrop' }),
           h('div', { className: 'dshm-jobpanel' },
             h('div', { className: 'dshm-head' },
-              h('div', { className: 'dshm-title' }, t('jobTitle') + ' · ' + (j.name || '')),
+              h('div', { className: 'dshm-title' }, t(isUn ? 'jobTitleUninstall' : 'jobTitle') + ' · ' + (j.name || '')),
               running
-                ? h('span', { className: 'dshm-pill dshm-pill-auto' }, t('jobRunning'))
+                ? h('span', { className: 'dshm-pill dshm-pill-auto' }, t(isUn ? 'jobRunningUninstall' : 'jobRunning'))
                 : j.status === 'done'
-                  ? h('span', { className: 'dshm-pill dshm-pill-on' }, t('jobDone'))
-                  : h('span', { className: 'dshm-pill dshm-pill-off' }, t('jobFailed')),
+                  ? h('span', { className: 'dshm-pill dshm-pill-on' }, t(isUn ? 'jobDoneUninstall' : 'jobDone'))
+                  : h('span', { className: 'dshm-pill dshm-pill-off' }, t(isUn ? 'jobFailedUninstall' : 'jobFailed')),
               !running
                 ? h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ job: null }) }, '×')
                 : null,
             ),
             h('div', { className: 'dshm-jobbody', ref: jobRef },
-              h('pre', { className: 'dshm-joblog' }, (j.lines && j.lines.length > 0) ? j.lines.join('\n') : t('jobRunning')),
+              h('pre', { className: 'dshm-joblog' }, (j.lines && j.lines.length > 0) ? j.lines.join('\n') : t(isUn ? 'jobRunningUninstall' : 'jobRunning')),
             ),
             !running
               ? h('div', { className: 'dshm-jobfoot' },
                   j.status === 'done'
-                    ? h('div', { className: 'dshm-strip dshm-strip-ok' }, j.message || t('msgInstalled'))
+                    ? h('div', { className: 'dshm-strip dshm-strip-ok' }, j.message || (isUn ? t('msgUninstalled') : t('msgInstalled')))
                     : h('div', { className: 'dshm-strip dshm-strip-err' }, j.error || t('errOp')),
                   h('div', { className: 'dshm-card-desc' }, t('jobAutoClose')),
                 )
