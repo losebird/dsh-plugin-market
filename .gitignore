@@ -5,3 +5,5 @@ web/.npm-cache/
 .DS_Store
 *.log
 diag*.txt
+.pnpm-store/
+.probe/
