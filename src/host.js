@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.38',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.39',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -586,13 +586,24 @@ async function performAgenticTask(kind, args, job) {
   const repo = args.repo || ''
   if (!name || !repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) return finishJob(job, { status: 'error', error: '参数错误（缺少插件名或仓库地址）' })
   if (!agents) return finishJob(job, { status: 'error', error: '当前 DSH 缺少会话服务，无法执行该任务' })
-  const agent = (typeof agents.currentInitiator === 'function' && agents.currentInitiator())
-    || (Array.isArray(agents.roots()) ? agents.roots()[0] : undefined)
+  // 优先投递给市场 UI 所在的那个会话（客户端上报 sessionId），避免 roots()[0] 投错窗口
+  let agent = null
+  if (args.sessionId && typeof agents.get === 'function') {
+    try { agent = agents.get(args.sessionId) } catch {}
+  }
+  if (!agent && typeof agents.currentInitiator === 'function') agent = agents.currentInitiator()
+  if (!agent && Array.isArray(agents.roots())) agent = agents.roots()[0]
   if (!agent || typeof agent.followup !== 'function') {
-    return finishJob(job, { status: 'error', error: '找不到当前 DSH 会话，无法执行（请先在 DSH 会话中打开插件市场再操作）' })
+    return finishJob(job, { status: 'error', error: '找不到目标 DSH 会话，无法执行（请先在 DSH 会话中打开插件市场再操作）' })
   }
   const text = agentUserText(kind, name, repo, args.spec || '', args.verified === true)
   appendJobLine(job, text)
+  // 关键：等当前回合结束后再投递。回合进行中投递，DSH 会静默丢弃唤醒，
+  // 消息会永远停在队列里不被认领（这正是之前“消息出现但没执行”的根因）。
+  if (typeof agent.whenIdle === 'function') {
+    appendJobLine(job, '等待 DSH 当前回合结束…')
+    await Promise.race([agent.whenIdle(), new Promise((r) => setTimeout(r, 600000))])
+  }
   try {
     agent.followup({
       id: 'plugin-market-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36),

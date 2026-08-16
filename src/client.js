@@ -244,7 +244,7 @@ window.__ModuleLoader__.load({
         q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
         view: 'market', mRows: [], mQ: '', mCat: null, mLoading: false,
         notice: null, error: null, loading: false, source: 'demo', open: false,
-        os: 'darwin', osTab: null, job: null, readmeVariants: [], readmeVariant: 'README.md',
+        os: 'darwin', osTab: null, job: null, readmeVariants: [], readmeVariant: 'README.md', sessionId: null,
       }
       const subs = new Set()
       const patch = (p) => { Object.assign(store, p); for (const f of subs) f() }
@@ -429,7 +429,7 @@ window.__ModuleLoader__.load({
           setTimeout(() => { if (store.job && store.job.id && String(store.job.id).indexOf('local-') === 0) patch({ job: null }) }, 3000)
         }
         try {
-          const res = await api(route, { id: item.id, name: item.name || item.id, repo: item.repo, spec: item.spec || '', package: item.package || null, verified: item.verified === false })
+          const res = await api(route, { id: item.id, name: item.name || item.id, repo: item.repo, spec: item.spec || '', package: item.package || null, verified: item.verified === false, sessionId: store.sessionId || null })
           if (res && res.ok && res.job) {
             patch({ job: { id: res.job, name: shortName(item.name || item.id), kind: kind === 'install' ? 'install' : 'uninstall', status: 'running', lines: [], message: null, error: null } })
             pollJob(res.job, item)
@@ -822,11 +822,15 @@ window.__ModuleLoader__.load({
         { name: 'settings.section', id: 'market', order: 17, label: () => (store.lang === 'zh' ? '插件市场' : 'Plugin Market') },
         (props) => {
           const st = useStore()
+          // 通过 settings.section 的标准 prop 拿到当前会话 id，供“交给 DSH 安装/卸载”精确投递
+          const sessionSnap = props && typeof props.useSessions === 'function' ? props.useSessions() : null
+          const currentSid = sessionSnap && sessionSnap.current ? sessionSnap.current : null
           useEffect(() => {
+            if (currentSid && currentSid !== st.sessionId) patch({ sessionId: currentSid })
             if (props && typeof props.close === 'function') props.close()
             patch({ open: true, detail: null })
             if (st.items.length === 0 && !st.loading) refresh()
-          }, [])
+          }, [currentSid])
           return h('div', { className: 'dshm-root' },
             h('button', {
               className: 'dshm-launch',
