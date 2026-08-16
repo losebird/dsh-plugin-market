@@ -135,7 +135,7 @@ const DEMO_ITEMS = [
     name: 'DSH 插件市场',
     type: 'bundle',
     package: 'dsh-plugin-market',
-    spec: 'github:losebird/dsh-plugin-market#v0.1.35',
+    spec: 'github:losebird/dsh-plugin-market#v0.1.36',
     version: 'v0.1.3',
     author: { name: 'losebird', url: 'https://github.com/losebird' },
     description: 'DSH 的社区插件市场本体：按钮 + 卡片弹窗 + 一键安装。',
@@ -576,7 +576,9 @@ function agentPrompt(kind, name, repo, spec, unverified) {
       '2. 每执行一步用 run_command；需要用户选择、确认或提供信息（账号、路径、选项）时用 ask_user 弹窗询问，',
       '   绝不擅自替用户决定；',
       '3. 只执行安装所必需的命令；禁止删除用户数据、禁止修改系统级配置；临时文件放在 /tmp；',
-      '4. 装完核对结果（dsh 插件列表/README 验证步骤），最后用 report_result 报告：ok、装了什么、装到哪、重启要求。',
+      '4. 绝对禁止在没有实际执行任何命令的情况下报告成功；每一步命令的结果都要核对；',
+      '   全部步骤执行并核对通过后才能用 report_result 报告 ok=true；任何一步失败都必须报告 ok=false 并说明原因；',
+      '5. 装完核对结果（dsh 插件列表/README 验证步骤），最后用 report_result 报告：ok、装了什么、装到哪、重启要求。',
       unverified ? '注意：该插件未声明 dsh.bundle，可能无法作为 profile 插件挂载；按 README 尽力安装，若确实无法挂载，用 report_result 报告 ok=false 并说明原因和替代方案。' : '',
     ].join('\n')
   }
@@ -645,6 +647,8 @@ async function performAgenticTask(kind, args, job) {
   const controller = new AbortController()
   job.abort = () => { try { controller.abort() } catch {} }
   const hardTimeout = setTimeout(() => { try { controller.abort() } catch {} }, 30 * 60 * 1000)
+  let executedAnyTool = false
+  let nudges = 0
   try {
     for (let step = 0; step < 50; step++) {
       const textBlocks = []
@@ -678,6 +682,19 @@ async function performAgenticTask(kind, args, job) {
       })
       if (toolCalls.length === 0) {
         const lastText = textBlocks.map((b) => b.text).join(' ').trim().slice(0, 1000)
+        // 没执行过任何工具就结束 → 模型在空谈：追问它真正动手，追问几次后判定失败
+        if (!executedAnyTool) {
+          if (nudges < 3) {
+            nudges++
+            appendJobLine(job, '（提示）DSH 尚未执行任何安装步骤，正在要求其继续…')
+            messages.push({
+              role: 'user',
+              content: [{ type: 'text', text: '你还没有执行任何命令。请立即用 run_command 执行第一条安装/卸载命令；每步必须真实执行并核对结果。如果确实无法执行，用 report_result 报告 ok=false 并说明原因。' }],
+            })
+            continue
+          }
+          return finishJob(job, { status: 'error', error: 'DSH 未执行任何安装步骤就结束了：' + (lastText || '（无说明）') })
+        }
         return finishJob(job, { status: 'done', message: lastText || (kind === 'install' ? '安装完成' : '卸载完成') })
       }
       const resultBlocks = []
@@ -690,10 +707,12 @@ async function performAgenticTask(kind, args, job) {
             const cmd = typeof payload.command === 'string' ? payload.command.trim() : ''
             if (!cmd || cmd.length > 4000) output = '命令参数非法'
             else {
+              executedAnyTool = true
               const r = await runShellLogged(job, cmd, 900000, { fullAccess: true })
               output = (r.ok ? '[成功] ' : '[失败] ') + (((r.stdout || '') + (r.stderr || '')).slice(-6000) || '（无输出）')
             }
           } else if (tc.name === 'ask_user') {
+            executedAnyTool = true
             const question = String(payload.question || '请确认').slice(0, 400)
             const options = (Array.isArray(payload.options) ? payload.options : []).map(String).slice(0, 6).filter(Boolean)
             job.question = { text: question, options }
@@ -707,6 +726,10 @@ async function performAgenticTask(kind, args, job) {
             const ok = payload.ok === true
             const summary = String(payload.summary || '').slice(0, 1000)
             appendJobLine(job, summary)
+            // 空谈成功防护：一条命令都没执行过就报 ok=true → 视为失败
+            if (ok && !executedAnyTool) {
+              return finishJob(job, { status: 'error', error: 'DSH 未执行任何安装步骤却报告成功，视为失败。' + (summary ? '（其说明：' + summary + '）' : '') })
+            }
             return finishJob(job, { status: ok ? 'done' : 'error', message: ok ? summary : null, error: ok ? null : (summary || '任务未成功') })
           }
         } catch (e) {

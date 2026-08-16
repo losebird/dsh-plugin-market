@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16T04:59:30.852Z",
+  "updatedAt": "2026-08-16T06:36:35.778Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -63,7 +63,6 @@
       "install": {
         "method": "script",
         "source": "readme",
-        "command": "git clone https://github.com/nexu-io/open-design.git",
         "scriptUrl": "https://open-design.ai/install.sh",
         "os": {
           "darwin": "curl -fsSL https://open-design.ai/install.sh | sh",
@@ -139,9 +138,8 @@
       "topicSourced": true,
       "verified": false,
       "install": {
-        "method": "git-clone",
-        "source": "readme",
-        "command": "git clone https://github.com/titanwings/colleague-skill"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -776,13 +774,8 @@
       "topicSourced": true,
       "verified": true,
       "install": {
-        "method": "script",
-        "source": "readme",
-        "scriptUrl": "https://antigravity.google/cli/install.sh",
-        "os": {
-          "darwin": "curl -fsSL https://antigravity.google/cli/install.sh | bash",
-          "linux": "curl -fsSL https://antigravity.google/cli/install.sh | bash"
-        }
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -1044,7 +1037,7 @@
       "topicSourced": true,
       "verified": true,
       "install": {
-        "method": "manual",
+        "method": "dsh-plugin-add",
         "source": "readme"
       },
       "source": "auto",
@@ -1914,13 +1907,8 @@
       "topicSourced": true,
       "verified": false,
       "install": {
-        "method": "script",
-        "source": "readme",
-        "scriptUrl": "https://raw.githubusercontent.com/Minara-AI/skills/main/scripts/claudecode-minara-skill-setup.sh",
-        "os": {
-          "darwin": "curl -fsSL https://raw.githubusercontent.com/Minara-AI/skills/main/scripts/claudecode-minara-skill-setup.sh | bash",
-          "linux": "curl -fsSL https://raw.githubusercontent.com/Minara-AI/skills/main/scripts/claudecode-minara-skill-setup.sh | bash"
-        }
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -2666,9 +2654,8 @@
       "topicSourced": true,
       "verified": false,
       "install": {
-        "method": "git-clone",
-        "source": "readme",
-        "command": "git clone https://github.com/humblebanana/open-record-replay.git"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -2874,13 +2861,8 @@
       "topicSourced": true,
       "verified": true,
       "install": {
-        "method": "script",
-        "source": "readme",
-        "scriptUrl": "https://antigravity.google/cli/install.sh",
-        "os": {
-          "darwin": "curl -fsSL https://antigravity.google/cli/install.sh | bash",
-          "linux": "curl -fsSL https://antigravity.google/cli/install.sh | bash"
-        }
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -4466,7 +4448,6 @@
       "install": {
         "method": "script",
         "source": "readme",
-        "command": "npm install -g @openai/codex`)",
         "scriptUrl": "https://hermes-agent.nousresearch.com/install.sh",
         "os": {
           "darwin": "curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash",
@@ -4989,9 +4970,8 @@
       "topicSourced": true,
       "verified": false,
       "install": {
-        "method": "git-clone",
-        "source": "readme",
-        "command": "git clone https://github.com/lhh010/dsh-ui-whale.git"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -6636,7 +6616,7 @@
       "topicSourced": true,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       },
       "source": "auto",
@@ -6964,7 +6944,7 @@
       "topicSourced": true,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       },
       "source": "auto",
@@ -9944,7 +9924,7 @@
       "topicSourced": true,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       },
       "source": "auto",
@@ -11786,9 +11766,8 @@
       "topicSourced": false,
       "verified": false,
       "install": {
-        "method": "git-clone",
-        "source": "readme",
-        "command": "git clone --recursive"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -13496,11 +13475,7 @@
       "verified": true,
       "install": {
         "method": "dsh-plugin-add",
-        "source": "readme",
-        "scriptUrl": "https://raw.githubusercontent.com/my-dsh-plugin/dsh-presets/main/readonly-audit/install-readonly-audit.ps1",
-        "os": {
-          "win32": "irm https://raw.githubusercontent.com/my-dsh-plugin/dsh-presets/main/readonly-audit/install-readonly-audit.ps1 | iex"
-        }
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -14999,12 +14974,6 @@
       "install": {
         "method": "git-clone",
         "source": "readme",
-        "scriptUrl": "https://raw.githubusercontent.com/bobcat848/dsh-calculator/main/install.sh",
-        "os": {
-          "win32": "irm https://raw.githubusercontent.com/bobcat848/dsh-calculator/main/install.ps1 | iex",
-          "darwin": "curl -fsSL https://raw.githubusercontent.com/bobcat848/dsh-calculator/main/install.sh | bash",
-          "linux": "curl -fsSL https://raw.githubusercontent.com/bobcat848/dsh-calculator/main/install.sh | bash"
-        },
         "command": "git clone https://github.com/bobcat848/dsh-calculator.git"
       },
       "source": "auto",
@@ -17693,7 +17662,7 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       },
       "source": "auto",
@@ -17855,13 +17824,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "script",
-        "source": "readme",
-        "scriptUrl": "https://antigravity.google/cli/install.sh",
-        "os": {
-          "darwin": "curl -fsSL https://antigravity.google/cli/install.sh | bash",
-          "linux": "curl -fsSL https://antigravity.google/cli/install.sh | bash"
-        }
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -19343,12 +19307,7 @@
       "verified": true,
       "install": {
         "method": "dsh-plugin-add",
-        "source": "readme",
-        "scriptUrl": "https://raw.githubusercontent.com/hewzhew/dsh-agent-rp/main/scripts/install-termux.sh",
-        "os": {
-          "darwin": "curl -fsSL https://raw.githubusercontent.com/hewzhew/dsh-agent-rp/main/scripts/install-termux.sh | bash",
-          "linux": "curl -fsSL https://raw.githubusercontent.com/hewzhew/dsh-agent-rp/main/scripts/install-termux.sh | bash"
-        }
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -21278,7 +21237,7 @@
       "verified": false,
       "install": {
         "method": "manual",
-        "source": "pkg"
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -24424,13 +24383,7 @@
       "verified": true,
       "install": {
         "method": "dsh-plugin-add",
-        "source": "readme",
-        "scriptUrl": "https://raw.githubusercontent.com/ChocoLZS/dsh-plugin-chat-menu/main/scripts/install.sh",
-        "os": {
-          "win32": "irm https://raw.githubusercontent.com/ChocoLZS/dsh-plugin-chat-menu/main/scripts/install.ps1 | iex",
-          "darwin": "curl -fsSL https://raw.githubusercontent.com/ChocoLZS/dsh-plugin-chat-menu/main/scripts/install.sh | bash",
-          "linux": "curl -fsSL https://raw.githubusercontent.com/ChocoLZS/dsh-plugin-chat-menu/main/scripts/install.sh | bash"
-        }
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -25250,7 +25203,7 @@
       "topicSourced": false,
       "verified": false,
       "install": {
-        "method": "manual",
+        "method": "dsh-plugin-add",
         "source": "readme"
       },
       "source": "auto",
@@ -28779,9 +28732,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "npm-global",
-        "source": "readme",
-        "command": "npm install -g pnpm"
+        "method": "manual",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -30945,7 +30897,7 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       },
       "source": "auto",
@@ -32795,7 +32747,7 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       },
       "source": "auto",
@@ -33161,9 +33113,8 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "git-clone",
-        "source": "readme",
-        "command": "git clone https://github.com/FuRongJun-1999/CommonTrustProtocol.git"
+        "method": "dsh-plugin-add",
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -33403,7 +33354,7 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       },
       "source": "auto",
@@ -37097,7 +37048,7 @@
       "topicSourced": false,
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       },
       "source": "auto",
@@ -38290,12 +38241,7 @@
       "verified": true,
       "install": {
         "method": "dsh-plugin-add",
-        "source": "readme",
-        "scriptUrl": "https://raw.githubusercontent.com/alib8b8/aflare/main/install.sh",
-        "os": {
-          "darwin": "curl -fsSL https://raw.githubusercontent.com/alib8b8/aflare/main/install.sh | bash",
-          "linux": "curl -fsSL https://raw.githubusercontent.com/alib8b8/aflare/main/install.sh | bash"
-        }
+        "source": "readme"
       },
       "source": "auto",
       "auto": true,
@@ -43216,7 +43162,7 @@
       "auto": true,
       "category": "tools",
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       }
     },
@@ -43242,7 +43188,7 @@
       "auto": true,
       "category": "auth",
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       }
     },
@@ -43561,9 +43507,8 @@
       "auto": true,
       "category": "agent",
       "install": {
-        "method": "git-clone",
-        "source": "readme",
-        "command": "git clone https://github.com/Totoro-qaq/Cobsidian.git"
+        "method": "manual",
+        "source": "readme"
       }
     },
     {
@@ -45172,7 +45117,7 @@
       "category": "agent",
       "install": {
         "method": "manual",
-        "source": "pkg"
+        "source": "readme"
       }
     },
     {
@@ -49895,9 +49840,8 @@
       "auto": true,
       "category": "ui",
       "install": {
-        "method": "npm-global",
-        "source": "readme",
-        "command": "npm install -g pnpm@11.7.0"
+        "method": "manual",
+        "source": "readme"
       }
     },
     {
@@ -55282,8 +55226,9 @@
       "auto": true,
       "category": "other",
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "readme"
+        "method": "npm-global",
+        "source": "readme",
+        "command": "npm install -g pnpm`."
       }
     },
     {
@@ -60473,7 +60418,7 @@
       "auto": true,
       "category": "ui",
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       }
     },
@@ -62352,7 +62297,7 @@
       "auto": true,
       "category": "ui",
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       }
     },
@@ -64005,7 +63950,7 @@
       "auto": true,
       "category": "auth",
       "install": {
-        "method": "dsh-plugin-add",
+        "method": "manual",
         "source": "readme"
       }
     },

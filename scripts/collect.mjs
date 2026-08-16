@@ -232,6 +232,13 @@ export function detectInstallFromReadme(readme) {
   const sections = installSections(readme)
   // 有安装章节 → 只在这些章节内识别（避免把开发/规划章节误当安装方式）；无章节 → 全文兜底
   const scopes = sections.length > 0 ? sections.map((s) => s.content) : [readme]
+  // 0) “交给你的 AI 安装”式项目（如 modlens：按 INSTALL.md 由 agent 执行，安装章节里的
+  //    curl 往往是可选引擎/附属步骤而非主安装方式）→ 归为 manual，市场点安装交给 DSH 执行
+  for (const text of scopes) {
+    if (/hand\s+(?:it|this)\s+to\s+your\s+(?:AI|agent)|send\s+(?:it|this)\s+(?:line|prompt)\s+to\s+your|\bINSTALL\.md\b/i.test(text)) {
+      return { method: 'manual', source: 'readme' }
+    }
+  }
   // 1) 脚本安装：curl|bash / irm|iex（无安装章节的全文兜底要求 raw.githubusercontent 的 .sh/.ps1）
   for (const text of scopes) {
     const strict = sections.length === 0

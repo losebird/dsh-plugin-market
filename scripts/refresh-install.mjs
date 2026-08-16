@@ -50,9 +50,16 @@ async function main() {
       const readme = await fetchReadme(it.repo)
       const next = detectInstallFromReadme(readme)
       if (next) {
-        if (!it.install || it.install.method !== next.method) changed++
-        // 保留原有 command/spec 信息，识别结果按字段合并
-        it.install = { ...(it.install || {}), ...next }
+        if (!it.install || it.install.method !== next.method) {
+          changed++
+          // 方法变化时丢弃旧方法专属字段（os/scriptUrl/command），避免误导
+          it.install = { ...next }
+        } else {
+          const merged = { ...(it.install || {}), ...next }
+          if (merged.method !== 'script') { delete merged.os; delete merged.scriptUrl }
+          if (merged.method !== 'npm-global' && merged.method !== 'git-clone') delete merged.command
+          it.install = merged
+        }
       } else if (readme === null) {
         // README 拉取失败：未经 README 核实的历史启发式 dsh-plugin-add 降级为 manual
         if (it.install && it.install.method === 'dsh-plugin-add' && it.install.source !== 'readme') {
