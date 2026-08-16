@@ -159,7 +159,8 @@ a:hover { text-decoration: underline; }
   transition: all 120ms ease;
 }
 .seg-btn:hover { color: var(--text); border-color: var(--border-2); }
-.seg-btn.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.seg-btn.on { background: var(--accent); border-color: var(--accent); color: #ffffff; font-weight: 650; }
+.seg-btn.on .chip-count { color: #ffffff; opacity: 1; }
 .pager { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 22px 0 6px; }
 .pager-info { font-size: 13px; color: var(--text-3); font-family: var(--font-mono); }
 .toast {
@@ -178,7 +179,7 @@ a:hover { text-decoration: underline; }
 .tag-chip:hover { color: var(--text); border-color: var(--accent); }
 .tag-chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .chip-count { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); margin-left: 5px; }
-.tag-chip.on .chip-count { color: var(--accent-ink); opacity: 0.85; }
+.tag-chip.on .chip-count { color: #ffffff; opacity: 1; }
 
 /* ── FAQ ──────────────────────────────────────────── */
 .faq { padding-top: 8px; }

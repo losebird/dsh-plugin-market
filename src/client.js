@@ -98,7 +98,7 @@ window.__ModuleLoader__.load({
 .dshm-viewseg { display:flex; gap:10px; }
 .dshm-viewbtn { display:inline-flex; align-items:center; gap:6px; border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:13px; font-weight:500; padding:6px 16px; border-radius:10px; cursor:pointer; }
 .dshm-viewbtn:hover { color:var(--dsw-alias-label-primary); }
-.dshm-viewbtn.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
+.dshm-viewbtn.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; font-weight:600; }
 .dshm-toolbar { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; }
 .dshm-searchwrap { position:relative; min-width:0; }
 .dshm-search { width:100%; box-sizing:border-box; padding:8px 30px 8px 12px; border:1px solid ${BORDER}; border-radius:10px; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); font-size:14px; }
@@ -111,7 +111,7 @@ window.__ModuleLoader__.load({
 .dshm-seg { display:flex; gap:10px; flex-wrap:wrap; }
 .dshm-seg-btn { display:inline-flex; align-items:center; gap:6px; border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12.5px; font-weight:500; padding:5px 14px; border-radius:10px; cursor:pointer; }
 .dshm-seg-btn:hover { color:var(--dsw-alias-label-primary); }
-.dshm-seg-btn.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; }
+.dshm-seg-btn.on { background:var(--dsw-alias-brand-primary); border-color:var(--dsw-alias-brand-primary); color:#fff; font-weight:600; }
 .dshm-cats { display:flex; gap:6px; flex-wrap:wrap; }
 .dshm-chip { border:1px solid ${BORDER}; background:transparent; color:var(--dsw-alias-label-secondary); font:inherit; font-size:12px; padding:3px 11px; border-radius:999px; cursor:pointer; }
 .dshm-chip:hover { color:var(--dsw-alias-label-primary); border-color:var(--dsw-alias-brand-primary); }
