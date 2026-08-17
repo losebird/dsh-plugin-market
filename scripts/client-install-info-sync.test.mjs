@@ -34,3 +34,25 @@ test('inlined install helpers match install-info.mjs', () => {
   const expected = installInfo.replace(/^export /gm, '').trim()
   assert.equal(inlined, expected)
 })
+
+test('Card and InstallPanel follow installPresentation kinds', () => {
+  const cardStart = clientJs.indexOf('function Card(item, st)')
+  const panelStart = clientJs.indexOf('function InstallPanel(st, item)')
+  const detailStart = clientJs.indexOf('function DetailView(st)')
+  assert.ok(cardStart > 0 && panelStart > cardStart && detailStart > panelStart)
+  const card = clientJs.slice(cardStart, panelStart)
+  const panel = clientJs.slice(panelStart, detailStart)
+
+  assert.match(card, /installPresentation\(item\)/)
+  assert.match(card, /pres\.kind === 'plugin' \|\| pres\.kind === 'companion'/)
+  assert.match(card, /pres\.kind === 'app'/)
+  assert.match(card, /t\('officialDownload'\)/)
+  assert.match(card, /href: pres\.downloadUrl/)
+
+  const appBranch = panel.slice(panel.indexOf("pres.kind === 'app'"), panel.indexOf("pres.kind === 'pack'"))
+  const packBranch = panel.slice(panel.indexOf("pres.kind === 'pack'"), panel.indexOf("inst.method === 'manual'"))
+  assert.doesNotMatch(appBranch, /installBtn/)
+  assert.doesNotMatch(packBranch, /installBtn/)
+  assert.doesNotMatch(packBranch, /dsh plugin/)
+  assert.match(packBranch, /packDownload/)
+})
