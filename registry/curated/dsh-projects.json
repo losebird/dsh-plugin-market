@@ -1,0 +1,24 @@
+{
+  "id": "dsh-projects",
+  "name": "dsh-projects",
+  "type": "bundle",
+  "repo": "WenhongPan/dsh-projects",
+  "spec": "github:WenhongPan/dsh-projects#v0.2.0-alpha.2",
+  "description": "Project and session management for DeepSeek Harness: searchable projects, organized sessions, archive center, and native folder picking.",
+  "license": "MIT",
+  "author": {
+    "name": "WenhongPan",
+    "url": "https://github.com/WenhongPan"
+  },
+  "version": "v0.2.0-alpha.2",
+  "longDescription": "Adds a project layer on top of native DSH Workspace and Session data without migrating existing data. Includes searchable project switching, project creation, organized sessions, pin/favorite/manual sorting, global search, an archive center, light/dark theme support, and native folder picking on supported hosts. Windows Desktop is the primary verified environment; local Web UI uses the host picker with an in-app fallback. Alpha release — compatibility feedback is welcome.",
+  "tags": [
+    "projects",
+    "workspace",
+    "session",
+    "sidebar",
+    "search",
+    "native-picker"
+  ],
+  "package": "dsh-projects"
+}
