@@ -17,10 +17,11 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
   "id": "demo-hello",              // ^[a-z0-9][a-z0-9._-]*$，唯一
   "name": "Demo Hello Skill",
   "type": "bundle",                // bundle = DSH 插件包（dsh plugin add）；pack = skill/preset 扩展包（zip）
-  "package": "dsh-plugin-market",  // bundle 的 npm 包名（自动采集会填；卸载时用）
+  "package": "@ace-zone/dsh-market", // bundle 的 npm 包名（自动采集会填；卸载时用）
   "repo": "losebird/dsh-plugin-market", // owner/name，必填
-  "spec": "github:losebird/dsh-plugin-market#v0.1.0",
-  // bundle: github:<owner>/<repo>[#tag] | git+https://...#tag | npm 包名
+  "spec": "@ace-zone/dsh-market",
+  // bundle 一键安装：npm 包名（无版本 pin）或 https://…tgz  release 资产
+  // bundle 仅展示：github:<owner>/<repo>[#tag]（不可一键安装）
   // pack:   https:// 开头的 zip 下载地址（通常是 release 资产）
   "version": "v0.1.0",
   "author": { "name": "losebird", "url": "https://github.com/losebird" },
@@ -39,8 +40,8 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
   "contents": { "skills": ["demo-hello"], "presets": [] }, // pack 条目声明 zip 内的目录
   "install": {                        // 安装方式（collector 从 README 识别，curated 可显式覆盖）
     "method": "script",               // script | dsh-plugin-add | npm-global | git-clone | desktop | manual | pack
-    "source": "readme",               // readme（项目 README 写明）| pkg（包特征启发式）| curated
-    "os": {                           // method=script 时按系统分命令；DSH 弹窗一键安装按当前系统执行
+    "source": "readme",               // readme（项目 README 写明）| pkg（包特征启发式）| curated | npm
+    "os": {                           // method=script 时按系统分命令；详情页展示用，非一键安装路径
       "darwin": "curl -fsSL https://raw.githubusercontent.com/o/r/main/scripts/install.sh | bash",
       "linux": "curl -fsSL https://raw.githubusercontent.com/o/r/main/scripts/install.sh | bash",
       "win32": "irm https://raw.githubusercontent.com/o/r/main/scripts/install.ps1 | iex"
@@ -51,9 +52,37 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
 }
 ```
 
-`git-clone` 在 DSH 弹窗中全自动执行：克隆 → 装依赖 → 构建 → pack → `dsh plugin --profile web add <本地 tarball>` → 清理临时目录（win32 暂不支持，提示按 README 手动安装）。
+## 一键安装与安全模型
 
-`install.method` 判定规则（`scripts/collect.mjs`）：
+**可一键安装**（`canOneClick`）仅当：
+
+- **bundle**：`verified !== false` 且 `spec` 为 npm 包名或 `https://…tgz` URL（或 `package` 字段为 npm 包名作为兜底）
+- **pack**：`spec` 为 `https://` 开头的 zip URL
+
+`github:` / `git+https` spec 仅用于列表展示与详情链接，**不会**作为 DSH 弹窗的一键安装目标。
+
+**Install API 为 id-only**：客户端只传条目 `id`；宿主从 registry 查条目，自行解析 `spec` 并执行 `dsh plugin add`。客户端不能注入 spec 或 shell 命令。
+
+市场**不会**代作者把插件 republish 到 `@ace-zone`；一键安装使用作者自己的 npm 包名或 release `.tgz` 资产。
+
+不支持 `dangerouslyAllowAllBuilds`、不支持 agent-install（把 INSTALL.md 交给 AI 执行）。
+
+`install.method` 仍可从 README 识别并记录（script / git-clone / manual 等），用于详情页展示；**一键安装按钮只执行** npm / tgz / pack 三条路径。
+
+`git-clone`、脚本安装、npm-global 等 README 方式**不会**在 DSH 弹窗里全自动执行；用户需按 README 或详情页说明自行安装。
+
+## collector 的 spec 选择（`scripts/collect.mjs`）
+
+自动条目在已知 `pkg`、`latest`、`verified`、`install` 后，按顺序选择 `spec`：
+
+1. 复用上一轮且已有 npm 名或 tgz URL → 保留 `prev.spec`
+2. 否则若 `pkg.name` 已在 npm 发布（HEAD `registry.npmjs.org`，8s 超时）→ `spec = pkg.name`（裸名，不 pin 版本）
+3. 否则若最新 release 有 `https://…tgz` 资产 → 使用该 URL
+4. 否则回退 `github:owner/repo#tag` 或 `github:owner/repo`（**不可一键安装**）
+
+若最终 spec 为 npm/tgz 且 `verified` 且 `install.method` 不是 `desktop` / `pack`，collector 将 `install` 设为 `{ method: 'dsh-plugin-add', source: 'npm' }`（覆盖 README 里的 script/git-clone/manual/npm-global，保证一键走 npm）。
+
+`install.method` 判定规则（README 识别，与 spec 独立记录）：
 
 1. 只在 README 的「安装类」章节内识别（install/安装/快速开始/Quick Start 等；`Target installation experience`、Roadmap 等未来/规划标题跳过）。识别顺序：脚本安装（`curl|bash` / `irm|iex`，按 OS 记录）> `dsh plugin add` > `npm -g` > `git clone`。
 2. `dsh plugin add` 仅当 README 给出**可远程安装**的 spec（`github:` / `git+https` / `https` / npm 包名）才采用；本地 tarball（`/path/x.tgz`、`file:`、相对路径）说明项目要求自行构建后本地安装，一律拒绝。
@@ -69,6 +98,8 @@ presets/<id>/agent.cordis.yml   # 一个 preset 一个目录（可选）
 ```
 
 安装时：`skills/<id>/` → `~/.agents/skills/<id>/`，`presets/<id>/` → `~/.dsh/.agent-presets/<id>/`。
+
+**首次安装冲突**：仅当目标目录已存在且**不是**市场托管记录（`~/.dsh/plugin-market/state.json` 中无该 id）时才报冲突；市场已安装过的 pack 可覆盖更新。
 
 ## 功能分类
 

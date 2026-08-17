@@ -4,12 +4,19 @@
 
 ## 路径一：DSH 插件（bundle，推荐）
 
-你的插件 = 一个声明了 `dsh.bundle.patch` 的 npm/git 包（宿主行 + 浏览器行）。参考本仓库根目录的 `dsh-plugin-market` 自身。
+你的插件 = 一个声明了 `dsh.bundle.patch` 的 npm/git 包（宿主行 + 浏览器行）。参考本仓库根目录的 `@ace-zone/dsh-market` 自身。
 
-1. 把你自己的插件仓库推到 GitHub，并发布一个 Release（tag 即版本号）。
+1. 把你自己的插件仓库推到 GitHub，并**发布到 npm**（推荐）或在 GitHub Release 上传 `.tgz` 资产。
 2. 打开市场网站的上传页，填表 → 生成条目 JSON。
 3. 点击「发起 PR」：文件路径 `registry/curated/<你的id>.json`。
-4. 合并后，用户即可在 DSH 弹窗里点安装（等价于 `dsh plugin --profile web add github:<你>/<仓库>#<tag>`）。
+4. 合并后，若 `spec` 为 npm 包名或 `https://…tgz`，用户可在 DSH 弹窗里一键安装（等价于 `dsh plugin --profile web add <spec>`）。
+
+**一键安装要求**：
+
+- `spec` 填**已发布的 npm 包名**（如 `@your-scope/your-plugin`，不要 pin 版本），或
+- `spec` 填 release 上 `.tgz` 资产的 `https://` 下载 URL
+
+`github:owner/repo#tag` 仅作列表展示与仓库链接，**不能**一键安装。市场**不会**把你的包 republish 到 `@ace-zone`；用户安装的是你在 npm 或 release 上发布的包。
 
 > git 托管的插件安装后会跑 prepare 脚本、被 pnpm 拦截。**请把构建产物（lib/ 等）直接提交进仓库**，不要依赖安装时构建，否则用户安装会失败。
 
@@ -28,7 +35,7 @@
 | name | ✅ | 显示名 |
 | type | ✅ | `bundle` 或 `pack` |
 | repo | ✅ | `owner/name` |
-| spec | ✅ | bundle: `github:owner/repo#tag`；pack: `https://…zip` |
+| spec | ✅ | bundle 一键：`npm 包名` 或 `https://…tgz`；bundle 仅展示：`github:owner/repo#tag`；pack：`https://…zip` |
 | description | ✅ | 一句话简介 |
 | longDescription | ⬜ | markdown 详情（网站详情区） |
 | tags | ⬜ | 最多 8 个，避免生态噪声词（dsh、deepseek、claude-code 等会被过滤） |
