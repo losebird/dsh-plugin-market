@@ -6,10 +6,10 @@
       "id": "dsh-plugin-market",
       "name": "DSH 插件市场",
       "type": "bundle",
-      "package": "dsh-plugin-market",
+      "package": "@ace-zone/dsh-market",
       "repo": "losebird/dsh-plugin-market",
       "spec": "@ace-zone/dsh-market",
-      "version": "v0.1.56",
+      "version": "v0.1.57",
       "author": {
         "name": "losebird",
         "url": "https://github.com/losebird"

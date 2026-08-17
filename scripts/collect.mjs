@@ -7,10 +7,12 @@
 // 去重：键 = npm 包名（若有）或规范化 repo URL；curated 覆盖 auto；跨源共享同一候选表
 // 分类：按功能分类器给每个条目打 category（curated 可显式声明），噪声 topic 标签一律过滤
 // 输出：registry/auto.json（纯自动）+ registry/all.json（curated ∪ auto，按 stars 排序）
+// spec 优先 npm（已发布）> release tgz > github:（github: 不可一键安装）；从不把别人的包 republish 到 @ace-zone
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { isNpmName, isTgzUrl, tgzAssetUrl } from '../src/safe-spec.js'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const TOKEN = process.env.GITHUB_TOKEN || ''
@@ -88,6 +90,19 @@ const loadJson = (rel, fallback) => {
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+
+async function isPublishedOnNpm(name) {
+  try {
+    const res = await fetch('https://registry.npmjs.org/' + encodeURIComponent(name), {
+      method: 'HEAD',
+      headers: { 'user-agent': 'dsh-plugin-market-collector' },
+      signal: AbortSignal.timeout(8000),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}
 
 // ── 候选收集（所有来源汇入同一张按 repo 去重的表） ───────────────────────────
 async function collectCandidates() {
@@ -390,7 +405,23 @@ export async function buildEntry(repo, prev) {
     }
   }
 
-  const spec = latest ? 'github:' + repo.full_name + '#' + latest.tag_name : 'github:' + repo.full_name
+  // Collector prefers npm/tgz install specs; never republishes packages to @ace-zone.
+  let spec
+  if (reuse && prev.spec && (isNpmName(prev.spec) || isTgzUrl(prev.spec))) {
+    spec = prev.spec
+  } else if (pkg && pkg.name && await isPublishedOnNpm(pkg.name)) {
+    spec = pkg.name
+  } else {
+    const tgz = tgzAssetUrl(latest)
+    if (tgz) {
+      spec = tgz
+    } else {
+      spec = latest ? 'github:' + repo.full_name + '#' + latest.tag_name : 'github:' + repo.full_name
+    }
+  }
+  if ((isNpmName(spec) || isTgzUrl(spec)) && verified && install.method !== 'desktop' && install.method !== 'pack') {
+    install = { method: 'dsh-plugin-add', source: 'npm' }
+  }
   const owner = repo.full_name.split('/')[0]
   const releasedAt = (latest && latest.published_at) || repo.pushedAt || (reuse && prev.releasedAt) || null
   const entry = {

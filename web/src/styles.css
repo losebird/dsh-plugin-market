@@ -306,21 +306,21 @@ a:hover { text-decoration: underline; }
 .readme-state a { color: var(--accent); }
 .spin { animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.readme { color: var(--text-2); font-size: 13.5px; line-height: 1.7; overflow-wrap: anywhere; }
-.readme h1, .readme h2, .readme h3, .readme h4 { color: var(--text); margin: 16px 0 6px; font-size: 15.5px; line-height: 1.4; }
-.readme h1:first-child, .readme h2:first-child, .readme h3:first-child { margin-top: 0; }
-.readme p { margin: 6px 0; }
-.readme ul, .readme ol { padding-left: 22px; margin: 6px 0; }
-.readme li { margin: 3px 0; }
-.readme code { font-family: var(--font-mono); background: var(--panel-2); padding: 1px 6px; border-radius: 5px; font-size: 12px; color: var(--accent); }
-.readme pre { background: var(--panel-2); padding: 10px 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; }
-.readme pre code { background: none; padding: 0; color: var(--text-2); }
-.readme img { max-width: 100%; border-radius: 8px; }
-.readme a { color: var(--accent); }
-.readme blockquote { border-left: 3px solid var(--border-2); padding-left: 12px; color: var(--text-3); margin: 8px 0; }
-.readme table { border-collapse: collapse; margin: 8px 0; font-size: 12.5px; }
-.readme td, .readme th { border: 1px solid var(--border-2); padding: 4px 10px; }
-.readme hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+.readme-md {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--text-2);
+  overflow-x: auto;
+  max-height: 320px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
 
 /* ── 工作原理 ─────────────────────────────────────── */
 .how { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 48px; padding: 64px 0; border-top: 1px solid var(--border); }

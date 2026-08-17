@@ -3,9 +3,6 @@ import {
   ArrowLeft, CaretRight, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
   GithubLogo, MagnifyingGlass, Moon, Package, Plug, Sparkle, Star, Sun, UploadSimple, UserCircle, Warning, X,
 } from '@phosphor-icons/react'
-import { marked } from 'marked'
-import DOMPurify from 'dompurify'
-
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
 const INSTALL_SPEC = '@ace-zone/dsh-market'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
@@ -43,16 +40,16 @@ const I18N = {
     'toast.repo': '项目地址已复制',
     'copiedModal.title': '安装命令已复制',
     'copiedModal.currentMachine': '本机',
-    'copiedModal.guide1': '在 DSH 内打开侧栏「插件市场」，找到该插件点一键安装（推荐）；',
+    'copiedModal.guide1': '在 DSH 内打开侧栏「插件市场」，找到该插件点一键安装（npm / tgz / zip）；',
     'copiedModal.guide2': '或把命令粘贴到终端直接执行（已在剪贴板）。',
     'copiedModal.gotIt': '知道了', 'copiedModal.viewDetail': '查看详情',
-    'copiedModal.urlGuide1': '该插件未验证，市场不提供一键安装；',
-    'copiedModal.urlGuide2': '打开详情页，把项目地址发给 DSH，让它按仓库说明帮你安装。',
-    'copiedModal.stepsTitle': '安装方式（按项目 README）',
-    'copiedModal.steps1': '① 在 DSH 应用内打开侧栏「插件市场」，找到该插件点「安装」；',
-    'copiedModal.steps2': '② DSH 会阅读项目 README 并自动执行安装；需要你选择或确认时，会在 DSH 对话中弹窗询问；',
-    'copiedModal.steps3': '③ 安装完成后按提示重启 DSH 生效。',
-    'copiedModal.stepsUnverified': '该插件未验证（未声明 dsh.bundle）：DSH 会按 README 尽力安装，若无法挂载会向你说明原因。',
+    'copiedModal.urlGuide1': '该插件不支持一键安装（市场仅支持 npm 包名、https .tgz 或 https zip）；',
+    'copiedModal.urlGuide2': '请打开仓库查看作者 README 并按说明安装，或复制下方命令到终端执行。',
+    'copiedModal.stepsTitle': '安装说明',
+    'copiedModal.steps1': '① 若支持一键安装：在 DSH 侧栏「插件市场」点「安装」（npm 包名、https .tgz 或 https zip）；',
+    'copiedModal.steps2': '② 否则请打开仓库，按 README 手动安装，或复制下方命令到终端执行；',
+    'copiedModal.steps3': '③ bundle 安装后需重启 DSH 生效。',
+    'copiedModal.stepsUnverified': '该插件未验证（未声明 dsh.bundle）：无法一键挂载，请按仓库说明安装。',
     'dir.title': '插件目录', 'dir.count': '{n} 个条目',
     'dir.demo': 'registry 暂不可用，当前展示演示数据。',
     'dir.search': '搜索名称、简介或标签',
@@ -69,24 +66,24 @@ const I18N = {
     'detail.readmeError': '项目 README 加载失败，', 'detail.readmeLink': '去仓库查看',
     'detail.readmeDefault': '默认',
     'detail.copy': '复制', 'detail.copied': '已复制',
-    'detail.bundleNote': '安装方式来自项目 README。在 DSH 应用内打开侧栏「插件市场」弹窗点安装，会自动执行当前系统的命令；安装后重启 DSH 生效。',
+    'detail.bundleNote': '在 DSH 侧栏「插件市场」点安装，将执行 dsh plugin add（仅 npm 包名或 https .tgz 支持一键安装）；安装后重启 DSH 生效。',
     'detail.packDownload': '下载扩展包 zip',
     'detail.packNote': '下载 zip 后在 DSH 插件市场弹窗中选择「从本地导入」，或手动解压到对应目录（skill 放 ~/.agents/skills/，preset 放 ~/.dsh/.agent-presets/）。',
     'detail.repo': '查看仓库', 'detail.unavailable': '该条目仓库已删除或转为私有',
-    'detail.manualNote': '该插件按其仓库说明安装。在 DSH 应用内的插件市场点「交给 DSH 安装」，DSH 会阅读项目 README 自动安装，需要你选择时弹窗询问。',
+    'detail.manualNote': '该插件不支持一键安装。请打开仓库查看作者 README 并按说明安装，或复制下方命令到终端执行。',
     'detail.unverified': '该仓库未声明 dsh.bundle.patch，一键安装不可用（直接 dsh plugin add 只会作为普通依赖安装、不会挂载插件）。请到仓库查看作者提供的手工安装方式。',
     'how.title': '工作原理',
     'how.sub': '没有私有后端。插件数据就是仓库里的 JSON 文件，每天由 GitHub Actions 自动采集、去重、合并，网站与 DSH 弹窗读的是同一份数据。',
     'how.s1t': '作者发布', 'how.s1b': '插件作者在自己的 GitHub 仓库发 Release（bundle 包或 zip 扩展包），构建产物直接提交进仓库，不依赖安装时编译。',
     'how.s2t': 'PR 上架或自动收录', 'how.s2b': '上传页生成条目 JSON，作者向 registry/curated/ 提 PR，合并即上架；仓库打了 topic 的插件也会被每日任务自动收录。',
     'how.s3t': '每日合并去重', 'how.s3b': '采集任务汇总下载量与星标，按包名和仓库去重，curated 条目优先，输出 registry/all.json。',
-    'how.s4t': 'DSH 内一键安装', 'how.s4b': '用户在 DSH 侧栏的插件市场弹窗里点安装，等价执行 dsh plugin --profile web add，重启后生效。',
+    'how.s4t': 'DSH 内一键安装', 'how.s4b': '用户在 DSH 侧栏的插件市场弹窗里点安装。一键安装只接受已发布的 npm 包名或 https .tgz（扩展包为 https zip）；宿主只接收条目 id，从 registry 解析安装源。',
     'submit.back': '返回目录', 'submit.title': '上传插件',
     'submit.sub': '填好表单后点击「发起 PR」，会把条目 JSON 直接带到 GitHub 的新建文件页面。提交后自动跑 schema 校验，合并即上架。详细规范见仓库 docs/SUBMIT.md。',
     'submit.type': '插件类型', 'submit.typeBundle': 'DSH 插件（bundle，走 dsh plugin add）', 'submit.typePack': '扩展包（skill / preset zip）',
     'submit.id': 'id', 'submit.idHint': '全局唯一标识，用于目录与卸载记录。',
     'submit.name': '名称', 'submit.repo': '仓库', 'submit.repoHint': '插件代码所在的 GitHub 仓库。',
-    'submit.spec': '安装源 spec', 'submit.specBundleHint': '带 tag 的 github: 形式最稳，tag 即版本。',
+    'submit.spec': '安装源 spec', 'submit.specBundleHint': '一键安装请填已发布的 npm 包名或 https .tgz；github: 仅作列表展示。',
     'submit.specPackHint': 'GitHub Release 里 zip 资产的下载地址。',
     'submit.package': 'npm 包名', 'submit.packageHint': '卸载时按包名执行 dsh plugin remove，有就填。',
     'submit.version': '版本', 'submit.description': '一句话简介', 'submit.longDesc': '完整介绍',
@@ -115,7 +112,7 @@ const I18N = {
     'faq.q4': '为什么有些插件标着「未验证」？', 'faq.a4a': '它们的仓库没有声明 ', 'faq.a4b': '，直接 dsh plugin add 只会作为普通依赖安装、不会挂载成插件。请参考作者仓库的手工安装说明。',
     'faq.q5': '安装后插件没有生效？', 'faq.a5': 'bundle 类插件安装后需要重启 dsh 才生效；扩展包里的 skill 在新会话可用，preset 需要在新会话的预设列表中选择。',
     'faq.q6': '如何卸载插件？', 'faq.a6a': '在弹窗里点「卸载」，或在终端执行 ', 'faq.a6b': '（包名可在插件详情里查看）。',
-    'faq.q7': '未验证的插件应该怎么安装呢？', 'faq.a7': '点击卡片「详情」，把项目地址发给 dsh，让它帮你安装即可。',
+    'faq.q7': '未验证的插件应该怎么安装呢？', 'faq.a7': '打开「详情」，查看仓库 README 并按作者说明安装；或复制安装命令到终端执行。',
     'links.title': '相关资源', 'links.llm': 'AI 大模型', 'links.agent': 'Agent 平台', 'links.token': 'API 中转',
   },
   en: {
@@ -133,16 +130,16 @@ const I18N = {
     'toast.repo': 'Repo URL copied',
     'copiedModal.title': 'Install command copied',
     'copiedModal.currentMachine': 'this device',
-    'copiedModal.guide1': 'In DSH, open the Plugin Market and click install on this plugin (recommended);',
+    'copiedModal.guide1': 'In DSH, open the Plugin Market and click install (npm name, https .tgz, or https zip);',
     'copiedModal.guide2': 'or paste the command into your terminal (already on your clipboard).',
     'copiedModal.gotIt': 'Got it', 'copiedModal.viewDetail': 'View details',
-    'copiedModal.urlGuide1': 'This plugin is unverified, so one-click install is unavailable;',
-    'copiedModal.urlGuide2': 'Open the details and send the project URL to DSH to install it per the repo instructions.',
-    'copiedModal.stepsTitle': 'Install method (from the project README)',
-    'copiedModal.steps1': '1. In DSH, open the Plugin Market and click Install on this plugin;',
-    'copiedModal.steps2': '2. DSH reads the project README and installs automatically; when your choice is needed, it asks you in the DSH conversation;',
-    'copiedModal.steps3': '3. Restart DSH after the install as prompted.',
-    'copiedModal.stepsUnverified': 'This plugin is unverified (no dsh.bundle): DSH will try its best per the README and explain if it cannot be mounted.',
+    'copiedModal.urlGuide1': 'One-click install is unavailable (the market only supports npm package names, https .tgz, or https zip).',
+    'copiedModal.urlGuide2': 'Open the repo and follow the author\'s README, or paste the command below into your terminal.',
+    'copiedModal.stepsTitle': 'Install notes',
+    'copiedModal.steps1': '1. If one-click is supported: open the Plugin Market in DSH and click Install (npm name, https .tgz, or https zip).',
+    'copiedModal.steps2': '2. Otherwise open the repo, install manually per the README, or paste the command below into your terminal.',
+    'copiedModal.steps3': '3. Restart DSH after installing a bundle.',
+    'copiedModal.stepsUnverified': 'This plugin is unverified (no dsh.bundle): it cannot be mounted via one-click. Follow the repo instructions.',
     'dir.title': 'Plugin Directory', 'dir.count': '{n} entries',
     'dir.demo': 'Registry unavailable, showing demo data.',
     'dir.search': 'Search name, description or tags',
@@ -159,24 +156,24 @@ const I18N = {
     'detail.readmeError': 'Failed to load README. ', 'detail.readmeLink': 'View on GitHub',
     'detail.readmeDefault': 'Default',
     'detail.copy': 'Copy', 'detail.copied': 'Copied',
-    'detail.bundleNote': 'Install steps come from the project README. In DSH, open the Plugin Market modal and click install — it runs the command for your current OS. Restart DSH to take effect.',
+    'detail.bundleNote': 'In DSH, open the Plugin Market and click install to run dsh plugin add (one-click only for npm names or https .tgz). Restart DSH to take effect.',
     'detail.packDownload': 'Download pack zip',
     'detail.packNote': 'Download the zip, then import it from the DSH Plugin Market modal, or extract manually (skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/).',
     'detail.repo': 'View repo', 'detail.unavailable': 'This repo has been deleted or made private',
-    'detail.manualNote': 'This plugin installs per its repo instructions. In DSH, open the Plugin Market and click "Let DSH install" — DSH reads the project README and installs automatically, asking you when a choice is needed.',
+    'detail.manualNote': 'One-click install is not available for this plugin. Open the repo and follow the author\'s README, or paste the command below into your terminal.',
     'detail.unverified': 'This repo does not declare dsh.bundle.patch, so one-click install is unavailable (dsh plugin add would only add it as a plain dependency). Check the repo for the author\'s manual install steps.',
     'how.title': 'How it works',
     'how.sub': 'No private backend. Plugin data is just JSON files in the repo, collected, deduplicated and merged by GitHub Actions daily. The website and the DSH modal read the same data.',
     'how.s1t': 'Authors publish', 'how.s1b': 'Authors cut a Release in their GitHub repo (bundle package or zip pack) and commit build artifacts instead of relying on install-time builds.',
     'how.s2t': 'PR or auto-collection', 'how.s2b': 'The submit page generates the entry JSON; authors PR it into registry/curated/. Repos tagged with the topic are also picked up by the daily job.',
     'how.s3t': 'Daily merge & dedup', 'how.s3b': 'The collector aggregates downloads and stars, dedups by package name and repo, prefers curated entries, and writes registry/all.json.',
-    'how.s4t': 'One-click install in DSH', 'how.s4b': 'Users click install in the DSH sidebar modal, which runs dsh plugin --profile web add. Restart to activate.',
+    'how.s4t': 'One-click install in DSH', 'how.s4b': 'Users click install in the DSH sidebar modal. One-click accepts a published npm name or https .tgz (packs: https zip). The host takes only the entry id and resolves the spec from the registry.',
     'submit.back': 'Back to directory', 'submit.title': 'Submit a plugin',
     'submit.sub': 'Fill the form and click Submit PR to carry the entry JSON straight into a GitHub new-file page. Schema validation runs automatically on the PR; merge to publish. See docs/SUBMIT.md for the spec.',
     'submit.type': 'Type', 'submit.typeBundle': 'DSH plugin (bundle, via dsh plugin add)', 'submit.typePack': 'Pack (skill / preset zip)',
     'submit.id': 'id', 'submit.idHint': 'Globally unique id used for the directory and uninstall bookkeeping.',
     'submit.name': 'Name', 'submit.repo': 'Repo', 'submit.repoHint': 'The GitHub repo hosting the plugin code.',
-    'submit.spec': 'Install spec', 'submit.specBundleHint': 'A tagged github: spec is the most stable; the tag is the version.',
+    'submit.spec': 'Install spec', 'submit.specBundleHint': 'For one-click, use a published npm name or https .tgz. github: is listing-only.',
     'submit.specPackHint': 'Download URL of the zip asset in a GitHub Release.',
     'submit.package': 'npm package name', 'submit.packageHint': 'Used for dsh plugin remove. Fill it in when you have one.',
     'submit.version': 'Version', 'submit.description': 'Short description', 'submit.longDesc': 'Full description',
@@ -205,7 +202,7 @@ const I18N = {
     'faq.q4': 'Why are some plugins marked Unverified?', 'faq.a4a': 'Their repos do not declare ', 'faq.a4b': ', so dsh plugin add would only add them as plain dependencies without mounting. Check the repo for manual install steps.',
     'faq.q5': 'Installed but not taking effect?', 'faq.a5': 'Bundle plugins require a dsh restart. Skills from packs are available in new sessions; presets must be selected in a new session\'s preset list.',
     'faq.q6': 'How do I uninstall?', 'faq.a6a': 'Click Uninstall in the modal, or run ', 'faq.a6b': ' (find the package name in the plugin detail).',
-    'faq.q7': 'How do I install an Unverified plugin?', 'faq.a7': 'Open Details, send the project URL to dsh, and ask it to install for you.',
+    'faq.q7': 'How do I install an Unverified plugin?', 'faq.a7': 'Open Details, check the repo README and install per the author\'s instructions, or copy the install command to your terminal.',
     'links.title': 'Related', 'links.llm': 'LLMs', 'links.agent': 'Agent', 'links.token': 'API Relays',
   },
 }
@@ -258,6 +255,34 @@ function fmtNum(n) {
 
 const OS_KEYS = ['darwin', 'linux', 'win32']
 const osName = (k) => ({ darwin: 'macOS', linux: 'Linux', win32: 'Windows' }[k] || k)
+
+const NPM_NAME_RE = /^(?:@[a-z0-9._-]+\/)?[a-z0-9._-]+(?:@[0-9][a-z0-9._-]*)?$/i
+const TGZ_URL_RE = /^https:\/\/[^\s'"]+\.tgz$/i
+const PACK_URL_RE = /^https:\/\/[^\s'"]+$/i
+
+function isNpmName(spec) {
+  if (typeof spec !== 'string' || spec.length === 0 || spec.length > 214) return false
+  if (/[\s'"\\]/.test(spec)) return false
+  if (/^(github:|git\+|https?:|file:)/i.test(spec)) return false
+  return NPM_NAME_RE.test(spec)
+}
+function isTgzUrl(spec) {
+  return typeof spec === 'string' && spec.length < 2000 && TGZ_URL_RE.test(spec)
+}
+function isPackUrl(spec) {
+  return typeof spec === 'string' && spec.length < 2000 && PACK_URL_RE.test(spec)
+}
+function isSafeBundleSpec(spec) {
+  return isNpmName(spec) || isTgzUrl(spec)
+}
+function canOneClick(item) {
+  if (!item || item.status === 'unavailable') return false
+  if (item.type === 'pack') return isPackUrl(item.spec)
+  if (item.verified === false) return false
+  if (isSafeBundleSpec(item.spec)) return true
+  if (isNpmName(item.package)) return true
+  return false
+}
 
 // 详情页可切换的 README 语言变体
 const README_VARIANTS = [
@@ -404,21 +429,12 @@ function DetailModal({ item, onClose, onToast }) {
     setReadme({ status: 'loading' })
     readmeCache.current = {}
     const base = 'https://raw.githubusercontent.com/' + item.repo + '/HEAD/'
-    const renderHtml = (text) => {
-      const renderer = new marked.Renderer()
-      renderer.image = ({ href, title, text: alt }) => {
-        const src = /^https?:/i.test(href || '') ? href : base + (href || '').replace(/^\.\//, '')
-        return '<img src="' + src + '" alt="' + (alt || '') + '"' + (title ? ' title="' + title + '"' : '') + ' loading="lazy">'
-      }
-      return DOMPurify.sanitize(marked.parse(text, { renderer }))
-    }
     fetch(base + 'README.md')
       .then((res) => { if (!res.ok) throw new Error(String(res.status)); return res.text() })
       .then((text) => {
         if (!alive) return
-        const html = renderHtml(text)
-        readmeCache.current['README.md'] = html
-        setReadme({ status: 'ready', html })
+        readmeCache.current['README.md'] = text
+        setReadme({ status: 'ready', text })
       })
       .catch(() => { if (alive) setReadme({ status: 'error' }) })
     // 探测多语言 README 变体（HEAD 优先，CORS 拒绝时退回 GET 探测）
@@ -445,20 +461,14 @@ function DetailModal({ item, onClose, onToast }) {
 
   const selectVariant = (f) => {
     setVariant(f)
-    if (readmeCache.current[f]) { setReadme({ status: 'ready', html: readmeCache.current[f] }); return }
+    if (readmeCache.current[f]) { setReadme({ status: 'ready', text: readmeCache.current[f] }); return }
     setReadme({ status: 'loading' })
     const base = 'https://raw.githubusercontent.com/' + item.repo + '/HEAD/'
     fetch(base + f)
       .then((res) => { if (!res.ok) throw new Error(String(res.status)); return res.text() })
       .then((text) => {
-        const renderer = new marked.Renderer()
-        renderer.image = ({ href, title, text: alt }) => {
-          const src = /^https?:/i.test(href || '') ? href : base + (href || '').replace(/^\.\//, '')
-          return '<img src="' + src + '" alt="' + (alt || '') + '"' + (title ? ' title="' + title + '"' : '') + ' loading="lazy">'
-        }
-        const html = DOMPurify.sanitize(marked.parse(text, { renderer }))
-        readmeCache.current[f] = html
-        setReadme({ status: 'ready', html })
+        readmeCache.current[f] = text
+        setReadme({ status: 'ready', text })
       })
       .catch(() => setReadme({ status: 'error' }))
   }
@@ -506,7 +516,7 @@ function DetailModal({ item, onClose, onToast }) {
                 <a href={'https://github.com/' + item.repo} target="_blank" rel="noreferrer">{t('detail.readmeLink')}</a>
               </div>
             )}
-            {readme.status === 'ready' && <div className="readme" dangerouslySetInnerHTML={{ __html: readme.html }} />}
+            {readme.status === 'ready' && <pre className="readme-md">{readme.text}</pre>}
           </>
         )}
         {item.type === 'bundle' && item.install && (item.install.method === 'manual' || item.install.method === 'desktop' || item.install.method === 'git-clone') ? (
@@ -526,7 +536,7 @@ function DetailModal({ item, onClose, onToast }) {
               <code>{shownCmd}</code>
               <button className="btn btn-primary btn-sm" onClick={doCopy}>{copied ? t('detail.copied') : t('detail.copy')}</button>
             </div>
-            <p className="card-desc">{t('detail.bundleNote')}</p>
+            <p className="card-desc">{canOneClick(item) ? t('detail.bundleNote') : t('detail.manualNote')}</p>
           </>
         ) : (
           <>
@@ -677,8 +687,8 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
     let v = 0
     let u = 0
     for (const it of items) {
-      if (it.verified === false) u++
-      else v++
+      if (canOneClick(it)) v++
+      else u++
     }
     const curated = items.filter((it) => it.source === 'curated').length
     const withDate = items.filter((it) => it.releasedAt).length
@@ -698,7 +708,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
     if (group === 'handmade') {
       return items.filter((it) => it.source === 'curated').sort((a, b) => (b.stars || 0) - (a.stars || 0))
     }
-    const list = items.filter((it) => (group === 'unverified' ? it.verified === false : it.verified !== false))
+    const list = items.filter((it) => (group === 'unverified' ? !canOneClick(it) : canOneClick(it)))
     return [...list].sort((a, b) => {
       if (sort === 'downloads') return (b.downloads || 0) - (a.downloads || 0)
       if (sort === 'name') return (a.name || '').localeCompare(b.name || '')
