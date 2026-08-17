@@ -1,6 +1,6 @@
 {
   "name": "@ace-zone/dsh-market",
-  "version": "0.1.56",
+  "version": "0.1.59",
   "description": "DSH 社区插件市场：设置内「插件市场」入口 + 卡片弹窗 + 一键安装/卸载/管理（bundle 走 dsh plugin add，pack 走 zip 落盘）",
   "type": "module",
   "main": "src/host.js",

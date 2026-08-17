@@ -5,6 +5,7 @@ import {
 } from '@phosphor-icons/react'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
+import { cardKey, collapsePackageOwnerDuplicates } from '../../scripts/collapse-package-owner.mjs'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
 const INSTALL_SPEC = '@ace-zone/dsh-market'
@@ -802,7 +803,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
           </div>
         ) : (
           <>
-            <div className="grid">{pageItems.map((it) => <Card key={it.id} item={it} onOpen={onOpenDetail} onToast={onToast} onShowCopied={onShowCopied} />)}</div>
+            <div className="grid">{pageItems.map((it) => <Card key={cardKey(it)} item={it} onOpen={onOpenDetail} onToast={onToast} onShowCopied={onShowCopied} />)}</div>
             <Pager page={safePage} total={totalPages} onChange={setPage} />
           </>
         )}
@@ -1130,6 +1131,8 @@ export default function App() {
     return s
   }, [lang])
 
+  const catalogItems = useMemo(() => collapsePackageOwnerDuplicates(items, { preferCurated: true }), [items])
+
   const goSubmit = () => setView('submit')
   const goHome = () => setView('home')
 
@@ -1167,7 +1170,7 @@ export default function App() {
       </nav>
       <main id="top">
         {view === 'home' ? (
-          <Home items={items} status={status} onGoSubmit={goSubmit} onOpenDetail={setDetail} onToast={showToast}
+          <Home items={catalogItems} status={status} onGoSubmit={goSubmit} onOpenDetail={setDetail} onToast={showToast}
             onShowCopied={(item, cmds, url, steps) => setCopiedInfo({ item, cmds, url, steps })} />
         ) : (
           <SubmitPage onBack={goHome} />

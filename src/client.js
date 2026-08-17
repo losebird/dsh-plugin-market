@@ -559,6 +559,91 @@ window.__ModuleLoader__.load({
         }
       }
 
+      function ownerOf(item) {
+        const owner = String(item && item.repo ? item.repo : '').split('/')[0]
+        return owner ? owner.toLowerCase() : ''
+      }
+      function packageOwnerKey(item) {
+        const pkg = item && item.package ? String(item.package).toLowerCase() : ''
+        const owner = ownerOf(item)
+        if (!pkg || !owner) return null
+        return pkg + '\0' + owner
+      }
+      function cardKey(item) {
+        return (item && (item.repo || item.package || item.id)) || ''
+      }
+      function versionTuple(v) {
+        const m = String(v || '').match(/(\d+)\.(\d+)(?:\.(\d+))?/)
+        if (!m) return null
+        return [Number(m[1]), Number(m[2]), Number(m[3] || 0)]
+      }
+      function compareVersion(a, b) {
+        const ta = versionTuple(a)
+        const tb = versionTuple(b)
+        if (!ta && !tb) return 0
+        if (!ta) return -1
+        if (!tb) return 1
+        for (let i = 0; i < 3; i++) { if (ta[i] !== tb[i]) return ta[i] - tb[i] }
+        return 0
+      }
+      function compareReleasedAt(a, b) {
+        const da = Date.parse(a || '')
+        const db = Date.parse(b || '')
+        const aOk = Number.isFinite(da)
+        const bOk = Number.isFinite(db)
+        if (!aOk && !bOk) return 0
+        if (!aOk) return -1
+        if (!bOk) return 1
+        return da - db
+      }
+      function repoMatchScore(item) {
+        const repo = String(item && item.repo || '').split('/')[1] || ''
+        const repoL = repo.toLowerCase()
+        const pkg = String(item && item.package || '')
+        const pkgL = (pkg.includes('/') ? pkg.slice(pkg.lastIndexOf('/') + 1) : pkg).toLowerCase()
+        if (!repoL || !pkgL) return 0
+        if (repoL === pkgL) return 3
+        const strip = (s) => s.replace(/[-_.]/g, '')
+        if (strip(repoL) === strip(pkgL)) return 2
+        if (repoL.includes(pkgL) || pkgL.includes(repoL)) return 1
+        return 0
+      }
+      function isBetterDuplicate(candidate, current, preferCurated) {
+        if (preferCurated) {
+          const aCur = candidate && candidate.source === 'curated'
+          const bCur = current && current.source === 'curated'
+          if (aCur !== bCur) return aCur
+        }
+        const stars = (candidate.stars || 0) - (current.stars || 0)
+        if (stars !== 0) return stars > 0
+        const ver = compareVersion(candidate.version, current.version)
+        if (ver !== 0) return ver > 0
+        const released = compareReleasedAt(candidate.releasedAt, current.releasedAt)
+        if (released !== 0) return released > 0
+        const match = repoMatchScore(candidate) - repoMatchScore(current)
+        if (match !== 0) return match > 0
+        return false
+      }
+      function collapsePackageOwnerDuplicates(items, options) {
+        options = options || {}
+        const preferCurated = !!options.preferCurated
+        if (!Array.isArray(items)) return []
+        if (items.length < 2) return items.slice()
+        const winnerIdx = new Map()
+        for (let i = 0; i < items.length; i++) {
+          const key = packageOwnerKey(items[i])
+          if (!key) continue
+          if (!winnerIdx.has(key)) { winnerIdx.set(key, i); continue }
+          const j = winnerIdx.get(key)
+          if (isBetterDuplicate(items[i], items[j], preferCurated)) winnerIdx.set(key, i)
+        }
+        const keep = new Set(winnerIdx.values())
+        return items.filter((it, i) => {
+          const key = packageOwnerKey(it)
+          return !key || keep.has(i)
+        })
+      }
+
       const fmtNum = (n) => {
         if (typeof n !== 'number') return '0'
         if (n >= 1000000) return (n / 1000000).toFixed(1) + 'm'
@@ -572,7 +657,7 @@ window.__ModuleLoader__.load({
         const busy = st.busy && st.busy[item.id]
         const unavailable = item.status === 'unavailable'
         const upToDate = isUpToDate(item, installed)
-        return h('div', { className: 'dshm-card', key: item.id },
+        return h('div', { className: 'dshm-card', key: cardKey(item) },
           h('div', { className: 'dshm-card-top' },
             h('div', { className: 'dshm-card-name' }, shortName(item.name)),
             h('div', { className: 'dshm-card-badges' },
@@ -956,15 +1041,16 @@ window.__ModuleLoader__.load({
           if (!st.open) return jobOverlay
           const normSearch = (s) => String(s || '').toLowerCase().replace(/_/g, '-')
           const qv = normSearch((st.q || '').trim())
-          let base = st.items
+          const catalog = collapsePackageOwnerDuplicates(st.items, { preferCurated: true })
+          let base = catalog
           if (st.group === 'featured') {
-            base = [...st.items].sort((a, b) => (b.stars || 0) - (a.stars || 0)).slice(0, 100)
+            base = [...catalog].sort((a, b) => (b.stars || 0) - (a.stars || 0)).slice(0, 100)
           } else if (st.group === 'new') {
-            base = st.items.filter((it) => it.releasedAt).sort((a, b) => String(b.releasedAt).localeCompare(String(a.releasedAt))).slice(0, 200)
+            base = catalog.filter((it) => it.releasedAt).sort((a, b) => String(b.releasedAt).localeCompare(String(a.releasedAt))).slice(0, 200)
           } else if (st.group === 'handmade') {
-            base = st.items.filter((it) => it.source === 'curated').sort((a, b) => (b.stars || 0) - (a.stars || 0))
+            base = catalog.filter((it) => it.source === 'curated').sort((a, b) => (b.stars || 0) - (a.stars || 0))
           } else {
-            base = st.items.filter((it) => (st.group === 'unverified' ? it.verified === false : it.verified !== false))
+            base = catalog.filter((it) => (st.group === 'unverified' ? it.verified === false : it.verified !== false))
           }
           const catCounts = new Map()
           for (const it of base) {
@@ -983,16 +1069,16 @@ window.__ModuleLoader__.load({
           const pageItems = filtered.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE)
           let vCount = 0
           let uCount = 0
-          for (const it of st.items) { if (it.verified === false) uCount++; else vCount++ }
-          const fCount = Math.min(100, st.items.length)
-          const nCount = st.items.filter((it) => it.releasedAt).length
-          const hCount = st.items.filter((it) => it.source === 'curated').length
+          for (const it of catalog) { if (it.verified === false) uCount++; else vCount++ }
+          const fCount = Math.min(100, catalog.length)
+          const nCount = catalog.filter((it) => it.releasedAt).length
+          const hCount = catalog.filter((it) => it.source === 'curated').length
 
           const body = st.detail
             ? DetailView(st)
             : h('div', { className: 'dshm-root' },
                 h('div', { className: 'dshm-viewseg' },
-                  h('button', { className: 'dshm-viewbtn' + (st.view === 'market' ? ' on' : ''), onClick: () => patch({ view: 'market', detail: null }) }, t('viewMarket') + ' ' + st.items.length),
+                  h('button', { className: 'dshm-viewbtn' + (st.view === 'market' ? ' on' : ''), onClick: () => patch({ view: 'market', detail: null }) }, t('viewMarket') + ' ' + catalog.length),
                   h('button', {
                     className: 'dshm-viewbtn' + (st.view === 'manage' ? ' on' : ''),
                     onClick: () => { patch({ view: 'manage' }); loadInstalled() },
