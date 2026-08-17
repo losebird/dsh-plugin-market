@@ -8,7 +8,7 @@ import DOMPurify from 'dompurify'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
 const INSTALL_SPEC = '@ace-zone/dsh-market'
-const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main'
+const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main/registry/curated'
 const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
 const PAGE_SIZE = 24
@@ -78,16 +78,16 @@ const I18N = {
     'how.title': '工作原理',
     'how.sub': '没有私有后端。插件数据就是仓库里的 JSON 文件，每天由 GitHub Actions 自动采集、去重、合并，网站与 DSH 弹窗读的是同一份数据。',
     'how.s1t': '作者发布', 'how.s1b': '插件作者在自己的 GitHub 仓库发 Release（bundle 包或 zip 扩展包），构建产物直接提交进仓库，不依赖安装时编译。',
-    'how.s2t': 'PR 上架或自动收录', 'how.s2b': '上传页生成条目 JSON，作者向 registry/curated/ 提 PR，合并即上架；仓库打了 topic 的插件也会被每日任务自动收录。',
+    'how.s2t': 'PR 上架或自动收录', 'how.s2b': '上传页生成条目 JSON，作者向 registry/curated/ 提 PR；合并后由 collect 并入 all.json 上架。打了 topic 的仓库也会被每日任务自动收录。',
     'how.s3t': '每日合并去重', 'how.s3b': '采集任务汇总下载量与星标，按包名和仓库去重，curated 条目优先，输出 registry/all.json。',
     'how.s4t': 'DSH 内一键安装', 'how.s4b': '用户在 DSH 侧栏的插件市场弹窗里点安装，等价执行 dsh plugin --profile web add，重启后生效。',
     'submit.back': '返回目录', 'submit.title': '上传插件',
-    'submit.sub': '填好表单后点击「发起 PR」，会把条目 JSON 直接带到 GitHub 的新建文件页面。提交后自动跑 schema 校验，合并即上架。详细规范见仓库 docs/SUBMIT.md。',
+    'submit.sub': '填好表单后点击「发起 PR」，会把条目 JSON 带到 GitHub 的新建文件页（registry/curated/<id>.json）。校验通过并合并后，collect 会读取该文件并入 registry/all.json，网站与 DSH 即可看到。详细规范见仓库 docs/SUBMIT.md。',
     'submit.type': '插件类型', 'submit.typeBundle': 'DSH 插件（bundle，走 dsh plugin add）', 'submit.typePack': '扩展包（skill / preset zip）',
     'submit.id': 'id', 'submit.idHint': '全局唯一标识，用于目录与卸载记录。',
     'submit.name': '名称', 'submit.repo': '仓库', 'submit.repoHint': '插件代码所在的 GitHub 仓库。',
-    'submit.spec': '安装源 spec', 'submit.specBundleHint': '带 tag 的 github: 形式最稳，tag 即版本。',
-    'submit.specPackHint': 'GitHub Release 里 zip 资产的下载地址。',
+    'submit.spec': '安装源 spec',     'submit.specBundleHint': '已发布的 npm 包名，或 GitHub Release 的 https://…tgz。',
+    'submit.specPackHint': 'GitHub Release 里 zip 资产的下载地址（https://…zip）。',
     'submit.package': 'npm 包名', 'submit.packageHint': '卸载时按包名执行 dsh plugin remove，有就填。',
     'submit.version': '版本', 'submit.description': '一句话简介', 'submit.longDesc': '完整介绍',
     'submit.longDescPh': '支持 markdown 的详细介绍，显示在详情弹窗',
@@ -104,7 +104,7 @@ const I18N = {
     'submit.preview': '预览',
     'err.id': '小写字母、数字、点、下划线、连字符，字母或数字开头', 'err.name': '必填',
     'err.repo': 'owner/name 形式',
-    'err.specBundle': 'github:owner/repo#tag、git+https://…#tag 或 npm 包名', 'err.specPack': 'https:// 开头的 zip 下载地址',
+    'err.specBundle': '已发布的 npm 包名或 https://…tgz', 'err.specPack': 'https:// 开头的 zip 下载地址',
     'err.desc': '必填', 'err.license': '必填', 'err.author': '必填', 'err.authorUrl': '以 https:// 开头',
     'footer.data': '数据源 github.com/{repo}，每日自动采集，全部可审计',
     'footer.install': '安装请在 DSH 应用内「插件市场」弹窗中完成',
@@ -168,16 +168,16 @@ const I18N = {
     'how.title': 'How it works',
     'how.sub': 'No private backend. Plugin data is just JSON files in the repo, collected, deduplicated and merged by GitHub Actions daily. The website and the DSH modal read the same data.',
     'how.s1t': 'Authors publish', 'how.s1b': 'Authors cut a Release in their GitHub repo (bundle package or zip pack) and commit build artifacts instead of relying on install-time builds.',
-    'how.s2t': 'PR or auto-collection', 'how.s2b': 'The submit page generates the entry JSON; authors PR it into registry/curated/. Repos tagged with the topic are also picked up by the daily job.',
+    'how.s2t': 'PR or auto-collection', 'how.s2b': 'The submit page generates the entry JSON; authors PR it into registry/curated/. After merge, collect writes it into all.json. Topic-tagged repos are also picked up daily.',
     'how.s3t': 'Daily merge & dedup', 'how.s3b': 'The collector aggregates downloads and stars, dedups by package name and repo, prefers curated entries, and writes registry/all.json.',
     'how.s4t': 'One-click install in DSH', 'how.s4b': 'Users click install in the DSH sidebar modal, which runs dsh plugin --profile web add. Restart to activate.',
     'submit.back': 'Back to directory', 'submit.title': 'Submit a plugin',
-    'submit.sub': 'Fill the form and click Submit PR to carry the entry JSON straight into a GitHub new-file page. Schema validation runs automatically on the PR; merge to publish. See docs/SUBMIT.md for the spec.',
+    'submit.sub': 'Fill the form and click Submit PR to open a GitHub new-file page at registry/curated/<id>.json. After the PR is merged, collect reads that file into registry/all.json for the site and DSH. See docs/SUBMIT.md.',
     'submit.type': 'Type', 'submit.typeBundle': 'DSH plugin (bundle, via dsh plugin add)', 'submit.typePack': 'Pack (skill / preset zip)',
     'submit.id': 'id', 'submit.idHint': 'Globally unique id used for the directory and uninstall bookkeeping.',
     'submit.name': 'Name', 'submit.repo': 'Repo', 'submit.repoHint': 'The GitHub repo hosting the plugin code.',
-    'submit.spec': 'Install spec', 'submit.specBundleHint': 'A tagged github: spec is the most stable; the tag is the version.',
-    'submit.specPackHint': 'Download URL of the zip asset in a GitHub Release.',
+    'submit.spec': 'Install spec',     'submit.specBundleHint': 'A published npm package name, or an https://…tgz release asset.',
+    'submit.specPackHint': 'Download URL of the zip asset in a GitHub Release (https://…zip).',
     'submit.package': 'npm package name', 'submit.packageHint': 'Used for dsh plugin remove. Fill it in when you have one.',
     'submit.version': 'Version', 'submit.description': 'Short description', 'submit.longDesc': 'Full description',
     'submit.longDescPh': 'Markdown details shown in the detail modal',
@@ -194,7 +194,7 @@ const I18N = {
     'submit.preview': 'Preview',
     'err.id': 'Lowercase letters, digits, dots, underscores, hyphens; must start with a letter or digit', 'err.name': 'Required',
     'err.repo': 'owner/name form',
-    'err.specBundle': 'github:owner/repo#tag, git+https://…#tag, or an npm package name', 'err.specPack': 'An https:// zip download URL',
+    'err.specBundle': 'A published npm package name or an https://…tgz URL', 'err.specPack': 'An https:// zip download URL',
     'err.desc': 'Required', 'err.license': 'Required', 'err.author': 'Required', 'err.authorUrl': 'Must start with https://',
     'footer.data': 'Data source github.com/{repo}, collected daily, fully auditable',
     'footer.install': 'Install from the Plugin Market modal inside DSH',
@@ -889,8 +889,8 @@ function LinksSection() {
 
 /* ── 上传页 ───────────────────────────────────────── */
 const ID_RE = /^[a-z0-9][a-z0-9._-]*$/
-const BUNDLE_SPEC_RE = /^(github:|git\+)[^\s"']+(#[^\s"']+)?$|^@?[\w.-]+\/[\w.-]+$|^[\w@.-]+$/
-const PACK_SPEC_RE = /^https:\/\/[^\s"']+$/
+const BUNDLE_SPEC_RE = /^(github:|git\+)[^\s"']+(#[^\s"']+)?$|^https:\/\/[^\s"']+\.(?:tgz|tar\.gz)(?:[?#][^\s"']*)?$|^@?[\w.-]+\/[\w.-]+$|^[\w@.-]+$/i
+const PACK_SPEC_RE = /^https:\/\/[^\s"']+\.zip(?:[?#][^\s"']*)?$/i
 
 function SubmitPage({ onBack }) {
   const { t } = useLang()
@@ -921,6 +921,7 @@ function SubmitPage({ onBack }) {
       const presets = form.presets.split(/[,，]/).map((x) => x.trim()).filter(Boolean)
       if (skills.length || presets.length) e.contents = { skills, presets }
     }
+    e.source = 'curated'
     return e
   }, [form])
 
@@ -941,7 +942,7 @@ function SubmitPage({ onBack }) {
   }
 
   const prUrl = () => {
-    const filename = 'registry/curated/' + (form.id || 'plugin') + '.json'
+    const filename = (form.id || 'plugin') + '.json'
     const value = JSON.stringify(entry, null, 2)
     return PR_FILE_BASE + '?filename=' + encodeURIComponent(filename) + '&value=' + encodeURIComponent(value)
   }
@@ -993,7 +994,7 @@ function SubmitPage({ onBack }) {
           </div>
           <div className="field">
             <label>{t('submit.spec')} <span className="req">*</span></label>
-            <input value={form.spec} onChange={set('spec')} placeholder={form.type === 'bundle' ? 'github:losebird/dsh-plugin-stock#v0.1.5' : 'https://github.com/owner/repo/releases/download/tag/pkg.zip'} />
+            <input value={form.spec} onChange={set('spec')} placeholder={form.type === 'bundle' ? '@ace-zone/example' : 'https://github.com/owner/repo/releases/download/tag/pkg.zip'} />
             <div className="hint">{form.type === 'bundle' ? t('submit.specBundleHint') : t('submit.specPackHint')}</div>
             {errors.spec && <div className="err">{errors.spec}</div>}
           </div>

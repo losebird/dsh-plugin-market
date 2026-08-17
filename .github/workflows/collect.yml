@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '17 2 * * *' # 每日 UTC 02:17 自动采集
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'registry/curated/**'
+      - 'registry/index.json'
+      - 'registry/blocklist.json'
 
 permissions:
   contents: write
