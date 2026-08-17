@@ -49,8 +49,6 @@ window.__ModuleLoader__.load({
         installGuide: '安装说明', manualNote: '该插件按项目 README 安装：点「安装」后由 DSH 自动执行，需要你选择时会在 DSH 对话中询问。', migrate: '迁移到 web',
         restartNote: '禁用/启用/删除在重启 dsh 后生效。',
         officialInstall: '官方安装方式（来自项目 README）',
-        scriptNote: '一键安装将执行当前系统对应的官方脚本。',
-        cloneNote: '一键安装将自动克隆、构建并安装到 web profile（需数分钟）。',
         installNow: '一键安装', currentOs: '当前系统',
         jobTitle: '安装进度', jobRunning: '正在安装…', jobDone: '安装完成', jobFailed: '安装失败',
         jobTitleUninstall: '卸载进度', jobRunningUninstall: '正在卸载…', jobDoneUninstall: '卸载完成', jobFailedUninstall: '卸载失败',
@@ -91,8 +89,6 @@ window.__ModuleLoader__.load({
         installGuide: 'Install guide', manualNote: 'This plugin installs per its README: clicking Install hands it to DSH, which asks you in the conversation when a choice is needed.', migrate: 'Migrate to web',
         restartNote: 'Disable / enable / remove take effect after restarting dsh.',
         officialInstall: 'Official install (from the project README)',
-        scriptNote: 'One-click install runs the official script for your current OS.',
-        cloneNote: 'One-click install clones, builds and installs into the web profile automatically (takes a few minutes).',
         installNow: 'Install now', currentOs: 'current OS',
         jobTitle: 'Install progress', jobRunning: 'Installing…', jobDone: 'Install complete', jobFailed: 'Install failed',
         jobTitleUninstall: 'Uninstall progress', jobRunningUninstall: 'Uninstalling…', jobDoneUninstall: 'Uninstall complete', jobFailedUninstall: 'Uninstall failed',
@@ -838,7 +834,7 @@ window.__ModuleLoader__.load({
         }
         if (pres.kind === 'app') {
           return h('div', { className: 'dshm-installpanel' },
-            h('div', { className: 'dshm-install-title' }, t('officialInstall')),
+            h('div', { className: 'dshm-install-title' }, t('officialDownload')),
             pres.downloadUrl
               ? h('a', { className: 'dshm-btn dshm-btn-ghost', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('officialDownload'))
               : null,

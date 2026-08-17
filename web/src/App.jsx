@@ -8,7 +8,7 @@ import DOMPurify from 'dompurify'
 import { cardKey, collapsePackageOwnerDuplicates } from '../../scripts/collapse-package-owner.mjs'
 import { keyOf, allKeysOf } from '../../scripts/canonicalize-repo.mjs'
 import { catalogFromParsed, registryUrls, REGISTRY_TIMEOUT_MS } from '../../src/registry-load.mjs'
-import { installPresentation, installCommand, installCommands } from '../../src/install-info.mjs'
+import { installPresentation } from '../../src/install-info.mjs'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
 const INSTALL_SPEC = '@ace-zone/dsh-market'
