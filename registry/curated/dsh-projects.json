@@ -4,7 +4,7 @@
   "type": "bundle",
   "repo": "WenhongPan/dsh-projects",
   "spec": "github:WenhongPan/dsh-projects#v0.2.0-alpha.2",
-  "description": "Codex-inspired project and session management for DeepSeek Harness: searchable projects, organized sessions, archive center, and native folder picking.",
+  "description": "Project and session management for DeepSeek Harness: searchable projects, organized sessions, archive center, and native folder picking.",
   "license": "MIT",
   "author": {
     "name": "WenhongPan",
