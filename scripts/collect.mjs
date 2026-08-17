@@ -4,7 +4,8 @@
 //       ④ 组织仓库列表 ⑤ 上一轮 auto.json 续存
 // 校验：verified 采用官方判据 dsh.bundle.patch（与 dsh plugin add 一致）；
 //       topic 来源仓库即使无声明也收录并标 verified: false
-// 去重：键 = npm 包名（若有）或规范化 repo URL；curated 覆盖 auto；跨源共享同一候选表
+// 去重：优先 GitHub 仓库数字 id（rename alias 合并），否则规范化 repo；无仓库才退回包名。
+//       切勿全局按包名去重（不同 owner 的同名 fork 必须分开）。curated 覆盖 auto。
 // 分类：按功能分类器给每个条目打 category（curated 可显式声明），噪声 topic 标签一律过滤
 // 输出：registry/auto.json（纯自动）+ registry/all.json（curated ∪ auto，按 stars 排序）
 // curated 来源：registry/index.json ∪ registry/curated/*.json
@@ -12,6 +13,12 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { collapsePackageOwnerDuplicates, compareVersion } from './collapse-package-owner.mjs'
+import {
+  normRepo, normPkg, keyOf, allKeysOf,
+  applyGithubRepoDetail, pickBestPrev, keepHigherVersion, isAliasDiscovery,
+  mergeCandidate, uniqueCandidates,
+} from './canonicalize-repo.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const TOKEN = process.env.GITHUB_TOKEN || ''
@@ -72,11 +79,7 @@ const ghJson = async (path) => {
   return null
 }
 
-const normRepo = (fullName) => 'github.com/' + String(fullName).toLowerCase().replace(/\.git$/, '').replace(/\/+$/, '')
-const normPkg = (name) => String(name).toLowerCase()
-// 去重键：优先按仓库区分（同一 npm 包名的不同仓库是不同项目，如官方 fork 不应互相吞并），
-// 无仓库信息的条目才退回包名
-const keyOf = (it) => (it.repo ? 'repo:' + normRepo(it.repo) : (it.package ? 'pkg:' + normPkg(it.package) : 'id:' + String(it.id || '').toLowerCase()))
+export { keyOf, normRepo }
 const cleanTags = (tags) => (tags || [])
   .map((t) => String(t).trim())
   .filter((t) => t.length > 0 && t.length <= 32 && !NOISE_TAGS.has(t.toLowerCase()))
@@ -117,19 +120,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 // ── 候选收集（所有来源汇入同一张按 repo 去重的表） ───────────────────────────
 async function collectCandidates() {
   const byRepo = new Map()
-  const addRepo = (fullName, meta = {}) => {
-    if (!fullName || typeof fullName !== 'string') return
-    const key = fullName.toLowerCase()
-    if (!byRepo.has(key)) byRepo.set(key, { full_name: fullName })
-    const r = byRepo.get(key)
-    if (meta.stars !== undefined) r.stars = meta.stars
-    if (meta.description !== undefined) r.description = meta.description
-    if (meta.license !== undefined) r.license = meta.license
-    if (meta.topics !== undefined) r.topics = meta.topics
-    if (meta.topicSourced === true) r.topicSourced = true
-    if (meta.orgSourced === true) r.orgSourced = true
-    if (meta.pushedAt !== undefined) r.pushedAt = meta.pushedAt
-  }
+  const addRepo = (fullName, meta = {}) => mergeCandidate(byRepo, fullName, meta)
 
   // ① topic 搜索：只取星标榜头部（top 200/主题），高价值优先、采集快
   for (const topic of TOPICS) {
@@ -139,6 +130,7 @@ async function collectCandidates() {
         if (!res || !Array.isArray(res.items)) break
         for (const it of res.items) {
           addRepo(it.full_name, {
+            id: it.id,
             stars: it.stargazers_count,
             description: it.description || '',
             license: it.license && it.license.spdx_id ? it.license.spdx_id : null,
@@ -162,7 +154,9 @@ async function collectCandidates() {
       try {
         const res = await ghJson('/search/code?q=' + encodeURIComponent('"@deepseek-ai/dsh" filename:package.json') + '&per_page=100&page=' + page)
         if (!res || !Array.isArray(res.items)) break
-        for (const it of res.items) if (it.repository) addRepo(it.repository.full_name)
+        for (const it of res.items) {
+          if (it.repository) addRepo(it.repository.full_name, { id: it.repository.id })
+        }
         if (res.items.length < 100) break
       } catch (e) {
         console.warn('[collect] code search 失败: ' + e.message)
@@ -204,6 +198,7 @@ async function collectCandidates() {
       const res = await ghJson('/orgs/' + org + '/repos?per_page=100')
       if (Array.isArray(res)) {
         for (const r of res) addRepo(r.full_name, {
+          id: r.id,
           pushedAt: r.pushed_at || null,
           orgSourced: true,
           stars: r.stargazers_count || 0,
@@ -219,7 +214,7 @@ async function collectCandidates() {
     await sleep(300)
   }
 
-  return [...byRepo.values()]
+  return uniqueCandidates(byRepo)
 }
 
 // ── README 安装方式识别 ──────────────────────────────────────────────────────
@@ -322,7 +317,21 @@ export function detectInstallFromReadme(readme) {
 // add 的挂载判定 exportsPatch 一致）。topic 来源的仓库即使无声明也收录，
 // 标 verified: false（未验证，禁用一键安装）。
 // 上一轮已有数据的仓库直接复用版本/下载量/spec，跳过 releases 调用（省配额）。
-export async function buildEntry(repo, prev) {
+export async function buildEntry(repo, prevAuto) {
+  if (!repo.discoveredAs) repo.discoveredAs = repo.full_name
+  const prevList = Array.isArray(prevAuto) ? prevAuto : (prevAuto ? [prevAuto] : [])
+
+  // Canonicalize via GET /repos when we lack github id or stars. Write live full_name
+  // so dsh-cc-tui / dsh-TUI / dsh-tui become one candidate (same numeric id).
+  if (repo.githubId == null || typeof repo.stars !== 'number') {
+    try {
+      const detail = await ghJson('/repos/' + repo.full_name)
+      if (detail) applyGithubRepoDetail(repo, detail)
+    } catch (e) {
+      console.warn('[collect] repo 详情获取失败（继续）: ' + repo.full_name)
+    }
+  }
+
   const [, name] = repo.full_name.split('/')
   let pkg = null
   try {
@@ -371,12 +380,16 @@ export async function buildEntry(repo, prev) {
     }
   }
 
-  const reuse = prev && prev.repo && prev.repo.toLowerCase() === repo.full_name.toLowerCase() && prev.status !== 'unavailable'
+  const prev = pickBestPrev(repo, pkg && pkg.name, prevList)
+  // Do not reuse a stale prev.version across rename aliases (dsh-cc-tui vs dsh-TUI).
+  // After canonicalize they are the same repo: fetch latest, or at least keep the higher tag.
+  const alias = isAliasDiscovery(repo)
+  const reuse = prev && prev.status !== 'unavailable' && !alias && prev.repo && prev.repo.toLowerCase() === repo.full_name.toLowerCase()
 
   let latest = null
   let downloads = 0
   if (reuse && typeof prev.version === 'string') {
-    latest = { tag_name: prev.version }
+    latest = { tag_name: prev.version, published_at: prev.releasedAt || null }
     downloads = typeof prev.downloads === 'number' ? prev.downloads : 0
   } else if (pkg) {
     try {
@@ -390,40 +403,35 @@ export async function buildEntry(repo, prev) {
     } catch (e) {
       console.warn('[collect] releases 获取失败（继续）: ' + repo.full_name)
     }
+    latest = keepHigherVersion(latest, prev && prev.version, prev && prev.releasedAt)
+    if (typeof downloads !== 'number' || downloads === 0) {
+      if (prev && typeof prev.downloads === 'number') downloads = prev.downloads
+    }
+  } else if (prev && typeof prev.version === 'string') {
+    latest = { tag_name: prev.version, published_at: prev.releasedAt || null }
+    downloads = typeof prev.downloads === 'number' ? prev.downloads : 0
   }
 
   let stars = repo.stars
   let description = repo.description
   let license = repo.license
   let topics = repo.topics || []
-  if (reuse) {
+  if (prev && prev.status !== 'unavailable') {
     description = description || prev.description
     license = license || prev.license
     topics = topics.length > 0 ? topics : (Array.isArray(prev.tags) ? prev.tags : [])
   }
-  if (typeof stars !== 'number') {
-    try {
-      const detail = await ghJson('/repos/' + repo.full_name)
-      if (detail) {
-        if (typeof stars !== 'number') stars = detail.stargazers_count
-        description = description || detail.description
-        license = license || (detail.license && detail.license.spdx_id)
-        topics = detail.topics || topics
-      }
-    } catch (e) {
-      console.warn('[collect] repo 详情获取失败（继续）: ' + repo.full_name)
-    }
-  }
 
   const spec = latest ? 'github:' + repo.full_name + '#' + latest.tag_name : 'github:' + repo.full_name
   const owner = repo.full_name.split('/')[0]
-  const releasedAt = (latest && latest.published_at) || repo.pushedAt || (reuse && prev.releasedAt) || null
+  const releasedAt = (latest && latest.published_at) || repo.pushedAt || (prev && prev.releasedAt) || null
   const entry = {
     id: pkg && pkg.name ? pkg.name.replace(/^@/, '').replace(/[/.]/g, '-') : name.toLowerCase(),
     name: (pkg && pkg.name) || name,
     type: 'bundle',
     package: (pkg && pkg.name) || null,
     repo: repo.full_name,
+    githubId: repo.githubId != null ? repo.githubId : undefined,
     spec: spec,
     version: latest ? latest.tag_name : null,
     author: { name: owner, url: 'https://github.com/' + owner },
@@ -450,33 +458,47 @@ async function main() {
   const prevAuto = (loadJson('registry/auto.json', { items: [] }).items) || []
 
   const candidates = await collectCandidates()
-  const prevByRepo = new Map(prevAuto.map((p) => [normRepo(p.repo), p]))
   const entries = []
   const seen = new Set()
+  const markSeen = (it, extra) => {
+    for (const k of allKeysOf(it)) seen.add(k)
+    if (extra) {
+      for (const a of extra.aliases || []) seen.add('repo:' + normRepo(a))
+      if (extra.discoveredAs) seen.add('repo:' + normRepo(extra.discoveredAs))
+      if (extra.full_name) seen.add('repo:' + normRepo(extra.full_name))
+      if (extra.githubId != null) seen.add('ghid:' + extra.githubId)
+    }
+  }
   for (const repo of candidates) {
     if (blocklist.includes(normRepo(repo.full_name))) continue
+    if ((repo.aliases || []).some((a) => blocklist.includes(normRepo(a)))) continue
     let entry = null
     try {
-      entry = await buildEntry(repo, prevByRepo.get(normRepo(repo.full_name)))
+      entry = await buildEntry(repo, prevAuto)
     } catch (e) {
       console.warn('[collect] 处理失败 ' + repo.full_name + ': ' + e.message)
     }
     if (!entry) continue
     if (entry.package && blocklist.includes(normPkg(entry.package))) continue
     const key = keyOf(entry)
-    if (seen.has(key)) continue
-    seen.add(key)
+    if (seen.has(key) || allKeysOf(entry).some((k) => seen.has(k))) {
+      const idx = entries.findIndex((e) => keyOf(e) === key || (entry.githubId != null && e.githubId === entry.githubId))
+      if (idx >= 0 && compareVersion(entry.version, entries[idx].version) > 0) entries[idx] = entry
+      markSeen(entry, repo)
+      continue
+    }
+    markSeen(entry, repo)
     entries.push(entry)
     await sleep(400)
   }
 
   // 上轮存在、本轮未重新发现的条目：查一次 repo 状态，404/私有 → unavailable，限流/异常 → 保留原数据
   for (const prev of prevAuto) {
-    const key = keyOf(prev)
-    if (seen.has(key)) continue
+    if (allKeysOf(prev).some((k) => seen.has(k))) continue
     // topic 来源的老条目直接保留，不做逐条状态检查（降低每日 API 压力）
     if (prev.topicSourced === true) {
       entries.push(prev)
+      markSeen(prev)
       continue
     }
     let detail = null
@@ -487,19 +509,37 @@ async function main() {
     }
     if (detail === undefined) {
       entries.push(prev)
+      markSeen(prev)
     } else if (detail === null) {
-      entries.push({ ...prev, status: 'unavailable' })
+      const gone = { ...prev, status: 'unavailable' }
+      entries.push(gone)
+      markSeen(gone)
       console.warn('[collect] 标记 unavailable: ' + prev.repo)
     } else {
-      entries.push(prev)
+      const canon = { full_name: prev.repo, githubId: prev.githubId, discoveredAs: prev.repo }
+      applyGithubRepoDetail(canon, detail)
+      const updated = { ...prev, repo: canon.full_name }
+      if (canon.githubId != null) updated.githubId = canon.githubId
+      if (allKeysOf(updated).some((k) => seen.has(k))) {
+        markSeen(updated)
+        continue
+      }
+      entries.push(updated)
+      markSeen(updated)
     }
     await sleep(400)
   }
 
+  // rename-collapse: same package + same owner (e.g. repo rename) → one auto row
+  const collapsedEntries = collapsePackageOwnerDuplicates(entries, { log: (m) => console.log(m) })
+
   // curated 覆盖 auto（按包名/repo 键），all = curated ∪ auto-only
-  const curatedKeys = new Set(curatedItems.map(keyOf))
-  const autoOnly = entries.filter((e) => !curatedKeys.has(keyOf(e)))
-  const all = [...curatedItems, ...autoOnly]
+  const curatedKeys = new Set(curatedItems.flatMap((it) => allKeysOf(it)))
+  const autoOnly = collapsedEntries.filter((e) => !allKeysOf(e).some((k) => curatedKeys.has(k)))
+  const all = collapsePackageOwnerDuplicates(
+    [...curatedItems, ...autoOnly],
+    { preferCurated: true, log: (m) => console.log(m) },
+  )
   for (const it of all) {
     it.category = categorize(it)
     if (Array.isArray(it.tags)) it.tags = cleanTags(it.tags)
@@ -513,11 +553,11 @@ async function main() {
   }
   all.sort((a, b) => (b.stars || 0) - (a.stars || 0))
 
-  writeFileSync(join(ROOT, 'registry/auto.json'), JSON.stringify({ schemaVersion: 1, updatedAt: new Date().toISOString(), items: entries }, null, 2))
+  writeFileSync(join(ROOT, 'registry/auto.json'), JSON.stringify({ schemaVersion: 1, updatedAt: new Date().toISOString(), items: collapsedEntries }, null, 2))
   writeFileSync(join(ROOT, 'registry/all.json'), JSON.stringify({ schemaVersion: 1, updatedAt: new Date().toISOString(), items: all }, null, 2))
   const byCat = {}
   for (const it of all) byCat[it.category] = (byCat[it.category] || 0) + 1
-  console.log('[collect] curated=' + curatedItems.length + ' auto=' + entries.length + ' merged=' + all.length)
+  console.log('[collect] curated=' + curatedItems.length + ' auto=' + collapsedEntries.length + ' merged=' + all.length)
   console.log('[collect] 分类分布: ' + JSON.stringify(byCat))
 }
 
