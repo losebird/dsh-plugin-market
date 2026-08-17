@@ -12,6 +12,7 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { collapsePackageOwnerDuplicates } from './collapse-package-owner.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const TOKEN = process.env.GITHUB_TOKEN || ''
@@ -496,10 +497,16 @@ async function main() {
     await sleep(400)
   }
 
+  // rename-collapse: same package + same owner (e.g. repo rename) → one auto row
+  const collapsedEntries = collapsePackageOwnerDuplicates(entries, { log: (m) => console.log(m) })
+
   // curated 覆盖 auto（按包名/repo 键），all = curated ∪ auto-only
   const curatedKeys = new Set(curatedItems.map(keyOf))
-  const autoOnly = entries.filter((e) => !curatedKeys.has(keyOf(e)))
-  const all = [...curatedItems, ...autoOnly]
+  const autoOnly = collapsedEntries.filter((e) => !curatedKeys.has(keyOf(e)))
+  const all = collapsePackageOwnerDuplicates(
+    [...curatedItems, ...autoOnly],
+    { preferCurated: true, log: (m) => console.log(m) },
+  )
   for (const it of all) {
     it.category = categorize(it)
     if (Array.isArray(it.tags)) it.tags = cleanTags(it.tags)
@@ -513,11 +520,11 @@ async function main() {
   }
   all.sort((a, b) => (b.stars || 0) - (a.stars || 0))
 
-  writeFileSync(join(ROOT, 'registry/auto.json'), JSON.stringify({ schemaVersion: 1, updatedAt: new Date().toISOString(), items: entries }, null, 2))
+  writeFileSync(join(ROOT, 'registry/auto.json'), JSON.stringify({ schemaVersion: 1, updatedAt: new Date().toISOString(), items: collapsedEntries }, null, 2))
   writeFileSync(join(ROOT, 'registry/all.json'), JSON.stringify({ schemaVersion: 1, updatedAt: new Date().toISOString(), items: all }, null, 2))
   const byCat = {}
   for (const it of all) byCat[it.category] = (byCat[it.category] || 0) + 1
-  console.log('[collect] curated=' + curatedItems.length + ' auto=' + entries.length + ' merged=' + all.length)
+  console.log('[collect] curated=' + curatedItems.length + ' auto=' + collapsedEntries.length + ' merged=' + all.length)
   console.log('[collect] 分类分布: ' + JSON.stringify(byCat))
 }
 
