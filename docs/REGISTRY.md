@@ -7,7 +7,7 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
 | `registry/index.json` | 维护者 / PR | **curated 主列表**（人工上架） |
 | `registry/curated/<id>.json` | 插件作者 PR | 每个 curated 条目的源文件（validate 校验；collect 读取并合并进 curated 列表） |
 | `registry/auto.json` | collect 工作流 | 自动采集的原始产出 |
-| `registry/all.json` | collect 工作流 | **合并结果**（curated ∪ auto，curated 覆盖 auto，按 stars 排序）——网站与 DSH 弹窗消费的就是它 |
+| `registry/all.json` | collect 工作流 + merge-curated 工作流 | **合并结果**（curated ∪ auto，curated 覆盖 auto，按 stars 排序）——网站与 DSH 弹窗消费的就是它；每日 collect 全量刷新，curated/index 推送时 merge-curated 秒级 overlay |
 | `registry/blocklist.json` | 维护者 | 黑名单（repo 全名或 npm 包名，小写），collector 跳过、validate 拒绝 |
 
 ## 条目 schema
