@@ -13,6 +13,8 @@
   "files": [
     "src/host.js",
     "src/client.js",
+    "src/registry-load.mjs",
+    "scripts/collapse-package-owner.mjs",
     "cordis.patch.yml",
     "README.md"
   ],

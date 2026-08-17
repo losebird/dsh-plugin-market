@@ -6,12 +6,12 @@ import {
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { cardKey, collapsePackageOwnerDuplicates } from '../../scripts/collapse-package-owner.mjs'
+import { catalogFromParsed, registryUrls, REGISTRY_TIMEOUT_MS } from '../../src/registry-load.mjs'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
 const INSTALL_SPEC = '@ace-zone/dsh-market'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main/registry/curated'
 const REGISTRY_BASE = import.meta.env.BASE_URL
-const RAW_REGISTRY = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/all.json'
 const PAGE_SIZE = 24
 
 const CATEGORIES = {
@@ -232,22 +232,26 @@ const DEMO_ITEMS = [
 ]
 
 async function loadRegistry() {
-  const grab = async (name) => {
-    const res = await fetch(REGISTRY_BASE + 'registry/' + name)
-    return res.ok ? res.json() : null
-  }
-  try {
-    const res = await fetch(RAW_REGISTRY)
-    if (res.ok) {
-      const parsed = await res.json()
-      if (parsed && Array.isArray(parsed.items)) return parsed.items
+  const grab = async (url) => {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(REGISTRY_TIMEOUT_MS) })
+      if (!res.ok) return null
+      return await res.json()
+    } catch {
+      return null
     }
-  } catch {}
-  const all = await grab('all.json')
-  if (all && Array.isArray(all.items)) return all.items
-  const curated = await grab('index.json')
-  const auto = await grab('auto.json')
-  return [...((curated && curated.items) || []), ...((auto && auto.items) || [])]
+  }
+  // 先读站点自己的 /registry/all.json，raw.githubusercontent.com 在国内常被墙或挂起
+  const pagesAll = REGISTRY_BASE + 'registry/all.json'
+  for (const url of registryUrls({ pagesUrl: pagesAll })) {
+    const items = catalogFromParsed(await grab(url))
+    if (items) return items
+  }
+  const curated = await grab(REGISTRY_BASE + 'registry/index.json')
+  const auto = await grab(REGISTRY_BASE + 'registry/auto.json')
+  const merged = [...((curated && curated.items) || []), ...((auto && auto.items) || [])]
+  if (merged.length > 0) return collapsePackageOwnerDuplicates(merged, { preferCurated: true })
+  throw new Error('registry unavailable')
 }
 
 function fmtNum(n) {

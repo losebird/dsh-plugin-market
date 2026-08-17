@@ -6,8 +6,7 @@ import { readFile, writeFile, mkdir, rm, readdir, stat } from 'node:fs/promises'
 import { marked } from 'marked'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
-
-const REGISTRY_URL = process.env.DSH_MARKET_REGISTRY || 'https://raw.githubusercontent.com/losebird/dsh-plugin-market/main/registry/all.json'
+import { catalogFromParsed, registryUrls, REGISTRY_TIMEOUT_MS } from './registry-load.mjs'
 const STATE_DIR = join(homedir(), '.dsh', 'plugin-market')
 const STATE_FILE = join(STATE_DIR, 'state.json')
 const SKILLS_ROOT = join(homedir(), '.agents', 'skills')
@@ -188,20 +187,20 @@ async function list() {
   let items = null
   let source = 'demo'
   let notice = null
-  try {
-    const res = await fetch(REGISTRY_URL, { signal: AbortSignal.timeout(8000) })
-    if (res.ok) {
-      const parsed = await res.json()
-      if (parsed && Array.isArray(parsed.items)) {
-        items = parsed.items
+  // Shop copy first, then raw GitHub. Env override wins if set. 8s timeout per URL.
+  for (const url of registryUrls({ envUrl: process.env.DSH_MARKET_REGISTRY })) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(REGISTRY_TIMEOUT_MS) })
+      if (!res.ok) continue
+      const got = catalogFromParsed(await res.json())
+      if (got) {
+        items = got
         source = 'remote'
-      } else {
-        notice = 'registry 数据格式异常，已回退演示数据'
+        break
       }
-    }
-  } catch {
-    notice = '远程 registry 暂不可用，已回退演示数据'
+    } catch {}
   }
+  if (!items) notice = '远程 registry 暂不可用，已回退演示数据'
   const finalItems = items || DEMO_ITEMS
   // 手动安装（dsh plugin add）识别：profile 依赖/bundles 里有这个包名 → 标记已安装
   const manifest = await readProfileManifest()
