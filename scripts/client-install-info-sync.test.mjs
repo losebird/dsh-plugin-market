@@ -35,6 +35,10 @@ test('inlined install helpers match install-info.mjs', () => {
   assert.equal(inlined, expected)
 })
 
+test('client.js has no ESM export statements', () => {
+  assert.doesNotMatch(clientJs, /^\s*export\s/m)
+})
+
 test('Card and InstallPanel follow installPresentation kinds', () => {
   const cardStart = clientJs.indexOf('function Card(item, st)')
   const panelStart = clientJs.indexOf('function InstallPanel(st, item)')
@@ -42,6 +46,7 @@ test('Card and InstallPanel follow installPresentation kinds', () => {
   assert.ok(cardStart > 0 && panelStart > cardStart && detailStart > panelStart)
   const card = clientJs.slice(cardStart, panelStart)
   const panel = clientJs.slice(panelStart, detailStart)
+  const detail = clientJs.slice(detailStart, clientJs.indexOf('function ManageView(st)'))
 
   assert.match(card, /installPresentation\(item\)/)
   assert.match(card, /pres\.kind === 'plugin' \|\| pres\.kind === 'companion'/)
@@ -49,10 +54,21 @@ test('Card and InstallPanel follow installPresentation kinds', () => {
   assert.match(card, /t\('officialDownload'\)/)
   assert.match(card, /href: pres\.downloadUrl/)
 
+  assert.doesNotMatch(panel, /inst\.method === 'manual'/)
+  assert.doesNotMatch(panel, /officialInstall/)
+  assert.doesNotMatch(panel, /runAgentInstall/)
+
   const appBranch = panel.slice(panel.indexOf("pres.kind === 'app'"), panel.indexOf("pres.kind === 'pack'"))
-  const packBranch = panel.slice(panel.indexOf("pres.kind === 'pack'"), panel.indexOf("inst.method === 'manual'"))
+  const packBranch = panel.slice(panel.indexOf("pres.kind === 'pack'"), panel.indexOf("noneCopyNote"))
   assert.doesNotMatch(appBranch, /installBtn/)
+  assert.doesNotMatch(appBranch, /installNow/)
+  assert.match(appBranch, /appNote/)
   assert.doesNotMatch(packBranch, /installBtn/)
   assert.doesNotMatch(packBranch, /dsh plugin/)
   assert.match(packBranch, /packDownload/)
+  assert.match(packBranch, /packNote/)
+
+  assert.match(detail, /installPresentation\(item\)\.kind === 'plugin' \|\| installPresentation\(item\)\.kind === 'companion'/)
+  assert.doesNotMatch(detail, /install\.method === 'manual'/)
+  assert.doesNotMatch(detail, /method === 'git-clone'/)
 })
