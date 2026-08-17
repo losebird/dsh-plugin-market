@@ -5,7 +5,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { detectInstallFromReadme } from './collect.mjs'
+import { detectInstallFromReadme, loadCuratedItems } from './collect.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const CONCURRENCY = 12
@@ -34,7 +34,7 @@ async function fetchReadme(repo) {
 }
 
 async function main() {
-  const curated = (loadJson('registry/index.json', { items: [] }).items) || []
+  const curated = loadCuratedItems()
   const auto = (loadJson('registry/auto.json', { items: [] }).items) || []
   if (auto.length === 0) {
     console.error('[refresh-install] auto.json 为空，先跑一次完整 collect')

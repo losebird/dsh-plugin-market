@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { detectInstallFromReadme } from './collect.mjs'
+import { detectInstallFromReadme, loadCuratedItems } from './collect.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const ORGS = ['omdsh-dev']
@@ -95,7 +95,7 @@ async function buildLightEntry(fullName, takenIds) {
 
 async function main() {
   const auto = (loadJson('registry/auto.json', { items: [] }).items) || []
-  const curated = (loadJson('registry/index.json', { items: [] }).items) || []
+  const curated = loadCuratedItems()
   const have = new Set(auto.map((i) => (i.repo ? i.repo.toLowerCase() : '')))
   const takenIds = new Set([...auto, ...curated].map((i) => String(i.id || '').toLowerCase()))
   const added = []

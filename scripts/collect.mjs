@@ -7,8 +7,9 @@
 // 去重：键 = npm 包名（若有）或规范化 repo URL；curated 覆盖 auto；跨源共享同一候选表
 // 分类：按功能分类器给每个条目打 category（curated 可显式声明），噪声 topic 标签一律过滤
 // 输出：registry/auto.json（纯自动）+ registry/all.json（curated ∪ auto，按 stars 排序）
+// curated 来源：registry/index.json ∪ registry/curated/*.json
 
-import { readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -85,6 +86,30 @@ const loadJson = (rel, fallback) => {
   const p = join(ROOT, rel)
   if (!existsSync(p)) return fallback
   try { return JSON.parse(readFileSync(p, 'utf8')) } catch { return fallback }
+}
+
+export function loadCuratedItems(root = ROOT) {
+  const indexPath = join(root, 'registry/index.json')
+  let indexItems = []
+  if (existsSync(indexPath)) {
+    try {
+      const data = JSON.parse(readFileSync(indexPath, 'utf8'))
+      indexItems = data.items || []
+    } catch {}
+  }
+  const byKey = new Map()
+  for (const it of indexItems) byKey.set(keyOf(it), it)
+  const curatedDir = join(root, 'registry/curated')
+  if (existsSync(curatedDir)) {
+    for (const file of readdirSync(curatedDir).filter((f) => f.endsWith('.json')).sort()) {
+      try {
+        const it = JSON.parse(readFileSync(join(curatedDir, file), 'utf8'))
+        if (!it || typeof it !== 'object' || Array.isArray(it)) continue
+        byKey.set(keyOf(it), it)
+      } catch {}
+    }
+  }
+  return [...byKey.values()]
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -420,7 +445,7 @@ export async function buildEntry(repo, prev) {
 
 // ── 主流程 ──────────────────────────────────────────────────────────────────
 async function main() {
-  const curatedItems = (loadJson('registry/index.json', { items: [] }).items) || []
+  const curatedItems = loadCuratedItems()
   const blocklist = (loadJson('registry/blocklist.json', []) || []).map((s) => String(s).toLowerCase())
   const prevAuto = (loadJson('registry/auto.json', { items: [] }).items) || []
 
