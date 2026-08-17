@@ -25,7 +25,7 @@ function versionTuple(v) {
   return [Number(m[1]), Number(m[2]), Number(m[3] || 0)]
 }
 
-function compareVersion(a, b) {
+export function compareVersion(a, b) {
   const ta = versionTuple(a)
   const tb = versionTuple(b)
   if (!ta && !tb) return 0
