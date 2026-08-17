@@ -5,7 +5,7 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
 | 文件 | 谁写 | 含义 |
 |---|---|---|
 | `registry/index.json` | 维护者 / PR | **curated 主列表**（人工上架） |
-| `registry/curated/<id>.json` | 插件作者 PR | 每个 curated 条目的源文件（validate workflow 校验） |
+| `registry/curated/<id>.json` | 插件作者 PR | 每个 curated 条目的源文件（validate 校验；collect 读取并合并进 curated 列表） |
 | `registry/auto.json` | collect 工作流 | 自动采集的原始产出 |
 | `registry/all.json` | collect 工作流 | **合并结果**（curated ∪ auto，curated 覆盖 auto，按 stars 排序）——网站与 DSH 弹窗消费的就是它 |
 | `registry/blocklist.json` | 维护者 | 黑名单（repo 全名或 npm 包名，小写），collector 跳过、validate 拒绝 |
@@ -20,8 +20,8 @@ DSH 插件市场的数据全部是仓库里的静态 JSON，无后端。三个�
   "package": "dsh-plugin-market",  // bundle 的 npm 包名（自动采集会填；卸载时用）
   "repo": "losebird/dsh-plugin-market", // owner/name，必填
   "spec": "github:losebird/dsh-plugin-market#v0.1.0",
-  // bundle: github:<owner>/<repo>[#tag] | git+https://...#tag | npm 包名
-  // pack:   https:// 开头的 zip 下载地址（通常是 release 资产）
+  // bundle: github:<owner>/<repo>[#tag] | git+https://...#tag | npm 包名 | https://…tgz
+  // pack:   https://…zip 下载地址（通常是 release 资产）
   "version": "v0.1.0",
   "author": { "name": "losebird", "url": "https://github.com/losebird" },
   "description": "一句话简介（卡片显示）",

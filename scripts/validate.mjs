@@ -31,11 +31,16 @@ function checkEntry(entry, file) {
   if (!entry.author || typeof entry.author.name !== 'string') errors.push(where + '缺少 author.name')
   if (entry.author && entry.author.url && !/^https:\/\//.test(entry.author.url)) errors.push(where + 'author.url 必须以 https:// 开头')
   if (entry.type === 'bundle') {
-    if (!/^(github:|git\+)[^\s"']+(#[^\s"']+)?$/.test(entry.spec) && !/^@?[\w.-]+\/[\w.-]+$/.test(entry.spec) && !/^[\w@.-]+$/.test(entry.spec)) {
-      errors.push(where + 'bundle spec 必须是 github:/git+/npm 名')
-    }
+    const spec = String(entry.spec || '')
+    const ok = /^(github:|git\+)[^\s"']+(#[^\s"']+)?$/.test(spec)
+      || /^https:\/\/[^\s"']+\.(?:tgz|tar\.gz)(?:[?#][^\s"']*)?$/i.test(spec)
+      || /^@?[\w.-]+\/[\w.-]+$/.test(spec)
+      || /^[\w@.-]+$/.test(spec)
+    if (!ok) errors.push(where + 'bundle spec 必须是 npm 包名或 https://…tgz')
   } else {
-    if (!/^https:\/\/[^\s"']+$/.test(entry.spec)) errors.push(where + 'pack spec 必须是 https:// 下载地址')
+    if (!/^https:\/\/[^\s"']+\.zip(?:[?#][^\s"']*)?$/i.test(String(entry.spec || ''))) {
+      errors.push(where + 'pack spec 必须是 https://…zip')
+    }
   }
   if (!/^[\w.-]+\/[\w.-]+$/.test(entry.repo)) errors.push(where + 'repo 必须是 owner/name 形式')
 }
