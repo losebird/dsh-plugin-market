@@ -8,6 +8,7 @@ import DOMPurify from 'dompurify'
 import { cardKey, collapsePackageOwnerDuplicates } from '../../scripts/collapse-package-owner.mjs'
 import { keyOf, allKeysOf } from '../../scripts/canonicalize-repo.mjs'
 import { catalogFromParsed, registryUrls, REGISTRY_TIMEOUT_MS } from '../../src/registry-load.mjs'
+import { installPresentation, installCommand, installCommands } from '../../src/install-info.mjs'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
 const INSTALL_SPEC = '@ace-zone/dsh-market'
@@ -51,13 +52,11 @@ const I18N = {
     'copiedModal.guide1': '在 DSH 内打开侧栏「插件市场」，找到该插件点一键安装（推荐）；',
     'copiedModal.guide2': '或把命令粘贴到终端直接执行（已在剪贴板）。',
     'copiedModal.gotIt': '知道了', 'copiedModal.viewDetail': '查看详情',
-    'copiedModal.urlGuide1': '该插件未验证，市场不提供一键安装；',
-    'copiedModal.urlGuide2': '打开详情页，把项目地址发给 DSH，让它按仓库说明帮你安装。',
-    'copiedModal.stepsTitle': '安装方式（按项目 README）',
-    'copiedModal.steps1': '① 在 DSH 应用内打开侧栏「插件市场」，找到该插件点「安装」；',
-    'copiedModal.steps2': '② DSH 会阅读项目 README 并自动执行安装；需要你选择或确认时，会在 DSH 对话中弹窗询问；',
-    'copiedModal.steps3': '③ 安装完成后按提示重启 DSH 生效。',
-    'copiedModal.stepsUnverified': '该插件未验证（未声明 dsh.bundle）：DSH 会按 README 尽力安装，若无法挂载会向你说明原因。',
+    'copiedModal.appTitle': '官方下载',
+    'copiedModal.appGuide1': '打开该系统的官方下载页面。',
+    'copiedModal.appGuide2': '不要在终端执行采集到的脚本。',
+    'copiedModal.noneTitle': '请在 DSH 插件市场查看',
+    'copiedModal.noneGuide': '请在 DSH 插件市场查看，不要从官网复制命令安装。',
     'dir.title': '插件目录', 'dir.count': '{n} 个条目',
     'dir.demo': 'registry 暂不可用，当前展示演示数据。',
     'dir.search': '搜索名称、简介或标签',
@@ -66,7 +65,7 @@ const I18N = {
     'dir.tabFeatured': '精选插件', 'dir.tabNew': '最新发布', 'dir.tabHandmade': '大神手作',
     'dir.emptyAll': '目录还是空的。上传第一个插件？', 'dir.emptyFilter': '没有匹配的插件，换个关键词试试。',
     'dir.pagerPrev': '上一页', 'dir.pagerNext': '下一页', 'dir.pager': '第 {p} / {total} 页',
-    'card.detail': '详情', 'card.install': '安装', 'card.copied': '已复制', 'card.copyUrl': '复制地址',
+    'card.detail': '详情', 'card.install': '安装', 'card.officialDownload': '官方下载', 'card.copied': '已复制', 'card.copyUrl': '复制地址',
     'card.downloads': '下载量', 'card.stars': 'GitHub 星标',
     'badge.pack': '扩展包', 'badge.auto': '自动收录', 'badge.unver': '未验证', 'badge.demo': '演示', 'badge.off': '已下线', 'badge.featured': '精选',
     'detail.author': '作者', 'detail.version': '版本', 'detail.category': '分类', 'detail.license': '许可', 'detail.downloads': '下载',
@@ -74,11 +73,12 @@ const I18N = {
     'detail.readmeError': '项目 README 加载失败，', 'detail.readmeLink': '去仓库查看',
     'detail.readmeDefault': '默认',
     'detail.copy': '复制', 'detail.copied': '已复制',
-    'detail.bundleNote': '安装方式来自项目 README。在 DSH 应用内打开侧栏「插件市场」弹窗点安装，会自动执行当前系统的命令；安装后重启 DSH 生效。',
+    'detail.pluginNote': '在 DSH 侧栏插件市场点安装；或把下面这条 dsh plugin add 命令粘贴到终端。',
     'detail.packDownload': '下载扩展包 zip',
     'detail.packNote': '下载 zip 后在 DSH 插件市场弹窗中选择「从本地导入」，或手动解压到对应目录（skill 放 ~/.agents/skills/，preset 放 ~/.dsh/.agent-presets/）。',
+    'detail.appNote': '这是独立产品。请打开官方下载页面；不要在终端执行采集到的脚本。',
+    'detail.noneNote': '请在 DSH 插件市场查看，不要从官网复制命令安装。',
     'detail.repo': '查看仓库', 'detail.unavailable': '该条目仓库已删除或转为私有',
-    'detail.manualNote': '该插件按其仓库说明安装。在 DSH 应用内的插件市场点「交给 DSH 安装」，DSH 会阅读项目 README 自动安装，需要你选择时弹窗询问。',
     'detail.unverified': '该仓库未声明 dsh.bundle.patch，一键安装不可用（直接 dsh plugin add 只会作为普通依赖安装、不会挂载插件）。请到仓库查看作者提供的手工安装方式。',
     'how.title': '工作原理',
     'how.sub': '没有私有后端。插件数据就是仓库里的 JSON 文件，每天由 GitHub Actions 自动采集、去重、合并，网站与 DSH 弹窗读的是同一份数据。',
@@ -141,13 +141,11 @@ const I18N = {
     'copiedModal.guide1': 'In DSH, open the Plugin Market and click install on this plugin (recommended);',
     'copiedModal.guide2': 'or paste the command into your terminal (already on your clipboard).',
     'copiedModal.gotIt': 'Got it', 'copiedModal.viewDetail': 'View details',
-    'copiedModal.urlGuide1': 'This plugin is unverified, so one-click install is unavailable;',
-    'copiedModal.urlGuide2': 'Open the details and send the project URL to DSH to install it per the repo instructions.',
-    'copiedModal.stepsTitle': 'Install method (from the project README)',
-    'copiedModal.steps1': '1. In DSH, open the Plugin Market and click Install on this plugin;',
-    'copiedModal.steps2': '2. DSH reads the project README and installs automatically; when your choice is needed, it asks you in the DSH conversation;',
-    'copiedModal.steps3': '3. Restart DSH after the install as prompted.',
-    'copiedModal.stepsUnverified': 'This plugin is unverified (no dsh.bundle): DSH will try its best per the README and explain if it cannot be mounted.',
+    'copiedModal.appTitle': 'Official download',
+    'copiedModal.appGuide1': 'Open this product\'s official download page.',
+    'copiedModal.appGuide2': 'Do not run scraped scripts in your terminal.',
+    'copiedModal.noneTitle': 'Check the DSH Plugin Market',
+    'copiedModal.noneGuide': 'Check this item in the DSH Plugin Market; do not copy an install command from the website.',
     'dir.title': 'Plugin Directory', 'dir.count': '{n} entries',
     'dir.demo': 'Registry unavailable, showing demo data.',
     'dir.search': 'Search name, description or tags',
@@ -156,7 +154,7 @@ const I18N = {
     'dir.tabFeatured': 'Featured', 'dir.tabNew': 'New', 'dir.tabHandmade': 'By Makers',
     'dir.emptyAll': 'The directory is empty. Submit the first plugin?', 'dir.emptyFilter': 'No matching plugins. Try another keyword.',
     'dir.pagerPrev': 'Prev', 'dir.pagerNext': 'Next', 'dir.pager': 'Page {p} / {total}',
-    'card.detail': 'Details', 'card.install': 'Install', 'card.copied': 'Copied', 'card.copyUrl': 'Copy URL',
+    'card.detail': 'Details', 'card.install': 'Install', 'card.officialDownload': 'Official download', 'card.copied': 'Copied', 'card.copyUrl': 'Copy URL',
     'card.downloads': 'Downloads', 'card.stars': 'GitHub stars',
     'badge.pack': 'Pack', 'badge.auto': 'Auto', 'badge.unver': 'Unverified', 'badge.demo': 'Demo', 'badge.off': 'Offline', 'badge.featured': 'Featured',
     'detail.author': 'Author', 'detail.version': 'Version', 'detail.category': 'Category', 'detail.license': 'License', 'detail.downloads': 'Downloads',
@@ -164,11 +162,12 @@ const I18N = {
     'detail.readmeError': 'Failed to load README. ', 'detail.readmeLink': 'View on GitHub',
     'detail.readmeDefault': 'Default',
     'detail.copy': 'Copy', 'detail.copied': 'Copied',
-    'detail.bundleNote': 'Install steps come from the project README. In DSH, open the Plugin Market modal and click install — it runs the command for your current OS. Restart DSH to take effect.',
+    'detail.pluginNote': 'In DSH, install from the Plugin Market, or paste the dsh plugin add command below.',
     'detail.packDownload': 'Download pack zip',
     'detail.packNote': 'Download the zip, then import it from the DSH Plugin Market modal, or extract manually (skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/).',
+    'detail.appNote': 'This is a standalone product. Open the official download page; do not run scraped scripts in a terminal.',
+    'detail.noneNote': 'Check this item in the DSH Plugin Market; do not copy an install command from the website.',
     'detail.repo': 'View repo', 'detail.unavailable': 'This repo has been deleted or made private',
-    'detail.manualNote': 'This plugin installs per its repo instructions. In DSH, open the Plugin Market and click "Let DSH install" — DSH reads the project README and installs automatically, asking you when a choice is needed.',
     'detail.unverified': 'This repo does not declare dsh.bundle.patch, so one-click install is unavailable (dsh plugin add would only add it as a plain dependency). Check the repo for the author\'s manual install steps.',
     'how.title': 'How it works',
     'how.sub': 'No private backend. Plugin data is just JSON files in the repo, collected, deduplicated and merged by GitHub Actions daily. The website and the DSH modal read the same data.',
@@ -346,16 +345,6 @@ function fmtNum(n) {
   return String(n)
 }
 
-const OS_KEYS = ['darwin', 'linux', 'win32']
-const osName = (k) => ({ darwin: 'macOS', linux: 'Linux', win32: 'Windows' }[k] || k)
-
-// 详情页可切换的 README 语言变体
-const README_VARIANTS = [
-  'README.md', 'readme.md',
-  'README_EN.md', 'README.EN.md', 'README.en.md', 'README_en.md',
-  'README_zh.md', 'README_ZH.md', 'README.zh.md', 'README_zh-CN.md', 'README_zh_CN.md',
-  'README_CN.md', 'README.CN.md', 'README.zh-CN.md', 'README.zh_CN.md',
-]
 function readmeVariantLabel(f, t) {
   const lf = String(f || '').toLowerCase()
   if (lf === 'readme.md') return t('detail.readmeDefault')
@@ -364,35 +353,13 @@ function readmeVariantLabel(f, t) {
   return f
 }
 
-function detectOS() {
-  try {
-    const p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || ''
-    if (/win/i.test(p)) return 'win32'
-    if (/mac/i.test(p)) return 'darwin'
-    return 'linux'
-  } catch { return 'darwin' }
-}
-
-function installCommands(item) {
-  // 返回 { darwin/linux/win32 → 命令 }；无 OS 差异时返回 { any: 命令 }
-  const inst = item.install || {}
-  const m = inst.method
-  if (m === 'script' && inst.os) {
-    const out = {}
-    for (const k of OS_KEYS) if (inst.os[k]) out[k] = inst.os[k]
-    return out
-  }
-  if (m === 'npm-global' || m === 'command' || m === 'git-clone') return { any: inst.command || '' }
-  if (m === 'pack' || m === 'manual' || m === 'desktop') return {}
-  return item.type === 'bundle' ? { any: 'dsh plugin --profile web add ' + item.spec } : {}
-}
-
-function installCommand(item) {
-  const cmds = installCommands(item)
-  if (cmds.any) return cmds.any
-  if (cmds.darwin || cmds.linux || cmds.win32) return cmds[detectOS()] || cmds.darwin || cmds.linux || cmds.win32 || ''
-  return ''
-}
+// 详情页可切换的 README 语言变体
+const README_VARIANTS = [
+  'README.md', 'readme.md',
+  'README_EN.md', 'README.EN.md', 'README.en.md', 'README_en.md',
+  'README_zh.md', 'README_ZH.md', 'README.zh.md', 'README_zh-CN.md', 'README_zh_CN.md',
+  'README_CN.md', 'README.CN.md', 'README.zh-CN.md', 'README.zh_CN.md',
+]
 
 const shortName = (n) => String(n || '').split('/').pop() || String(n || '')
 
@@ -419,16 +386,21 @@ function Badges({ item, t }) {
 function Card({ item, onOpen, onToast, onShowCopied }) {
   const { t } = useLang()
   const [copied, setCopied] = useState(false)
-  const cmd = installCommand(item)
-  const cmds = installCommands(item)
-  const doCopy = async () => {
-    if (await copyText(cmd)) {
+  const info = installPresentation(item)
+  const doInstall = async () => {
+    if (!info.command) return
+    if (await copyText(info.command)) {
       setCopied(true)
       onToast(t('toast.copied'))
-      if (onShowCopied) onShowCopied(item, cmds)
+      if (onShowCopied) onShowCopied({ item, kind: info.kind, cmds: { any: info.command } })
       setTimeout(() => setCopied(false), 1600)
     }
   }
+  const doOfficialDownload = () => {
+    if (onShowCopied) onShowCopied({ item, kind: 'app', url: info.downloadUrl })
+  }
+  const showInstall = (info.kind === 'plugin' || info.kind === 'companion') && item.status !== 'unavailable'
+  const showOfficialDownload = info.kind === 'app' && info.downloadUrl && item.status !== 'unavailable'
   return (
     <div className="card">
       <div className="card-top">
@@ -452,14 +424,14 @@ function Card({ item, onOpen, onToast, onShowCopied }) {
         <button className="btn btn-ghost btn-sm" onClick={() => onOpen(item)} disabled={item.status === 'unavailable'}>
           {t('card.detail')}<CaretRight size={13} />
         </button>
-        {item.type !== 'pack' && item.status !== 'unavailable' && cmd && (
-          <button className="btn btn-primary btn-sm" onClick={doCopy} title={cmd}>
+        {showInstall && (
+          <button className="btn btn-primary btn-sm" onClick={doInstall} title={info.command}>
             {copied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.install')}</>}
           </button>
         )}
-        {item.type === 'bundle' && item.status !== 'unavailable' && !cmd && (
-          <button className="btn btn-primary btn-sm" onClick={() => onShowCopied && onShowCopied(item, cmds, null, true)}>
-            <Copy size={13} />{t('card.install')}
+        {showOfficialDownload && (
+          <button className="btn btn-primary btn-sm" onClick={doOfficialDownload}>
+            <DownloadSimple size={13} />{t('card.officialDownload')}
           </button>
         )}
         <span className="spacer" />
@@ -475,13 +447,10 @@ function DetailModal({ item, onClose, onToast }) {
   const [variants, setVariants] = useState([])
   const [variant, setVariant] = useState('README.md')
   const readmeCache = useRef({})
-  const cmds = installCommands(item)
-  const osOptions = OS_KEYS.filter((k) => cmds[k])
-  const [osSel, setOsSel] = useState(() => detectOS())
-  const effOs = osOptions.includes(osSel) ? osSel : osOptions[0]
-  const shownCmd = cmds.any || cmds[effOs] || ''
+  const info = installPresentation(item)
   const doCopy = async () => {
-    if (await copyText(shownCmd)) {
+    if (!info.command) return
+    if (await copyText(info.command)) {
       setCopied(true)
       onToast(t('toast.copied'))
       setTimeout(() => setCopied(false), 1600)
@@ -599,33 +568,38 @@ function DetailModal({ item, onClose, onToast }) {
             {readme.status === 'ready' && <div className="readme" dangerouslySetInnerHTML={{ __html: readme.html }} />}
           </>
         )}
-        {item.type === 'bundle' && item.install && (item.install.method === 'manual' || item.install.method === 'desktop' || item.install.method === 'git-clone') ? (
-          <div className="strip strip-demo"><Warning size={15} /> {t('detail.manualNote')}</div>
-        ) : item.type === 'bundle' && item.verified === false ? (
-          <div className="strip strip-demo"><Warning size={15} /> {t('detail.unverified')}</div>
-        ) : item.type === 'bundle' && shownCmd ? (
+        {info.kind === 'plugin' || info.kind === 'companion' ? (
           <>
             <div className="install-box">
-              {osOptions.length > 1 && (
-                <div className="install-tabs">
-                  {osOptions.map((k) => (
-                    <button key={k} className={'os-tab' + (k === effOs ? ' on' : '')} onClick={() => setOsSel(k)}>{osName(k)}</button>
-                  ))}
-                </div>
-              )}
-              <code>{shownCmd}</code>
+              <code>{info.command}</code>
               <button className="btn btn-primary btn-sm" onClick={doCopy}>{copied ? t('detail.copied') : t('detail.copy')}</button>
             </div>
-            <p className="card-desc">{t('detail.bundleNote')}</p>
+            <p className="card-desc">{t('detail.pluginNote')}</p>
           </>
-        ) : (
+        ) : info.kind === 'pack' ? (
           <>
-            {/^https:\/\//.test(item.spec || '') && (
-              <a className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }} href={item.spec} target="_blank" rel="noreferrer">
+            {info.downloadUrl && (
+              <a className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }} href={info.downloadUrl} target="_blank" rel="noreferrer">
                 <DownloadSimple size={15} />{t('detail.packDownload')}
               </a>
             )}
             <p className="card-desc">{t('detail.packNote')}</p>
+          </>
+        ) : info.kind === 'app' ? (
+          <>
+            {info.downloadUrl && (
+              <a className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }} href={info.downloadUrl} target="_blank" rel="noreferrer">
+                <DownloadSimple size={15} />{t('card.officialDownload')}
+              </a>
+            )}
+            <p className="card-desc">{t('detail.appNote')}</p>
+          </>
+        ) : (
+          <>
+            {item.verified === false && (
+              <div className="strip strip-demo"><Warning size={15} /> {t('detail.unverified')}</div>
+            )}
+            <p className="card-desc">{t('detail.noneNote')}</p>
           </>
         )}
         <div className="card-actions">
@@ -645,43 +619,40 @@ function DetailModal({ item, onClose, onToast }) {
 function CopiedModal({ info, onClose, onOpenDetail }) {
   const { t } = useLang()
   if (!info) return null
-  const { item, cmds, url, steps } = info
-  const osOptions = OS_KEYS.filter((k) => cmds && cmds[k])
-  const det = detectOS()
+  const { item, kind, cmds, url } = info
+  let effKind = kind
+  if (!effKind) {
+    if (url) effKind = 'app'
+    else if (cmds && cmds.any) effKind = 'plugin'
+    else effKind = 'none'
+  }
+  const titleKey = effKind === 'app' ? 'copiedModal.appTitle'
+    : effKind === 'none' ? 'copiedModal.noneTitle'
+      : 'copiedModal.title'
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
-          <h3>{steps ? t('copiedModal.stepsTitle') : t('copiedModal.title')}</h3>
+          <h3>{t(titleKey)}</h3>
           <button className="modal-close" onClick={onClose} aria-label="close"><X size={18} /></button>
         </div>
         <p className="card-desc" style={{ marginTop: 4 }}>{item.name}</p>
-        {url ? (
-          <div className="install-box"><code>{url}</code></div>
-        ) : cmds && cmds.any ? (
+        {(effKind === 'plugin' || effKind === 'companion') && cmds && cmds.any ? (
           <div className="install-box"><code>{cmds.any}</code></div>
-        ) : osOptions.length > 0 ? (
-          <div className="copied-cmds">
-            {osOptions.map((k) => (
-              <div key={k} className={'copied-cmd' + (k === det ? ' on' : '')}>
-                <span className="copied-os">{osName(k)}{k === det ? `（${t('copiedModal.currentMachine')}）` : ''}</span>
-                <code>{cmds[k]}</code>
-              </div>
-            ))}
-          </div>
+        ) : effKind === 'app' && url ? (
+          <div className="install-box"><a href={url} target="_blank" rel="noreferrer">{url}</a></div>
+        ) : effKind === 'pack' && url ? (
+          <div className="install-box"><a href={url} target="_blank" rel="noreferrer">{url}</a></div>
         ) : null}
-        {url ? (
+        {effKind === 'app' ? (
           <>
-            <p className="card-desc">{t('copiedModal.urlGuide1')}</p>
-            <p className="card-desc">{t('copiedModal.urlGuide2')}</p>
+            <p className="card-desc">{t('copiedModal.appGuide1')}</p>
+            <p className="card-desc">{t('copiedModal.appGuide2')}</p>
           </>
-        ) : steps ? (
-          <>
-            <p className="card-desc">{t('copiedModal.steps1')}</p>
-            <p className="card-desc">{t('copiedModal.steps2')}</p>
-            <p className="card-desc">{t('copiedModal.steps3')}</p>
-            {item.verified === false && <p className="card-desc">{t('copiedModal.stepsUnverified')}</p>}
-          </>
+        ) : effKind === 'none' ? (
+          <p className="card-desc">{t('copiedModal.noneGuide')}</p>
+        ) : effKind === 'pack' ? (
+          <p className="card-desc">{t('detail.packNote')}</p>
         ) : (
           <>
             <p className="card-desc">{t('copiedModal.guide1')}</p>
@@ -1271,7 +1242,7 @@ export default function App() {
       <main id="top">
         {view === 'home' ? (
           <Home items={catalogItems} status={status} onGoSubmit={goSubmit} onOpenDetail={setDetail} onToast={showToast}
-            onShowCopied={(item, cmds, url, steps) => setCopiedInfo({ item, cmds, url, steps })} />
+            onShowCopied={(payload) => setCopiedInfo(payload)} />
         ) : (
           <SubmitPage onBack={goHome} />
         )}
