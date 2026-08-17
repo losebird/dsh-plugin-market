@@ -306,6 +306,9 @@ window.__ModuleLoader__.load({
         agentNoteUninstall: '点「卸载」后，请求会发送给 DSH 会话：它会按项目说明卸载，需要确认时会在对话中问你。',
         jobCancel: '取消', jobAnswerPlaceholder: '输入你的回答，回车提交…', jobSubmit: '提交',
         officialDownload: '官方下载', noKitchenScript: '不要在终端执行采集到的脚本',
+        packDownload: '下载扩展包 zip',
+        packNote: '下载 zip 后在 DSH 插件市场弹窗中选择「从本地导入」，或手动解压到对应目录（skill 放 ~/.agents/skills/，preset 放 ~/.dsh/.agent-presets/）。',
+        appNote: '这是独立产品。请打开官方下载页面；不要在终端执行采集到的脚本。',
         noneCopyNote: '请在 DSH 插件市场查看，不要从官网复制命令安装。',
       },
       en: {
@@ -346,7 +349,10 @@ window.__ModuleLoader__.load({
         agentNoteUninstall: 'Clicking Uninstall hands the request to your DSH session, which follows the project instructions and asks you in the chat when confirmation is needed.',
         jobCancel: 'Cancel', jobAnswerPlaceholder: 'Type your answer and press Enter…', jobSubmit: 'Submit',
         officialDownload: 'Official download', noKitchenScript: 'Do not run scraped scripts in your terminal',
-        noneCopyNote: 'Use the DSH plugin market; do not copy install commands from the project website.',
+        packDownload: 'Download pack zip',
+        packNote: 'Download the zip, then import it from the DSH Plugin Market modal, or extract manually (skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/).',
+        appNote: 'This is a standalone product. Open the official download page; do not run scraped scripts in a terminal.',
+        noneCopyNote: 'Check this item in the DSH Plugin Market; do not copy an install command from the website.',
       },
     }
 
@@ -999,6 +1005,31 @@ window.__ModuleLoader__.load({
         const busy = st.busy && st.busy[item.id]
         const unavailable = item.status === 'unavailable'
         const upToDate = isUpToDate(item, installed)
+        const pres = installPresentation(item)
+        const canOneClick = (pres.kind === 'plugin' || pres.kind === 'companion') && !unavailable
+        const showOfficialDownload = pres.kind === 'app' && !!pres.downloadUrl && !unavailable
+        let primary = null
+        if (busy) {
+          primary = h('span', { className: 'dshm-busy' }, busy === 'uninstall' ? t('uninstalling') : t('installing'))
+        } else if (unavailable) {
+          primary = h('span', { className: 'dshm-busy' }, t('offlineNote'))
+        } else if (installedRaw && installedRaw.source === 'other') {
+          primary = canOneClick
+            ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('migrate'))
+            : null
+        } else if (installed && !upToDate) {
+          primary = canOneClick
+            ? h('span', null,
+                h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) }, t('update')),
+                h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall')))
+            : h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
+        } else if (installed && upToDate) {
+          primary = h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
+        } else if (canOneClick) {
+          primary = h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) }, t('install'))
+        } else if (showOfficialDownload) {
+          primary = h('a', { className: 'dshm-btn dshm-btn-primary', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('officialDownload'))
+        }
         return h('div', { className: 'dshm-card', key: cardKey(item) },
           h('div', { className: 'dshm-card-top' },
             h('div', { className: 'dshm-card-name' }, shortName(item.name)),
@@ -1038,24 +1069,12 @@ window.__ModuleLoader__.load({
           ),
           h('div', { className: 'dshm-card-actions' },
             h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => openDetail(item) }, t('detailBtn')),
-            busy
-              ? h('span', { className: 'dshm-busy' }, busy === 'uninstall' ? t('uninstalling') : t('installing'))
-              : unavailable
-                ? h('span', { className: 'dshm-busy' }, t('offlineNote'))
-                : installedRaw && installedRaw.source === 'other'
-                  ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) }, t('migrate'))
-                  : installed && !upToDate
-                    ? h('span', null,
-                        h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) }, t('update')),
-                        h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall')))
-                    : installed && upToDate
-                      ? h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
-                      : h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) }, t('install'))),
+            primary,
+          ),
         )
       }
 
       function InstallPanel(st, item) {
-        const inst = item.install || {}
         const pres = installPresentation(item)
         const installedRaw = st.installed && st.installed[item.id]
         const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
@@ -1063,15 +1082,15 @@ window.__ModuleLoader__.load({
         const copyBtn = (cmd, key) => h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyTextCmd(cmd, key) },
           st.copiedRepo === key ? t('copied') : t('copyCmd'))
         const installBtn = (enabled) => (enabled && !upToDate)
-          ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => (item.verified === false ? runAgentInstall(item) : runInstall(item)) },
-              (installed ? t('update') : (item.verified === false ? t('install') : t('installNow') + ' · ' + osLabel(store.os))))
+          ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runInstall(item) },
+              (installed ? t('update') : t('installNow') + ' · ' + osLabel(store.os)))
           : null
-        if (pres.command) {
+        if (pres.kind === 'plugin' || pres.kind === 'companion') {
           return h('div', { className: 'dshm-installpanel' },
             h('div', { className: 'dshm-install-title' }, t('installGuide')),
-            h('code', { className: 'dshm-cmd' }, pres.command),
+            pres.command ? h('code', { className: 'dshm-cmd' }, pres.command) : null,
             h('div', { className: 'dshm-install-actions' },
-              copyBtn(pres.command, item.id + ':cmd'),
+              pres.command ? copyBtn(pres.command, item.id + ':cmd') : null,
               installBtn(true)),
             pres.kind === 'companion' && pres.downloadUrl
               ? h('a', { className: 'dshm-btn dshm-btn-ghost', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('officialDownload'))
@@ -1084,36 +1103,21 @@ window.__ModuleLoader__.load({
             pres.downloadUrl
               ? h('a', { className: 'dshm-btn dshm-btn-ghost', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('officialDownload'))
               : null,
-            h('div', { className: 'dshm-install-actions' },
-              installBtn(true)),
-            h('div', { className: 'dshm-card-desc' }, t('noKitchenScript')),
+            h('div', { className: 'dshm-card-desc' }, t('appNote')),
           )
         }
         if (pres.kind === 'pack') {
-          if (!pres.downloadUrl) return null
           return h('div', { className: 'dshm-installpanel' },
             h('div', { className: 'dshm-install-title' }, t('installGuide')),
-            h('a', { className: 'dshm-btn dshm-btn-ghost', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('officialDownload')),
-            h('div', { className: 'dshm-install-actions' },
-              installBtn(true)),
+            pres.downloadUrl
+              ? h('a', { className: 'dshm-btn dshm-btn-ghost', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('packDownload'))
+              : null,
+            h('div', { className: 'dshm-card-desc' }, t('packNote')),
           )
         }
-        if (inst.method === 'manual' || inst.method === 'desktop') {
-          return h('div', { className: 'dshm-installpanel' },
-            h('div', { className: 'dshm-install-title' }, t('officialInstall')),
-            h('div', { className: 'dshm-install-actions' },
-              (item.repo && !upToDate)
-                ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runAgentInstall(item) }, installed ? t('update') : t('install'))
-                : null),
-            h('div', { className: 'dshm-card-desc' }, t('agentNote')),
-          )
-        }
-        if (pres.kind === 'none') {
-          return h('div', { className: 'dshm-installpanel' },
-            h('div', { className: 'dshm-card-desc' }, t('noneCopyNote')),
-          )
-        }
-        return null
+        return h('div', { className: 'dshm-installpanel' },
+          h('div', { className: 'dshm-card-desc' }, t('noneCopyNote')),
+        )
       }
 
       function DetailView(st) {
@@ -1140,9 +1144,7 @@ window.__ModuleLoader__.load({
             ? h('div', { className: 'dshm-card-tags' }, item.tags.map((tg) => h('span', { className: 'dshm-tag', key: tg }, tg)))
             : null,
           h('div', { className: 'dshm-card-actions' },
-            !upToDate && item.type === 'bundle'
-              && !(item.install && (item.install.method === 'manual' || item.install.method === 'desktop' || item.install.method === 'git-clone'
-                || ((item.install.method === 'script' && item.install.os) || item.install.method === 'npm-global' || item.install.method === 'command')))
+            !upToDate && (installPresentation(item).kind === 'plugin' || installPresentation(item).kind === 'companion')
               ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) },
                   installed ? t('update') : t('install'))
               : null,
@@ -1164,9 +1166,6 @@ window.__ModuleLoader__.load({
           ),
           item.verified === false
             ? h('div', { className: 'dshm-strip dshm-strip-err' }, t('unverNote'))
-            : null,
-          item.install && (item.install.method === 'manual' || item.install.method === 'desktop')
-            ? h('div', { className: 'dshm-strip dshm-strip-ok' }, t('manualNote'))
             : null,
           InstallPanel(st, item),
           st.readmeVariants && st.readmeVariants.length > 1
