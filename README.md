@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**2822** 个插件 · **2124** 个可一键安装
+**2824** 个插件 · **2127** 个可一键安装
 
 安装市场：
 
@@ -17,14 +17,14 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 
 ## 目录
 
-- [界面与主题](#ui) (588)
+- [界面与主题](#ui) (589)
 - [会话与记忆](#session) (457)
 - [Agent 与工作流](#agent) (481)
 - [工具与集成](#tools) (312)
 - [开发与输入](#dev) (145)
 - [通信与移动](#comm) (96)
 - [安全与权限](#auth) (143)
-- [技能与扩展](#skills) (71)
+- [技能与扩展](#skills) (72)
 - [市场与发现](#market) (181)
 - [趣味与个性](#fun) (28)
 - [其他](#other) (320)
@@ -619,6 +619,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-ocgo-quota](https://github.com/fuzz1og/dsh-ocgo-quota) OpenCode Go usage floating widget for the DeepSeek Harness Web UI: a bottom-right overlay  ⭐ 0 ⬇ 0 · 未验证
 - [dsh-workbench](https://github.com/doebkblcya/dsh-workbench) DSH Web GUI right-side workbench plugin: a VS Code-style single right panel with Files/Git ⭐ 0 ⬇ 0
 - [dsh-settings-mcp-skills](https://github.com/w123456789zy/dsh-settings-mcp-skills) MCP Servers and Skills settings pages for the dsh web UI: mounts the official DeepSeek too ⭐ 0 ⬇ 0
+- [dsh-projects](https://github.com/WenhongPan/dsh-projects) Project and session management for DeepSeek Harness: searchable projects, organized sessio ⭐ 0 ⬇ 0 · v0.2.0-alpha.2
 
 ## 会话与记忆
 
@@ -701,7 +702,6 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-btw](https://github.com/iyllyt/dsh-btw) Transient /btw side questions for DeepSeek Harness: immediate while the main agent is busy ⭐ 6 ⬇ 0
 - [dsh-inspector](https://github.com/CocoSgt/dsh-inspector) Inspect and manage the live instruction chain and project skills for the current dsh sessi ⭐ 6 ⬇ 0
 - [dsh-hxyz-archived-conversations](https://github.com/hxyz486/dsh-archived-conversations) 归档对话查看：查看、恢复与删除归档会话 ⭐ 6 ⬇ 0 · 未验证 · 手动安装
-- [dsh-import-agents](https://github.com/Chang-Tong/dsh-import-agents) Import pi / opencode sessions, chat history, and agents into DeepSeek Harness (dsh): slash ⭐ 6 ⬇ 0 · 未验证 · 手动安装 · v0.2.3
 - [dsh-web-attention-badge](https://github.com/Luaphes/dsh-web-attention-badge) Web attention badge: a top-left corner indicator counting sessions waiting for user input  ⭐ 5 ⬇ 0
 - [context-vista](https://github.com/GooodWei/context-vista) A live context-window donut for DeepSeek Harness: token usage, compaction savings, and cos ⭐ 5 ⬇ 0
 - [nowledge-mem-deepseek-harness](https://github.com/nowledge-co/nowledge-mem-deepseek-harness) One memory layer for every AI tool and agent, packaged for DeepSeek Harness with startup c ⭐ 5 ⬇ 0
@@ -940,6 +940,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-goodmemory](https://github.com/hjqcan/dsh-goodmemory) Automatic cross-session GoodMemory recall and writeback for DeepSeek Harness ⭐ 1 ⬇ 0 · 手动安装 · v0.1.0
 - [LiuHe](https://github.com/wulun811/LiuHe) LLM-native code toolkit: Rust multi-language parser (tree-sitter) + 44 MCP tools for atomi ⭐ 1 ⬇ 0 · 未验证 · 手动安装
 - [dsh-feishu-bridge](https://github.com/21hbguo/dsh-feishu-bridge-plugin) 飞书机器人 ↔ DSH 对话桥：进程内驱动 DSH 会话，流式卡片回复 ⭐ 1 ⬇ 0 · 未验证 · 官方脚本安装 · v0.0.2
+- [dsh-import-agents](https://github.com/Chang-Tong/dsh-import-agents)  pi、opencode、codex、claude-code 的会话、聊天记录与 agent 导入 DeepSeek Harness（dsh）。导入的会话出现在会话列表，可携带完整 ⭐ 0 ⬇ 0 · v0.2.4
 - [dsh-worktree](https://github.com/whitelonng/dsh-worktree) DSH 插件：git worktree 槽位池。固定 N 个槽位 + N 条分支复用，多会话并行开发互不干扰；池满时结构化暴露占用明细，由模型转告用户决定释放或合并。 ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [skill-injector-plugin](https://github.com/Zenjibad/skill-injector-plugin) Auto-inject user-chosen skills (e.g. caveman, ponytail) into DeepSeek Harness sessions: ev ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-headroom](https://github.com/giter00/dsh-headroom) Headroom-inspired automatic context compression plugin for DeepSeek Harness (dsh): compres ⭐ 0 ⬇ 0
@@ -2345,6 +2346,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [airesearch-plugin](https://github.com/WOOK98/airesearch-plugin) AIResearch skills for DeepSeek Harness: snapshot, deep dive, morning brief, and SEC filing ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-provision](https://github.com/MoYuSOwO/dsh-provision) Manifest-driven multi-source asset manager for DeepSeek Harness profiles (npm/github/relea ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [dsh-understand-anything](https://github.com/GongYuanCaiJi/dsh-understand-anything) 理解任何东西技能包（移植自 Understand-Anything） ⭐ 0 ⬇ 0
+- [世舶科技招投标数据 Skills](https://github.com/Tingman/baobiao-api-skills) 世舶科技招投标数据 API 场景 Skill 扩展包，覆盖招标项目查询、招标公告查询、中标项目查询、中标结果查询、项目详情与附件获取、政府采购意向、合同公告、拟在建项目查询等高频需 ⭐ 0 ⬇ 0 · 扩展包 · v1.0.1
 
 ## 市场与发现
 
