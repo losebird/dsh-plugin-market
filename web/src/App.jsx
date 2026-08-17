@@ -55,8 +55,8 @@ const I18N = {
     'copiedModal.appTitle': '官方下载',
     'copiedModal.appGuide1': '打开该系统的官方下载页面。',
     'copiedModal.appGuide2': '不要在终端执行采集到的脚本。',
-    'copiedModal.noneTitle': '请在 DSH 插件市场查看',
-    'copiedModal.noneGuide': '请在 DSH 插件市场查看，不要从官网复制命令安装。',
+    'copiedModal.noneTitle': '未验证',
+    'copiedModal.noneGuide': '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。',
     'dir.title': '插件目录', 'dir.count': '{n} 个条目',
     'dir.demo': 'registry 暂不可用，当前展示演示数据。',
     'dir.search': '搜索名称、简介或标签',
@@ -64,6 +64,7 @@ const I18N = {
     'dir.tabVerified': '可一键安装', 'dir.tabUnverified': '未验证',
     'dir.tabFeatured': '精选插件', 'dir.tabNew': '最新发布', 'dir.tabHandmade': '大神手作',
     'dir.emptyAll': '目录还是空的。上传第一个插件？', 'dir.emptyFilter': '没有匹配的插件，换个关键词试试。',
+    'dir.emptyTab': '没有匹配的插件（{filter}）',
     'dir.pagerPrev': '上一页', 'dir.pagerNext': '下一页', 'dir.pager': '第 {p} / {total} 页',
     'card.detail': '详情', 'card.install': '安装', 'card.officialDownload': '官方下载', 'card.copied': '已复制', 'card.copyUrl': '复制地址',
     'card.downloads': '下载量', 'card.stars': 'GitHub 星标',
@@ -75,11 +76,11 @@ const I18N = {
     'detail.copy': '复制', 'detail.copied': '已复制',
     'detail.pluginNote': '在 DSH 侧栏插件市场点安装；或把下面这条 dsh plugin add 命令粘贴到终端。',
     'detail.packDownload': '下载扩展包 zip',
-    'detail.packNote': '下载 zip 后在 DSH 插件市场弹窗中选择「从本地导入」，或手动解压到对应目录（skill 放 ~/.agents/skills/，preset 放 ~/.dsh/.agent-presets/）。',
+    'detail.packNote': '下载 zip 后解压：skill 放到 ~/.agents/skills/，preset 放到 ~/.dsh/.agent-presets/。',
     'detail.appNote': '这是独立产品。请打开官方下载页面；不要在终端执行采集到的脚本。',
-    'detail.noneNote': '请在 DSH 插件市场查看，不要从官网复制命令安装。',
+    'detail.noneNote': '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。',
     'detail.repo': '查看仓库', 'detail.unavailable': '该条目仓库已删除或转为私有',
-    'detail.unverified': '该仓库未声明 dsh.bundle.patch，一键安装不可用（直接 dsh plugin add 只会作为普通依赖安装、不会挂载插件）。请到仓库查看作者提供的手工安装方式。',
+    'detail.unverified': '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。',
     'how.title': '工作原理',
     'how.sub': '没有私有后端。插件数据就是仓库里的 JSON 文件，每天由 GitHub Actions 自动采集、去重、合并，网站与 DSH 弹窗读的是同一份数据。',
     'how.s1t': '作者发布', 'how.s1b': '插件作者在自己的 GitHub 仓库发 Release（bundle 包或 zip 扩展包），构建产物直接提交进仓库，不依赖安装时编译。',
@@ -115,12 +116,12 @@ const I18N = {
     'footer.install': '安装请在 DSH 应用内「插件市场」弹窗中完成',
     'faq.title': '常见问题',
     'faq.q1': '如何安装插件市场？', 'faq.a1a': '在终端执行 ', 'faq.a1b': '，然后重启 dsh。重启后打开设置（Settings），在设置面板里找到「插件市场」入口。',
-    'faq.q2': '如何在 DSH 里安装插件？', 'faq.a2a': '打开插件市场弹窗，点卡片上的「安装」即可；也可以复制安装命令到终端执行 ', 'faq.a2b': '（把 spec 换成对应插件）。扩展包类插件先下载 zip，再在弹窗里导入。',
+    'faq.q2': '如何在 DSH 里安装插件？', 'faq.a2a': '打开插件市场弹窗，点卡片上的「安装」即可；也可以复制安装命令到终端执行 ', 'faq.a2b': '（把 spec 换成对应插件）。扩展包请下载 zip 后解压：skill 放到 ~/.agents/skills/，preset 放到 ~/.dsh/.agent-presets/。',
     'faq.q3': '为什么我的终端里没有 dsh 命令？', 'faq.a3a': '如果你是用 ', 'faq.a3b': ' 方式启动的，dsh 命令并没有安装到系统里。先全局安装 ', 'faq.a3c': '，之后 dsh 系列命令（dsh web、dsh plugin add 等）就都可用了。',
     'faq.q4': '为什么有些插件标着「未验证」？', 'faq.a4a': '它们的仓库没有声明 ', 'faq.a4b': '，直接 dsh plugin add 只会作为普通依赖安装、不会挂载成插件。请参考作者仓库的手工安装说明。',
     'faq.q5': '安装后插件没有生效？', 'faq.a5': 'bundle 类插件安装后需要重启 dsh 才生效；扩展包里的 skill 在新会话可用，preset 需要在新会话的预设列表中选择。',
     'faq.q6': '如何卸载插件？', 'faq.a6a': '在弹窗里点「卸载」，或在终端执行 ', 'faq.a6b': '（包名可在插件详情里查看）。',
-    'faq.q7': '未验证的插件应该怎么安装呢？', 'faq.a7': '点击卡片「详情」，把项目地址发给 dsh，让它帮你安装即可。',
+    'faq.q7': '未验证的插件应该怎么安装呢？', 'faq.a7': '没有一键安装。打开详情，到仓库看作者说明。',
     'links.title': '相关资源', 'links.llm': 'AI 大模型', 'links.agent': 'Agent 平台', 'links.token': 'API 中转',
   },
   en: {
@@ -144,8 +145,8 @@ const I18N = {
     'copiedModal.appTitle': 'Official download',
     'copiedModal.appGuide1': 'Open this product\'s official download page.',
     'copiedModal.appGuide2': 'Do not run scraped scripts in your terminal.',
-    'copiedModal.noneTitle': 'Check the DSH Plugin Market',
-    'copiedModal.noneGuide': 'Check this item in the DSH Plugin Market; do not copy an install command from the website.',
+    'copiedModal.noneTitle': 'Unverified',
+    'copiedModal.noneGuide': 'Unverified (the repo does not declare a mountable plugin). No one-click install; see the author\'s notes in the repo.',
     'dir.title': 'Plugin Directory', 'dir.count': '{n} entries',
     'dir.demo': 'Registry unavailable, showing demo data.',
     'dir.search': 'Search name, description or tags',
@@ -153,6 +154,7 @@ const I18N = {
     'dir.tabVerified': 'One-click install', 'dir.tabUnverified': 'Unverified',
     'dir.tabFeatured': 'Featured', 'dir.tabNew': 'New', 'dir.tabHandmade': 'By Makers',
     'dir.emptyAll': 'The directory is empty. Submit the first plugin?', 'dir.emptyFilter': 'No matching plugins. Try another keyword.',
+    'dir.emptyTab': 'No matching plugins ({filter})',
     'dir.pagerPrev': 'Prev', 'dir.pagerNext': 'Next', 'dir.pager': 'Page {p} / {total}',
     'card.detail': 'Details', 'card.install': 'Install', 'card.officialDownload': 'Official download', 'card.copied': 'Copied', 'card.copyUrl': 'Copy URL',
     'card.downloads': 'Downloads', 'card.stars': 'GitHub stars',
@@ -164,11 +166,11 @@ const I18N = {
     'detail.copy': 'Copy', 'detail.copied': 'Copied',
     'detail.pluginNote': 'In DSH, install from the Plugin Market, or paste the dsh plugin add command below.',
     'detail.packDownload': 'Download pack zip',
-    'detail.packNote': 'Download the zip, then import it from the DSH Plugin Market modal, or extract manually (skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/).',
+    'detail.packNote': 'Download the zip and unpack — skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/.',
     'detail.appNote': 'This is a standalone product. Open the official download page; do not run scraped scripts in a terminal.',
-    'detail.noneNote': 'Check this item in the DSH Plugin Market; do not copy an install command from the website.',
+    'detail.noneNote': 'Unverified (the repo does not declare a mountable plugin). No one-click install; see the author\'s notes in the repo.',
     'detail.repo': 'View repo', 'detail.unavailable': 'This repo has been deleted or made private',
-    'detail.unverified': 'This repo does not declare dsh.bundle.patch, so one-click install is unavailable (dsh plugin add would only add it as a plain dependency). Check the repo for the author\'s manual install steps.',
+    'detail.unverified': 'Unverified (the repo does not declare a mountable plugin). No one-click install; see the author\'s notes in the repo.',
     'how.title': 'How it works',
     'how.sub': 'No private backend. Plugin data is just JSON files in the repo, collected, deduplicated and merged by GitHub Actions daily. The website and the DSH modal read the same data.',
     'how.s1t': 'Authors publish', 'how.s1b': 'Authors cut a Release in their GitHub repo (bundle package or zip pack) and commit build artifacts instead of relying on install-time builds.',
@@ -204,12 +206,12 @@ const I18N = {
     'footer.install': 'Install from the Plugin Market modal inside DSH',
     'faq.title': 'FAQ',
     'faq.q1': 'How do I install the market itself?', 'faq.a1a': 'Run ', 'faq.a1b': ' in your terminal, then restart dsh. Open Settings afterwards — the Plugin Market is a section inside Settings.',
-    'faq.q2': 'How do I install a plugin?', 'faq.a2a': 'Open the market modal and click Install on a card, or copy the command and run ', 'faq.a2b': ' (replace with the plugin spec). For packs, download the zip and import it in the modal.',
+    'faq.q2': 'How do I install a plugin?', 'faq.a2a': 'Open the market modal and click Install on a card, or copy the command and run ', 'faq.a2b': ' (replace with the plugin spec). For packs, download the zip and unpack — skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/.',
     'faq.q3': 'Why is there no dsh command in my terminal?', 'faq.a3a': 'If you started dsh with ', 'faq.a3b': ', the dsh command is not installed on your system. Install it globally with ', 'faq.a3c': ', then all dsh commands (dsh web, dsh plugin add, etc.) become available.',
     'faq.q4': 'Why are some plugins marked Unverified?', 'faq.a4a': 'Their repos do not declare ', 'faq.a4b': ', so dsh plugin add would only add them as plain dependencies without mounting. Check the repo for manual install steps.',
     'faq.q5': 'Installed but not taking effect?', 'faq.a5': 'Bundle plugins require a dsh restart. Skills from packs are available in new sessions; presets must be selected in a new session\'s preset list.',
     'faq.q6': 'How do I uninstall?', 'faq.a6a': 'Click Uninstall in the modal, or run ', 'faq.a6b': ' (find the package name in the plugin detail).',
-    'faq.q7': 'How do I install an Unverified plugin?', 'faq.a7': 'Open Details, send the project URL to dsh, and ask it to install for you.',
+    'faq.q7': 'How do I install an Unverified plugin?', 'faq.a7': 'There is no one-click install. Open Details and check the repo for the author\'s notes.',
     'links.title': 'Related', 'links.llm': 'LLMs', 'links.agent': 'Agent', 'links.token': 'API Relays',
   },
 }
@@ -778,14 +780,37 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
 
   const filtered = useMemo(() => {
     const normSearch = (s) => String(s || '').toLowerCase().replace(/_/g, '-')
-    const qv = normSearch(q)
-    return base.filter((it) => {
+    const qTrimmed = q.trim()
+    const source = qTrimmed
+      ? [...items].sort((a, b) => {
+        if (sort === 'downloads') return (b.downloads || 0) - (a.downloads || 0)
+        if (sort === 'name') return (a.name || '').localeCompare(b.name || '')
+        return (b.stars || 0) - (a.stars || 0)
+      })
+      : base
+    const qv = normSearch(qTrimmed)
+    return source.filter((it) => {
       if (cat && (it.category || 'other') !== cat) return false
-      if (!q) return true
+      if (!qTrimmed) return true
       const hay = normSearch([it.name, it.description, it.repo, it.package, it.id, (it.tags || []).join(' ')].join(' '))
       return hay.includes(qv)
     })
-  }, [base, cat, q])
+  }, [items, base, cat, q, sort])
+
+  const emptyMsg = useMemo(() => {
+    if (items.length === 0) return t('dir.emptyAll')
+    if (q.trim()) return t('dir.emptyFilter')
+    const tabLabels = {
+      verified: t('dir.tabVerified'),
+      unverified: t('dir.tabUnverified'),
+      featured: t('dir.tabFeatured'),
+      new: t('dir.tabNew'),
+      handmade: t('dir.tabHandmade'),
+    }
+    let filter = tabLabels[group] || ''
+    if (cat) filter += ' · ' + (CATEGORIES[cat] || CATEGORIES.other)[lang]
+    return t('dir.emptyTab', { filter })
+  }, [items.length, q, cat, group, t, lang])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage = Math.min(page, totalPages - 1)
@@ -858,7 +883,7 @@ function Home({ items, status, onGoSubmit, onOpenDetail, onToast, onShowCopied }
         ) : filtered.length === 0 ? (
           <div className="state">
             <Package size={34} />
-            <p>{items.length === 0 ? t('dir.emptyAll') : t('dir.emptyFilter')}</p>
+            <p>{emptyMsg}</p>
             {items.length === 0 && <button className="btn btn-primary" onClick={onGoSubmit}>{t('hero.upload')}</button>}
           </div>
         ) : (

@@ -278,9 +278,9 @@ window.__ModuleLoader__.load({
         installing: '安装中…', uninstalling: '卸载中…', installed: '已安装', latestPill: '已是最新',
         copyUrl: '复制地址', copied: '已复制', copyCmd: '复制命令',
         auto: '自动收录', unver: '未验证', demo: '演示', offline: '已下线',
-        offlineNote: '仓库已下线，无法安装', unverNote: '未验证（缺少 dsh.bundle 声明）：安装将由 DSH 阅读 README 执行，可能无法挂载，请留意 DSH 对话中的提示。',
+        offlineNote: '仓库已下线，无法安装', unverNote: '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。',
         typeBundle: 'DSH 插件', typePack: '扩展包', downloads: '下载量', stars: '星标',
-        loading: '加载中…', empty: '没有匹配的插件',
+        loading: '加载中…', empty: '没有匹配的插件', emptyFilter: '没有匹配的插件（{filter}）',
         sourceRemote: 'registry 实时', sourceDemo: '演示数据',
         pagerPrev: '上一页', pagerNext: '下一页', page: '第 {p}/{total} 页',
         detailBtn: '详情', back: '返回', readmeLoading: '加载项目说明中…', readmeError: '项目说明加载失败',
@@ -307,9 +307,9 @@ window.__ModuleLoader__.load({
         jobCancel: '取消', jobAnswerPlaceholder: '输入你的回答，回车提交…', jobSubmit: '提交',
         officialDownload: '官方下载', noKitchenScript: '不要在终端执行采集到的脚本',
         packDownload: '下载扩展包 zip',
-        packNote: '下载 zip 后在 DSH 插件市场弹窗中选择「从本地导入」，或手动解压到对应目录（skill 放 ~/.agents/skills/，preset 放 ~/.dsh/.agent-presets/）。',
+        packNote: '下载 zip 后解压：skill 放到 ~/.agents/skills/，preset 放到 ~/.dsh/.agent-presets/。',
         appNote: '这是独立产品。请打开官方下载页面；不要在终端执行采集到的脚本。',
-        noneCopyNote: '请在 DSH 插件市场查看，不要从官网复制命令安装。',
+        noneCopyNote: '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。',
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
@@ -321,9 +321,9 @@ window.__ModuleLoader__.load({
         installing: 'Installing…', uninstalling: 'Uninstalling…', installed: 'Installed', latestPill: 'Up to date',
         copyUrl: 'Copy URL', copied: 'Copied', copyCmd: 'Copy command',
         auto: 'Auto', unver: 'Unverified', demo: 'Demo', offline: 'Offline',
-        offlineNote: 'Repo offline, cannot install', unverNote: 'Unverified (no dsh.bundle declaration): DSH will read the README and install it; mounting may fail, so watch the DSH conversation for notes.',
+        offlineNote: 'Repo offline, cannot install', unverNote: 'Unverified (the repo does not declare a mountable plugin). No one-click install; see the author\'s notes in the repo.',
         typeBundle: 'DSH plugin', typePack: 'Pack', downloads: 'Downloads', stars: 'Stars',
-        loading: 'Loading…', empty: 'No matching plugins',
+        loading: 'Loading…', empty: 'No matching plugins', emptyFilter: 'No matching plugins ({filter})',
         sourceRemote: 'registry live', sourceDemo: 'demo data',
         pagerPrev: 'Prev', pagerNext: 'Next', page: 'Page {p}/{total}',
         detailBtn: 'Details', back: 'Back', readmeLoading: 'Loading README…', readmeError: 'Failed to load README',
@@ -350,9 +350,9 @@ window.__ModuleLoader__.load({
         jobCancel: 'Cancel', jobAnswerPlaceholder: 'Type your answer and press Enter…', jobSubmit: 'Submit',
         officialDownload: 'Official download', noKitchenScript: 'Do not run scraped scripts in your terminal',
         packDownload: 'Download pack zip',
-        packNote: 'Download the zip, then import it from the DSH Plugin Market modal, or extract manually (skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/).',
+        packNote: 'Download the zip and unpack — skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/.',
         appNote: 'This is a standalone product. Open the official download page; do not run scraped scripts in a terminal.',
-        noneCopyNote: 'Check this item in the DSH Plugin Market; do not copy an install command from the website.',
+        noneCopyNote: 'Unverified (the repo does not declare a mountable plugin). No one-click install; see the author\'s notes in the repo.',
       },
     }
 
@@ -656,8 +656,10 @@ window.__ModuleLoader__.load({
             os: (res && res.os) || 'darwin',
             loading: false,
           })
+          await loadInstalled()
         } catch (e) {
           patch({ loading: false, error: String(e && e.message ? e.message : e) })
+          await loadInstalled()
         }
       }
 
@@ -999,8 +1001,32 @@ window.__ModuleLoader__.load({
         return String(n)
       }
 
+      function installedRec(item, st) {
+        const direct = st.installed && st.installed[item.id]
+        if (direct) return direct
+        const fields = [item.package, item.spec, item.name, item.id].map(lower).filter(Boolean)
+        if (!fields.length) return null
+        for (const row of st.mRows || []) {
+          const rowKeys = [row.name, row.id].map(lower).filter(Boolean)
+          for (const f of fields) {
+            for (const rk of rowKeys) {
+              if (f === rk) {
+                return {
+                  type: 'bundle',
+                  spec: row.name,
+                  package: row.name,
+                  source: row.source === 'other' ? 'other' : (row.source || 'manual'),
+                  profile: row.profile,
+                }
+              }
+            }
+          }
+        }
+        return null
+      }
+
       function Card(item, st) {
-        const installedRaw = st.installed && st.installed[item.id]
+        const installedRaw = installedRec(item, st)
         const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
         const busy = st.busy && st.busy[item.id]
         const unavailable = item.status === 'unavailable'
@@ -1076,7 +1102,7 @@ window.__ModuleLoader__.load({
 
       function InstallPanel(st, item) {
         const pres = installPresentation(item)
-        const installedRaw = st.installed && st.installed[item.id]
+        const installedRaw = installedRec(item, st)
         const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
         const upToDate = isUpToDate(item, installed)
         const copyBtn = (cmd, key) => h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => copyTextCmd(cmd, key) },
@@ -1122,7 +1148,7 @@ window.__ModuleLoader__.load({
 
       function DetailView(st) {
         const item = st.detail
-        const installedRaw = st.installed && st.installed[item.id]
+        const installedRaw = installedRec(item, st)
         const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
         const upToDate = isUpToDate(item, installed)
         return h('div', { className: 'dshm-detail' },
@@ -1154,9 +1180,6 @@ window.__ModuleLoader__.load({
               : null,
             installed
               ? h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
-              : null,
-            installed && item.repo
-              ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => runAgentUninstall(item) }, t('agentUninstall'))
               : null,
             item.verified === false
               ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => copyRepo(item) },
@@ -1249,9 +1272,6 @@ window.__ModuleLoader__.load({
                               item && installed && !upToDate
                                 ? h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: installClick(item) }, t('update'))
                                 : null,
-                              item && item.repo
-                                ? h('button', { className: 'dshm-btn dshm-btn-ghost dshm-btn-sm', onClick: () => runAgentUninstall(item) }, t('agentUninstall'))
-                                : null,
                               h('button', { className: 'dshm-btn dshm-btn-danger dshm-btn-sm', onClick: () => doRemove(row) }, t('remove')),
                             ],
                       ),
@@ -1277,6 +1297,7 @@ window.__ModuleLoader__.load({
             if (currentSid && currentSid !== st.sessionId) patch({ sessionId: currentSid })
             if (props && typeof props.close === 'function') props.close()
             patch({ open: true, detail: null })
+            loadInstalled()
             if (st.items.length === 0 && !st.loading) refresh()
           }, [currentSid])
           return h('div', { className: 'dshm-root' },
@@ -1285,6 +1306,7 @@ window.__ModuleLoader__.load({
               onClick: () => {
                 if (props && typeof props.close === 'function') props.close()
                 patch({ open: true, detail: null })
+                loadInstalled()
                 if (st.items.length === 0 && !st.loading) refresh()
               },
             },
@@ -1310,7 +1332,14 @@ window.__ModuleLoader__.load({
           api('job-answer', { id: j.id, answer }).catch(() => {})
         }
         const cancelJob = () => {
-          api('job-cancel', { id: j.id }).catch(() => {})
+          const tid = jobTimers.get(j.id)
+          if (tid != null) {
+            clearTimeout(tid)
+            jobTimers.delete(j.id)
+          }
+          const cleared = {}
+          for (const k in store.busy) { if (store.busy[k]) cleared[k] = null }
+          patch({ job: null, busy: Object.assign({}, store.busy, cleared) })
         }
         return h('div', { className: 'dshm-overlay dshm-job-overlay', role: 'dialog' },
           h('div', { className: 'dshm-backdrop' }),
@@ -1381,10 +1410,14 @@ window.__ModuleLoader__.load({
           const jobOverlay = st.job ? JobDialogView(st, jobRef) : null
           if (!st.open) return jobOverlay
           const normSearch = (s) => String(s || '').toLowerCase().replace(/_/g, '-')
-          const qv = normSearch((st.q || '').trim())
+          const qTrim = (st.q || '').trim()
+          const qv = normSearch(qTrim)
+          const searchActive = qTrim.length > 0
           const catalog = collapsePackageOwnerDuplicates(st.items, { preferCurated: true })
           let base = catalog
-          if (st.group === 'featured') {
+          if (searchActive) {
+            base = catalog
+          } else if (st.group === 'featured') {
             base = [...catalog].sort((a, b) => (b.stars || 0) - (a.stars || 0)).slice(0, 100)
           } else if (st.group === 'new') {
             base = catalog.filter((it) => it.releasedAt).sort((a, b) => String(b.releasedAt).localeCompare(String(a.releasedAt))).slice(0, 200)
@@ -1460,7 +1493,17 @@ window.__ModuleLoader__.load({
                       st.loading
                         ? h('div', { className: 'dshm-empty' }, t('loading'))
                         : filtered.length === 0
-                          ? h('div', { className: 'dshm-empty' }, t('empty'))
+                          ? h('div', { className: 'dshm-empty' }, searchActive
+                              ? t('empty')
+                              : t('emptyFilter', {
+                                  filter: ({
+                                    verified: t('tabVerified'),
+                                    unverified: t('tabUnverified'),
+                                    featured: t('tabFeatured'),
+                                    new: t('tabNew'),
+                                    handmade: t('tabHandmade'),
+                                  }[st.group] || t('tabVerified')) + (st.cat ? ' · ' + (CATEGORIES[st.cat] || CATEGORIES.other)[store.lang] : ''),
+                                }))
                           : h('div', { className: 'dshm-grid' }, pageItems.map((it) => Card(it, st))),
                       totalPages > 1
                         ? h('div', { className: 'dshm-pager' },
