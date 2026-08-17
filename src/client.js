@@ -1,4 +1,5 @@
 // dsh-market 浏览器半片：设置 → 插件 → 插件市场（AMD bundle，由 client-modules 提供）
+import { installPresentation, installCommand } from './install-info.mjs'
 window.__ModuleLoader__.load({
   id: '@ace-zone/dsh-market',
   factory: (require) => {
@@ -60,6 +61,8 @@ window.__ModuleLoader__.load({
         agentNote: '点「安装」后，请求会发送给 DSH 会话：就像你在对话框里说“帮我装这个”一样，执行、提问与审批都在你的对话中进行。',
         agentNoteUninstall: '点「卸载」后，请求会发送给 DSH 会话：它会按项目说明卸载，需要确认时会在对话中问你。',
         jobCancel: '取消', jobAnswerPlaceholder: '输入你的回答，回车提交…', jobSubmit: '提交',
+        officialDownload: '官方下载', noKitchenScript: '不要在终端执行采集到的脚本',
+        noneCopyNote: '请在 DSH 插件市场查看，不要从官网复制命令安装。',
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
@@ -100,6 +103,8 @@ window.__ModuleLoader__.load({
         agentNote: 'Clicking Install hands the request to your DSH session — exactly like asking in the chat: execution, questions and approvals happen in your conversation.',
         agentNoteUninstall: 'Clicking Uninstall hands the request to your DSH session, which follows the project instructions and asks you in the chat when confirmation is needed.',
         jobCancel: 'Cancel', jobAnswerPlaceholder: 'Type your answer and press Enter…', jobSubmit: 'Submit',
+        officialDownload: 'Official download', noKitchenScript: 'Do not run scraped scripts in your terminal',
+        noneCopyNote: 'Use the DSH plugin market; do not copy install commands from the project website.',
       },
     }
 
@@ -363,15 +368,7 @@ window.__ModuleLoader__.load({
       const catLabel = (item) => (CATEGORIES[item.category] || CATEGORIES.other)[store.lang]
       const shortName = (n) => String(n || '').split('/').pop() || String(n || '')
       const osLabel = (os) => ({ darwin: 'macOS', linux: 'Linux', win32: 'Windows' }[os] || String(os))
-      const osKeysOf = (inst) => ['darwin', 'linux', 'win32'].filter((k) => inst && inst.os && inst.os[k])
-      const installCmdFor = (item, os) => {
-        const inst = item.install || {}
-        if (inst.method === 'script' && inst.os) {
-          return inst.os[os] || (os !== 'win32' ? (inst.os.darwin || inst.os.linux) : null) || inst.os.win32 || ''
-        }
-        if (inst.method === 'npm-global' || inst.method === 'command' || inst.method === 'git-clone') return inst.command || ''
-        return 'dsh plugin --profile web add ' + item.spec
-      }
+      const installCmdFor = (item, os) => installCommand(item)
       // 版本号提取：兼容 github:owner/repo#v1.2.3、owner/repo#v1.2.3、name@1.2.3、v1.2.3 等写法
       const verOf = (s) => {
         const m = /#v?([0-9][\w.-]*)$|@([0-9][\w.-]*)$|^v?([0-9][\w.-]*)$/.exec(String(s || ''))
@@ -580,7 +577,8 @@ window.__ModuleLoader__.load({
         } catch {}
       }
       const doCopyCmd = (item) => {
-        const cmd = installCmdFor(item, store.os)
+        const cmd = installCmdFor(item)
+        if (!cmd) return
         try {
           navigator.clipboard.writeText(cmd).then(() => {
             patch({ copiedRepo: item.id + ':cmd' })
@@ -816,6 +814,7 @@ window.__ModuleLoader__.load({
 
       function InstallPanel(st, item) {
         const inst = item.install || {}
+        const pres = installPresentation(item)
         const installedRaw = st.installed && st.installed[item.id]
         const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
         const upToDate = isUpToDate(item, installed)
@@ -825,42 +824,36 @@ window.__ModuleLoader__.load({
           ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => (item.verified === false ? runAgentInstall(item) : runInstall(item)) },
               (installed ? t('update') : (item.verified === false ? t('install') : t('installNow') + ' · ' + osLabel(store.os))))
           : null
-        if (inst.method === 'script' && inst.os) {
-          const oses = osKeysOf(inst)
-          const sel = oses.includes(st.osTab) ? st.osTab : (oses.includes(store.os) ? store.os : oses[0])
+        if (pres.command) {
           return h('div', { className: 'dshm-installpanel' },
-            h('div', { className: 'dshm-install-title' }, t('officialInstall')),
-            h('div', { className: 'dshm-ostabs' },
-              oses.map((k) => h('button', {
-                key: k,
-                className: 'dshm-seg-btn' + (k === sel ? ' on' : ''),
-                onClick: () => patch({ osTab: k }),
-              }, osLabel(k) + (k === store.os ? ' · ' + t('currentOs') : '')))),
-            h('code', { className: 'dshm-cmd' }, inst.os[sel]),
+            h('div', { className: 'dshm-install-title' }, t('installGuide')),
+            h('code', { className: 'dshm-cmd' }, pres.command),
             h('div', { className: 'dshm-install-actions' },
-              copyBtn(inst.os[sel], item.id + ':os:' + sel),
+              copyBtn(pres.command, item.id + ':cmd'),
               installBtn(true)),
-            h('div', { className: 'dshm-card-desc' }, t('scriptNote')),
+            pres.kind === 'companion' && pres.downloadUrl
+              ? h('a', { className: 'dshm-btn dshm-btn-ghost', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('officialDownload'))
+              : null,
           )
         }
-        if (inst.method === 'npm-global' || inst.method === 'command') {
-          const cmd = inst.command || ''
-          return h('div', { className: 'dshm-installpanel' },
-            h('code', { className: 'dshm-cmd' }, cmd),
-            h('div', { className: 'dshm-install-actions' },
-              copyBtn(cmd, item.id + ':os:npm'),
-              installBtn(true)),
-          )
-        }
-        if (inst.method === 'git-clone') {
-          const cmd = inst.command || ''
+        if (pres.kind === 'app') {
           return h('div', { className: 'dshm-installpanel' },
             h('div', { className: 'dshm-install-title' }, t('officialInstall')),
-            h('code', { className: 'dshm-cmd' }, cmd),
+            pres.downloadUrl
+              ? h('a', { className: 'dshm-btn dshm-btn-ghost', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('officialDownload'))
+              : null,
             h('div', { className: 'dshm-install-actions' },
-              copyBtn(cmd, item.id + ':os:clone'),
               installBtn(true)),
-            h('div', { className: 'dshm-card-desc' }, t('cloneNote')),
+            h('div', { className: 'dshm-card-desc' }, t('noKitchenScript')),
+          )
+        }
+        if (pres.kind === 'pack') {
+          if (!pres.downloadUrl) return null
+          return h('div', { className: 'dshm-installpanel' },
+            h('div', { className: 'dshm-install-title' }, t('installGuide')),
+            h('a', { className: 'dshm-btn dshm-btn-ghost', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('officialDownload')),
+            h('div', { className: 'dshm-install-actions' },
+              installBtn(true)),
           )
         }
         if (inst.method === 'manual' || inst.method === 'desktop') {
@@ -871,6 +864,11 @@ window.__ModuleLoader__.load({
                 ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => runAgentInstall(item) }, installed ? t('update') : t('install'))
                 : null),
             h('div', { className: 'dshm-card-desc' }, t('agentNote')),
+          )
+        }
+        if (pres.kind === 'none') {
+          return h('div', { className: 'dshm-installpanel' },
+            h('div', { className: 'dshm-card-desc' }, t('noneCopyNote')),
           )
         }
         return null
@@ -906,7 +904,7 @@ window.__ModuleLoader__.load({
               ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) },
                   installed ? t('update') : t('install'))
               : null,
-            item.type === 'bundle' && item.verified !== false
+            installCmdFor(item)
               ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => doCopyCmd(item) },
                   st.copiedRepo === item.id + ':cmd' ? t('copied') : t('copyCmd'))
               : null,
