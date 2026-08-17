@@ -1,0 +1,31 @@
+{
+  "id": "baobiao-api-overview",
+  "name": "世舶科技招投标数据 Skills",
+  "type": "pack",
+  "repo": "Tingman/baobiao-api-skills",
+  "spec": "https://github.com/Tingman/baobiao-api-skills/releases/download/v1.0.1/baobiao-api-overview-v1.0.1.zip",
+  "description": "世舶科技招投标数据 API 场景 Skill 扩展包，覆盖招标项目查询、招标公告查询、中标项目查询、中标结果查询、项目详情与附件获取、政府采购意向、合同公告、拟在建项目查询等高频需求；支持企业研究、企业画像、投标参考、项目分析、竞争对手监测、商机挖掘和采购客户分析。日更新招投标数据 30 万+，帮助用户快速查标、找项目、看中标、做企业研究，提升投标决策与市场拓展效率。",
+  "license": "MIT",
+  "author": {
+    "name": "世舶科技",
+    "url": "https://www.gov-bid.com/"
+  },
+  "version": "v1.0.1",
+  "longDescription": "世舶科技招投标数据 API 场景 Skill 扩展包，覆盖招标项目查询、招标公告查询、中标项目查询、中标结果查询、项目详情与附件获取、政府采购意向、合同公告、拟在建项目查询等高频需求；支持企业研究、企业画像、投标参考、项目分析、竞争对手监测、商机挖掘和采购客户分析。日更新招投标数据 30 万+，帮助用户快速查标、找项目、看中标、做企业研究，提升投标决策与市场拓展效率。\n1. https://apiyx.gov-bid.com/?share=eyJjb2RlIjoic2Jrai0wMG1ibGJlZyJ9 获取 Key，也可联系世舶科技商务人员获取并配置密钥。\n2. ☎️ **商务联系方式：张瑛 18986107388**",
+  "tags": [
+    "招投标",
+    "API",
+    "招标查询",
+    "中标查询",
+    "企业画像",
+    "拟在建项目",
+    "投标分析",
+    "商机挖掘"
+  ],
+  "contents": {
+    "skills": [
+      "baobiao-api-overview"
+    ],
+    "presets": []
+  }
+}
