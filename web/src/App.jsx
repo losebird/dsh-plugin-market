@@ -6,12 +6,16 @@ import {
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { cardKey, collapsePackageOwnerDuplicates } from '../../scripts/collapse-package-owner.mjs'
+import { keyOf, allKeysOf } from '../../scripts/canonicalize-repo.mjs'
 import { catalogFromParsed, registryUrls, REGISTRY_TIMEOUT_MS } from '../../src/registry-load.mjs'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
 const INSTALL_SPEC = '@ace-zone/dsh-market'
 const PR_FILE_BASE = 'https://github.com/' + GITHUB_REPO + '/new/main/registry/curated'
 const REGISTRY_BASE = import.meta.env.BASE_URL
+const RAW_INDEX = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/index.json'
+const CURATED_API = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/registry/curated'
+const RAW_CURATED_BASE = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/curated/'
 const PAGE_SIZE = 24
 
 const CATEGORIES = {
@@ -79,11 +83,11 @@ const I18N = {
     'how.title': '工作原理',
     'how.sub': '没有私有后端。插件数据就是仓库里的 JSON 文件，每天由 GitHub Actions 自动采集、去重、合并，网站与 DSH 弹窗读的是同一份数据。',
     'how.s1t': '作者发布', 'how.s1b': '插件作者在自己的 GitHub 仓库发 Release（bundle 包或 zip 扩展包），构建产物直接提交进仓库，不依赖安装时编译。',
-    'how.s2t': 'PR 上架或自动收录', 'how.s2b': '上传页生成条目 JSON，作者向 registry/curated/ 提 PR；合并后由 collect 并入 all.json 上架。打了 topic 的仓库也会被每日任务自动收录。',
+    'how.s2t': 'PR 上架或自动收录', 'how.s2b': '上传页生成条目 JSON，作者向 registry/curated/ 提 PR；合并后大神手作会即时读取 registry/curated/ 现网内容，另由快速合并任务写入 all.json（每日 collect 仍会自动收录带 topic 的仓库）。',
     'how.s3t': '每日合并去重', 'how.s3b': '采集任务汇总下载量与星标，按包名和仓库去重，curated 条目优先，输出 registry/all.json。',
     'how.s4t': 'DSH 内一键安装', 'how.s4b': '用户在 DSH 侧栏的插件市场弹窗里点安装，等价执行 dsh plugin --profile web add，重启后生效。',
     'submit.back': '返回目录', 'submit.title': '上传插件',
-    'submit.sub': '填好表单后点击「发起 PR」，会把条目 JSON 带到 GitHub 的新建文件页（registry/curated/<id>.json）。校验通过并合并后，collect 会读取该文件并入 registry/all.json，网站与 DSH 即可看到。详细规范见仓库 docs/SUBMIT.md。',
+    'submit.sub': '填好表单后点击「发起 PR」，会把条目 JSON 带到 GitHub 的新建文件页（registry/curated/<id>.json）。校验通过并合并后，大神手作可立即展示该文件；all.json 由快速合并任务更新。详细规范见仓库 docs/SUBMIT.md。',
     'submit.type': '插件类型', 'submit.typeBundle': 'DSH 插件（bundle，走 dsh plugin add）', 'submit.typePack': '扩展包（skill / preset zip）',
     'submit.id': 'id', 'submit.idHint': '全局唯一标识，用于目录与卸载记录。',
     'submit.name': '名称', 'submit.repo': '仓库', 'submit.repoHint': '插件代码所在的 GitHub 仓库。',
@@ -169,11 +173,11 @@ const I18N = {
     'how.title': 'How it works',
     'how.sub': 'No private backend. Plugin data is just JSON files in the repo, collected, deduplicated and merged by GitHub Actions daily. The website and the DSH modal read the same data.',
     'how.s1t': 'Authors publish', 'how.s1b': 'Authors cut a Release in their GitHub repo (bundle package or zip pack) and commit build artifacts instead of relying on install-time builds.',
-    'how.s2t': 'PR or auto-collection', 'how.s2b': 'The submit page generates the entry JSON; authors PR it into registry/curated/. After merge, collect writes it into all.json. Topic-tagged repos are also picked up daily.',
+    'how.s2t': 'PR or auto-collection', 'how.s2b': 'The submit page generates the entry JSON; authors PR it into registry/curated/. After merge, By Makers reads registry/curated/ live on the site; a fast merge job also writes into all.json (daily collect still scrapes topic-tagged repos).',
     'how.s3t': 'Daily merge & dedup', 'how.s3b': 'The collector aggregates downloads and stars, dedups by package name and repo, prefers curated entries, and writes registry/all.json.',
     'how.s4t': 'One-click install in DSH', 'how.s4b': 'Users click install in the DSH sidebar modal, which runs dsh plugin --profile web add. Restart to activate.',
     'submit.back': 'Back to directory', 'submit.title': 'Submit a plugin',
-    'submit.sub': 'Fill the form and click Submit PR to open a GitHub new-file page at registry/curated/<id>.json. After the PR is merged, collect reads that file into registry/all.json for the site and DSH. See docs/SUBMIT.md.',
+    'submit.sub': 'Fill the form and click Submit PR to open a GitHub new-file page at registry/curated/<id>.json. After the PR is merged, By Makers can show the file immediately; all.json is updated by the fast merge job. See docs/SUBMIT.md.',
     'submit.type': 'Type', 'submit.typeBundle': 'DSH plugin (bundle, via dsh plugin add)', 'submit.typePack': 'Pack (skill / preset zip)',
     'submit.id': 'id', 'submit.idHint': 'Globally unique id used for the directory and uninstall bookkeeping.',
     'submit.name': 'Name', 'submit.repo': 'Repo', 'submit.repoHint': 'The GitHub repo hosting the plugin code.',
@@ -252,6 +256,87 @@ async function loadRegistry() {
   const merged = [...((curated && curated.items) || []), ...((auto && auto.items) || [])]
   if (merged.length > 0) return collapsePackageOwnerDuplicates(merged, { preferCurated: true })
   throw new Error('registry unavailable')
+}
+
+function normalizeCuratedItem(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null
+  if (raw.source) return raw
+  return { ...raw, source: 'curated' }
+}
+
+function overlayCatalog(baseItems, curatedItems) {
+  const items = (baseItems || []).slice()
+  const indexByKey = new Map()
+  const remember = (it, i) => {
+    indexByKey.set(keyOf(it), i)
+    for (const k of allKeysOf(it)) indexByKey.set(k, i)
+  }
+  for (let i = 0; i < items.length; i++) remember(items[i], i)
+  for (const raw of curatedItems || []) {
+    const n = normalizeCuratedItem(raw)
+    if (!n) continue
+    let idx = -1
+    for (const k of [keyOf(n), ...allKeysOf(n)]) {
+      if (indexByKey.has(k)) { idx = indexByKey.get(k); break }
+    }
+    if (idx >= 0) {
+      items[idx] = n
+      remember(n, idx)
+    } else {
+      remember(n, items.length)
+      items.push(n)
+    }
+  }
+  return items
+}
+
+async function loadLiveCurated() {
+  try {
+    let indexItems = []
+    let githubIndexOk = false
+    try {
+      const res = await fetch(RAW_INDEX)
+      if (res.ok) {
+        githubIndexOk = true
+        const parsed = await res.json()
+        if (parsed && Array.isArray(parsed.items)) indexItems = parsed.items
+      }
+    } catch {}
+    if (!githubIndexOk) {
+      try {
+        const res = await fetch(REGISTRY_BASE + 'registry/index.json')
+        if (res.ok) {
+          const parsed = await res.json()
+          if (parsed && Array.isArray(parsed.items)) indexItems = parsed.items
+        }
+      } catch {}
+    }
+
+    let files = []
+    try {
+      const res = await fetch(CURATED_API, { headers: { Accept: 'application/vnd.github+json' } })
+      if (res.ok) {
+        const listing = await res.json()
+        if (Array.isArray(listing)) {
+          files = listing.filter((f) => f.type === 'file' && f.name !== '.gitkeep' && f.name.endsWith('.json'))
+        }
+      }
+    } catch {}
+
+    const fileItems = await Promise.all(files.map(async (f) => {
+      try {
+        const url = f.download_url || (RAW_CURATED_BASE + f.name)
+        const res = await fetch(url)
+        if (!res.ok) return null
+        return await res.json()
+      } catch { return null }
+    }))
+
+    const merged = overlayCatalog(indexItems, fileItems.filter(Boolean))
+    return merged.length > 0 ? merged : []
+  } catch {
+    return []
+  }
 }
 
 function fmtNum(n) {
@@ -1118,9 +1203,20 @@ export default function App() {
 
   useEffect(() => {
     let alive = true
-    loadRegistry()
-      .then((list) => { if (alive) { setItems(list); setStatus('ready') } })
-      .catch(() => { if (alive) { setItems(DEMO_ITEMS); setStatus('demo') } })
+    ;(async () => {
+      let list = []
+      try {
+        list = await loadRegistry()
+        if (alive) { setItems(list); setStatus('ready') }
+      } catch {
+        if (alive) { setItems(DEMO_ITEMS); setStatus('demo') }
+        return
+      }
+      try {
+        const curated = await loadLiveCurated()
+        if (alive && curated.length > 0) setItems(overlayCatalog(list, curated))
+      } catch {}
+    })()
     return () => { alive = false }
   }, [])
 

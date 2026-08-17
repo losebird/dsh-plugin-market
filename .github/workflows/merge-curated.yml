@@ -1,46 +1,41 @@
-name: collect
+name: merge-curated
 
 on:
-  schedule:
-    - cron: '17 2 * * *' # 每日 UTC 02:17 自动采集
-  workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - 'registry/blocklist.json'
+      - 'registry/curated/**'
+      - 'registry/index.json'
+  workflow_dispatch:
 
 concurrency:
-  group: collect
+  group: merge-curated
   cancel-in-progress: true
 
 permissions:
   contents: write
 
 jobs:
-  collect:
+  merge:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Run collector
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/collect.mjs
+      - name: Merge curated into all.json
+        run: node scripts/merge-curated.mjs
       - name: Render README
         run: node scripts/render-readme.mjs
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add registry/auto.json registry/all.json README.md
+          git add registry/all.json README.md
           if git diff --cached --quiet; then
             echo "no changes"
           else
-            git commit -m "chore(registry): refresh auto-collected plugins"
+            git commit -m "chore(registry): merge curated into all.json"
             git pull --rebase origin main
             git push
           fi
-      # 注意：GITHUB_TOKEN 无法触发其他工作流（GitHub 官方限制），且网站数据
-      # 是运行时读 raw 主分支的，无需在此触发部署；站点代码变更由人工 push 触发。

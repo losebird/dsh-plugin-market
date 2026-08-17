@@ -236,6 +236,100 @@ window.__ModuleLoader__.load({
       return res.json()
     }
 
+    const CURATED_REPO = 'losebird/dsh-plugin-market'
+    const CURATED_RAW = 'https://raw.githubusercontent.com/' + CURATED_REPO + '/main/registry/'
+
+    function catalogKeyOf(it) {
+      if (it && it.githubId != null && it.githubId !== '') return 'ghid:' + it.githubId
+      if (it && it.repo) {
+        return 'repo:github.com/' + String(it.repo).toLowerCase().replace(/\.git$/, '').replace(/\/+$/, '')
+      }
+      if (it && it.package) return 'pkg:' + String(it.package).toLowerCase()
+      return 'id:' + String((it && it.id) || '').toLowerCase()
+    }
+    function catalogKeysOf(it) {
+      const keys = [catalogKeyOf(it)]
+      if (it && it.githubId != null && it.githubId !== '') keys.push('ghid:' + it.githubId)
+      if (it && it.repo) keys.push('repo:github.com/' + String(it.repo).toLowerCase().replace(/\.git$/, '').replace(/\/+$/, ''))
+      if (it && it.package) keys.push('pkg:' + String(it.package).toLowerCase())
+      if (it && it.id) keys.push('id:' + String(it.id).toLowerCase())
+      return keys
+    }
+
+    function normalizeCuratedItem(raw) {
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null
+      const n = Object.assign({}, raw)
+      if (!n.source) n.source = 'curated'
+      return n
+    }
+
+    function overlayCatalog(baseItems, curatedItems) {
+      const items = (baseItems || []).slice()
+      const indexByKey = new Map()
+      const remember = (it, i) => { for (const k of catalogKeysOf(it)) indexByKey.set(k, i) }
+      for (let i = 0; i < items.length; i++) remember(items[i], i)
+      for (const raw of curatedItems || []) {
+        const n = normalizeCuratedItem(raw)
+        if (!n) continue
+        let idx = -1
+        for (const k of catalogKeysOf(n)) {
+          if (indexByKey.has(k)) { idx = indexByKey.get(k); break }
+        }
+        if (idx >= 0) {
+          items[idx] = n
+          remember(n, idx)
+        } else {
+          remember(n, items.length)
+          items.push(n)
+        }
+      }
+      return items
+    }
+
+    // 浏览器直连 GitHub：大神手作不依赖 host all.json 缓存
+    async function loadLiveCurated() {
+      try {
+        const indexRes = await fetch(CURATED_RAW + 'index.json')
+        let indexItems = []
+        if (indexRes.ok) {
+          const data = await indexRes.json()
+          indexItems = (data && Array.isArray(data.items)) ? data.items : []
+        }
+        let fileBodies = []
+        try {
+          const dirRes = await fetch('https://api.github.com/repos/' + CURATED_REPO + '/contents/registry/curated', {
+            headers: { Accept: 'application/vnd.github+json' },
+          })
+          if (dirRes.ok) {
+            const entries = await dirRes.json()
+            if (Array.isArray(entries)) {
+              const jsonFiles = entries.filter((e) => e && e.type === 'file' && e.name && e.name.endsWith('.json') && e.name !== '.gitkeep')
+              fileBodies = await Promise.all(jsonFiles.map(async (entry) => {
+                try {
+                  const url = entry.download_url || (CURATED_RAW + 'curated/' + entry.name)
+                  const res = await fetch(url)
+                  if (!res.ok) return null
+                  return res.json()
+                } catch { return null }
+              }))
+            }
+          }
+        } catch {}
+        const byKey = new Map()
+        for (const raw of indexItems) {
+          const n = normalizeCuratedItem(raw)
+          if (n) byKey.set(catalogKeyOf(n), n)
+        }
+        for (const raw of fileBodies) {
+          const n = normalizeCuratedItem(raw)
+          if (n) byKey.set(catalogKeyOf(n), n)
+        }
+        return [...byKey.values()]
+      } catch {
+        return []
+      }
+    }
+
     function apply(ctx) {
       const slots = ctx.get('slots')
       if (slots === undefined) return
@@ -301,8 +395,16 @@ window.__ModuleLoader__.load({
         patch({ loading: true, error: null })
         try {
           const res = await api('list')
+          const base = res && Array.isArray(res.items) ? res.items : []
+          let curated = []
+          try {
+            curated = await loadLiveCurated()
+          } catch {
+            curated = []
+          }
+          const items = curated.length ? overlayCatalog(base, curated) : base
           patch({
-            items: res && Array.isArray(res.items) ? res.items : [],
+            items,
             installed: (res && res.installed && typeof res.installed === 'object') ? res.installed : {},
             source: (res && res.source) || 'demo',
             notice: (res && res.notice) || null,
