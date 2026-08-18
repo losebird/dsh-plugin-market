@@ -233,6 +233,18 @@ export function installPresentation(item) {
   return empty('none')
 }
 
+export function helpDownloadUrl(item) {
+  if (!item || typeof item !== 'object') return null
+  const pres = installPresentation(item)
+  if (pres.kind === 'pack') return packZipUrl(item)
+  if (pres.kind === 'app') return officialDownloadUrl(item)
+  const official = officialDownloadUrl(item)
+  if (official) return official
+  const repo = str(item.repo)
+  if (/^[^/\s]+\/[^/\s]+$/.test(repo)) return 'https://github.com/' + repo
+  return null
+}
+
 export function installCommand(item) {
   return installPresentation(item).command || ''
 }
@@ -250,6 +262,13 @@ export const INSTALL_COPY = {
     appNote: '这是独立产品。请打开官方下载页面；不要在终端执行采集到的脚本。',
     packDownload: '下载扩展包 zip',
     officialDownload: '官方下载',
+    helpTitle: '无法一键安装',
+    unverHelp: '当前插件无法一键安装。请到 GitHub 看作者说明，自行安装。如果不会装，先把作者给的安装包下下来，再点下面交给 DSH 协助。',
+    packHelp: '这是扩展包，不能当插件一键挂上。请下载 zip，解压到技能目录（skill → ~/.agents/skills/，preset → ~/.dsh/.agent-presets/）。不会解压的可以交给 DSH。',
+    appHelp: '这是独立软件，不能装进后厨。请到官网下载，在自己的电脑上安装。',
+    openRepo: '打开 GitHub',
+    openDownload: '打开下载',
+    agentHelp: '交给 DSH 协助安装',
   },
   en: {
     packNote: 'Download the zip and unpack — skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/.',
@@ -257,5 +276,12 @@ export const INSTALL_COPY = {
     appNote: 'This is a standalone product. Open the official download page; do not run scraped scripts in a terminal.',
     packDownload: 'Download pack zip',
     officialDownload: 'Official download',
+    helpTitle: 'Cannot one-click install',
+    unverHelp: 'This plugin cannot be one-click installed. See the author\'s notes on GitHub and install it yourself. If you need help, download the author\'s package first, then tap Let DSH help install below.',
+    packHelp: 'This is an extension pack, not a one-click plugin. Download the zip and unpack it into the skill directories (skill → ~/.agents/skills/, preset → ~/.dsh/.agent-presets/). If you cannot unpack it, let DSH help.',
+    appHelp: 'This is standalone software and cannot be installed into the kitchen. Download it from the official site and install it on your own computer.',
+    openRepo: 'Open GitHub',
+    openDownload: 'Open download',
+    agentHelp: 'Let DSH help install',
   },
 }

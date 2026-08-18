@@ -236,6 +236,18 @@ function installPresentation(item) {
   return empty('none')
 }
 
+function helpDownloadUrl(item) {
+  if (!item || typeof item !== 'object') return null
+  const pres = installPresentation(item)
+  if (pres.kind === 'pack') return packZipUrl(item)
+  if (pres.kind === 'app') return officialDownloadUrl(item)
+  const official = officialDownloadUrl(item)
+  if (official) return official
+  const repo = str(item.repo)
+  if (/^[^/\s]+\/[^/\s]+$/.test(repo)) return 'https://github.com/' + repo
+  return null
+}
+
 function installCommand(item) {
   return installPresentation(item).command || ''
 }
@@ -253,6 +265,13 @@ const INSTALL_COPY = {
     appNote: '这是独立产品。请打开官方下载页面；不要在终端执行采集到的脚本。',
     packDownload: '下载扩展包 zip',
     officialDownload: '官方下载',
+    helpTitle: '无法一键安装',
+    unverHelp: '当前插件无法一键安装。请到 GitHub 看作者说明，自行安装。如果不会装，先把作者给的安装包下下来，再点下面交给 DSH 协助。',
+    packHelp: '这是扩展包，不能当插件一键挂上。请下载 zip，解压到技能目录（skill → ~/.agents/skills/，preset → ~/.dsh/.agent-presets/）。不会解压的可以交给 DSH。',
+    appHelp: '这是独立软件，不能装进后厨。请到官网下载，在自己的电脑上安装。',
+    openRepo: '打开 GitHub',
+    openDownload: '打开下载',
+    agentHelp: '交给 DSH 协助安装',
   },
   en: {
     packNote: 'Download the zip and unpack — skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/.',
@@ -260,6 +279,13 @@ const INSTALL_COPY = {
     appNote: 'This is a standalone product. Open the official download page; do not run scraped scripts in a terminal.',
     packDownload: 'Download pack zip',
     officialDownload: 'Official download',
+    helpTitle: 'Cannot one-click install',
+    unverHelp: 'This plugin cannot be one-click installed. See the author\'s notes on GitHub and install it yourself. If you need help, download the author\'s package first, then tap Let DSH help install below.',
+    packHelp: 'This is an extension pack, not a one-click plugin. Download the zip and unpack it into the skill directories (skill → ~/.agents/skills/, preset → ~/.dsh/.agent-presets/). If you cannot unpack it, let DSH help.',
+    appHelp: 'This is standalone software and cannot be installed into the kitchen. Download it from the official site and install it on your own computer.',
+    openRepo: 'Open GitHub',
+    openDownload: 'Open download',
+    agentHelp: 'Let DSH help install',
   },
 }
 
@@ -270,7 +296,7 @@ window.__ModuleLoader__.load({
     const { useState, useEffect } = React
     const h = React.createElement
 
-    const MARKET_VERSION = '0.1.65'
+    const MARKET_VERSION = '0.1.66'
 
     const CATEGORIES = {
       ui: { zh: '界面与主题', en: 'UI & Themes' },
@@ -329,6 +355,13 @@ window.__ModuleLoader__.load({
         packNote: INSTALL_COPY.zh.packNote,
         appNote: INSTALL_COPY.zh.appNote,
         noneCopyNote: INSTALL_COPY.zh.unverNote,
+        helpTitle: INSTALL_COPY.zh.helpTitle,
+        unverHelp: INSTALL_COPY.zh.unverHelp,
+        packHelp: INSTALL_COPY.zh.packHelp,
+        appHelp: INSTALL_COPY.zh.appHelp,
+        openRepo: INSTALL_COPY.zh.openRepo,
+        openDownload: INSTALL_COPY.zh.openDownload,
+        agentHelp: INSTALL_COPY.zh.agentHelp,
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
@@ -372,6 +405,13 @@ window.__ModuleLoader__.load({
         packNote: INSTALL_COPY.en.packNote,
         appNote: INSTALL_COPY.en.appNote,
         noneCopyNote: INSTALL_COPY.en.unverNote,
+        helpTitle: INSTALL_COPY.en.helpTitle,
+        unverHelp: INSTALL_COPY.en.unverHelp,
+        packHelp: INSTALL_COPY.en.packHelp,
+        appHelp: INSTALL_COPY.en.appHelp,
+        openRepo: INSTALL_COPY.en.openRepo,
+        openDownload: INSTALL_COPY.en.openDownload,
+        agentHelp: INSTALL_COPY.en.agentHelp,
       },
     }
 
@@ -473,6 +513,7 @@ window.__ModuleLoader__.load({
 .dshm-cmd { display:block; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.6; background:var(--dsw-alias-bg-layer-2); color:var(--dsw-alias-label-primary); padding:8px 10px; border-radius:8px; overflow-wrap:anywhere; white-space:pre-wrap; }
 .dshm-install-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 .dshm-job-overlay { z-index:300; }
+.dshm-help-overlay { z-index:250; }
 .dshm-jobpanel { position:relative; display:flex; flex-direction:column; width:min(560px, 94vw); background:var(--dsw-alias-bg-layer-1); border:1px solid ${BORDER}; border-radius:16px; box-shadow:0 24px 64px rgba(0,0,0,0.4); overflow:hidden; }
 .dshm-jobbody { max-height:min(340px, 40vh); overflow-y:auto; padding:12px 16px; background:var(--dsw-alias-bg-layer-2); }
 .dshm-joblog { margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.65; color:var(--dsw-alias-label-secondary); white-space:pre-wrap; overflow-wrap:anywhere; }
@@ -615,7 +656,7 @@ window.__ModuleLoader__.load({
         q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
         view: 'market', mRows: [], mQ: '', mCat: null, mLoading: false,
         notice: null, error: null, loading: false, source: 'demo', open: false,
-        os: 'darwin', osTab: null, job: null, readmeVariants: [], readmeVariant: 'README.md', sessionId: null,
+        os: 'darwin', osTab: null, job: null, helpItem: null, readmeVariants: [], readmeVariant: 'README.md', sessionId: null,
       }
       const subs = new Set()
       const patch = (p) => { Object.assign(store, p); for (const f of subs) f() }
@@ -1053,7 +1094,7 @@ window.__ModuleLoader__.load({
         const upToDate = isUpToDate(item, installed)
         const pres = installPresentation(item)
         const canOneClick = (pres.kind === 'plugin' || pres.kind === 'companion') && !unavailable
-        const showOfficialDownload = pres.kind === 'app' && !!pres.downloadUrl && !unavailable
+        const canHelpInstall = !unavailable && (pres.kind === 'app' || pres.kind === 'pack' || pres.kind === 'none')
         let primary = null
         if (busy) {
           primary = h('span', { className: 'dshm-busy' }, busy === 'uninstall' ? t('uninstalling') : t('installing'))
@@ -1073,8 +1114,8 @@ window.__ModuleLoader__.load({
           primary = h('button', { className: 'dshm-btn dshm-btn-outline dshm-btn-sm', onClick: () => runUninstall(item) }, t('uninstall'))
         } else if (canOneClick) {
           primary = h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) }, t('install'))
-        } else if (showOfficialDownload) {
-          primary = h('a', { className: 'dshm-btn dshm-btn-primary', href: pres.downloadUrl, target: '_blank', rel: 'noreferrer' }, t('officialDownload'))
+        } else if (canHelpInstall) {
+          primary = h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => patch({ helpItem: item }) }, t('install'))
         }
         return h('div', { className: 'dshm-card', key: cardKey(item) },
           h('div', { className: 'dshm-card-top' },
@@ -1171,6 +1212,9 @@ window.__ModuleLoader__.load({
         const installedRaw = installedRec(item, st)
         const installed = installedRaw && installedRaw.source !== 'other' ? installedRaw : null
         const upToDate = isUpToDate(item, installed)
+        const pres = installPresentation(item)
+        const canOneClick = pres.kind === 'plugin' || pres.kind === 'companion'
+        const canHelpInstall = !upToDate && item.status !== 'unavailable' && (pres.kind === 'app' || pres.kind === 'pack' || pres.kind === 'none')
         return h('div', { className: 'dshm-detail' },
           h('div', { className: 'dshm-detail-head' },
             h('button', { className: 'dshm-backbtn', onClick: closeDetail }, '← ' + t('back')),
@@ -1190,10 +1234,12 @@ window.__ModuleLoader__.load({
             ? h('div', { className: 'dshm-card-tags' }, item.tags.map((tg) => h('span', { className: 'dshm-tag', key: tg }, tg)))
             : null,
           h('div', { className: 'dshm-card-actions' },
-            !upToDate && (installPresentation(item).kind === 'plugin' || installPresentation(item).kind === 'companion')
+            !upToDate && canOneClick
               ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: installClick(item) },
                   installed ? t('update') : t('install'))
-              : null,
+              : canHelpInstall
+                ? h('button', { className: 'dshm-btn dshm-btn-primary', onClick: () => patch({ helpItem: item }) }, t('install'))
+                : null,
             installCmdFor(item)
               ? h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => doCopyCmd(item) },
                   st.copiedRepo === item.id + ':cmd' ? t('copied') : t('copyCmd'))
@@ -1419,6 +1465,45 @@ window.__ModuleLoader__.load({
         )
       }
 
+      function HelpDialogView(st) {
+        if (!st.helpItem) return null
+        const item = st.helpItem
+        const pres = installPresentation(item)
+        const dlUrl = helpDownloadUrl(item)
+        const closeHelp = () => patch({ helpItem: null })
+        let bodyText = t('unverHelp')
+        if (pres.kind === 'app') bodyText = t('appHelp')
+        else if (pres.kind === 'pack') bodyText = t('packHelp')
+        let dlLabel = t('openRepo')
+        if (pres.kind === 'pack') dlLabel = t('packDownload')
+        else if (pres.kind === 'app') dlLabel = t('officialDownload')
+        else if (officialDownloadUrl(item)) dlLabel = t('openDownload')
+        return h('div', { className: 'dshm-overlay dshm-help-overlay', role: 'dialog' },
+          h('div', { className: 'dshm-backdrop', onClick: closeHelp }),
+          h('div', { className: 'dshm-jobpanel' },
+            h('div', { className: 'dshm-head' },
+              h('div', { className: 'dshm-title' }, t('helpTitle')),
+              h('button', { className: 'dshm-close', title: 'close', onClick: closeHelp }, '×'),
+            ),
+            h('div', { className: 'dshm-jobbody' },
+              h('div', { className: 'dshm-card-desc' }, bodyText),
+              dlUrl
+                ? h('a', { className: 'dshm-btn dshm-btn-ghost', href: dlUrl, target: '_blank', rel: 'noreferrer' }, dlLabel)
+                : null,
+              pres.kind !== 'app'
+                ? h('button', {
+                    className: 'dshm-btn dshm-btn-primary',
+                    onClick: () => { patch({ helpItem: null }); runAgentInstall(item) },
+                  }, t('agentHelp'))
+                : null,
+            ),
+            h('div', { className: 'dshm-jobfoot' },
+              h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: closeHelp }, t('jobClose')),
+            ),
+          ),
+        )
+      }
+
       slots.inject('shell.overlay', () => slots.register(
         { name: 'shell.overlay', id: 'plugin-market-window', order: 0 },
         () => {
@@ -1537,7 +1622,7 @@ window.__ModuleLoader__.load({
 
           return h(React.Fragment, null,
             h('div', { className: 'dshm-overlay', role: 'dialog' },
-              h('div', { className: 'dshm-backdrop', onClick: () => patch({ open: false, detail: null }) }),
+              h('div', { className: 'dshm-backdrop', onClick: () => patch({ open: false, detail: null, helpItem: null }) }),
               h('div', { className: 'dshm-panel' },
                 h('div', { className: 'dshm-head' },
                   h('div', { className: 'dshm-title' }, t('title')),
@@ -1548,11 +1633,12 @@ window.__ModuleLoader__.load({
                   h('span', { className: 'dshm-ver', title: '@ace-zone/dsh-market' }, MARKET_VERSION),
                   h('a', { className: 'dshm-viewbtn', href: 'https://www.dsh-plugin.shop/', target: '_blank', rel: 'noreferrer', title: t('officialSite') }, t('officialSite')),
                   h('button', { className: 'dshm-viewbtn', title: 'switch language', onClick: toggleLang }, t('langBtn')),
-                  h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ open: false, detail: null }) }, '×'),
+                  h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ open: false, detail: null, helpItem: null }) }, '×'),
                 ),
                 h('div', { className: 'dshm-body' }, body),
               ),
             ),
+            HelpDialogView(st),
             jobOverlay,
           )
         },
