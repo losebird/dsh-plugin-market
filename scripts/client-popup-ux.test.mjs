@@ -12,15 +12,23 @@ const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 const UNVER = '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。'
 const PACK = '下载 zip 后解压：skill 放到 ~/.agents/skills/，preset 放到 ~/.dsh/.agent-presets/。'
 
-test('package.json is 0.1.64', () => {
-  assert.equal(pkg.version, '0.1.64')
+test('package.json is 0.1.65', () => {
+  assert.equal(pkg.version, '0.1.65')
 })
 
-test('MARKET_VERSION matches package.json and shows version pill', () => {
+test('MARKET_VERSION matches package.json and shows version before officialSite', () => {
   const m = clientJs.match(/const MARKET_VERSION = '([^']+)'/)
   assert.ok(m, 'MARKET_VERSION constant')
   assert.equal(m[1], pkg.version)
-  assert.match(clientJs, /className: 'dshm-title' \}, t\('title'\)\),\s*h\('span', \{ className: 'dshm-pill', title: '@ace-zone\/dsh-market' \}, MARKET_VERSION\)/)
+  assert.match(
+    clientJs,
+    /h\('span', \{ className: 'dshm-ver'[^}]*\}, MARKET_VERSION\),\s*h\('a', \{ className: 'dshm-viewbtn', href: 'https:\/\/www\.dsh-plugin\.shop\/'/,
+  )
+  assert.doesNotMatch(
+    clientJs,
+    /className: 'dshm-title' \}, t\('title'\)\),\s*h\('span', \{ className: 'dshm-pill', title: '@ace-zone\/dsh-market' \}, MARKET_VERSION\)/,
+  )
+  assert.match(clientJs, /\.dshm-ver\s*\{[^}]*font-size:\s*11px[^}]*opacity:\s*0\.75/)
 })
 
 test('I18N references INSTALL_COPY for shared install copy', () => {

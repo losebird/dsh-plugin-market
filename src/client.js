@@ -270,7 +270,7 @@ window.__ModuleLoader__.load({
     const { useState, useEffect } = React
     const h = React.createElement
 
-    const MARKET_VERSION = '0.1.64'
+    const MARKET_VERSION = '0.1.65'
 
     const CATEGORIES = {
       ui: { zh: '界面与主题', en: 'UI & Themes' },
@@ -389,6 +389,7 @@ window.__ModuleLoader__.load({
 .dshm-panel { position:relative; display:flex; flex-direction:column; width:min(1100px, 96vw); height:min(760px, 92vh); background:var(--dsw-alias-bg-layer-1); border:1px solid ${BORDER}; border-radius:16px; box-shadow:0 24px 64px rgba(0,0,0,0.4); overflow:hidden; }
 .dshm-head { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid ${BORDER}; }
 .dshm-title { font-size:15px; font-weight:600; color:var(--dsw-alias-label-primary); }
+.dshm-ver { font-size:11px; line-height:1; color:var(--dsw-alias-label-secondary); opacity:0.75; padding:0 4px; user-select:none; }
 .dshm-head-badges { flex:1; display:flex; gap:6px; align-items:center; }
 .dshm-slogan { font-size:12px; font-weight:700; letter-spacing:0.04em; background:linear-gradient(90deg,#4176E6,#7ee2ff,#a78bfa,#ff8ac2,#4176E6); background-size:300% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; animation:dshm-slogan-flow 6s linear infinite; white-space:nowrap; }
 @keyframes dshm-slogan-flow { 0% { background-position:0% 50%; } 100% { background-position:300% 50%; } }
@@ -1540,11 +1541,11 @@ window.__ModuleLoader__.load({
               h('div', { className: 'dshm-panel' },
                 h('div', { className: 'dshm-head' },
                   h('div', { className: 'dshm-title' }, t('title')),
-                  h('span', { className: 'dshm-pill', title: '@ace-zone/dsh-market' }, MARKET_VERSION),
                   h('div', { className: 'dshm-head-badges' },
                     h('span', { className: 'dshm-pill' }, st.source === 'remote' ? t('sourceRemote') : t('sourceDemo')),
                     h('span', { className: 'dshm-slogan' }, 'Everything is a Plugin.'),
                   ),
+                  h('span', { className: 'dshm-ver', title: '@ace-zone/dsh-market' }, MARKET_VERSION),
                   h('a', { className: 'dshm-viewbtn', href: 'https://www.dsh-plugin.shop/', target: '_blank', rel: 'noreferrer', title: t('officialSite') }, t('officialSite')),
                   h('button', { className: 'dshm-viewbtn', title: 'switch language', onClick: toggleLang }, t('langBtn')),
                   h('button', { className: 'dshm-close', title: 'close', onClick: () => patch({ open: false, detail: null }) }, '×'),
