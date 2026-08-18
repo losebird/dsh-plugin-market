@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17T10:44:10.286Z",
+  "updatedAt": "2026-08-18T02:51:49.105Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -85932,6 +85932,33 @@
       ],
       "package": "dsh-projects",
       "category": "ui",
+      "source": "curated",
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add"
+      }
+    },
+    {
+      "id": "ui-muyu",
+      "name": "赛博木鱼",
+      "type": "bundle",
+      "repo": "TongY1n/ui-muyu",
+      "spec": "https://github.com/TongY1n/ui-muyu/releases/download/v0.1.0/deepseek-ai-dsh-client-ui-muyu-0.1.0.tgz",
+      "description": "一个赛博木鱼：可拖拽、点击敲击、累积功德的 Web 悬浮小摆件",
+      "license": "MIT",
+      "author": {
+        "name": "TongY1n",
+        "url": "https://github.com/TongY1n"
+      },
+      "version": "0.1.0",
+      "category": "fun",
+      "tags": [
+        "fun",
+        "widget",
+        "wooden-fish",
+        "merit"
+      ],
+      "longDescription": "工作间隙敲一敲、攒一攒\"功德\"。\n\n点击木鱼即敲击，鼠标按住木鱼移动可随意拖拽，刷新页面不丢进度，其他的留给大家自由探索～",
       "source": "curated",
       "verified": true,
       "install": {

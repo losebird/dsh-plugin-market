@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**2824** 个插件 · **2127** 个可一键安装
+**2825** 个插件 · **2128** 个可一键安装
 
 安装市场：
 
@@ -26,7 +26,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [安全与权限](#auth) (143)
 - [技能与扩展](#skills) (72)
 - [市场与发现](#market) (181)
-- [趣味与个性](#fun) (28)
+- [趣味与个性](#fun) (29)
 - [其他](#other) (320)
 
 ## 界面与主题
@@ -2562,6 +2562,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-casual-conversation](https://github.com/QiJi-2001/dsh-casual-conversation)  ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [whale-girl-desktop](https://github.com/DeeJ6126/whale-girl-desktop) Desktop companion pet for DeepSeek Harness (whale-girl), driven by the /whale-girl externa ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [dsh-pet](https://github.com/npc-dao/dsh-pet) DSH Web pet with a bundled default and Codex-compatible imports ⭐ 0 ⬇ 0 · 未验证 · 手动安装
+- [赛博木鱼](https://github.com/TongY1n/ui-muyu) 一个赛博木鱼：可拖拽、点击敲击、累积功德的 Web 悬浮小摆件 ⭐ 0 ⬇ 0 · 0.1.0
 
 ## 其他
 
