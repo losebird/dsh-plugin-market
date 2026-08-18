@@ -12,8 +12,21 @@ const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 const UNVER = '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。'
 const PACK = '下载 zip 后解压：skill 放到 ~/.agents/skills/，preset 放到 ~/.dsh/.agent-presets/。'
 
-test('package.json is 0.1.63', () => {
-  assert.equal(pkg.version, '0.1.63')
+test('package.json is 0.1.64', () => {
+  assert.equal(pkg.version, '0.1.64')
+})
+
+test('MARKET_VERSION matches package.json and shows version pill', () => {
+  const m = clientJs.match(/const MARKET_VERSION = '([^']+)'/)
+  assert.ok(m, 'MARKET_VERSION constant')
+  assert.equal(m[1], pkg.version)
+  assert.match(clientJs, /className: 'dshm-title' \}, t\('title'\)\),\s*h\('span', \{ className: 'dshm-pill', title: '@ace-zone\/dsh-market' \}, MARKET_VERSION\)/)
+})
+
+test('I18N references INSTALL_COPY for shared install copy', () => {
+  assert.match(clientJs, /packNote: INSTALL_COPY\.zh\.packNote/)
+  assert.match(clientJs, /noneCopyNote: INSTALL_COPY\.zh\.unverNote/)
+  assert.match(clientJs, /appNote: INSTALL_COPY\.en\.appNote/)
 })
 
 test('client.js still registers the AMD bundle', () => {
@@ -79,8 +92,13 @@ test('market 卸载 hides 交给 DSH 卸载', () => {
 })
 
 test('shop I18N matches pack / unverified / none copy', () => {
-  assert.ok(shopJsx.includes(PACK), 'shop packNote')
-  assert.ok(shopJsx.includes(UNVER), 'shop unver/none note')
+  assert.match(shopJsx, /'detail\.packNote': INSTALL_COPY\.zh\.packNote/)
+  assert.match(shopJsx, /'detail\.unverified': INSTALL_COPY\.zh\.unverNote/)
+  assert.match(shopJsx, /'copiedModal\.noneGuide': INSTALL_COPY\.en\.unverNote/)
+  assert.match(shopJsx, /import \{[^}]*INSTALL_COPY[^}]*\} from '\.\.\/\.\.\/src\/install-info\.mjs'/)
+  const installInfo = readFileSync(join(root, 'src/install-info.mjs'), 'utf8')
+  assert.ok(installInfo.includes(UNVER), 'install-info zh unver/none note')
+  assert.ok(installInfo.includes(PACK), 'install-info zh packNote')
   assert.doesNotMatch(shopJsx, /从本地导入/)
   assert.match(shopJsx, /dir\.emptyTab/)
   assert.match(shopJsx, /qTrimmed\s*\n\s*\? \[\.\.\.items\]/)

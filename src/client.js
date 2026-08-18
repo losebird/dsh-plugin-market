@@ -246,12 +246,31 @@ function installCommands(item) {
   return cmd ? { any: cmd } : {}
 }
 
+const INSTALL_COPY = {
+  zh: {
+    packNote: '下载 zip 后解压：skill 放到 ~/.agents/skills/，preset 放到 ~/.dsh/.agent-presets/。',
+    unverNote: '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。',
+    appNote: '这是独立产品。请打开官方下载页面；不要在终端执行采集到的脚本。',
+    packDownload: '下载扩展包 zip',
+    officialDownload: '官方下载',
+  },
+  en: {
+    packNote: 'Download the zip and unpack — skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/.',
+    unverNote: 'Unverified (the repo does not declare a mountable plugin). No one-click install; see the author\'s notes in the repo.',
+    appNote: 'This is a standalone product. Open the official download page; do not run scraped scripts in a terminal.',
+    packDownload: 'Download pack zip',
+    officialDownload: 'Official download',
+  },
+}
+
 window.__ModuleLoader__.load({
   id: '@ace-zone/dsh-market',
   factory: (require) => {
     const React = require('react')
     const { useState, useEffect } = React
     const h = React.createElement
+
+    const MARKET_VERSION = '0.1.64'
 
     const CATEGORIES = {
       ui: { zh: '界面与主题', en: 'UI & Themes' },
@@ -278,7 +297,7 @@ window.__ModuleLoader__.load({
         installing: '安装中…', uninstalling: '卸载中…', installed: '已安装', latestPill: '已是最新',
         copyUrl: '复制地址', copied: '已复制', copyCmd: '复制命令',
         auto: '自动收录', unver: '未验证', demo: '演示', offline: '已下线',
-        offlineNote: '仓库已下线，无法安装', unverNote: '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。',
+        offlineNote: '仓库已下线，无法安装', unverNote: INSTALL_COPY.zh.unverNote,
         typeBundle: 'DSH 插件', typePack: '扩展包', downloads: '下载量', stars: '星标',
         loading: '加载中…', empty: '没有匹配的插件', emptyFilter: '没有匹配的插件（{filter}）',
         sourceRemote: 'registry 实时', sourceDemo: '演示数据',
@@ -305,11 +324,11 @@ window.__ModuleLoader__.load({
         agentNote: '点「安装」后，请求会发送给 DSH 会话：就像你在对话框里说“帮我装这个”一样，执行、提问与审批都在你的对话中进行。',
         agentNoteUninstall: '点「卸载」后，请求会发送给 DSH 会话：它会按项目说明卸载，需要确认时会在对话中问你。',
         jobCancel: '取消', jobAnswerPlaceholder: '输入你的回答，回车提交…', jobSubmit: '提交',
-        officialDownload: '官方下载', noKitchenScript: '不要在终端执行采集到的脚本',
-        packDownload: '下载扩展包 zip',
-        packNote: '下载 zip 后解压：skill 放到 ~/.agents/skills/，preset 放到 ~/.dsh/.agent-presets/。',
-        appNote: '这是独立产品。请打开官方下载页面；不要在终端执行采集到的脚本。',
-        noneCopyNote: '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。',
+        officialDownload: INSTALL_COPY.zh.officialDownload, noKitchenScript: '不要在终端执行采集到的脚本',
+        packDownload: INSTALL_COPY.zh.packDownload,
+        packNote: INSTALL_COPY.zh.packNote,
+        appNote: INSTALL_COPY.zh.appNote,
+        noneCopyNote: INSTALL_COPY.zh.unverNote,
       },
       en: {
         title: 'Plugin Market', viewMarket: 'Market', viewManage: 'Installed',
@@ -321,7 +340,7 @@ window.__ModuleLoader__.load({
         installing: 'Installing…', uninstalling: 'Uninstalling…', installed: 'Installed', latestPill: 'Up to date',
         copyUrl: 'Copy URL', copied: 'Copied', copyCmd: 'Copy command',
         auto: 'Auto', unver: 'Unverified', demo: 'Demo', offline: 'Offline',
-        offlineNote: 'Repo offline, cannot install', unverNote: 'Unverified (the repo does not declare a mountable plugin). No one-click install; see the author\'s notes in the repo.',
+        offlineNote: 'Repo offline, cannot install', unverNote: INSTALL_COPY.en.unverNote,
         typeBundle: 'DSH plugin', typePack: 'Pack', downloads: 'Downloads', stars: 'Stars',
         loading: 'Loading…', empty: 'No matching plugins', emptyFilter: 'No matching plugins ({filter})',
         sourceRemote: 'registry live', sourceDemo: 'demo data',
@@ -348,11 +367,11 @@ window.__ModuleLoader__.load({
         agentNote: 'Clicking Install hands the request to your DSH session — exactly like asking in the chat: execution, questions and approvals happen in your conversation.',
         agentNoteUninstall: 'Clicking Uninstall hands the request to your DSH session, which follows the project instructions and asks you in the chat when confirmation is needed.',
         jobCancel: 'Cancel', jobAnswerPlaceholder: 'Type your answer and press Enter…', jobSubmit: 'Submit',
-        officialDownload: 'Official download', noKitchenScript: 'Do not run scraped scripts in your terminal',
-        packDownload: 'Download pack zip',
-        packNote: 'Download the zip and unpack — skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/.',
-        appNote: 'This is a standalone product. Open the official download page; do not run scraped scripts in a terminal.',
-        noneCopyNote: 'Unverified (the repo does not declare a mountable plugin). No one-click install; see the author\'s notes in the repo.',
+        officialDownload: INSTALL_COPY.en.officialDownload, noKitchenScript: 'Do not run scraped scripts in your terminal',
+        packDownload: INSTALL_COPY.en.packDownload,
+        packNote: INSTALL_COPY.en.packNote,
+        appNote: INSTALL_COPY.en.appNote,
+        noneCopyNote: INSTALL_COPY.en.unverNote,
       },
     }
 
@@ -1521,6 +1540,7 @@ window.__ModuleLoader__.load({
               h('div', { className: 'dshm-panel' },
                 h('div', { className: 'dshm-head' },
                   h('div', { className: 'dshm-title' }, t('title')),
+                  h('span', { className: 'dshm-pill', title: '@ace-zone/dsh-market' }, MARKET_VERSION),
                   h('div', { className: 'dshm-head-badges' },
                     h('span', { className: 'dshm-pill' }, st.source === 'remote' ? t('sourceRemote') : t('sourceDemo')),
                     h('span', { className: 'dshm-slogan' }, 'Everything is a Plugin.'),

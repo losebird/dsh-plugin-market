@@ -242,3 +242,20 @@ export function installCommands(item) {
   const cmd = installCommand(item)
   return cmd ? { any: cmd } : {}
 }
+
+export const INSTALL_COPY = {
+  zh: {
+    packNote: '下载 zip 后解压：skill 放到 ~/.agents/skills/，preset 放到 ~/.dsh/.agent-presets/。',
+    unverNote: '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。',
+    appNote: '这是独立产品。请打开官方下载页面；不要在终端执行采集到的脚本。',
+    packDownload: '下载扩展包 zip',
+    officialDownload: '官方下载',
+  },
+  en: {
+    packNote: 'Download the zip and unpack — skills to ~/.agents/skills/, presets to ~/.dsh/.agent-presets/.',
+    unverNote: 'Unverified (the repo does not declare a mountable plugin). No one-click install; see the author\'s notes in the repo.',
+    appNote: 'This is a standalone product. Open the official download page; do not run scraped scripts in a terminal.',
+    packDownload: 'Download pack zip',
+    officialDownload: 'Official download',
+  },
+}
