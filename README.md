@@ -619,7 +619,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-ocgo-quota](https://github.com/fuzz1og/dsh-ocgo-quota) OpenCode Go usage floating widget for the DeepSeek Harness Web UI: a bottom-right overlay  ⭐ 0 ⬇ 0 · 未验证
 - [dsh-workbench](https://github.com/doebkblcya/dsh-workbench) DSH Web GUI right-side workbench plugin: a VS Code-style single right panel with Files/Git ⭐ 0 ⬇ 0
 - [dsh-settings-mcp-skills](https://github.com/w123456789zy/dsh-settings-mcp-skills) MCP Servers and Skills settings pages for the dsh web UI: mounts the official DeepSeek too ⭐ 0 ⬇ 0
-- [dsh-projects](https://github.com/WenhongPan/dsh-projects) Project and session management for DeepSeek Harness: searchable projects, organized sessio ⭐ 0 ⬇ 0 · v0.2.0-alpha.2
+- [dsh-projects](https://github.com/WenhongPan/dsh-projects) Project and session organization for DeepSeek Harness: multi-folder projects, attention su ⭐ 0 ⬇ 0 · v0.3.0-alpha.1
 
 ## 会话与记忆
 
