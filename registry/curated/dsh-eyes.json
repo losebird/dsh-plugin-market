@@ -1,0 +1,15 @@
+{
+  "id": "dsh-eyes",
+  "name": "dsh-eyes",
+  "type": "bundle",
+  "repo": "losebird/dsh-eyes",
+  "spec": "https://github.com/losebird/dsh-eyes/releases/download/v0.3.2/dsh-eyes-0.3.2.tgz",
+  "description": "做DSH 的眼睛，看到一切",
+  "license": "MIT",
+  "author": {
+    "name": "losebird",
+    "url": "https://github.com/losebird"
+  },
+  "version": "v0.3.2",
+  "source": "curated"
+}
