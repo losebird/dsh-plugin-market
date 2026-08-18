@@ -8,7 +8,7 @@ import DOMPurify from 'dompurify'
 import { cardKey, collapsePackageOwnerDuplicates } from '../../scripts/collapse-package-owner.mjs'
 import { keyOf, allKeysOf } from '../../scripts/canonicalize-repo.mjs'
 import { catalogFromParsed, registryUrls, REGISTRY_TIMEOUT_MS } from '../../src/registry-load.mjs'
-import { installPresentation, INSTALL_COPY } from '../../src/install-info.mjs'
+import { installPresentation, INSTALL_COPY, helpDownloadUrl, officialDownloadUrl } from '../../src/install-info.mjs'
 
 const GITHUB_REPO = 'losebird/dsh-plugin-market'
 const INSTALL_SPEC = '@ace-zone/dsh-market'
@@ -398,11 +398,11 @@ function Card({ item, onOpen, onToast, onShowCopied }) {
       setTimeout(() => setCopied(false), 1600)
     }
   }
-  const doOfficialDownload = () => {
-    if (onShowCopied) onShowCopied({ item, kind: 'app', url: info.downloadUrl })
-  }
   const showInstall = (info.kind === 'plugin' || info.kind === 'companion') && item.status !== 'unavailable'
-  const showOfficialDownload = info.kind === 'app' && info.downloadUrl && item.status !== 'unavailable'
+  const showHelpInstall = (info.kind === 'app' || info.kind === 'pack' || info.kind === 'none') && item.status !== 'unavailable'
+  const doHelpInstall = () => {
+    if (onShowCopied) onShowCopied({ item, kind: info.kind, url: helpDownloadUrl(item), help: true })
+  }
   return (
     <div className="card">
       <div className="card-top">
@@ -431,9 +431,9 @@ function Card({ item, onOpen, onToast, onShowCopied }) {
             {copied ? <><Check size={13} />{t('card.copied')}</> : <><Copy size={13} />{t('card.install')}</>}
           </button>
         )}
-        {showOfficialDownload && (
-          <button className="btn btn-primary btn-sm" onClick={doOfficialDownload}>
-            <DownloadSimple size={13} />{t('card.officialDownload')}
+        {showHelpInstall && (
+          <button className="btn btn-primary btn-sm" onClick={doHelpInstall}>
+            {t('card.install')}
           </button>
         )}
         <span className="spacer" />
@@ -442,7 +442,7 @@ function Card({ item, onOpen, onToast, onShowCopied }) {
   )
 }
 
-function DetailModal({ item, onClose, onToast }) {
+function DetailModal({ item, onClose, onToast, onShowCopied }) {
   const { t, lang } = useLang()
   const [copied, setCopied] = useState(false)
   const [readme, setReadme] = useState({ status: 'idle' })
@@ -450,6 +450,10 @@ function DetailModal({ item, onClose, onToast }) {
   const [variant, setVariant] = useState('README.md')
   const readmeCache = useRef({})
   const info = installPresentation(item)
+  const showHelpInstall = (info.kind === 'app' || info.kind === 'pack' || info.kind === 'none') && item.status !== 'unavailable'
+  const doHelpInstall = () => {
+    if (onShowCopied) onShowCopied({ item, kind: info.kind, url: helpDownloadUrl(item), help: true })
+  }
   const doCopy = async () => {
     if (!info.command) return
     if (await copyText(info.command)) {
@@ -608,6 +612,11 @@ function DetailModal({ item, onClose, onToast }) {
           <a className="btn btn-ghost btn-sm" href={'https://github.com/' + item.repo} target="_blank" rel="noreferrer">
             <GithubLogo size={14} />{t('detail.repo')}
           </a>
+          {showHelpInstall && (
+            <button className="btn btn-primary btn-sm" onClick={doHelpInstall}>
+              {t('card.install')}
+            </button>
+          )}
           {item.status === 'unavailable' && (
             <span style={{ color: 'var(--error)', fontSize: 13 }}><Warning size={13} /> {t('detail.unavailable')}</span>
           )}
@@ -619,14 +628,45 @@ function DetailModal({ item, onClose, onToast }) {
 
 /* ── 复制信息弹窗（卡片安装按钮点击后展示复制内容） ─────────────────────── */
 function CopiedModal({ info, onClose, onOpenDetail }) {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   if (!info) return null
-  const { item, kind, cmds, url } = info
+  const { item, kind, cmds, url, help } = info
   let effKind = kind
   if (!effKind) {
     if (url) effKind = 'app'
     else if (cmds && cmds.any) effKind = 'plugin'
     else effKind = 'none'
+  }
+  if (help && (effKind === 'app' || effKind === 'pack' || effKind === 'none')) {
+    const helpBody = effKind === 'app' ? INSTALL_COPY[lang].appHelp
+      : effKind === 'pack' ? INSTALL_COPY[lang].packHelp
+        : INSTALL_COPY[lang].unverHelp
+    const downloadLabel = effKind === 'pack' ? INSTALL_COPY[lang].packDownload
+      : effKind === 'app' ? INSTALL_COPY[lang].officialDownload
+        : (officialDownloadUrl(item) ? INSTALL_COPY[lang].openDownload : INSTALL_COPY[lang].openRepo)
+    return (
+      <div className="modal-backdrop" onClick={onClose}>
+        <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-head">
+            <h3>{INSTALL_COPY[lang].helpTitle}</h3>
+            <button className="modal-close" onClick={onClose} aria-label="close"><X size={18} /></button>
+          </div>
+          <p className="card-desc" style={{ marginTop: 4 }}>{item.name}</p>
+          <p className="card-desc">{helpBody}</p>
+          {url && (
+            <div className="install-box">
+              <a href={url} target="_blank" rel="noreferrer">{downloadLabel}</a>
+            </div>
+          )}
+          <div className="card-actions">
+            <button className="btn btn-primary btn-sm" onClick={onClose}>{t('copiedModal.gotIt')}</button>
+            {onOpenDetail && (
+              <button className="btn btn-ghost btn-sm" onClick={() => { onClose(); onOpenDetail(item) }}>{t('copiedModal.viewDetail')}</button>
+            )}
+          </div>
+        </div>
+      </div>
+    )
   }
   const titleKey = effKind === 'app' ? 'copiedModal.appTitle'
     : effKind === 'none' ? 'copiedModal.noneTitle'
@@ -1278,7 +1318,7 @@ export default function App() {
           <span>{t('footer.install')}</span>
         </div>
       </footer>
-      {detail && <DetailModal item={detail} onClose={() => setDetail(null)} onToast={showToast} />}
+      {detail && <DetailModal item={detail} onClose={() => setDetail(null)} onToast={showToast} onShowCopied={setCopiedInfo} />}
       {copiedInfo && (
         <CopiedModal info={copiedInfo} onClose={() => setCopiedInfo(null)} onOpenDetail={(it) => setDetail(it)} />
       )}
