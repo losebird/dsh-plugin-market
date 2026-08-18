@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**2825** 个插件 · **2128** 个可一键安装
+**2826** 个插件 · **2129** 个可一键安装
 
 安装市场：
 
@@ -27,7 +27,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [技能与扩展](#skills) (72)
 - [市场与发现](#market) (181)
 - [趣味与个性](#fun) (29)
-- [其他](#other) (320)
+- [其他](#other) (321)
 
 ## 界面与主题
 
@@ -2886,6 +2886,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [deepseekharness-audio-notifier](https://github.com/ziphow/deepseekharness-audio-notifier) DeepseekHarness 任务完成提示音插件：任务完成时随机播放提示音，内置默认音频开箱即用，支持音频池/音量/开关与持久化设置（学习用 Demo） ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [dsh-browser4](https://github.com/omdsh-dev/dsh-browser4) Browser4 skills bundle for DeepSeek Harness — AI-native browser automation (browser4-cli)  ⭐ 0 ⬇ 0 · 官方脚本安装 · 4.13.3
 - [dsh-skill-stats](https://github.com/omdsh-dev/dsh-skill-stats) Skill usage statistics for DSH: counts every skill invocation across sessions (replay of e ⭐ 0 ⬇ 0 · git clone · 0.1.0
+- [dsh-eyes](https://github.com/losebird/dsh-eyes) 做DSH 的眼睛，看到一切 ⭐ 0 ⬇ 0 · v0.3.2
 
 ---
 
