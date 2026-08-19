@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-19T04:17:58.847Z",
+  "updatedAt": "2026-08-19T16:14:02.450Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -72562,8 +72562,8 @@
         "presets": []
       },
       "category": "skills",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "pack"
       }
@@ -72603,6 +72603,7 @@
       "version": "v0.2.4",
       "longDescription": " pi、opencode、codex、claude-code 的会话、聊天记录与 agent 导入 DeepSeek Harness（dsh）。导入的会话出现在会话列表，可携带完整上下文继续对话；自定义 agent 与模式提示词变成可发现的 dsh skills；composer 里的一键 同步 按钮即可完成全部导入。",
       "tags": [
+        "agents",
         "codex",
         "claude",
         "opencode",
@@ -72610,8 +72611,8 @@
       ],
       "package": "dsh-import-agents",
       "category": "session",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -72642,8 +72643,8 @@
       ],
       "package": "dsh-projects",
       "category": "ui",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -72669,8 +72670,8 @@
         "merit"
       ],
       "longDescription": "工作间隙敲一敲、攒一攒\"功德\"。\n\n点击木鱼即敲击，鼠标按住木鱼移动可随意拖拽，刷新页面不丢进度，其他的留给大家自由探索～",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -99428,6 +99429,32 @@
       "auto": true,
       "category": "other",
       "githubId": 1335609722
+    },
+    {
+      "id": "harness-lark",
+      "name": "harness-lark",
+      "type": "bundle",
+      "repo": "huoxue1/harness-lark",
+      "spec": "harness-lark",
+      "description": "Lark/飞书（Feishu）渠道插件，为 DeepSeek Harness 提供飞书通信能力。",
+      "license": "MIT",
+      "author": {
+        "name": "huoxue1",
+        "url": ""
+      },
+      "version": "v0.1.18",
+      "longDescription": "# harness-lark\n\nLark/飞书（Feishu）渠道插件，为 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 提供飞书通信能力。通信部分参考 [openclaw-lark](https://github.com/larksuite/openclaw-lark)（MIT, ByteDance Ltd.），适配 dsh 的 Cordis 插件体系。\n\nEnglish | [中文](README.zh.md) | [📖 安装文档（GitHub Pages）](https://huoxue1.github.io/harness-lark/)\n\n> 用 Docker 一键部署（自带插件的 `deepseek-harness-lark` 镜像）或手动安装插件，见[安装文档](https://huoxue1.github.io/harness-lark/)。\n\n## 功能\n\n| 类别 | 能力 |\n|---|---|\n| 💬 IM 消息收发 | WebSocket 长连接接收消息、文本/卡片回复、@提及、群聊/私聊策略、重连去重 |\n| 🃏 交互卡片 + 流式回复 | 思考过程（reasoning）流式 → 生成（answer）流式 → 最终结果更新到卡片，含可折叠思考面板、耗时/token footer |\n| 🖼️ 媒体 | 图片/文件/音频的上传、下载与发送 |\n| 📄 文档/Wiki/Drive | 创建/读取/更新云文档（docx）、知识库节点、云盘文件 |\n| 📊 Base/表格/日历/任务 | 多维表格（bitable）、电子表格、日历事件、任务 |\n| 🔐 用户 OAuth | 设备授权码流程（RFC 8628），用户级 token 管理 |\n| 👍 表情反馈 | 收到消息回复 `Get` 表情（处理中），完成后换成 `DONE` |\n| 🔐 飞书审批卡片 | dsh 审批请求（如 bash 沙箱升级）以带「批准/拒绝」按钮的卡片发到会话，点击即应答，超时自动拒绝 |\n| ⌨️ 斜杠命令 | `/status` `/model` `/cd` `/permission` `/setting` `/help` 本地命令（不进模型） |\n\n## 架构\n\n- **会话模型**：每个飞书会话（chat_id）映射一个持久的 dsh agent（`ctx.agents.resume` 优先，失败则 `create`），上下文跨消息、跨重启保留。\n- **通信层**：`@larksuiteoapi/node-sdk` 的 `WSClient` 长连接 + `EventDispatcher` 路由（参考 openclaw-lark 的 `monitor.ts` / `lark-client.ts`）。注意 SDK v1.65+ 需要显式 `start({ eventDispatcher })`（旧版构造时自动连接），且事件为 schema 2.0 格式（`message.message_type` 而非 `msg_type`）——harness-lark 两者均已适配。\n- **回复通路**：飞书消息 → `agent.followup()`；`assistant/chunk`（reasoning-delta / text-delta）→ 流式卡片；`turn/end` → 完成卡片并换表情。\n- **模型切换**：`/model` 通过 `installModelSelection` 的 `ModelSelectionRef` 运行时改写，下一轮生效。\n- **工具注册**：所有飞书能力以 dsh 工具（`ctx.tools.register` + `defineTool`）暴露给模型。\n\n## 斜杠命令\n\n| 命令 | 说明 |\n|---|---|\n| `/status` | 查看当前模型、工作目录、会话状态 |\n| `/model` | 列出可用模型；`/model <provider/model>` 切换 |\n| `/cd` | 查看工作目录；`/cd <绝对路径>` 修改（下次会话/重启后生效） |\n| `/new` | 新建上下文（清空当前对话历史，别名 `/reset`） |\n| `/stop` | 停止当前正在进行的回复 |\n| `/permission` | 查看/切换会话权限预设（`/permission <预设名>`，如 `danger-full-access`） |\n| `/setting` | 查看设置项；`/setting permission [预设名]` 设置新会话默认权限；`/setting model [模型]` 设置新会话默认模型 |\n| `/help` | 列出所有命令 |\n\n群聊中命令可带 `@机器人` 前缀（如 `@机器人 /status`），插件会自动剥离提及前缀。\n\n## 安装\n\n### 前置条件\n\n- Node.js ≥ 22（含 pnpm）\n- 已安装 DeepSeek Harness（`dsh` CLI，可通过 `npx @deepseek-ai/dsh web` 或从源码运行）\n- 飞书开放平台应用（凭据：`appId`、`appSecret`；推荐开启长连接模式，无需公网回调地址）\n- 飞书开放平台后台：事件订阅 → 订阅方式选择「使用长连接接收事件」，并订阅 `im.message.receive_v1` 事件\n\n### 一条命令安装（推荐）\n\nharness-lark 已发布到 npm。插件声明了 `dsh.bundle.patch`，`dsh plugin` 安装后会自动把\n插件的 `cordis.patch.yml` 作为 bundle 层应用——**无需再手动编辑任何配置**，凭据直接读环境变量：\n\n```sh\n# 1. 设置凭据\nexport FEISHU_APP_ID=cli_xxx\nexport FEISHU_APP_SECRET=your_secret\n\n# 2. 安装到 web profile（同时自动应用插件的 cordis.patch.yml）\ndsh plugin --profile web add harness-lark\n\n# 3. 启动\ndsh --profile web\n```\n\n可选：用仓库提供的一键脚本（安装 + 启动，等价于上面三条命令）：\n\n```sh\nexport FEISHU_APP_ID=cli_xxx\nexport FEISHU_APP_SECRET=your_secret\nbash scripts/install-dsh.sh web harness-lark\n```\n\n> 用本地源码构建后安装：`bash scripts/install-dsh.sh web /path/to/harness-lark`\n> （先在仓库目录执行 `pnpm install && pnpm run build`）\n\n> 想覆盖插件默认配置（如禁用群聊）时，在 profile 的 `$DSH_HOME/profiles/web/cordis.patch.yml`\n> 中按 `id: lark` 覆盖对应字段即可（见下方配置示例）。\n\n### 方式二：手动 patch 安装（从源码）\n\n```sh\ngit clone https://github.com/huoxue1/harness-lark.git\ncd harness-lark\npnpm install && pnpm run build\ndsh plugin --profile web add file:/path/to/harness-lark\n```\n\n或直接在 profile 的 `cordis.patch.yml`（`$DSH_HOME/profiles/<name>/cordis.patch.yml`）中加入：\n\n```yaml\n- insert:\n    - id: lark\n      name: 'harness-lark'\n      config:\n        appId: !!js process.env.FEISHU_APP_ID\n        appSecret: !!js process.env.FEISHU_APP_SECRET\n        brand: feishu        # feishu | lark\n        connectionMode: websocket\n        dmPolicy: open       # open | pairing | allowlist | disabled\n        groupPolicy: disabled\n        requireMentionInGroups: true\n        replyMode: streaming # auto | static | streaming\n```\n\n> 群聊允许 + 流式回复：`groupPolicy: open`、`requireMentionInGroups: false`、`replyMode: streaming`。\n\n### 方式三：Docker 部署\n\n参见仓库内 `Dockerfile` / `docker-compose.yml`（dsh 侧镜像），插件通过 `COPY plugins/harness-lark` 打进镜像，entrypoint 首次启动时用 `dsh plugin --profile web add` 装入 profile。\n\n## 配置\n\n| 字段 | 类型 | 默认 | 说明 |\n|---|---|---|---|\n| `appId` | string | — | 飞书应用 ID（缺省时仅注册工具、不启动网关） |\n| `appSecret` | string | — | 飞书应用密钥（缺省时仅注册工具、不启动网关） |\n| `encryptKey` | string | — | 事件加密密钥（长连接模式可留空） |\n| `verificationToken` | string | — | 事件验证令牌（长连接模式可留空） |\n| `brand` | `feishu` \\| `lark` | `feishu` | 平台品牌 |\n| `connectionMode` | `websocket` \\| `webhook` | `websocket` | 事件接收模式 |\n| `provider` | string | — | 创建的 agent 使用的 provider（缺省走默认） |\n| `model` | string | — | 创建的 agent 使用的模型 |\n| `replyMode` | `auto` \\| `static` \\| `streaming` | `auto` | 回复模式（`auto` 走静态文本） |\n| `dmPolicy` | `open` \\| `pairing` \\| `allowlist` \\| `disabled` | `open` | 私聊策略 |\n| `groupPolicy` | `open` \\| `allowlist` \\| `disabled` | `disabled` | 群聊策略 |\n| `allowlist` | string[] | — | open_id 白名单 |\n| `requireMentionInGroups` | boolean | `true` | 群聊中是否需要 @机器人 |\n| `topicSeparateSession` | boolean | `false` | 话题群消息按 thread 独立建 session（每个话题一个上下文） |\n| `dedupTtlMs` | number | 12h | 消息去重窗口 |\n| `agents` | array | — | 多 agent 配置（见下）：每个 agent 一个 chat 路由分区 |\n\n### 多 Agent 配置（`agents`）\n\n支持多个 agent（可共享同一个飞书应用的 `appId`/`appSecret`），按 chat 路由：\n\n```yaml\n- id: lark\n  config:\n    agents:\n      - id: agent-a\n        appId: cli_xxx            # 可与其他 agent 共享同一 appId/secret\n        appSecret: secret\n        cwd: /work/a              # 该 agent 会话的默认工作目录\n        agentsMd: |               # 写入 <cwd>/AGENTS.md，作为该 agent 的指令\n          # agent-a 的专属指令\n        chats: [oc_111, p2p]      # 限定该 agent 服务的 chat：oc_ 精确 id 或 p2p/group 标签\n        default: true             # 默认 agent：未匹配其他 agent 的 chat 走它\n      - id: agent-b\n        appId: cli_xxx            # 共享同一应用\n        appSecret: secret\n        cwd: /work/b\n        agentsMd: \"...\"\n        chats: [oc_222, group]    # 只服务该群组\n```\n\n- `chats`：`oc_...` 精确 chat_id 或 `p2p`/`group` 类型标签；缺省 = 服务全部（仅限单 agent 组）。\n- `default: true`：未匹配的 chat 路由到此 agent；未标记时取组内第一个。\n- 同一 `appId` 的 agent 共享一条 WebSocket 连接，消息按 chat 路由到各自 bridge（独立 cwd/AGENTS.md/session）。\n- 也可在 Web 设置界面（dsh settings 的 `harness-lark` namespace）编辑 `agents`，重启后生效。\n- 旧的顶层 `appId`/`appSecret`（或 `FEISHU_APP_ID`/`FEISHU_APP_SECRET` 环境变量）仍兼容，作为单 agent 配置。\n\n## 工具清单\n\n| 工具 | 说明 |\n|---|---|\n| `feishu_create_doc` | 从 Markdown 创建云文档 |\n| `feishu_fetch_doc` | 读取云文档（Markdown） |\n| `feishu_update_doc` | 向云文档追加 Markdown |\n| `feishu_wiki_space_node` | 列出知识库节点 |\n| `feishu_drive_file` | 搜索/列出云盘文件 |\n| `feishu_bitable_app` / `_table` / `_record` / `_field` / `_view` | 多维表格操作 |\n| `feishu_sheet` | 电子表格创建/读取/写入 |\n| `feishu_calendar_event` | 日历事件 CRUD |\n| `feishu_task_task` | 任务 CRUD/完成 |\n| `feishu_oauth` | 用户 OAuth 授权/状态/撤销 |\n\n> 用户数据类工具（云文档 `feishu_create_doc`/`fetch_doc`/`update_doc`，以及多维表格、电子表格、日历、任务系列工具）在用户执行 `/feishu auth` 授权后，以该用户的身份调用飞书 API；未授权时回退为机器人身份。Wiki/Drive/IM 类工具始终以机器人身份调用。\n\n## 开发\n\n```sh\npnpm install\npnpm run typecheck   # tsc --noEmit\npnpm run test        # vitest\npnpm run build       # tsdown -> lib/\n```\n\n### 目录结构\n\n```\nsrc/\n  index.ts                 # 插件入口（name/inject/Config/apply）\n  core/                    # 配置 schema、LarkClient、类型、去重、OAuth、token store\n  channel/                 # WebSocket 网关 + 事件处理\n  messaging/inbound/       # 消息解析、@提及、去重\n  messaging/outbound/      # 文本/卡片/媒体发送\n  agent/bridge.ts          # per-chat 持久 agent 桥接\n  card/                    # 交互卡片构建 + 流式控制器\n  tools/                   # 文档/Wiki/Drive、Base/表格/日历/任务、OAuth 工具\ntests/                     # vitest 单测\n```\n\n## 安全说明\n\n与 OpenClaw 插件相同，此插件在授权范围内以机器人身份调用飞书 API，存在模型幻觉、提示注入等固有风险。建议仅作为私聊助手使用，不要加入群聊或允许他人交互；保持默认安全配置（`groupPolicy: disabled`、`requireMentionInGroups: true`）。\n\n## 许可证\n\n[MIT](LICENSE)。通信与卡片设计参考 [openclaw-lark](https://github.com/larksuite/openclaw-lark)（MIT, ByteDance Ltd.）。\n",
+      "tags": [
+        "lark",
+        "feishu"
+      ],
+      "package": "harness-lark",
+      "source": "curated",
+      "category": "other",
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add"
+      }
     }
   ]
 }

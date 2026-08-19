@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**3142** 个插件 · **2504** 个可一键安装
+**3143** 个插件 · **2505** 个可一键安装
 
 安装市场：
 
@@ -27,7 +27,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [技能与扩展](#skills) (81)
 - [市场与发现](#market) (211)
 - [趣味与个性](#fun) (34)
-- [其他](#other) (311)
+- [其他](#other) (312)
 
 ## 界面与主题
 
@@ -1670,8 +1670,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-urge-risk-light](https://github.com/MurrayJoe/dsh-urge-risk-light) 催办风险灯（Urge Risk Light）— 根据流程节点停留时间与 SLA 对比批量判定红/黄/绿催办风险的 DeepSeek Harness 工具插件，含结果卡片与右下角悬浮 ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · v0.1.0
 - [gewu-tools](https://github.com/nyantused-cpun/gewu-tools) 格物审视面插件：gewu_prep（HTML 逐页截图 + subagent_vision 简报契约生成，宿主直起 Chrome）+ gewu_locate（真值核验：文字定位到页 ⭐ 0 ⬇ 0 · v1.0.0
 - [dsh-hashline-edit-pro](https://github.com/sleepinginsummer/dsh-hashline-edit-pro) Hash-anchored read/replace/undo tools for DSH. Every line of a file carries a unique 3-cha ⭐ 0 ⬇ 0
-- [dsh-ci-co-pilot](https://github.com/temotee2103/dsh-ci-co-pilot) GitHub CI co-pilot for DeepSeek Harness: PR review, CI failure fixing, issue triage and re ⭐ 0 ⬇ 0 · 手动安装 · v0.3.0
-- [dsh-overdrive](https://github.com/temotee2103/dsh-overdrive) OpenClaw-style multi-platform gateway for DSH: WhatsApp/Telegram/Discord/Slack/Feishu/DingTalk/WeCom channels, chat-native trajectory replay, subagent & cron commands, ⭐ 0 ⬇ 0 · 手动安装 · v0.1.4
+- [dsh-ci-co-pilot](https://github.com/temotee2103/dsh-ci-co-pilot) GitHub CI co-pilot for DeepSeek Harness: PR review, CI failure fixing, issue triage and re ⭐ 0 ⬇ 0 · 手动安装 · v0.2.0
 - [dsh-docgen](https://github.com/JohnXu22786/docgen) docgen — document workshop skill pack: pure-prompt Agent Skills for README generation, PR  ⭐ 0 ⬇ 0
 - [dsh-omicos](https://github.com/omicverse/dsh-omicos) OmicOS as a deepseek-harness (dsh) plugin — Mode A: omicos bioinformatics tools + backgrou ⭐ 0 ⬇ 0
 - [dsh-norm-spec](https://github.com/CyanoOrg/dsh-norm-spec) Rust-backed DeepSeek Harness (dsh) Cordis plugin for norm-spec conventions ⭐ 0 ⬇ 11 · 未验证 · v0.1.0-beta.1
@@ -3204,6 +3203,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [deepseekharness-audio-notifier](https://github.com/ziphow/deepseekharness-audio-notifier) DeepseekHarness 任务完成提示音插件：任务完成时随机播放提示音，内置默认音频开箱即用，支持音频池/音量/开关与持久化设置（学习用 Demo） ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [dsh-browser4](https://github.com/omdsh-dev/dsh-browser4) Browser4 skills bundle for DeepSeek Harness — AI-native browser automation (browser4-cli)  ⭐ 0 ⬇ 0 · 官方脚本安装 · 4.13.3
 - [dsh-skill-stats](https://github.com/omdsh-dev/dsh-skill-stats) Skill usage statistics for DSH: counts every skill invocation across sessions (replay of e ⭐ 0 ⬇ 0 · git clone · 0.1.0
+- [harness-lark](https://github.com/huoxue1/harness-lark) Lark/飞书（Feishu）渠道插件，为 DeepSeek Harness 提供飞书通信能力。 ⭐ 0 ⬇ 0 · v0.1.18
 
 ---
 
