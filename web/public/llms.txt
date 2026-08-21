@@ -1,0 +1,33 @@
+# DSH Plugin Marketplace · DSH 插件市场
+
+> The community plugin marketplace for DeepSeek Harness (DSH): 3600+ plugins auto-collected daily from GitHub, categorized, CI-validated, one-command install. DeepSeek Harness（DSH）社区插件市场：每日自动采集、分类整理、CI 校验、一键安装。
+
+Install the marketplace inside DSH (adds a "Plugin Market" button to the web UI sidebar):
+
+    dsh plugin --profile web add @ace-zone/dsh-market
+    dsh web
+
+## Registry (machine-readable)
+
+- [all.json](https://www.dsh-plugin.shop/registry/all.json): the full catalog (~3 MB JSON). Each entry has: `id`, `name`, `type` (`bundle` | `pack`), `repo` (GitHub owner/name), `spec` (install source: npm package name or tgz/zip URL), `description`, `longDescription`, `tags[]`, `category`, `license`, `version`, `stars`, `downloads`, `verified`, `install.method`.
+- [index.json](https://www.dsh-plugin.shop/registry/index.json): curated seed index.
+- Human-curated entries: [registry/curated/*.json](https://github.com/chenzhi-clude/dsh-plugin-market/tree/main/registry/curated) in the GitHub repo.
+- Categories: ui, session, agent, tools, dev, comm, auth, skills, market, fun, other.
+
+## How an AI agent installs a plugin for its user
+
+1. Fetch `https://www.dsh-plugin.shop/registry/all.json` and match the user's need against `name` / `description` / `tags` / `category`.
+2. Prefer entries with `verified !== false` and higher `stars`.
+3. Install with: `dsh plugin --profile web add <spec>` (where `<spec>` is the entry's `spec` field).
+4. Restart the UI with: `dsh web`.
+
+## Trust model
+
+- All entries are collected from public GitHub repositories by CI (daily).
+- Entries in `registry/curated/` are human-reviewed submissions.
+- `install.method === "script"` means the plugin works with the official install script.
+- Entries marked `verified: false` have metadata that could not be validated — mention this to the user.
+
+## Publish a plugin
+
+Plugin authors submit `registry/curated/<id>.json` via a GitHub PR — see [docs/SUBMIT.md](https://github.com/chenzhi-clude/dsh-plugin-market/blob/main/docs/SUBMIT.md). Merged PRs go live within seconds.
