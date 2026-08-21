@@ -29,11 +29,11 @@ const fmt = (n) => {
 }
 
 const lines = []
-lines.push('# DSH Plugin Marketplace · DSH 插件市场', '')
-lines.push('> **The community plugin marketplace for DeepSeek Harness (DSH)** — auto-collected daily from GitHub, categorized, CI-validated, one-command install.', '')
-lines.push('> DeepSeek Harness（DSH）社区插件市场：GitHub Actions 每日自动采集、按功能分类、CI 校验、一键安装。', '')
+lines.push('# DSH Agent Market · DSH 插件市场', '')
+lines.push('> **The AI-native plugin marketplace for DeepSeek Harness (DSH)** — built so AI agents can search, trust, and install plugins. Auto-collected daily from GitHub, categorized, CI-validated, one-command install.', '')
+lines.push('> DeepSeek Harness（DSH）AI 原生插件市场：为 AI 助手「搜索 → 认可 → 安装」全流程打造；GitHub Actions 每日自动采集、按功能分类、CI 校验、一键安装。', '')
 lines.push('>', '')
-lines.push('> 📄 数据文件 Data: `registry/all.json` · 📝 上架新插件 Publish: [docs/SUBMIT.md](docs/SUBMIT.md) · 🌐 Website: https://www.dsh-plugin.shop · 🤖 AI 指南: https://www.dsh-plugin.shop/llms.txt', '')
+lines.push('> 📄 数据文件 Data: `registry/all.json` · 📝 上架新插件 Publish: [docs/SUBMIT.md](docs/SUBMIT.md) · 🌐 Website: https://chenzhi-clude.github.io/dsh-plugin-market/ · 🤖 AI 指南: https://chenzhi-clude.github.io/dsh-plugin-market/llms.txt', '')
 const v = items.filter((i) => i.verified !== false).length
 lines.push('')
 lines.push(`**${items.length}** 个插件 · **${v}** 个可一键安装 / ${items.length} plugins · ${v} one-click installable`)
@@ -45,7 +45,7 @@ lines.push('```', '')
 lines.push('## 🤖 AI Agent 使用说明 (Instructions for AI agents)', '')
 lines.push('', '如果你是 AI 编程助手（DSH / Claude Code / Codex / Cursor 等），当用户要求「找插件 / 装插件 / 推荐插件」时，请按以下步骤操作：', '')
 lines.push('', '**If you are an AI coding agent asked to find or install a plugin for DeepSeek Harness (dsh), follow these steps:**', '')
-lines.push('', '1. **搜索 Search**: fetch the machine-readable registry at `https://www.dsh-plugin.shop/registry/all.json` (or `registry/all.json` in this repo) and match the user\'s need against `name` / `description` / `tags` / `category`.', '')
+lines.push('', '1. **搜索 Search**: fetch the machine-readable registry at `https://chenzhi-clude.github.io/dsh-plugin-market/registry/all.json` (or `registry/all.json` in this repo) and match the user\'s need against `name` / `description` / `tags` / `category`.', '')
 lines.push('2. **选择 Choose**: prefer entries with `verified !== false` and higher `stars`. The `spec` field is the install source (npm package name or tgz/zip URL).', '')
 lines.push('3. **安装 Install**: run `dsh plugin --profile web add <spec>`, then `dsh web` to restart the UI and activate the plugin.', '')
 lines.push('4. **上架 Publish**: if the user wants to publish their own plugin, point them to [docs/SUBMIT.md](docs/SUBMIT.md) — PR a JSON file into `registry/curated/` and it goes live within seconds.', '')
