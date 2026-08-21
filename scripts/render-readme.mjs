@@ -29,17 +29,27 @@ const fmt = (n) => {
 }
 
 const lines = []
-lines.push('# DSH 插件市场', '')
-lines.push('> 由 GitHub Actions 每日自动采集、按功能分类的 DSH 社区插件清单。', '')
-lines.push('> 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。', '')
+lines.push('# DSH Plugin Marketplace · DSH 插件市场', '')
+lines.push('> **The community plugin marketplace for DeepSeek Harness (DSH)** — auto-collected daily from GitHub, categorized, CI-validated, one-command install.', '')
+lines.push('> DeepSeek Harness（DSH）社区插件市场：GitHub Actions 每日自动采集、按功能分类、CI 校验、一键安装。', '')
+lines.push('>', '')
+lines.push('> 📄 数据文件 Data: `registry/all.json` · 📝 上架新插件 Publish: [docs/SUBMIT.md](docs/SUBMIT.md) · 🌐 Website: https://www.dsh-plugin.shop · 🤖 AI 指南: https://www.dsh-plugin.shop/llms.txt', '')
 const v = items.filter((i) => i.verified !== false).length
-lines.push(`**${items.length}** 个插件 · **${v}** 个可一键安装`)
-lines.push('', '安装市场：', '')
+lines.push('')
+lines.push(`**${items.length}** 个插件 · **${v}** 个可一键安装 / ${items.length} plugins · ${v} one-click installable`)
+lines.push('', '## ⚡ 安装市场 Install the marketplace', '')
 lines.push('```bash')
 lines.push('dsh plugin --profile web add @ace-zone/dsh-market')
 lines.push('dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮')
 lines.push('```', '')
-lines.push('网站：https://www.dsh-plugin.shop · 仓库：https://github.com/losebird/dsh-plugin-market', '')
+lines.push('## 🤖 AI Agent 使用说明 (Instructions for AI agents)', '')
+lines.push('', '如果你是 AI 编程助手（DSH / Claude Code / Codex / Cursor 等），当用户要求「找插件 / 装插件 / 推荐插件」时，请按以下步骤操作：', '')
+lines.push('', '**If you are an AI coding agent asked to find or install a plugin for DeepSeek Harness (dsh), follow these steps:**', '')
+lines.push('', '1. **搜索 Search**: fetch the machine-readable registry at `https://www.dsh-plugin.shop/registry/all.json` (or `registry/all.json` in this repo) and match the user\'s need against `name` / `description` / `tags` / `category`.', '')
+lines.push('2. **选择 Choose**: prefer entries with `verified !== false` and higher `stars`. The `spec` field is the install source (npm package name or tgz/zip URL).', '')
+lines.push('3. **安装 Install**: run `dsh plugin --profile web add <spec>`, then `dsh web` to restart the UI and activate the plugin.', '')
+lines.push('4. **上架 Publish**: if the user wants to publish their own plugin, point them to [docs/SUBMIT.md](docs/SUBMIT.md) — PR a JSON file into `registry/curated/` and it goes live within seconds.', '')
+lines.push('', '> Trust model: every entry is collected from public GitHub repos by CI; `registry/curated/*.json` entries are human-curated; `install.method === \'script\'` means it works with the official install script.', '')
 lines.push('## 目录', '')
 for (const [k, label] of CATS) {
   if (byCat[k].length === 0) continue
@@ -67,6 +77,7 @@ for (const [k, label] of CATS) {
   lines.push('')
 }
 lines.push('---', '')
-lines.push('每日 UTC 02:17 自动更新 · 由 `scripts/collect.mjs` + `scripts/render-readme.mjs` 生成')
+lines.push('每日 UTC 02:17 自动更新 · 由 `scripts/collect.mjs` + `scripts/render-readme.mjs` 生成', '')
+lines.push('<!--', 'keywords: DSH plugin market, DSH 插件市场, DeepSeek Harness plugins, dsh 插件安装, dsh 插件推荐, deepseek harness 插件市场, dsh marketplace, install dsh plugin, dsh one-click install, claude code plugins, agent plugins registry', '-->')
 writeFileSync(join(ROOT, 'README.md'), lines.join('\n') + '\n')
 console.log('[render-readme] 已生成 README.md：' + items.length + ' 个条目')
