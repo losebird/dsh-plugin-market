@@ -1992,8 +1992,8 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [gewu-tools](https://github.com/nyantused-cpun/gewu-tools) 格物审视面插件：gewu_prep（HTML 逐页截图 + subagent_vision 简报契约生成，宿主直起 Chrome）+ gewu_locate（真值核验：文字定位到页 ⭐ 0 ⬇ 0 · v1.0.0
 - [dsh-ai-teacher](https://github.com/hatter123/dsh-ai-teacher) AI老师 (ai-teacher) agent preset for the dsh web GUI: a full-capability teaching agent focus ⭐ 0 ⬇ 0
 - [dsh-hashline-edit-pro](https://github.com/sleepinginsummer/dsh-hashline-edit-pro) Hash-anchored read/replace/undo tools for DSH. Every line of a file carries a unique 3-cha ⭐ 0 ⬇ 0
-- [dsh-ci-co-pilot](https://github.com/temotee2103/dsh-ci-co-pilot) GitHub CI co-pilot for DeepSeek Harness: PR review, CI failure fixing, issue triage and re ⭐ 0 ⬇ 0 · 手动安装 · v0.2.0
-- [dsh-overdrive](https://github.com/temotee2103/dsh-overdrive) dsh-overdrive: turn DeepSeek Harness into a multi-platform chat agent you can see thinking ⭐ 0 ⬇ 0 · 未验证 · git clone · v0.1.4
+- [dsh-ci-co-pilot](https://github.com/temotee2103/dsh-ci-co-pilot) GitHub CI co-pilot for DeepSeek Harness: PR review, CI failure fixing, issue triage and re ⭐ 0 ⬇ 0 · 手动安装 · v0.3.1
+- [dsh-overdrive](https://github.com/temotee2103/dsh-overdrive) dsh-overdrive: turn DeepSeek Harness into a multi-platform chat agent you can see thinking ⭐ 0 ⬇ 0 · 未验证 · git clone · v0.2.0
 - [dsh-docgen](https://github.com/JohnXu22786/docgen) docgen — document workshop skill pack: pure-prompt Agent Skills for README generation, PR  ⭐ 0 ⬇ 0
 - [dsh-omicos](https://github.com/omicverse/dsh-omicos) OmicOS as a deepseek-harness (dsh) plugin — Mode A: omicos bioinformatics tools + backgrou ⭐ 0 ⬇ 0
 - [dsh-norm-spec](https://github.com/CyanoOrg/dsh-norm-spec) Rust-backed DeepSeek Harness (dsh) Cordis plugin for norm-spec conventions ⭐ 0 ⬇ 11 · 未验证 · v0.1.0-beta.1
