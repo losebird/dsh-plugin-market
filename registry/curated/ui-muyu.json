@@ -3,14 +3,14 @@
   "name": "赛博木鱼",
   "type": "bundle",
   "repo": "TongY1n/ui-muyu",
-  "spec": "https://github.com/TongY1n/ui-muyu/releases/download/v0.1.0/deepseek-ai-dsh-client-ui-muyu-0.1.0.tgz",
+  "spec": "https://github.com/TongY1n/ui-muyu/releases/download/v0.1.1/deepseek-ai-dsh-client-ui-muyu-0.1.1.tgz",
   "description": "一个赛博木鱼：可拖拽、点击敲击、累积功德的 Web 悬浮小摆件",
   "license": "MIT",
   "author": {
     "name": "TongY1n",
     "url": "https://github.com/TongY1n"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "category": "fun",
   "tags": [
     "fun",
