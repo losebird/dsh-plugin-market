@@ -1,0 +1,25 @@
+{
+  "id": "dsh-loghud",
+  "name": "LogHUD",
+  "type": "bundle",
+  "repo": "XuXcode/dsh-loghud",
+  "spec": "https://github.com/XuXcode/dsh-loghud/releases/download/v0.1.0/dsh-loghud-0.1.0.tgz",
+  "description": "DeepSeek Harness 的本地开发日志错误监控 HUD，支持错误归并、项目健康状态跟踪和按需中文 AI 诊断，并将持续扩展更多编程语言与开发框架。",
+  "license": "MIT",
+  "author": {
+    "name": "XuXcode",
+    "url": "https://github.com/XuXcode"
+  },
+  "version": "v0.1.0",
+  "longDescription": "LogHUD 在 DeepSeek Harness 中监控本地开发命令的错误日志，将重复异常归并成清晰的错误卡片，并持续展示当前 Session 的项目健康状态。普通 Shell 命令会在执行结束后分析最终输出；使用 loghud_run 时可以增量捕获运行日志。AI 诊断仅在用户主动点击后调用，并会在发送前对密码、令牌、API Key、URL 凭据和私钥等敏感信息进行遮盖。本地错误检测不依赖 AI，模型不可用时仍可查看错误摘要、异常链、上下文和原始日志。当前版本重点覆盖 Java 与 Spring 生态，后续将继续扩展更多编程语言和开发框架",
+  "tags": [
+    "log-monitoring",
+    "error-detection",
+    "ai-diagnosis",
+    "developer-tools",
+    "debugging",
+    "deepseek-harness"
+  ],
+  "package": "dsh-loghud",
+  "source": "curated"
+}
