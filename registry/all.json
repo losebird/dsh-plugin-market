@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-25T13:23:32.171Z",
+  "updatedAt": "2026-08-25T13:24:05.178Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -107647,35 +107647,27 @@
       "id": "dsh-hooks-pack",
       "name": "dsh-hooks-pack",
       "type": "bundle",
-      "package": "dsh-hooks-pack",
       "repo": "chenzhi-clude/dsh-hooks-pack",
-      "githubId": 1341788926,
-      "spec": "github:chenzhi-clude/dsh-hooks-pack#v0.1.0",
-      "version": "v0.1.0",
+      "spec": "dsh-hooks-pack",
+      "description": "One-click Claude Code & Codex hooks for DeepSeek Harness: auto-discovers your existing ~/.claude / ~/.codex hook config and runs it on the official bridge plugins, with an explicit sandbox-policy shim so hook commands never die silently.",
+      "longDescription": "Wraps the official @deepseek-ai/dsh-hooks-claude-code and @deepseek-ai/dsh-hooks-codex bridges behind one bundle row. Auto-discovers existing hook configs at standard locations, injects an explicit sandboxPolicy into hook command execution (the executor fail-safe default breaks hooks on some Windows deployments), and no-ops cleanly when no config exists. Verified end-to-end: PreToolUse deny decisions block tool calls; SessionStart additionalContext reaches the model.",
+      "tags": [
+        "hooks",
+        "automation",
+        "guardrails",
+        "pre-tool-use"
+      ],
+      "category": "agent",
+      "license": "MIT",
       "author": {
         "name": "chenzhi-clude",
         "url": "https://github.com/chenzhi-clude"
       },
-      "description": "One-click Claude Code & Codex hooks for DeepSeek Harness: auto-discovers your existing hooks config and runs it on the harness interception points via the official bridge plugins",
-      "tags": [
-        "automation",
-        "codex",
-        "dsh-extension",
-        "hooks"
-      ],
-      "license": "MIT",
-      "downloads": 0,
-      "stars": 0,
-      "releasedAt": "2026-08-21T12:30:36Z",
-      "topicSourced": true,
+      "source": "curated",
       "verified": true,
       "install": {
-        "method": "dsh-plugin-add",
-        "source": "readme"
-      },
-      "source": "auto",
-      "auto": true,
-      "category": "dev"
+        "method": "dsh-plugin-add"
+      }
     },
     {
       "id": "dsh-preset-scaffold",
