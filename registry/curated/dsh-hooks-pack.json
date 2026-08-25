@@ -1,0 +1,13 @@
+{
+  "id": "dsh-hooks-pack",
+  "name": "dsh-hooks-pack",
+  "type": "bundle",
+  "repo": "chenzhi-clude/dsh-hooks-pack",
+  "spec": "dsh-hooks-pack",
+  "description": "One-click Claude Code & Codex hooks for DeepSeek Harness: auto-discovers your existing ~/.claude / ~/.codex hook config and runs it on the official bridge plugins, with an explicit sandbox-policy shim so hook commands never die silently.",
+  "longDescription": "Wraps the official @deepseek-ai/dsh-hooks-claude-code and @deepseek-ai/dsh-hooks-codex bridges behind one bundle row. Auto-discovers existing hook configs at standard locations, injects an explicit sandboxPolicy into hook command execution (the executor fail-safe default breaks hooks on some Windows deployments), and no-ops cleanly when no config exists. Verified end-to-end: PreToolUse deny decisions block tool calls; SessionStart additionalContext reaches the model.",
+  "tags": ["hooks", "automation", "guardrails", "pre-tool-use"],
+  "category": "agent",
+  "license": "MIT",
+  "author": { "name": "chenzhi-clude", "url": "https://github.com/chenzhi-clude" }
+}
