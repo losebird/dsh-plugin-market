@@ -129,18 +129,22 @@ const I18N = {
     'kit.backHub': '回套件',
     'kit.hero.t1': 'DSH 助手套件',
     'kit.hero.t2': '复杂协作，就用助手套件',
-    'kit.hero.sub': '找回放过的资料。向旁边工位借经验。公司系统里的单，用你自己的号去查。',
+    'kit.hero.sub': '定义人、agent、场的全新协作方式',
     'kit.hero.semantic': '语义插件',
     'kit.hero.assist': '协助插件',
     'kit.hero.img': '产品演示：资料连起来、信封送过去、单据打勾',
-    'kit.hub.semantic': '找回放过的资料',
-    'kit.hub.assist': '向旁边工位借一招',
-    'kit.hub.biz': '用你自己的号查单、过单',
+    'kit.hub.semantic': '让大模型更懂你的意图',
+    'kit.hub.assist': '点起草，发给懂的人',
+    'kit.hub.biz': '一个界面全搞定',
     'kit.hub.go': '看看怎么用',
     'kit.hub.platforms': '两个插件，一件事',
     'kit.hub.demo': '产品演示',
+    'kit.contact.title': '联系我们',
+    'kit.contact.name': 'Ace',
+    'kit.contact.line': '扫二维码，添加我为朋友。',
+    'kit.contact.alt': 'Ace 微信二维码',
     'kit.semantic.name': '语义插件',
-    'kit.semantic.line': 'DSH 每次新聊天都是一张白纸。\n装上这个，这个文件夹里聊过的、放过的、点过头的，还能找回来。\n图上记的是当时怎么定的，不是公司系统现在的状态。',
+    'kit.semantic.line': '让大模型更懂你的意图，有效降低模型幻觉。\n看过的文档、图片，DSH 会话的内容，做过的决策，一样都不会丢。\n快速查找你的历史信息。',
     'kit.semantic.s1t': '把这个项目摊开看',
     'kit.semantic.s1b': '探索页是一张全图。会话、文件、概念挤在一起，底下还能按日期拖。\n你不用自己翻聊天记录。问「上次那套方案放哪了」，能点回原文。',
     'kit.semantic.s1alt': '语义探索：全图、搜索和底部时间轴',
@@ -157,7 +161,7 @@ const I18N = {
     'kit.semantic.s5b': '建一座桥，跨目录搜会话正文。选好路径就行。\n协助项目和语义项目分开记。你问「那天聊了什么」时，还能搜到对面。',
     'kit.semantic.s5alt': '创建桥：把两个工作区连上，只搜会话不并图',
     'kit.assist.name': '协助插件',
-    'kit.assist.line': '卡住了，发给旁边工位。\n对方用自己电脑上的 DSH 总结完，再回给你。',
+    'kit.assist.line': '回复的内容不懂？没关系，把内容发送给懂的人，让他来帮你。\n没有相关资料？没关系，把你的需求发给有资料的人，让他来帮你。\n没有权限查数据？没关系，把要查的信息发给有权限的人，让他来帮你。\n不需要切换到聊天软件，不需要你再跑来跑去，一键沟通，方便快捷。',
     'kit.assist.s1t': '先配对，再写信',
     'kit.assist.s1b': '两个人当面报一个码。\n发出去之前要点名。没点名，信发不出去。',
     'kit.assist.s1alt': '协助写信：发出去之前要点名',
@@ -169,7 +173,7 @@ const I18N = {
     'kit.assist.s3alt': '秘书开口，信封原文标在卡上',
     'kit.biz.badge': '连上公司系统',
     'kit.biz.title': '问旁边工位，用自己的号现查',
-    'kit.biz.sub': '两个都装上，再接公司系统。\n信在办公室里走。单用你自己的号去查。图上没有的，不会装成已经查过。',
+    'kit.biz.sub': '一个界面全搞定，不用多个系统来回切换。\n助手 + 语义，更方便、快捷地帮你处理公司的业务。',
     'kit.biz.s1t': '先写信，先点名',
     'kit.biz.s1b': '「去年 3 月的订货单发我看下」。\n写给谁，卡片上得写清楚。没点名，发不出去。',
     'kit.biz.s1alt': '协助写信：点名 Ace，写去年 3 月订货单',
@@ -283,18 +287,22 @@ const I18N = {
     'kit.backHub': 'Back to kit',
     'kit.hero.t1': 'DSH Assist Kit',
     'kit.hero.t2': 'Hard collaboration. Use the kit.',
-    'kit.hero.sub': 'Find what you stored. Borrow a move from the next desk. Look up a company form with your own login.',
+    'kit.hero.sub': 'A new way for people, agents, and the workplace to work together.',
     'kit.hero.semantic': 'Semantic',
     'kit.hero.assist': 'Assist',
     'kit.hero.img': 'Product demo: notes connect, an envelope moves, a form is checked',
-    'kit.hub.semantic': 'Find what you already stored',
-    'kit.hub.assist': 'Borrow a move from the next desk',
-    'kit.hub.biz': 'Look up and approve with your own login',
+    'kit.hub.semantic': 'Help the model hear what you mean',
+    'kit.hub.assist': 'Tap Draft. Send it to someone who knows.',
+    'kit.hub.biz': 'One screen. The whole job.',
     'kit.hub.go': 'See how',
     'kit.hub.platforms': 'Two plugins. One job.',
     'kit.hub.demo': 'Product demo',
+    'kit.contact.title': 'Contact',
+    'kit.contact.name': 'Ace',
+    'kit.contact.line': 'Scan the code to add me on WeChat.',
+    'kit.contact.alt': 'WeChat QR code for Ace',
     'kit.semantic.name': 'Semantic plugin',
-    'kit.semantic.line': 'Every new DSH chat starts blank.\nWith this, chats, files, and boards in this folder can still be found.\nThe graph is what was true then, not live status from a company system.',
+    'kit.semantic.line': 'Help the model hear what you mean, and cut down on made-up answers.\nDocuments you read, pictures you saw, DSH chats, and decisions you made: none of it has to disappear.\nFind your old information faster.',
     'kit.semantic.s1t': 'Lay the project out',
     'kit.semantic.s1b': 'Explore is one full graph. Chats, files, and concepts sit together. Drag the timeline below.\nYou do not dig through history. Ask where last month’s plan went, and tap back to the original.',
     'kit.semantic.s1alt': 'Semantic explore: full graph, search, and a timeline',
@@ -311,7 +319,7 @@ const I18N = {
     'kit.semantic.s5b': 'Build a bridge and search chat text across folders. Pick the path. That is all.\nAssist and semantic stay in their own records. Ask what you talked about that day, and the other side still comes up.',
     'kit.semantic.s5alt': 'Create a bridge: connect two workspaces, search chats, do not merge graphs',
     'kit.assist.name': 'Assist plugin',
-    'kit.assist.line': 'Stuck? Send it to the next desk.\nThey summarize from their own DSH and send it back.',
+    'kit.assist.line': 'Don’t get the reply? Send it to someone who does.\nNo files on hand? Send the ask to someone who has them.\nNo permission to look it up? Send it to someone who can.\nNo chat app. No walking the floor. One tap. Fast.',
     'kit.assist.s1t': 'Pair first, then write',
     'kit.assist.s1b': 'Two people share a code in the room.\nName who it is for. No name, no send.',
     'kit.assist.s1alt': 'Compose an assist request. Name the person first.',
@@ -323,7 +331,7 @@ const I18N = {
     'kit.assist.s3alt': 'Secretary speaking, with the original envelope marked on the card',
     'kit.biz.badge': 'Company systems',
     'kit.biz.title': 'Ask the next desk. Look it up with your login.',
-    'kit.biz.sub': 'Install both, then connect the company system.\nMail stays in the office. Forms are checked with your own login. If the graph has nothing, it does not pretend it already looked.',
+    'kit.biz.sub': 'One screen. No hopping across company systems.\nAssist plus semantic: a faster way to handle the work at the company.',
     'kit.biz.s1t': 'Write first. Name them first.',
     'kit.biz.s1b': '“Send me last March’s purchase orders.”\nThe card has to say who it is for. No name, no send.',
     'kit.biz.s1alt': 'Compose an assist: name Ace, ask for last March’s orders',
@@ -1210,6 +1218,14 @@ function KitHub({ onBack, onOpen }) {
           </div>
         </section>
       ))}
+      <section className="kit-contact">
+        <h2 className="kit-h2">{t('kit.contact.title')}</h2>
+        <p className="kit-contact-name">{t('kit.contact.name')}</p>
+        <p className="kit-line">{t('kit.contact.line')}</p>
+        <figure className="kit-qr">
+          <img src={REGISTRY_BASE + 'kit/wechat-qr.png'} alt={t('kit.contact.alt')} width={320} height={332} />
+        </figure>
+      </section>
     </div>
   )
 }

@@ -416,6 +416,18 @@ a:hover { text-decoration: underline; }
 }
 .kit-band.flip { direction: rtl; }
 .kit-band.flip > * { direction: ltr; }
+.kit-contact {
+  margin-top: 28px; padding: 48px 0 12px; border-top: 1px solid var(--border);
+  text-align: center;
+}
+.kit-contact .kit-line { margin: 0 auto 22px; }
+.kit-contact-name { margin: 0 0 8px; font-size: 18px; font-weight: 650; letter-spacing: -0.02em; }
+.kit-qr {
+  margin: 0 auto; width: min(240px, 72vw); background: #fff;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden; box-shadow: var(--term-shadow);
+}
+.kit-qr img { display: block; width: 100%; height: auto; }
 .kit .page-head h1 {
   font-size: clamp(32px, 4.4vw, 48px); letter-spacing: -0.03em; font-weight: 650; line-height: 1.08;
 }
