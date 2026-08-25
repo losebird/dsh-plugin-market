@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**4271** 个插件 · **3572** 个可一键安装
+**4272** 个插件 · **3573** 个可一键安装
 
 安装市场：
 
@@ -20,7 +20,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [界面与主题](#ui) (892)
 - [会话与记忆](#session) (720)
 - [Agent 与工作流](#agent) (737)
-- [工具与集成](#tools) (472)
+- [工具与集成](#tools) (473)
 - [开发与输入](#dev) (210)
 - [通信与移动](#comm) (137)
 - [安全与权限](#auth) (243)
@@ -2861,6 +2861,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-plugin-browser-use](https://github.com/coderdailyone/dsh-plugin-browser-use) Browser-automation tools for DeepSeek Harness (dsh): Chromium via playwright-core behind a ⭐ 0 ⬇ 0
 - [dsh-app-launcher](https://github.com/Alvin-Somedo/dsh-app-launcher) Open the DSH Web GUI in a dedicated browser app window; closing the window shuts down DSH  ⭐ 0 ⬇ 0
 - [dsh-show-diff](https://github.com/kaiarvin/dsh-show-diff) Expanded color-coded diff tool cards for the edit/write tools ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · v0.1.0
+- [dsh-3d-model-viewer](https://github.com/lishLRF/dsh-3d-model-viewer) 在 DSH Web 界面查看 OBJ/STL/STEP 三维模型，并转译为标准化、LLM 可读的 JSON（含语义分析），一键发送给 AI。 ⭐ 0 ⬇ 0 · v0.1.1
 
 ## 开发与输入
 
