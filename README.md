@@ -3300,7 +3300,6 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-opencode-go-usage](https://github.com/xiaweiliang060035/dsh-opencode-go-usage) DSH (DeepSeek Harness) web plugin — floating widget showing real-time OpenCode Go subscrip ⭐ 3 ⬇ 0 · 手动安装
 - [dsh-everything-oauth](https://github.com/kam74515-boop/dsh-everything-oauth) Import local Codex / Grok / Claude / Copilot / Gemini login state into DeepSeek Harness ⭐ 3 ⬇ 0
 - [dsh-codex-connect-plus](https://github.com/stoneface10/dsh-codex-connect-plus) Use your ChatGPT subscription in DeepSeek Harness to access Codex models and generate or e ⭐ 3 ⬇ 4 · v0.1.0-beta.4
-- [dsh-auth-everying](https://github.com/chenbin-dev/dsh-auth-everying) Import local Codex / Grok / Claude / Copilot / Gemini login state into DeepSeek Harness ⭐ 3 ⬇ 0 · 0.1.4
 - [dsh-plugin-sync](https://github.com/AngLi1997/dsh-plugin-sync) DSH 插件同步：将 DeepSeek Harness 已安装插件清单同步到 GitHub Gist（OAuth 快捷登录，导出/导入，导入后自动安装依赖）。 ⭐ 3 ⬇ 0
 - [chrome-faithful](https://github.com/bpc-oss/chrome-faithful) Faithful control of your real, logged-in Chrome profiles: MCP server + MV3 extension + aut ⭐ 3 ⬇ 0 · 手动安装 · v0.4.0
 - [dsh-webbridge](https://github.com/bill9109/dsh-webbridge) Kimi WebBridge host plugin for DeepSeek Harness: model tools that drive the user's REAL br ⭐ 3 ⬇ 0 · 官方脚本安装
@@ -3400,6 +3399,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-llm-local](https://github.com/nnbw-liu/deepseek-ai-dsh-llm-local) OpenAI-compatible local model adapter (Ollama, llama.cpp, Foundry Local, LM Studio, vLLM,  ⭐ 1 ⬇ 0 · 未验证 · git clone
 - [dsh-cc-ecosystem](https://github.com/Bcy2020/dsh-cc-ecosystem) 让 DeepSeek Harness 用上 Claude Code 全家桶:技能、命令、规则、权限、子代理、hooks—— .claude/ 资产原样加载,正在逐步做到全兼容。 ⭐ 1 ⬇ 0 · 未验证 · 手动安装
 - [dsh-fare-meter](https://github.com/Saikel-Orado-Liu/dsh-fare-meter) Cost tracking plugin for the DeepSeek Harness Web GUI — snapshot-anchored per-turn pricing ⭐ 1 ⬇ 0
+- [dsh-auth-everying](https://github.com/chenbin-dev/dsh-auth-everying) 导入本地 Claude、Codex、Grok、Gemini、Copilot、OpenCode 与 CC Switch 登录配置到 DeepSeek Harness ⭐ 0 ⬇ 0 · 0.1.4
 - [dsh-llm-chatgpt-oauth](https://github.com/zhangxiubo/dsh-llm-chatgpt-oauth) ChatGPT Plus/Pro OAuth model provider for DeepSeek Harness, backed by pi-ai's openai-codex ⭐ 0 ⬇ 0 · v0.1.0
 - [dsh-rss-digest](https://github.com/JohnXu22786/rss-digest) RSS/Atom feed subscription, scheduled fetching, deduplication, LLM-powered summarization,  ⭐ 0 ⬇ 0
 - [dsh-tool-workspace](https://github.com/wangxing-git/dsh-tool-workspace) DeepSeek Harness 工作区管理工具集：查看、创建注册、重命名、删除工作区记录（纯注册，不触碰磁盘目录）；破坏性操作（删除注册、改注册路径）走用户审批 fail-clo ⭐ 0 ⬇ 0

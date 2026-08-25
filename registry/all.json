@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-25T04:29:24.561Z",
+  "updatedAt": "2026-08-25T13:23:32.171Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -50865,35 +50865,6 @@
       "source": "auto",
       "auto": true,
       "category": "ui"
-    },
-    {
-      "id": "dsh-auth-everying",
-      "name": "dsh-auth-everying",
-      "type": "bundle",
-      "package": "dsh-auth-everying",
-      "repo": "chenbin-dev/dsh-auth-everying",
-      "githubId": 1335828671,
-      "spec": "github:chenbin-dev/dsh-auth-everying#0.1.4",
-      "version": "0.1.4",
-      "author": {
-        "name": "chenbin-dev",
-        "url": "https://github.com/chenbin-dev"
-      },
-      "description": "Import local Codex / Grok / Claude / Copilot / Gemini login state into DeepSeek Harness",
-      "tags": [],
-      "license": "NOASSERTION",
-      "downloads": 0,
-      "stars": 3,
-      "releasedAt": "2026-08-21T15:41:42Z",
-      "topicSourced": false,
-      "verified": true,
-      "install": {
-        "method": "dsh-plugin-add",
-        "source": "readme"
-      },
-      "source": "auto",
-      "auto": true,
-      "category": "auth"
     },
     {
       "id": "dsh-inline-images",
@@ -107440,6 +107411,35 @@
       "status": "unavailable"
     },
     {
+      "id": "dsh-auth-everying",
+      "name": "dsh-auth-everying",
+      "type": "bundle",
+      "repo": "chenbin-dev/dsh-auth-everying",
+      "spec": "dsh-auth-everying",
+      "description": "导入本地 Claude、Codex、Grok、Gemini、Copilot、OpenCode 与 CC Switch 登录配置到 DeepSeek Harness",
+      "license": "Apache-2.0",
+      "author": {
+        "name": "chenbin-dev",
+        "url": "https://github.com/chenbin-dev"
+      },
+      "version": "0.1.4",
+      "category": "auth",
+      "tags": [
+        "oauth",
+        "codex",
+        "claude",
+        "grok",
+        "opencode",
+        "gemini",
+        "copilot"
+      ],
+      "source": "curated",
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add"
+      }
+    },
+    {
       "id": "demo-hello",
       "name": "Demo Hello Skill",
       "type": "pack",
@@ -107503,8 +107503,8 @@
         "presets": []
       },
       "category": "skills",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "pack"
       }
@@ -107544,6 +107544,7 @@
       "version": "v0.2.4",
       "longDescription": " pi、opencode、codex、claude-code 的会话、聊天记录与 agent 导入 DeepSeek Harness（dsh）。导入的会话出现在会话列表，可携带完整上下文继续对话；自定义 agent 与模式提示词变成可发现的 dsh skills；composer 里的一键 同步 按钮即可完成全部导入。",
       "tags": [
+        "agents",
         "codex",
         "claude",
         "opencode",
@@ -107551,8 +107552,8 @@
       ],
       "package": "dsh-import-agents",
       "category": "session",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -107583,8 +107584,8 @@
       ],
       "package": "dsh-projects",
       "category": "ui",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -107636,8 +107637,8 @@
         "merit"
       ],
       "longDescription": "工作间隙敲一敲、攒一攒\"功德\"。\n\n点击木鱼即敲击，鼠标按住木鱼移动可随意拖拽，刷新页面不丢进度，其他的留给大家自由探索～",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
