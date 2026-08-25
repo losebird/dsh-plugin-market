@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  ArrowLeft, CaretRight, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
-  GithubLogo, MagnifyingGlass, Moon, Package, Plug, Sparkle, Star, Sun, UploadSimple, UserCircle, Warning, X,
+  ArrowLeft, BookOpen, CaretRight, Chats, Check, CheckCircle, CircleNotch, Clock, Copy, DownloadSimple,
+  GithubLogo, Graph, Handshake, MagnifyingGlass, Moon, Package, Plug, ShieldCheck, Sparkle, Star, Sun,
+  UploadSimple, UserCircle, Warning, X,
 } from '@phosphor-icons/react'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
@@ -36,6 +37,7 @@ const CATEGORIES = {
 const I18N = {
   zh: {
     'nav.directory': '目录', 'nav.how': '工作原理', 'nav.repo': '仓库', 'nav.upload': '上传插件',
+    'nav.kit': 'DSH助手套件',
     'nav.themeLight': '切换到亮色主题', 'nav.themeDark': '切换到暗色主题',
     'hero.t1': '发现并安装', 'hero.t2': 'DSH 社区插件',
     'hero.sub': '上千个社区插件与扩展包，一键装进你的 DSH。数据来自 GitHub，每日自动采集。',
@@ -123,9 +125,73 @@ const I18N = {
     'faq.q6': '如何卸载插件？', 'faq.a6a': '在弹窗里点「卸载」，或在终端执行 ', 'faq.a6b': '（包名可在插件详情里查看）。',
     'faq.q7': '未验证的插件应该怎么安装呢？', 'faq.a7': '没有一键安装。打开详情，到仓库看作者说明。',
     'links.title': '相关资源', 'links.llm': 'AI 大模型', 'links.agent': 'Agent 平台', 'links.token': 'API 中转',
+    'kit.back': '返回目录',
+    'kit.backHub': '回套件',
+    'kit.hero.t1': 'DSH 助手套件',
+    'kit.hero.t2': '复杂协作，就用助手套件',
+    'kit.hero.sub': '找回放过的资料。向旁边工位借经验。公司系统里的单，用你自己的号去查。',
+    'kit.hero.semantic': '语义插件',
+    'kit.hero.assist': '协助插件',
+    'kit.hero.img': '产品演示：资料连起来、信封送过去、单据打勾',
+    'kit.hub.semantic': '找回放过的资料',
+    'kit.hub.assist': '向旁边工位借一招',
+    'kit.hub.biz': '用你自己的号查单、过单',
+    'kit.hub.go': '看看怎么用',
+    'kit.hub.platforms': '两个插件，一件事',
+    'kit.hub.demo': '产品演示',
+    'kit.semantic.name': '语义插件',
+    'kit.semantic.line': 'DSH 每次新聊天都是一张白纸。\n装上这个，这个文件夹里聊过的、放过的、点过头的，还能找回来。\n图上记的是当时怎么定的，不是公司系统现在的状态。',
+    'kit.semantic.s1t': '把这个项目摊开看',
+    'kit.semantic.s1b': '探索页是一张全图。会话、文件、概念挤在一起，底下还能按日期拖。\n你不用自己翻聊天记录。问「上次那套方案放哪了」，能点回原文。',
+    'kit.semantic.s1alt': '语义探索：全图、搜索和底部时间轴',
+    'kit.semantic.s2t': '当时怎么定的，还能顺着看',
+    'kit.semantic.s2b': '决策页把一次拍板拆开：依据是哪段会话，后面又连到什么。\n过了几个月再问「我们当时为啥这么定」，不用靠记性。',
+    'kit.semantic.s2alt': '决策记录：一条因果链连回原来的会话',
+    'kit.semantic.s3t': '这本记忆能带进带出',
+    'kit.semantic.s3b': '导入一份 JSON 或 CSV，或把当前图导出一份快照。\n换电脑、备份、给同事一份当时的记录，不用整台机器拷走。',
+    'kit.semantic.s3alt': '导入导出：拖入文件，或下载图快照',
+    'kit.semantic.s4t': '这本记忆齐不齐，自己先打分',
+    'kit.semantic.s4b': '完整度、一致性、规则有没有对上，一页能看见。\n缺出处、缺标签，早点发现。别等问的时候才知道图是空的。',
+    'kit.semantic.s4alt': '规则检查：完整度、一致性和要对的问题',
+    'kit.semantic.s5t': '两个工作区能对上话，图不并在一起',
+    'kit.semantic.s5b': '建一座桥，跨目录搜会话正文。选好路径就行。\n协助项目和语义项目分开记。你问「那天聊了什么」时，还能搜到对面。',
+    'kit.semantic.s5alt': '创建桥：把两个工作区连上，只搜会话不并图',
+    'kit.assist.name': '协助插件',
+    'kit.assist.line': '卡住了，发给旁边工位。\n对方用自己电脑上的 DSH 总结完，再回给你。',
+    'kit.assist.s1t': '先配对，再写信',
+    'kit.assist.s1b': '两个人当面报一个码。\n发出去之前要点名。没点名，信发不出去。',
+    'kit.assist.s1alt': '协助写信：发出去之前要点名',
+    'kit.assist.s2t': '回信落在一张卡上',
+    'kit.assist.s2b': '对方回了，屏幕上弹出秘书卡。\n点「只收下」，看看就完。\n点「按他说的做」，你这边才接着干。',
+    'kit.assist.s2alt': '秘书卡：只收下，或按他说的做',
+    'kit.assist.s3t': '秘书开口，原文还在',
+    'kit.assist.s3b': '卡片上能看见信封原文。\n它不会替你签字，也不会自己接着跑。',
+    'kit.assist.s3alt': '秘书开口，信封原文标在卡上',
+    'kit.biz.badge': '连上公司系统',
+    'kit.biz.title': '问旁边工位，用自己的号现查',
+    'kit.biz.sub': '两个都装上，再接公司系统。\n信在办公室里走。单用你自己的号去查。图上没有的，不会装成已经查过。',
+    'kit.biz.s1t': '先写信，先点名',
+    'kit.biz.s1b': '「去年 3 月的订货单发我看下」。\n写给谁，卡片上得写清楚。没点名，发不出去。',
+    'kit.biz.s1alt': '协助写信：点名 Ace，写去年 3 月订货单',
+    'kit.biz.s2t': '秘书拟好了，你点了才发',
+    'kit.biz.s2b': '信封原文还在。点「发出去」，对面才收得到。\n点「先不发」，这封就停在你这边。',
+    'kit.biz.s2alt': '秘书卡：发出去，或先不发',
+    'kit.biz.s3t': '对面先看见信，再决定谁回',
+    'kit.biz.s3b': '回信可以自己打，也可以让秘书拟一句。\n这颗键只表示你同意开口，不是过单。',
+    'kit.biz.s3alt': '对方收到协助：自己打，或让秘书拟回',
+    'kit.biz.s4t': '秘书拟回，原文还压在下面',
+    'kit.biz.s4b': '拟好的是采购单号和状态。\n点「回给对方」才寄出。信封原文还在，不是秘书编的。',
+    'kit.biz.s4alt': '秘书拟回：去年 3 月采购单列表',
+    'kit.biz.s5t': '图里没有，就去系统里现查',
+    'kit.biz.s5b': '先翻这本记忆。图上没有这份清单，就用你自己的号去公司系统里看。\n这封只现查，没有改单。查完另起一封回信。',
+    'kit.biz.s5alt': '会话里现查去年 3 月采购单，没有改单',
+    'kit.biz.s6t': '回信到了，你点了才接着干',
+    'kit.biz.s6b': '点「只收下」，看看就完。\n点「采纳并让模型接着做」，你这边才按他说的往下走。',
+    'kit.biz.s6alt': '回信卡：只收下，或采纳并让模型接着做',
   },
   en: {
     'nav.directory': 'Directory', 'nav.how': 'How it works', 'nav.repo': 'Repo', 'nav.upload': 'Submit',
+    'nav.kit': 'Assist Kit',
     'nav.themeLight': 'Switch to light theme', 'nav.themeDark': 'Switch to dark theme',
     'hero.t1': 'Discover & install', 'hero.t2': 'DSH community plugins',
     'hero.sub': 'Thousands of community plugins and packs, one click into your DSH. Data from GitHub, collected daily.',
@@ -213,6 +279,69 @@ const I18N = {
     'faq.q6': 'How do I uninstall?', 'faq.a6a': 'Click Uninstall in the modal, or run ', 'faq.a6b': ' (find the package name in the plugin detail).',
     'faq.q7': 'How do I install an Unverified plugin?', 'faq.a7': 'There is no one-click install. Open Details and check the repo for the author\'s notes.',
     'links.title': 'Related', 'links.llm': 'LLMs', 'links.agent': 'Agent', 'links.token': 'API Relays',
+    'kit.back': 'Back to directory',
+    'kit.backHub': 'Back to kit',
+    'kit.hero.t1': 'DSH Assist Kit',
+    'kit.hero.t2': 'Hard collaboration. Use the kit.',
+    'kit.hero.sub': 'Find what you stored. Borrow a move from the next desk. Look up a company form with your own login.',
+    'kit.hero.semantic': 'Semantic',
+    'kit.hero.assist': 'Assist',
+    'kit.hero.img': 'Product demo: notes connect, an envelope moves, a form is checked',
+    'kit.hub.semantic': 'Find what you already stored',
+    'kit.hub.assist': 'Borrow a move from the next desk',
+    'kit.hub.biz': 'Look up and approve with your own login',
+    'kit.hub.go': 'See how',
+    'kit.hub.platforms': 'Two plugins. One job.',
+    'kit.hub.demo': 'Product demo',
+    'kit.semantic.name': 'Semantic plugin',
+    'kit.semantic.line': 'Every new DSH chat starts blank.\nWith this, chats, files, and boards in this folder can still be found.\nThe graph is what was true then, not live status from a company system.',
+    'kit.semantic.s1t': 'Lay the project out',
+    'kit.semantic.s1b': 'Explore is one full graph. Chats, files, and concepts sit together. Drag the timeline below.\nYou do not dig through history. Ask where last month’s plan went, and tap back to the original.',
+    'kit.semantic.s1alt': 'Semantic explore: full graph, search, and a timeline',
+    'kit.semantic.s2t': 'See how you decided then',
+    'kit.semantic.s2b': 'A decision page splits one board: which chat supported it, and what it led to.\nMonths later you can still ask why you decided that way, without relying on memory.',
+    'kit.semantic.s2alt': 'A decision record with a chain back to the original chat',
+    'kit.semantic.s3t': 'Take this memory in and out',
+    'kit.semantic.s3b': 'Import a JSON or CSV, or export a snapshot of the current graph.\nMove machines, keep a backup, or hand a colleague the record from then. You do not copy the whole computer.',
+    'kit.semantic.s3alt': 'Import and export: drop a file, or download a graph snapshot',
+    'kit.semantic.s4t': 'See if this memory is complete',
+    'kit.semantic.s4b': 'Completeness, consistency, and whether the rules line up sit on one page.\nMissing sources or labels show up early. You do not wait until a question comes back empty.',
+    'kit.semantic.s4alt': 'Rule check: completeness, consistency, and issues to fix',
+    'kit.semantic.s5t': 'Two folders can talk. The graphs stay apart.',
+    'kit.semantic.s5b': 'Build a bridge and search chat text across folders. Pick the path. That is all.\nAssist and semantic stay in their own records. Ask what you talked about that day, and the other side still comes up.',
+    'kit.semantic.s5alt': 'Create a bridge: connect two workspaces, search chats, do not merge graphs',
+    'kit.assist.name': 'Assist plugin',
+    'kit.assist.line': 'Stuck? Send it to the next desk.\nThey summarize from their own DSH and send it back.',
+    'kit.assist.s1t': 'Pair first, then write',
+    'kit.assist.s1b': 'Two people share a code in the room.\nName who it is for. No name, no send.',
+    'kit.assist.s1alt': 'Compose an assist request. Name the person first.',
+    'kit.assist.s2t': 'The reply lands on a card',
+    'kit.assist.s2b': 'A secretary card pops up.\nKeep only means look.\nDo as they said lets your side continue.',
+    'kit.assist.s2alt': 'Secretary card: keep only, or do as they said',
+    'kit.assist.s3t': 'The secretary talks. The original stays.',
+    'kit.assist.s3b': 'The card still shows the envelope text.\nIt will not sign for you, and it will not keep going on its own.',
+    'kit.assist.s3alt': 'Secretary speaking, with the original envelope marked on the card',
+    'kit.biz.badge': 'Company systems',
+    'kit.biz.title': 'Ask the next desk. Look it up with your login.',
+    'kit.biz.sub': 'Install both, then connect the company system.\nMail stays in the office. Forms are checked with your own login. If the graph has nothing, it does not pretend it already looked.',
+    'kit.biz.s1t': 'Write first. Name them first.',
+    'kit.biz.s1b': '“Send me last March’s purchase orders.”\nThe card has to say who it is for. No name, no send.',
+    'kit.biz.s1alt': 'Compose an assist: name Ace, ask for last March’s orders',
+    'kit.biz.s2t': 'The secretary drafted it. You tap, then it goes.',
+    'kit.biz.s2b': 'The envelope text is still there. Tap Send, and the other side gets it.\nTap Hold, and it stays on your desk.',
+    'kit.biz.s2alt': 'Secretary card: send, or hold',
+    'kit.biz.s3t': 'They see the letter first, then decide who replies',
+    'kit.biz.s3b': 'They can type it, or let the secretary draft a line.\nThat tap only means they agree to speak. It is not an approval.',
+    'kit.biz.s3alt': 'Incoming assist: type it, or let the secretary draft',
+    'kit.biz.s4t': 'The draft sits on top. The original stays below.',
+    'kit.biz.s4b': 'The draft is purchase-order numbers and status.\nTap Reply to send it. The envelope text is still the original, not something the secretary made up.',
+    'kit.biz.s4alt': 'Secretary draft: last March’s purchase-order list',
+    'kit.biz.s5t': 'If the graph has nothing, look it up live',
+    'kit.biz.s5b': 'It searches this memory first. No list on the graph, so it opens the company system with your login.\nThis letter is a lookup. It does not change the form. Then it writes a separate reply.',
+    'kit.biz.s5alt': 'Live lookup of last March’s purchase orders. No change.',
+    'kit.biz.s6t': 'The reply lands. You tap before anything continues.',
+    'kit.biz.s6b': 'Keep only means look.\nAdopt and continue lets your side follow what they said.',
+    'kit.biz.s6alt': 'Reply card: keep only, or adopt and let the model continue',
   },
 }
 
@@ -1013,6 +1142,131 @@ function LinksSection() {
   )
 }
 
+/* ── 助手套件 ─────────────────────────────────────── */
+function KitShot({ src, alt, title, body, flip }) {
+  const { t } = useLang()
+  return (
+    <section className={'kit-shot' + (flip ? ' flip' : '')}>
+      <figure className="kit-figure kit-figure-shot">
+        <img src={REGISTRY_BASE + src} alt={t(alt)} />
+      </figure>
+      <div>
+        <h2 className="kit-h2">{t(title)}</h2>
+        <p className="kit-line kit-break">{t(body)}</p>
+      </div>
+    </section>
+  )
+}
+
+function KitHub({ onBack, onOpen }) {
+  const { t } = useLang()
+  const bands = [
+    { id: 'kit-semantic', video: 'kit/band-semantic.mp4', poster: 'kit/band-semantic.jpg', alt: 'kit.semantic.s1alt', name: 'kit.semantic.name', line: 'kit.semantic.line' },
+    { id: 'kit-assist', video: 'kit/band-assist.mp4', poster: 'kit/band-assist.jpg', alt: 'kit.assist.s1alt', name: 'kit.assist.name', line: 'kit.assist.line' },
+    { id: 'kit-biz', video: 'kit/band-biz.mp4', poster: 'kit/band-biz.jpg', alt: 'kit.biz.s2alt', name: 'kit.biz.badge', line: 'kit.biz.sub' },
+  ]
+  return (
+    <div className="shell kit kit-hub">
+      <div className="kit-stage kit-stage-center">
+        <button className="back-btn" onClick={onBack}><ArrowLeft size={14} />{t('kit.back')}</button>
+        <p className="kit-brand">{t('kit.hero.t1')}</p>
+        <h1 className="kit-headline">{t('kit.hero.t2')}</h1>
+        <p className="kit-lead">{t('kit.hero.sub')}</p>
+        <div className="kit-hero-row kit-hero-center">
+          <button type="button" className="btn btn-primary" onClick={() => onOpen('kit-semantic')}>{t('kit.hero.semantic')}</button>
+          <button type="button" className="btn btn-ghost" onClick={() => onOpen('kit-assist')}>{t('kit.hero.assist')}</button>
+          <button type="button" className="btn btn-ghost" onClick={() => onOpen('kit-biz')}>{t('kit.biz.badge')}</button>
+        </div>
+      </div>
+      <figure className="kit-demo">
+        <video
+          src={REGISTRY_BASE + 'kit/demo.mp4'}
+          poster={REGISTRY_BASE + 'kit/shot-biz-form.png'}
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-label={t('kit.hub.demo')}
+        />
+      </figure>
+      <p className="kit-platforms-label">{t('kit.hub.platforms')}</p>
+      {bands.map((b, i) => (
+        <section className={'kit-band' + (i % 2 ? ' flip' : '')} key={b.id}>
+          <figure className="kit-figure kit-figure-shot">
+            <video
+              src={REGISTRY_BASE + b.video}
+              poster={REGISTRY_BASE + b.poster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-label={t(b.alt)}
+            />
+          </figure>
+          <div>
+            <h2 className="kit-h2">{t(b.name)}</h2>
+            <p className="kit-line kit-break">{t(b.line)}</p>
+            <button type="button" className="btn btn-ghost" onClick={() => onOpen(b.id)}>{t('kit.hub.go')}</button>
+          </div>
+        </section>
+      ))}
+    </div>
+  )
+}
+
+function KitSemanticPage({ onBack }) {
+  const { t } = useLang()
+  return (
+    <div className="shell kit">
+      <div className="page-head">
+        <button className="back-btn" onClick={onBack}><ArrowLeft size={14} />{t('kit.backHub')}</button>
+        <h1>{t('kit.semantic.name')}</h1>
+      </div>
+      <p className="page-sub kit-break">{t('kit.semantic.line')}</p>
+      <KitShot src="kit/sem-explore.png" alt="kit.semantic.s1alt" title="kit.semantic.s1t" body="kit.semantic.s1b" />
+      <KitShot src="kit/sem-decision.png" alt="kit.semantic.s2alt" title="kit.semantic.s2t" body="kit.semantic.s2b" flip />
+      <KitShot src="kit/sem-io.png" alt="kit.semantic.s3alt" title="kit.semantic.s3t" body="kit.semantic.s3b" />
+      <KitShot src="kit/sem-health.png" alt="kit.semantic.s4alt" title="kit.semantic.s4t" body="kit.semantic.s4b" flip />
+      <KitShot src="kit/sem-bridge.png" alt="kit.semantic.s5alt" title="kit.semantic.s5t" body="kit.semantic.s5b" />
+    </div>
+  )
+}
+
+function KitAssistPage({ onBack }) {
+  const { t } = useLang()
+  return (
+    <div className="shell kit">
+      <div className="page-head">
+        <button className="back-btn" onClick={onBack}><ArrowLeft size={14} />{t('kit.backHub')}</button>
+        <h1>{t('kit.assist.name')}</h1>
+      </div>
+      <p className="page-sub kit-break">{t('kit.assist.line')}</p>
+      <KitShot src="kit/shot-assist-compose.png" alt="kit.assist.s1alt" title="kit.assist.s1t" body="kit.assist.s1b" />
+      <KitShot src="kit/shot-assist-card.png" alt="kit.assist.s2alt" title="kit.assist.s2t" body="kit.assist.s2b" flip />
+      <KitShot src="kit/shot-assist-speak.png" alt="kit.assist.s3alt" title="kit.assist.s3t" body="kit.assist.s3b" />
+    </div>
+  )
+}
+
+function KitBizPage({ onBack }) {
+  const { t } = useLang()
+  return (
+    <div className="shell kit">
+      <div className="page-head">
+        <button className="back-btn" onClick={onBack}><ArrowLeft size={14} />{t('kit.backHub')}</button>
+        <h1>{t('kit.biz.title')}</h1>
+      </div>
+      <p className="page-sub kit-break">{t('kit.biz.sub')}</p>
+      <KitShot src="kit/biz-compose.jpg" alt="kit.biz.s1alt" title="kit.biz.s1t" body="kit.biz.s1b" />
+      <KitShot src="kit/biz-send.jpg" alt="kit.biz.s2alt" title="kit.biz.s2t" body="kit.biz.s2b" flip />
+      <KitShot src="kit/biz-inbox.png" alt="kit.biz.s3alt" title="kit.biz.s3t" body="kit.biz.s3b" />
+      <KitShot src="kit/biz-draft.png" alt="kit.biz.s4alt" title="kit.biz.s4t" body="kit.biz.s4b" flip />
+      <KitShot src="kit/biz-lookup.png" alt="kit.biz.s5alt" title="kit.biz.s5t" body="kit.biz.s5b" />
+      <KitShot src="kit/biz-adopt.jpg" alt="kit.biz.s6alt" title="kit.biz.s6t" body="kit.biz.s6b" flip />
+    </div>
+  )
+}
+
 /* ── 上传页 ───────────────────────────────────────── */
 const ID_RE = /^[a-z0-9][a-z0-9._-]*$/
 const BUNDLE_SPEC_RE = /^(github:|git\+)[^\s"']+(#[^\s"']+)?$|^https:\/\/[^\s"']+\.(?:tgz|tar\.gz)(?:[?#][^\s"']*)?$|^@?[\w.-]+\/[\w.-]+$|^[\w@.-]+$/i
@@ -1214,8 +1468,14 @@ function SubmitPage({ onBack }) {
 }
 
 /* ── 根组件 ───────────────────────────────────────── */
+function viewFromHash() {
+  const h = (typeof location !== 'undefined' && location.hash.slice(1)) || ''
+  if (h === 'submit' || h === 'kit' || h === 'kit-semantic' || h === 'kit-assist' || h === 'kit-biz') return h
+  return 'home'
+}
+
 export default function App() {
-  const [view, setView] = useState('home')
+  const [view, setView] = useState(viewFromHash)
   const [items, setItems] = useState([])
   const [status, setStatus] = useState('loading')
   const [detail, setDetail] = useState(null)
@@ -1269,8 +1529,21 @@ export default function App() {
 
   const catalogItems = useMemo(() => collapsePackageOwnerDuplicates(items, { preferCurated: true }), [items])
 
-  const goSubmit = () => setView('submit')
-  const goHome = () => setView('home')
+  const goTo = (next) => {
+    setView(next)
+    const hash = next === 'home' ? '' : '#' + next
+    if (location.hash !== hash) history.replaceState(null, '', hash || location.pathname + location.search)
+    if (next !== 'home') window.scrollTo(0, 0)
+  }
+  const goSubmit = () => goTo('submit')
+  const goHome = () => goTo('home')
+  const goKit = () => goTo('kit')
+
+  useEffect(() => {
+    const onHash = () => setView(viewFromHash())
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
 
   return (
     <LangCtx.Provider value={{ t, lang, setLang }}>
@@ -1282,6 +1555,7 @@ export default function App() {
           </a>
           <div className="nav-links">
             <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('directory') && document.getElementById('directory').scrollIntoView(), 0) }}>{t('nav.directory')}</button>
+            <button className={'nav-link nav-kit' + (String(view).startsWith('kit') ? ' on' : '')} onClick={goKit}>{t('nav.kit')}</button>
             <button className="nav-link" onClick={() => { goHome(); setTimeout(() => document.getElementById('faq') && document.getElementById('faq').scrollIntoView(), 0) }}>{t('faq.title')}</button>
             <a className="nav-link" href={'https://github.com/' + GITHUB_REPO} target="_blank" rel="noreferrer"><GithubLogo size={15} />{t('nav.repo')}</a>
             <button className="nav-link nav-cta" onClick={goSubmit}><UploadSimple size={15} />{t('nav.upload')}</button>
@@ -1308,6 +1582,14 @@ export default function App() {
         {view === 'home' ? (
           <Home items={catalogItems} status={status} onGoSubmit={goSubmit} onOpenDetail={setDetail} onToast={showToast}
             onShowCopied={(payload) => setCopiedInfo(payload)} />
+        ) : view === 'kit' ? (
+          <KitHub onBack={goHome} onOpen={goTo} />
+        ) : view === 'kit-semantic' ? (
+          <KitSemanticPage onBack={goKit} />
+        ) : view === 'kit-assist' ? (
+          <KitAssistPage onBack={goKit} />
+        ) : view === 'kit-biz' ? (
+          <KitBizPage onBack={goKit} />
         ) : (
           <SubmitPage onBack={goHome} />
         )}
