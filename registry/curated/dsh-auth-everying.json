@@ -1,0 +1,13 @@
+{
+  "id": "dsh-auth-everying",
+  "name": "dsh-auth-everying",
+  "type": "bundle",
+  "repo": "chenbin-dev/dsh-auth-everying",
+  "spec": "dsh-auth-everying",
+  "description": "导入本地 Claude、Codex、Grok、Gemini、Copilot、OpenCode 与 CC Switch 登录配置到 DeepSeek Harness",
+  "license": "Apache-2.0",
+  "author": { "name": "chenbin-dev", "url": "https://github.com/chenbin-dev" },
+  "version": "0.1.4",
+  "category": "auth",
+  "tags": ["oauth", "codex", "claude", "grok", "opencode", "gemini", "copilot"]
+}
