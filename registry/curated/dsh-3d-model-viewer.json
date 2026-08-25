@@ -1,0 +1,17 @@
+{
+  "id": "dsh-3d-model-viewer",
+  "name": "dsh-3d-model-viewer",
+  "type": "bundle",
+  "repo": "lishLRF/dsh-3d-model-viewer",
+  "spec": "https://github.com/lishLRF/dsh-3d-model-viewer/releases/download/v0.1.1/dsh-3d-model-viewer-0.1.1.tgz",
+  "description": "在 DSH Web 界面查看 OBJ/STL/STEP 三维模型，并转译为标准化、LLM 可读的 JSON（含语义分析），一键发送给 AI。",
+  "license": "MIT",
+  "author": {
+    "name": "lishLRF",
+    "url": "https://github.com/lishLRF"
+  },
+  "version": "v0.1.1",
+  "tags": ["3d", "model", "viewer", "obj", "stl", "step", "cad", "llm"],
+  "category": "tools",
+  "source": "curated"
+}
