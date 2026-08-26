@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-25T13:24:39.014Z",
+  "updatedAt": "2026-08-26T02:37:29.864Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -78923,38 +78923,6 @@
       "category": "other"
     },
     {
-      "id": "mengyuly-dsh-ponytail",
-      "name": "@mengyuly/dsh-ponytail",
-      "type": "bundle",
-      "package": "@mengyuly/dsh-ponytail",
-      "repo": "MengYuil/dsh-ponytail",
-      "githubId": 1343627148,
-      "spec": "github:MengYuil/dsh-ponytail#v0.1.2",
-      "version": "v0.1.2",
-      "author": {
-        "name": "MengYuil",
-        "url": "https://github.com/MengYuil"
-      },
-      "description": "Lazy senior dev mode for DeepSeek Harness: always-on minimal-code ruleset, intensity switching, and short review/audit/debt/gain/help skills",
-      "tags": [
-        "ai-tools",
-        "ponytail"
-      ],
-      "license": "MIT",
-      "downloads": 1,
-      "stars": 1,
-      "releasedAt": "2026-08-23T14:27:40Z",
-      "topicSourced": true,
-      "verified": true,
-      "install": {
-        "method": "manual",
-        "source": "readme"
-      },
-      "source": "auto",
-      "auto": true,
-      "category": "auth"
-    },
-    {
       "id": "dh-multiagents-bundle",
       "name": "@dh-multiagents/bundle",
       "type": "bundle",
@@ -107409,6 +107377,34 @@
         "source": "readme"
       },
       "status": "unavailable"
+    },
+    {
+      "id": "dsh-ponytail",
+      "name": "Ponytail",
+      "type": "bundle",
+      "repo": "MengYuil/dsh-ponytail",
+      "spec": "@mengyuly/dsh-ponytail",
+      "description": "懒惰资深开发者人设：常驻最小编码规则集，lite/full/ultra/off 强度可切换，附 review/audit/debt/gain/help 五个代码审查技能。",
+      "longDescription": "把 DietrichGebert/ponytail（MIT）移植成 DeepSeek Harness 原生插件。\n\n- 每轮注入结构化规则集（Common + 不可删的 Safety 边界 + 档位专属规则），full 默认；\n- `/ponytail` 报告/恢复，`/ponytail status` 只查询，`/ponytail lite|full|ultra|off` 显式切换；\n- `/ponytail default <mode>` 持久化默认档（env / Profile config 仍优先）；\n- Profile 级 `config: { defaultMode }`（web → full、tui → lite 等）；\n- 五个一次性技能：`/ponytail-review`（改动审查）、`/ponytail-audit`（全仓库审计）、`/ponytail-debt`（债务台账）、`/ponytail-gain`（收益计分）、`/ponytail-help`（参考卡）；\n- 说 `stop ponytail` 或 `normal mode` 停用；\n- 常驻注入约 370–420 tokens/请求，同模式字节级稳定。",
+      "tags": [
+        "ponytail",
+        "lazy",
+        "persona",
+        "code-review",
+        "yagni",
+        "minimal-code"
+      ],
+      "category": "dev",
+      "license": "MIT",
+      "author": {
+        "name": "MengYuil",
+        "url": "https://github.com/MengYuil"
+      },
+      "source": "curated",
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add"
+      }
     },
     {
       "id": "dsh-auth-everying",

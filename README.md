@@ -21,9 +21,9 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [会话与记忆](#session) (720)
 - [Agent 与工作流](#agent) (737)
 - [工具与集成](#tools) (473)
-- [开发与输入](#dev) (210)
+- [开发与输入](#dev) (211)
 - [通信与移动](#comm) (137)
-- [安全与权限](#auth) (243)
+- [安全与权限](#auth) (242)
 - [技能与扩展](#skills) (95)
 - [市场与发现](#market) (303)
 - [趣味与个性](#fun) (51)
@@ -3020,6 +3020,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-landscape](https://github.com/cyanseek/dsh-landscape) Run a read-only capability preflight before changing or building for DeepSeek Harness. ⭐ 1 ⬇ 0
 - [deepseek-harness-electron-client](https://github.com/luoboovo/deepseek-harness-client) Modern Windows desktop wrapper for DeepSeek Harness. ⭐ 1 ⬇ 0 · 未验证 · 手动安装 · dsh-plugin
 - [dsh-go-usage](https://github.com/6pofx/dsh-go) DeepSeek Harness plugin: OpenCode GO 套餐用量（三窗口额度 + DSH 按模型 token/金额统计 + 输入框迷你条） ⭐ 1 ⬇ 0
+- [Ponytail](https://github.com/MengYuil/dsh-ponytail) 懒惰资深开发者人设：常驻最小编码规则集，lite/full/ultra/off 强度可切换，附 review/audit/debt/gain/help 五个代码审查技能。 ⭐ 0 ⬇ 0
 - [dsh-plugin-global-prompt](https://github.com/chaserchan/dsh-plugin-global-prompt) DSH 插件：在「设置 → 通用设置」新增全局 Prompt 输入框，注入每次对话（含子代理）的系统提示词，保存即生效。 ⭐ 0 ⬇ 0
 - [dsh-sseye](https://github.com/jhuanxx44/dsh-sseye) The LLM debug console inside DeepSeek Harness — capture every model call, see everything,  ⭐ 0 ⬇ 0
 - [dsh-debug-mode](https://github.com/a554878526/dsh-debug-mode) Runtime-first Debug Mode plugin for DeepSeek Harness ⭐ 0 ⬇ 0 · 手动安装
@@ -3344,7 +3345,6 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-git](https://github.com/walavave/dsh-git) Git capability bundle for DeepSeek Harness: structured git tools, approval-gated mutations ⭐ 2 ⬇ 0 · v0.4.0
 - [dsh-statusbar](https://github.com/Sutera-Diffusus/dsh-statusbar) DeepSeek Harness 状态栏扩展:模块化统计行(进度/耗时/性能/缓存/Token/花费/余额) + 本地余额代理 ⭐ 1 ⬇ 0 · 未验证 · 手动安装 · v1.0.0
 - [dsh-whale-widget-eac](https://github.com/liangbai250/DSH-Whale-Balance-Widget) DeepSeek Harness EAC balance whale widget with DeepSeek and Sub2API support. ⭐ 1 ⬇ 6 · 手动安装 · 1.0.2
-- [dsh-ponytail](https://github.com/MengYuil/dsh-ponytail) Lazy senior dev mode for DeepSeek Harness: always-on minimal-code ruleset, intensity switc ⭐ 1 ⬇ 1 · 手动安装 · v0.1.2
 - [dsh-plugin-chatcut](https://github.com/nigedazhima/dsh-plugin-chatcut) ChatCut AI video editing for DeepSeek Harness: 50 MCP editing tools + official craft skill ⭐ 1 ⬇ 0 · 未验证 · git clone
 - [dsh-scenario](https://github.com/LiFenrir/dsh-scenario) 场景配置插件：人设 + 模型 + 权限 + 插件动态管理，配置页自动发现已安装插件并按场景开关 ⭐ 1 ⬇ 0 · git clone
 - [dsh-codex-oauth](https://github.com/birat-chapagain/dsh-codex-oauth) DeepSeek Harness plugin: use your OpenAI Codex (ChatGPT Plus/Pro) subscription through OAu ⭐ 1 ⬇ 19 · v0.1.5
