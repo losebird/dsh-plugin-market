@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-26T04:45:58.598Z",
+  "updatedAt": "2026-08-26T13:10:47.877Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -125962,8 +125962,8 @@
         "presets": []
       },
       "category": "skills",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "pack"
       }
@@ -125988,7 +125988,8 @@
         "obj",
         "stl",
         "step",
-        "cad"
+        "cad",
+        "llm"
       ],
       "category": "tools",
       "source": "curated",
@@ -126020,8 +126021,8 @@
         "gemini",
         "copilot"
       ],
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -126066,8 +126067,8 @@
         "name": "chenzhi-clude",
         "url": "https://github.com/chenzhi-clude"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -126087,6 +126088,7 @@
       "version": "v0.2.4",
       "longDescription": " pi、opencode、codex、claude-code 的会话、聊天记录与 agent 导入 DeepSeek Harness（dsh）。导入的会话出现在会话列表，可携带完整上下文继续对话；自定义 agent 与模式提示词变成可发现的 dsh skills；composer 里的一键 同步 按钮即可完成全部导入。",
       "tags": [
+        "agents",
         "codex",
         "claude",
         "opencode",
@@ -126094,8 +126096,8 @@
       ],
       "package": "dsh-import-agents",
       "category": "session",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -126122,8 +126124,8 @@
         "name": "MengYuil",
         "url": "https://github.com/MengYuil"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -126154,8 +126156,8 @@
       ],
       "package": "dsh-projects",
       "category": "ui",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -126191,14 +126193,14 @@
       "name": "赛博木鱼",
       "type": "bundle",
       "repo": "TongY1n/ui-muyu",
-      "spec": "https://github.com/TongY1n/ui-muyu/releases/download/v0.1.0/deepseek-ai-dsh-client-ui-muyu-0.1.0.tgz",
+      "spec": "https://github.com/TongY1n/ui-muyu/releases/download/v0.1.2/deepseek-ai-dsh-client-ui-muyu-0.1.2.tgz",
       "description": "一个赛博木鱼：可拖拽、点击敲击、累积功德的 Web 悬浮小摆件",
       "license": "MIT",
       "author": {
         "name": "TongY1n",
         "url": "https://github.com/TongY1n"
       },
-      "version": "0.1.0",
+      "version": "0.1.2",
       "category": "fun",
       "tags": [
         "fun",
@@ -126207,8 +126209,8 @@
         "merit"
       ],
       "longDescription": "工作间隙敲一敲、攒一攒\"功德\"。\n\n点击木鱼即敲击，鼠标按住木鱼移动可随意拖拽，刷新页面不丢进度，其他的留给大家自由探索～",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }

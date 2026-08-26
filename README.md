@@ -4019,7 +4019,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-anime25d-pets](https://github.com/coldfish486/dsh-anime25d-pets) Anime2.5DRig × DSH pet: PSD auto-rig 2.5D desktop pet using Anime2.5DRig rendering instead ⭐ 1 ⬇ 0 · git clone
 - [dsh-fun-turn-status](https://github.com/Ycet/dsh-fun-turn-status) 替换 DSH 任务运行中的 “Deep diving...” 状态文案：每 30 秒随机轮换幽默文案，可在「设置-插件-插件配置」页增删改（最多 50 条），与其他同类插件共存时优 ⭐ 1 ⬇ 0
 - [yuhao-pet](https://github.com/dlpufan/yuhao-pet) DSH Web GUI 桌面宠物「宇昊」：可拖拽/投喂/玩耍/洗澡/打针吃药/学习/打工/积分商店，token 消耗自动攒积分。 ⭐ 1 ⬇ 0 · 手动安装
-- [赛博木鱼](https://github.com/TongY1n/ui-muyu) 一个赛博木鱼：可拖拽、点击敲击、累积功德的 Web 悬浮小摆件 ⭐ 0 ⬇ 0 · 0.1.0
+- [赛博木鱼](https://github.com/TongY1n/ui-muyu) 一个赛博木鱼：可拖拽、点击敲击、累积功德的 Web 悬浮小摆件 ⭐ 0 ⬇ 0 · 0.1.2
 - [seek-on-dsh](https://github.com/Win-Hao/seek-on-dsh) Seek — the DeepSeek pixel whale as a DSH web overlay pet. ⭐ 0 ⬇ 0
 - [dsh-whale-desktop-launcher](https://github.com/0QwQ0/dsh-whale-desktop-launcher) Windows desktop launcher for DeepSeek Harness with a whale-girl icon, startup progress win ⭐ 0 ⬇ 1 · v0.2.0
 - [dsh-web-manager](https://github.com/FYHC1/dsh-web-manager) dsh web manager — Windows tray manager, WSL companion scripts, and the in-dsh runtime brid ⭐ 0 ⬇ 0 · v3.8.0
