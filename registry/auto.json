@@ -56862,8 +56862,8 @@
       "package": "@temotee2103/dsh-ci-co-pilot",
       "repo": "temotee2103/dsh-ci-co-pilot",
       "githubId": 1335046237,
-      "spec": "github:temotee2103/dsh-ci-co-pilot#v0.2.0",
-      "version": "v0.2.0",
+      "spec": "github:temotee2103/dsh-ci-co-pilot#v0.3.1",
+      "version": "v0.3.1",
       "author": {
         "name": "temotee2103",
         "url": "https://github.com/temotee2103"
@@ -56896,8 +56896,8 @@
       "package": "dsh-overdrive",
       "repo": "temotee2103/dsh-overdrive",
       "githubId": 1336179025,
-      "spec": "github:temotee2103/dsh-overdrive#v0.1.4",
-      "version": "v0.1.4",
+      "spec": "github:temotee2103/dsh-overdrive#v0.3.1",
+      "version": "v0.3.1",
       "author": {
         "name": "temotee2103",
         "url": "https://github.com/temotee2103"

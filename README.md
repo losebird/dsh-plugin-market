@@ -2367,7 +2367,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-repo-setup](https://github.com/gongyijie85/dsh-repo-setup) Repo bootstrap guidance for DeepSeek Harness: read-only repo_setup_scan tool that detects  ⭐ 3 ⬇ 0 · 手动安装 · v0.1.1
 - [dsh-specflow](https://github.com/lonelymoon87/dsh-specflow) Specification-driven development workflows for DeepSeek Harness. ⭐ 3 ⬇ 71 · v0.1.2
 - [dsh-plugin-template](https://github.com/zoahdev/dsh-plugin-template) Minimal, verified template for DeepSeek Harness plugins: bundle manifest, one tool, tests, ⭐ 3 ⬇ 0 · 手动安装 · v0.1.0
-- [dsh-overdrive](https://github.com/temotee2103/dsh-overdrive) dsh-overdrive: turn DeepSeek Harness into a multi-platform chat agent you can see thinking ⭐ 3 ⬇ 0 · 未验证 · git clone · v0.1.4
+- [dsh-overdrive](https://github.com/temotee2103/dsh-overdrive) dsh-overdrive: turn DeepSeek Harness into a multi-platform chat agent you can see thinking ⭐ 3 ⬇ 0 · 未验证 · git clone · v0.3.1
 - [pr-genius](https://github.com/zsxh1990/pr-genius) PR 评估和建议工具 — 基于历史反模式和成功模式 ⭐ 3 ⬇ 0 · 手动安装 · v1.3.0
 - [dsh-pdf](https://github.com/zhtx2024/dsh-pdf) DSH PDF 解析插件: 为 agent 提供 pdf_info / pdf_extract_text / pdf_render_page 三个工具。基于 pdfjs-dist  ⭐ 3 ⬇ 0
 - [agentduel-dsh](https://github.com/linconz/agentduel-dsh) AgentDuel plugin for DeepSeek Harness ⭐ 3 ⬇ 0 · git clone · v0.1.4
@@ -2485,7 +2485,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-remotion-video-plugin](https://github.com/chenjie1129/remotion-video-plugin) Remotion video creation and verified rendering plugin for DeepSeek Harness ⭐ 2 ⬇ 5 · 手动安装 · v0.1.0
 - [dsh-hashline-edit-pro](https://github.com/sleepinginsummer/dsh-hashline-edit-pro) Hash-anchored read/replace/undo tools for DSH. Every line of a file carries a unique 3-cha ⭐ 2 ⬇ 0
 - [dsh-bio-genie](https://github.com/moonbowterfly/dsh-bio-genie) 生物信息学「许愿式分析」插件：Python 执行器（bio_python：Biopython 全功能 + 出版级绘图）+ 48 个高频语义化工具（差异表达/GSEA、代谢建模/FB ⭐ 2 ⬇ 0 · v0.1.3
-- [dsh-ci-co-pilot](https://github.com/temotee2103/dsh-ci-co-pilot) GitHub CI co-pilot for DeepSeek Harness: PR review, CI failure fixing, issue triage and re ⭐ 2 ⬇ 0 · 手动安装 · v0.2.0
+- [dsh-ci-co-pilot](https://github.com/temotee2103/dsh-ci-co-pilot) GitHub CI co-pilot for DeepSeek Harness: PR review, CI failure fixing, issue triage and re ⭐ 2 ⬇ 0 · 手动安装 · v0.3.1
 - [dsh-cinematic-workflow](https://github.com/luoyuejun9/dsh-cinematic-workflow) A local-first, human-gated authorial film workflow for DeepSeek Harness ⭐ 2 ⬇ 0 · 手动安装 · v0.1.0
 - [keel](https://github.com/JohnXu22786/spec-driven) 龙骨（keel）——规格驱动开发纪律技能包：先立规格、验证假设、防止过度工程、防止范围蔓延。以技能与工具形式约束 agent 行为，为 dsh（DeepSeek Harness）等 ⭐ 2 ⬇ 0
 - [dsh-omicos](https://github.com/omicverse/dsh-omicos) OmicOS as a deepseek-harness (dsh) plugin — Mode A: omicos bioinformatics tools + backgrou ⭐ 2 ⬇ 0
