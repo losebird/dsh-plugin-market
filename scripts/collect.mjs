@@ -262,6 +262,11 @@ export function detectInstallFromReadme(readme) {
   const sections = installSections(readme)
   // 有安装章节 → 只在这些章节内识别（避免把开发/规划章节误当安装方式）；无章节 → 全文兜底
   const scopes = sections.length > 0 ? sections.map((s) => s.content) : [readme]
+  const dshAddRe = /dsh\s+plugin(?:\s+--profile\s+\S+)?\s+(?:add|i)\s+(?:(?:-w|--workspace-root)\s+)?([^\s]+)/i
+  for (const text of scopes) {
+    const match = dshAddRe.exec(text)
+    if (match && validAddArg(match[1].replace(/[;'"`]+$/, ''))) return { method: 'dsh-plugin-add', source: 'readme' }
+  }
   // 0) “交给你的 AI 安装”式项目（如 modlens：按 INSTALL.md 由 agent 执行，安装章节里的
   //    curl 往往是可选引擎/附属步骤而非主安装方式）→ 归为 manual，市场点安装交给 DSH 执行
   for (const text of scopes) {
@@ -349,6 +354,7 @@ export async function buildEntry(repo, prevAuto) {
   // 关键原则：verified（声明了 dsh.bundle）不再默认 dsh-plugin-add——不是所有
   // bundle 都能直接 dsh plugin add（如要求自行构建 tarball 后本地安装的）。
   // README 拉取失败时沿用上一轮结论，避免网络抖动误伤已有数据。
+  const prev = pickBestPrev(repo, pkg && pkg.name, prevList)
   let readme = null
   for (const f of ['README.md', 'readme.md']) {
     try {
@@ -380,7 +386,6 @@ export async function buildEntry(repo, prevAuto) {
     }
   }
 
-  const prev = pickBestPrev(repo, pkg && pkg.name, prevList)
   // Do not reuse a stale prev.version across rename aliases (dsh-cc-tui vs dsh-TUI).
   // After canonicalize they are the same repo: fetch latest, or at least keep the higher tag.
   const alias = isAliasDiscovery(repo)
@@ -388,13 +393,20 @@ export async function buildEntry(repo, prevAuto) {
 
   let latest = null
   let downloads = 0
-  if (reuse && typeof prev.version === 'string') {
+  let releaseCheckedAt = prev && prev.releaseCheckedAt
+  const checkedAt = Date.parse(releaseCheckedAt || '')
+  const pushedAt = Date.parse(repo.pushedAt || '')
+  const releaseCacheFresh = Number.isFinite(checkedAt)
+    && Date.now() - checkedAt >= 0 && Date.now() - checkedAt < 7 * 86400000
+    && (!Number.isFinite(pushedAt) || pushedAt <= checkedAt)
+  if (reuse && releaseCacheFresh && typeof prev.version === 'string') {
     latest = { tag_name: prev.version, published_at: prev.releasedAt || null }
     downloads = typeof prev.downloads === 'number' ? prev.downloads : 0
   } else if (pkg) {
     try {
       const rel = await ghJson('/repos/' + repo.full_name + '/releases?per_page=30')
       const releases = Array.isArray(rel) ? rel : []
+      if (Array.isArray(rel)) releaseCheckedAt = new Date().toISOString()
       for (const r of releases) {
         if (!latest && !r.draft && !r.prerelease) latest = r
         for (const a of r.assets || []) downloads += a.download_count || 0
@@ -434,6 +446,7 @@ export async function buildEntry(repo, prevAuto) {
     githubId: repo.githubId != null ? repo.githubId : undefined,
     spec: spec,
     version: latest ? latest.tag_name : null,
+    releaseCheckedAt: releaseCheckedAt || null,
     author: { name: owner, url: 'https://github.com/' + owner },
     description: (pkg && pkg.description) || description || '',
     tags: cleanTags(topics),
