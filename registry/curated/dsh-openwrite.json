@@ -4,9 +4,9 @@
   "type": "bundle",
   "repo": "LiPu-jpg/Openwrite",
   "spec": "dsh-openwrite@latest",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "小说创作工作台：创作预设、大纲与人物管理、正文批注和审稿流程。",
-  "longDescription": "为 DeepSeek Harness web profile 提供小说创作工作台。作品保存在作者选择的本地目录，支持大纲、人物、正文批注与审稿流程。\n\n首次使用下载并校验隔离 Python 环境，启动带实例认证的回环后端；不需要修改系统 Python。模型生成与评审使用用户配置的服务商，会产生相应 API 费用；安装与健康检查不调用写作模型。\n\n推荐宿主 dsh 0.1.2-rc.1。macOS arm64/x64、Linux x64、Windows x64 原生验收见 Release 的 release-acceptance.json。0.1.5-alpha.1 仅按 docs/DSH_STORE.md 记录的依赖图验证。真实模型测量 not-run。\n\n本条目通过 npm latest 安装预编译包，不依赖 GitHub 源码安装时的 prepare。latest 在执行安装/升级时解析；运行中不会自动更新。版本字段和验收记录对应已核验的 0.2.8，升级前请核对目标 Release 的宿主兼容范围。插件会下载依赖、读写选定作品并管理自身子进程；工具策略不是操作系统沙箱。卸载默认保留作品与历史。",
+  "longDescription": "为 DeepSeek Harness web profile 提供小说创作工作台。作品保存在作者选择的本地目录，支持大纲、人物、正文批注与审稿流程。\n\n首次使用下载并校验隔离 Python 环境，启动带实例认证的回环后端；不需要修改系统 Python。模型生成与评审使用用户配置的服务商，会产生相应 API 费用；安装与健康检查不调用写作模型。\n\n推荐宿主 dsh 0.1.2-rc.1。macOS arm64/x64、Linux x64、Windows x64 原生验收见 Release 的 release-acceptance.json。0.1.5-alpha.1 仅按 docs/DSH_STORE.md 记录的依赖图验证。真实模型测量 not-run。\n\n本条目通过 npm latest 安装预编译包，不依赖 GitHub 源码安装时的 prepare。latest 在执行安装/升级时解析；运行中不会自动更新。版本字段和验收记录对应已核验的 0.2.9，升级前请核对目标 Release 的宿主兼容范围。插件会下载依赖、读写选定作品并管理自身子进程；工具策略不是操作系统沙箱。卸载默认保留作品与历史。",
   "tags": [
     "小说",
     "写作",
