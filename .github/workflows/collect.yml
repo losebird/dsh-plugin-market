@@ -42,5 +42,5 @@ jobs:
             git pull --rebase origin main
             git push
           fi
-      # 注意：GITHUB_TOKEN 无法触发其他工作流（GitHub 官方限制），且网站数据
-      # 是运行时读 raw 主分支的，无需在此触发部署；站点代码变更由人工 push 触发。
+      # GITHUB_TOKEN 的 push 不触发下游 push workflow。deploy-pages 通过
+      # workflow_run 监听本任务成功，重新部署网站优先读取的 registry 静态副本。
