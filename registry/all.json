@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-16T09:57:55.928Z",
+  "updatedAt": "2026-09-17T02:50:21.269Z",
   "items": [
     {
       "id": "deepseek-ai-dsh-root",
@@ -3124,39 +3124,6 @@
       "source": "auto",
       "auto": true,
       "category": "market"
-    },
-    {
-      "id": "dsh-openwrite",
-      "name": "dsh-openwrite",
-      "type": "bundle",
-      "package": "dsh-openwrite",
-      "repo": "LiPu-jpg/Openwrite",
-      "githubId": 1171186947,
-      "spec": "github:LiPu-jpg/Openwrite#v0.2.1",
-      "version": "v0.2.1",
-      "author": {
-        "name": "LiPu-jpg",
-        "url": "https://github.com/LiPu-jpg"
-      },
-      "description": "OpenWrite 长篇小说领域后端接入 DeepSeek Harness：统一创作 Agent 预设 + 原生创作工作台",
-      "tags": [
-        "ai-novel",
-        "story-writing",
-        "writing-assistant"
-      ],
-      "license": "Apache-2.0",
-      "downloads": 24,
-      "stars": 731,
-      "releasedAt": "2026-09-08T21:46:39Z",
-      "topicSourced": true,
-      "verified": true,
-      "install": {
-        "method": "manual",
-        "source": "readme"
-      },
-      "source": "auto",
-      "auto": true,
-      "category": "agent"
     },
     {
       "id": "helloagents",
@@ -149990,6 +149957,36 @@
       "status": "unavailable"
     },
     {
+      "id": "dsh-openwrite",
+      "name": "OpenWrite 小说创作",
+      "type": "bundle",
+      "repo": "LiPu-jpg/Openwrite",
+      "spec": "dsh-openwrite@latest",
+      "version": "0.2.9",
+      "description": "小说创作工作台：创作预设、大纲与人物管理、正文批注和审稿流程。",
+      "longDescription": "为 DeepSeek Harness web profile 提供小说创作工作台。作品保存在作者选择的本地目录，支持大纲、人物、正文批注与审稿流程。\n\n首次使用下载并校验隔离 Python 环境，启动带实例认证的回环后端；不需要修改系统 Python。模型生成与评审使用用户配置的服务商，会产生相应 API 费用；安装与健康检查不调用写作模型。\n\n推荐宿主 dsh 0.1.2-rc.1。macOS arm64/x64、Linux x64、Windows x64 原生验收见 Release 的 release-acceptance.json。0.1.5-alpha.1 仅按 docs/DSH_STORE.md 记录的依赖图验证。真实模型测量 not-run。\n\n本条目通过 npm latest 安装预编译包，不依赖 GitHub 源码安装时的 prepare。latest 在执行安装/升级时解析；运行中不会自动更新。版本字段和验收记录对应已核验的 0.2.9，升级前请核对目标 Release 的宿主兼容范围。插件会下载依赖、读写选定作品并管理自身子进程；工具策略不是操作系统沙箱。卸载默认保留作品与历史。",
+      "tags": [
+        "小说",
+        "写作",
+        "大纲",
+        "人物",
+        "批注",
+        "审稿"
+      ],
+      "category": "agent",
+      "license": "Apache-2.0",
+      "author": {
+        "name": "LiPu-jpg",
+        "url": "https://github.com/LiPu-jpg"
+      },
+      "source": "curated",
+      "package": "dsh-openwrite",
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add"
+      }
+    },
+    {
       "id": "demo-hello",
       "name": "Demo Hello Skill",
       "type": "pack",
@@ -150053,8 +150050,8 @@
         "presets": []
       },
       "category": "skills",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "pack"
       }
@@ -150079,7 +150076,8 @@
         "obj",
         "stl",
         "step",
-        "cad"
+        "cad",
+        "llm"
       ],
       "category": "tools",
       "source": "curated",
@@ -150111,8 +150109,8 @@
         "gemini",
         "copilot"
       ],
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -150157,8 +150155,8 @@
         "name": "chenzhi-clude",
         "url": "https://github.com/chenzhi-clude"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -150178,6 +150176,7 @@
       "version": "v0.2.4",
       "longDescription": " pi、opencode、codex、claude-code 的会话、聊天记录与 agent 导入 DeepSeek Harness（dsh）。导入的会话出现在会话列表，可携带完整上下文继续对话；自定义 agent 与模式提示词变成可发现的 dsh skills；composer 里的一键 同步 按钮即可完成全部导入。",
       "tags": [
+        "agents",
         "codex",
         "claude",
         "opencode",
@@ -150185,8 +150184,8 @@
       ],
       "package": "dsh-import-agents",
       "category": "session",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -150213,8 +150212,8 @@
         "name": "MengYuil",
         "url": "https://github.com/MengYuil"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -150245,8 +150244,8 @@
       ],
       "package": "dsh-projects",
       "category": "ui",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -150298,8 +150297,8 @@
         "merit"
       ],
       "longDescription": "工作间隙敲一敲、攒一攒\"功德\"。\n\n点击木鱼即敲击，鼠标按住木鱼移动可随意拖拽，刷新页面不丢进度，其他的留给大家自由探索～",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }

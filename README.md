@@ -2552,7 +2552,6 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [wesight](https://github.com/freestylefly/wesight) AI-Powered WeChat Intelligence ⭐ 923 ⬇ 5.4k · 未验证 · 手动安装 · v1.0.4
 - [wegent-workspace](https://github.com/wecode-ai/Wegent) Plan, build, and deliver with an open-source, self-hostable AI workspace for coding, colla ⭐ 852 ⬇ 5.2k · 未验证 · 手动安装 · v2.0.14
 - [dsh-handbook](https://github.com/Electricitysheep/dsh-handbook) DeepSeek Harness (dsh) 从 0 到 1 深度手册：安装/插件开发/性能调优/实测案例/同模型多 Agent 实测对比（中文 + 英文 PDF） ⭐ 786 ⬇ 11 · 未验证 · 手动安装 · v1.8.0
-- [dsh-openwrite](https://github.com/LiPu-jpg/Openwrite) OpenWrite 长篇小说领域后端接入 DeepSeek Harness：统一创作 Agent 预设 + 原生创作工作台 ⭐ 731 ⬇ 24 · 手动安装 · v0.2.1
 - [helloagents](https://github.com/hellowind777/helloagents) HelloAGENTS — The orchestration kernel that makes any AI CLI smarter. Adds intelligent rou ⭐ 705 ⬇ 0 · 未验证 · 官方脚本安装 · v3.1.9
 - [dsh-browser](https://github.com/Lum1104/dsh-browser) Standalone dsh browser bridge and controlled-tab Chrome/Firefox extension workspace ⭐ 664 ⬇ 0 · 未验证 · 官方脚本安装 · v0.1.1
 - [pi-working-activity](https://github.com/ccch1mneyyy/working-activity) Lively Working-line for pi CLI — live tool progress, playful phrases, settings panel, doct ⭐ 659 ⬇ 0 · 未验证 · 手动安装 · v0.4.0
@@ -3296,6 +3295,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-answer-sound](https://github.com/zl99103/dsh-answer-sound) Agent answer sound effects for DeepSeek Harness web: play start/done/error tones on answer ⭐ 1 ⬇ 0
 - [dsh-win-fable-report](https://github.com/L-xx1/dsh-win-fable-report) Fable级且及时总结模式：基于 dsh-anchored-standard 的 Windows 工具调用增强 agent preset ⭐ 1 ⬇ 0 · 未验证 · git clone
 - [ag-dsh-coding-plugins](https://github.com/AlphaGodzilla/ag-dsh-coding-plugins) DeepSeek Harness (DSH) coding-plugins monorepo: independent TypeScript plugin packages und ⭐ 1 ⬇ 0 · 未验证 · 手动安装
+- [OpenWrite 小说创作](https://github.com/LiPu-jpg/Openwrite) 小说创作工作台：创作预设、大纲与人物管理、正文批注和审稿流程。 ⭐ 0 ⬇ 0 · 0.2.9
 - [dsh-hooks-pack](https://github.com/chenzhi-clude/dsh-hooks-pack) One-click Claude Code & Codex hooks for DeepSeek Harness: auto-discovers your existing ~/. ⭐ 0 ⬇ 0
 - [dsh-tool-reading-map](https://github.com/he-yufeng/dsh-tool-reading-map) Repo reading-map tool for DeepSeek Harness: a structured, priority-ranked map of any codeb ⭐ 0 ⬇ 0
 - [dsh-worktree-manager](https://github.com/shenkonghui/dsh-worktree-manager) dsh plugin that adds git worktree management to the task start window — list, create, and  ⭐ 0 ⬇ 0 · v0.3.1
