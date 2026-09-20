@@ -1,0 +1,16 @@
+{
+  "id": "dsh-auto-review",
+  "name": "dsh-auto-review",
+  "type": "bundle",
+  "repo": "PerryLink/dsh-auto-review",
+  "spec": "dsh-auto-review",
+  "description": "Second-model AI auto-review on the DSH approval chain: a read-only reviewer subagent returns structured allow/deny verdicts with reasons, fail-closed by default and fully auditable from the session log.",
+  "longDescription": "审批链上的第二模型 AI 自动审查：只读审查子代理返回带理由的结构化 allow/deny 裁决，默认失败即拒绝，全程可在会话日志中审计。",
+  "category": "agent",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "PerryLink",
+    "url": "https://github.com/PerryLink"
+  },
+  "source": "curated"
+}

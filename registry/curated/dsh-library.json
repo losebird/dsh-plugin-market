@@ -1,0 +1,16 @@
+{
+  "id": "dsh-library",
+  "name": "dsh-library",
+  "type": "bundle",
+  "repo": "PerryLink/dsh-library",
+  "spec": "dsh-library",
+  "description": "Local document knowledge base for a workspace: hybrid semantic and keyword retrieval, diversity re-ranking, citation-aware injection and integrity checks over a local SQLite index, with no model downloads.",
+  "longDescription": "工作区本地文档知识库：语义与关键词混合检索、多样性重排、带引用注入与完整性校验，索引为本地 SQLite，不下载任何模型。",
+  "category": "tools",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "PerryLink",
+    "url": "https://github.com/PerryLink"
+  },
+  "source": "curated"
+}
