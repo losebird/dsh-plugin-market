@@ -1,0 +1,16 @@
+{
+  "id": "helm-d",
+  "name": "helmd",
+  "type": "bundle",
+  "repo": "ADWMC/helm-d",
+  "spec": "@adwmc/helm-d",
+  "description": "单包逆向与渗透测试安全分析插件：33 个工具覆盖 APK、Web、原生二进制、协议、恶意样本与 LLM 场景的逆向分析、加壳脱壳、License 破解绕过与渗透测试；内置 H-CoT 评估引擎、Web 工作台与磁盘案件工作区。",
+  "longDescription": "helmd — DeepSeek Harness 破甲一体化安全分析插件，装一次六大领域即开即用。\n\n- 33 个工具（10 个模块）：APK、Web、Native、Protocol、Malware、AI-Security 领域 + 证据链与工具箱\n- 首轮工具锚定（首个请求只暴露 shell + read，晋升后放开全量目录）\n- 领域路由 + 361 篇按需参考文档（8 领域 + toolbox），知识不注入 system prompt\n- 磁盘案件工作区：证据链自动存证、E 编号结论校验、上下文压缩后恢复\n- H-CoT 评估引擎（语义路由、/hcot 命令）与 Web 工作台（账本驱动的逆向工具货架）\n- npm 渠道：dsh plugin --profile web add @adwmc/helm-d；Node >= 22.19\n",
+  "tags": ["security", "reverse-engineering", "pentest", "unpacking", "frida", "license-bypass"],
+  "category": "security",
+  "license": "MIT",
+  "author": {
+    "name": "ADWMC",
+    "url": "https://github.com/ADWMC"
+  }
+}
