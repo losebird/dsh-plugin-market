@@ -1,0 +1,16 @@
+{
+  "id": "dsh-plugin-upgrade",
+  "name": "dsh-plugin-upgrade",
+  "type": "bundle",
+  "repo": "PerryLink/dsh-plugin-upgrade",
+  "spec": "dsh-plugin-upgrade",
+  "description": "Upgrade skill for DSH plugin authors: one package carrying one corridor index that reads the caller declared DSH range and routes it to the matching closed corridor card, plus a zero-dependency seam scanner.",
+  "longDescription": "面向 DSH 插件作者的升级技能：一个包内一份走廊索引，按调用方声明的 DSH 区间路由到对应已封版升级卡片，附零依赖接缝扫描器。",
+  "category": "skills",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "PerryLink",
+    "url": "https://github.com/PerryLink"
+  },
+  "source": "curated"
+}

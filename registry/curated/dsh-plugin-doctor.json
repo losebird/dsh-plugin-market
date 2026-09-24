@@ -1,0 +1,16 @@
+{
+  "id": "dsh-plugin-doctor",
+  "name": "dsh-plugin-doctor",
+  "type": "bundle",
+  "repo": "PerryLink/dsh-plugin-doctor",
+  "spec": "@perrylink/dsh-plugin-doctor",
+  "description": "Zero-dependency detector for DSH plugins: package-structure checks, cordis contract scanning, a keyless headless sandbox smoke run and ecosystem-listing verification in one pass.",
+  "longDescription": "DSH 插件零依赖检测器：包结构检查、cordis 契约扫描、无密钥无头沙箱冒烟与生态收录校验，一次运行全部覆盖。",
+  "category": "dev",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "PerryLink",
+    "url": "https://github.com/PerryLink"
+  },
+  "source": "curated"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "dsh-github",
+  "name": "dsh-github",
+  "type": "bundle",
+  "repo": "PerryLink/dsh-github",
+  "spec": "@perrylink/dsh-github",
+  "description": "GitHub integration for DSH: pull request, issue, repository and file tools, a review bot with idempotent inline comments and a status-check gate, and a reusable GitHub Action, with every write gated by human approval.",
+  "longDescription": "DSH 的 GitHub 集成：PR / Issue / 仓库 / 文件工具，带幂等行内评论与状态门禁的审查机器人，以及可复用的 GitHub Action；写操作全部人工审批。",
+  "category": "dev",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "PerryLink",
+    "url": "https://github.com/PerryLink"
+  },
+  "source": "curated"
+}

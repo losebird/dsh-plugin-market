@@ -1,0 +1,16 @@
+{
+  "id": "dsh-mcp-panel",
+  "name": "dsh-mcp-panel",
+  "type": "bundle",
+  "repo": "PerryLink/dsh-mcp-panel",
+  "spec": "dsh-mcp-panel",
+  "description": "Management console for the official DSH MCP client: a /mcp command with health diagnostics, a Settings tab with approval-gated server CRUD and automatic backups, and a trial console over the official tool pipeline.",
+  "longDescription": "官方 DSH MCP 客户端的管理控制台：/mcp 健康诊断、设置页审批门禁的服务器增删改与自动备份、官方工具管线试调台。",
+  "category": "dev",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "PerryLink",
+    "url": "https://github.com/PerryLink"
+  },
+  "source": "curated"
+}

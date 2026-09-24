@@ -1,0 +1,16 @@
+{
+  "id": "dsh-ticktick",
+  "name": "dsh-ticktick",
+  "type": "bundle",
+  "repo": "PerryLink/dsh-ticktick",
+  "spec": "@perrylink/dsh-ticktick",
+  "description": "TickTick (Dida365) task bridge for DSH: a session-header task panel with filtering, search and drag reordering, eleven curated agent tools and a settings card, over the official TickTick MCP endpoint.",
+  "longDescription": "DSH 的滴答清单任务桥：会话头部任务面板（筛选 / 搜索 / 拖拽排序）、十一个代理工具与设置卡片，走官方 TickTick MCP 端点。",
+  "category": "tools",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "PerryLink",
+    "url": "https://github.com/PerryLink"
+  },
+  "source": "curated"
+}

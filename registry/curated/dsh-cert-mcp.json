@@ -1,0 +1,16 @@
+{
+  "id": "dsh-cert-mcp",
+  "name": "dsh-cert-mcp",
+  "type": "bundle",
+  "repo": "PerryLink/dsh-cert-mcp",
+  "spec": "dsh-cert-mcp",
+  "description": "Read-only MCP server over the DSH plugin-certification registry: query a plugin certification grade, its snapshot and the five-dimension evidence behind it.",
+  "longDescription": "只读 MCP 服务器，把 DSH 插件认证注册表开放给任何 MCP 客户端：查询认证等级、快照与五维证据。",
+  "category": "dev",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "PerryLink",
+    "url": "https://github.com/PerryLink"
+  },
+  "source": "curated"
+}
