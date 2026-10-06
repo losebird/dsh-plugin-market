@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**7572** 个插件 · **6730** 个可一键安装
+**7573** 个插件 · **6731** 个可一键安装
 
 安装市场：
 
@@ -17,7 +17,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 
 ## 目录
 
-- [界面与主题](#ui) (1618)
+- [界面与主题](#ui) (1619)
 - [会话与记忆](#session) (1428)
 - [Agent 与工作流](#agent) (1194)
 - [工具与集成](#tools) (805)
@@ -1649,6 +1649,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-ocgo-quota](https://github.com/fuzz1og/dsh-ocgo-quota) OpenCode Go usage floating widget for the DeepSeek Harness Web UI: a bottom-right overlay  ⭐ 0 ⬇ 0 · 未验证
 - [dsh-workbench](https://github.com/doebkblcya/dsh-workbench) DSH Web GUI right-side workbench plugin: a VS Code-style single right panel with Files/Git ⭐ 0 ⬇ 0
 - [dsh-settings-mcp-skills](https://github.com/w123456789zy/dsh-settings-mcp-skills) MCP Servers and Skills settings pages for the dsh web UI: mounts the official DeepSeek too ⭐ 0 ⬇ 0
+- [DSH Background · 多区域背景](https://github.com/flora-ari/dsh-background) 为全局、聊天和侧边栏设置独立图片背景，支持图库轮播、透明度与按比例缩放。 ⭐ 0 ⬇ 0 · v0.1.9
 
 ## 会话与记忆
 
