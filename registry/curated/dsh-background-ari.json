@@ -1,0 +1,22 @@
+{
+  "id": "dsh-background-ari",
+  "name": "DSH Background · 多区域背景",
+  "type": "bundle",
+  "repo": "flora-ari/dsh-background",
+  "spec": "https://github.com/flora-ari/dsh-background/releases/download/v0.1.9/dsh-background-ari-0.1.9.tgz",
+  "version": "v0.1.9",
+  "description": "为全局、聊天和侧边栏设置独立图片背景，支持图库轮播、透明度与按比例缩放。",
+  "longDescription": "为 DeepSeek Harness Web 与官方 Desktop 设置图片背景。\n\n- 全局、聊天与侧边栏分别配置图库、轮播间隔、透明度、模糊和单图样式。\n- 右侧面板与左侧共用图库，独立选图，并可单独调整缩放与位置。\n- 左右侧图片的透明度由宿主主题底色承接，不透出全局背景；关闭侧边栏图片或清空图库时仍可沿用全局背景。\n- 支持高度铺满、宽度自适应，以及宽度铺满、高度自适应。\n- 轨迹页面优先使用聊天背景；自动化任务页面沿用全局背景。\n- Windows 顶部栏按下方区域显示背景，中间采用全局图片。\n- 支持图片网址、本地图片导入及 JSON 配置导入导出；配置保存在当前客户端。\n\n适配 Windows 10 / 11 x64、macOS Apple Silicon arm64 Preview 与 Linux x64 Preview 的官方 Desktop 客户端，也可在 Web 端使用。Windows 已有实机加载验证；macOS 与 Linux 已核对源码兼容性，尚未实机验证。\n\n安装后从左侧「背景设置」或设置弹窗内「背景 / Background」进入，添加图片后保存即可生效。首次安装图库为空，不附带背景图片。\n\n安装包包含已编译产物，无需安装时构建。详见 [使用说明](https://github.com/flora-ari/dsh-background#readme)。",
+  "category": "ui",
+  "tags": ["background", "wallpaper", "carousel", "theme", "ui"],
+  "license": "MIT",
+  "author": {
+    "name": "flora-ari",
+    "url": "https://github.com/flora-ari"
+  },
+  "install": {
+    "method": "dsh-plugin-add",
+    "source": "curated"
+  },
+  "source": "curated"
+}
