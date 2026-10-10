@@ -1,0 +1,13 @@
+{
+  "id": "klarkxy-dsh-dev-index",
+  "name": "DSH 文档 · dsh-dev-index",
+  "type": "bundle",
+  "repo": "klarkxy/dsh-plugins",
+  "spec": "@klarkxy/dsh-dev-index",
+  "description": "在 DSH 插件页阅读官方文档；创造模式用原生工具检索文档、查询插件 npm 元数据。",
+  "longDescription": "源码位于 monorepo 的 plugins/dsh-dev-index 子目录。\n\n插件页内嵌 DSH 官方文档，支持中文和 English。创造模式通过 dsh_docs_search / dsh_docs_fetch 检索和读取官方文档，通过 dsh_plugins_search / dsh_plugins_fetch 查询插件 npm 元数据。文档搜索覆盖目录标题、分类和路径。插件注册表工具只读元数据，安装仍由官方插件管理器完成。\n\n公开安装：dsh plugin --profile web add @klarkxy/dsh-dev-index\n\n截至 2026-10-10，npm latest 为 0.1.7，声明 DSH >=0.1.7-rc.2、Node ^22.19.0 || >=24.0.0。main 中的 0.2.0 源码另有 DSH >=0.2.0-rc.2 要求，请以实际安装版本的 package.json 为准。声明范围不等于所有版本均已实测。\n\n文档：https://klarkxy.github.io/dsh-plugins/plugins/dev-index/\n源码：https://github.com/klarkxy/dsh-plugins/tree/main/plugins/dsh-dev-index\n\n许可证：The Star And Thank Author License (SATA) 2.1，原文位于插件目录 LICENSE；不是 MIT，也不使用 SATA 旧版本的标识替代。",
+  "category": "dev",
+  "tags": ["documentation", "creator-mode", "developer-tools", "npm-metadata"],
+  "license": "LicenseRef-SATA-2.1",
+  "author": { "name": "klarkxy", "url": "https://github.com/klarkxy" }
+}
