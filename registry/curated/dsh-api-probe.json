@@ -1,0 +1,17 @@
+{
+  "id": "dsh-api-probe",
+  "name": "API 体检",
+  "type": "bundle",
+  "repo": "LFY-bot/dsh-api-probe",
+  "spec": "https://github.com/LFY-bot/dsh-api-probe/releases/latest/download/dsh-api-probe.tgz",
+  "version": "v1.0.0",
+  "description": "配置前先体检 API：30 秒测出能不能用、快不快，以及坏在哪一层。",
+  "longDescription": "拿到一个陌生的 API 地址和 Key，先测一遍再决定要不要接进 Harness。左侧栏点「API 体检」，填两项，点一下按钮，30 秒给出结论：能用而且快，还是能用但慢，还是压根不通。\n\n三个指标一起看：首字延迟、输出速度（tok/s）、连续 N 次的成功率。首字很快但成功率只有六成，说明线路在抖，比稳定地慢两秒更难受。\n\n四层诊断，失败时归因到具体那一步：\n\n1. 网络 —— 域名解析、端口连通、TLS 握手、证书剩余天数\n2. Key 和模型 —— Key 是否有效；没填模型名时从该地址的 /models 里挑一个能对话的\n3. 能不能真的说话 —— 走完整流式，把模型输出直接显示出来\n4. 快不快稳不稳 —— 连测 N 次\n\n每次失败都会标出卡在第几步，并报出实际写出去多少字节。「没反应」有两种完全相反的情况——TCP 都没建起来，一个字节都没发出去；和请求正文已经写出去了、对方连 HTTP 状态行都没回——混在一起就只能瞎猜。结论跟着证据走，不替服务商下结论。\n\n37 个服务商预设，覆盖 OpenAI 兼容、Anthropic 原生、Gemini 原生和本地 Ollama / LM Studio。预设里不写死任何模型名：同一个模型在不同厂商的 ID 完全不同，中转站还会再改一次名，模型也会随时下架，过期的提示看起来很权威却会直接把人送进 400 错误。模型名一律取自该地址自己的 /models 响应。\n\nKey 只在这一次请求里用一下，不写进任何文件，报告里打码，除被测的那家服务商外不发给任何第三方。\n\n三套测试共 230 项（探测逻辑 129 / 客户端 75 / 路由 26），CI 跑 Node 20 与 24 × Linux 与 Windows，全绿。MIT。\n\n源码与截图：https://github.com/LFY-bot/dsh-api-probe\n需要 DeepSeek Harness >= 0.2.0-rc.2。",
+  "category": "dev",
+  "tags": ["api", "health-check", "diagnosis", "latency", "streaming", "self-check"],
+  "license": "MIT",
+  "author": {
+    "name": "LFY-bot",
+    "url": "https://github.com/LFY-bot"
+  }
+}
