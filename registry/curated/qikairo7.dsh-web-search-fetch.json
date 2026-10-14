@@ -1,0 +1,23 @@
+{
+  "id": "qikairo7.dsh-web-search-fetch",
+  "name": "多来源搜索与网页正文整理",
+  "type": "bundle",
+  "repo": "qikairo7/dsh-web-search-fetch",
+  "spec": "https://github.com/qikairo7/dsh-web-search-fetch/releases/download/v0.2.3/dsh-web-search-fetch-0.2.3.tgz",
+  "description": "为原生 web_search 与 web_fetch 融合多来源搜索、去重互补网页正文，并保留来源与文本差异。",
+  "longDescription": "支持 RRF 搜索融合、可选相关性重排，以及同一 URL 多路提取正文的去重、互补与来源标记。提供 DSH 设置卡片；官方 Firecrawl 匿名模式与 Bing RSS 可无需密钥开始。服务额度、付费规则与权限见项目文档。已在 DSH 0.2.1-alpha.2 / Windows / Node.js 24.20.0 验证真实搜索与提取；其他 DSH 版本待验证。使用 GitHub Release 预构建包安装，尚未发布 npm。",
+  "license": "MIT",
+  "author": {
+    "name": "qikairo7",
+    "url": "https://github.com/qikairo7"
+  },
+  "category": "tools",
+  "tags": [
+    "search",
+    "web-fetch",
+    "content-extraction",
+    "rrf",
+    "reranking",
+    "research"
+  ]
+}
