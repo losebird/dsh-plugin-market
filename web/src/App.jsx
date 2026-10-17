@@ -18,6 +18,7 @@ const REGISTRY_BASE = import.meta.env.BASE_URL
 const RAW_INDEX = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/index.json'
 const CURATED_API = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/registry/curated'
 const RAW_CURATED_BASE = 'https://raw.githubusercontent.com/' + GITHUB_REPO + '/main/registry/curated/'
+const CURATED_CONTENTS = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/'
 const PAGE_SIZE = 24
 
 const CATEGORIES = {
@@ -428,6 +429,42 @@ function overlayCatalog(baseItems, curatedItems) {
   return items
 }
 
+// raw.githubusercontent.com 在部分网络环境下不可达，「大神手作」的即时补齐会静默失败。
+// contents API 的响应自带 base64 content，直接解码即可绕开 raw 域名。
+function decodeContentsBase64(b64) {
+  if (typeof b64 !== 'string' || b64 === '') return null
+  try {
+    const bin = atob(b64.replace(/\s+/g, ''))
+    const bytes = new Uint8Array(bin.length)
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
+    return new TextDecoder('utf-8').decode(bytes)
+  } catch {
+    return null
+  }
+}
+
+async function fetchJsonViaContents(path) {
+  try {
+    const res = await fetch(CURATED_CONTENTS + path, { headers: { Accept: 'application/vnd.github+json' } })
+    if (!res.ok) return null
+    const payload = await res.json()
+    if (!payload || Array.isArray(payload) || typeof payload.content !== 'string') return null
+    const text = decodeContentsBase64(payload.content)
+    return text == null ? null : JSON.parse(text)
+  } catch {
+    return null
+  }
+}
+
+async function fetchCuratedFile(f) {
+  const rawUrl = f.download_url || (RAW_CURATED_BASE + f.name)
+  try {
+    const res = await fetch(rawUrl)
+    if (res.ok) return await res.json()
+  } catch {}
+  return fetchJsonViaContents('registry/curated/' + encodeURIComponent(f.name))
+}
+
 async function loadLiveCurated() {
   try {
     let indexItems = []
@@ -440,6 +477,13 @@ async function loadLiveCurated() {
         if (parsed && Array.isArray(parsed.items)) indexItems = parsed.items
       }
     } catch {}
+    if (!githubIndexOk) {
+      const viaContents = await fetchJsonViaContents('registry/index.json')
+      if (viaContents && Array.isArray(viaContents.items)) {
+        githubIndexOk = true
+        indexItems = viaContents.items
+      }
+    }
     if (!githubIndexOk) {
       try {
         const res = await fetch(REGISTRY_BASE + 'registry/index.json')
@@ -461,14 +505,7 @@ async function loadLiveCurated() {
       }
     } catch {}
 
-    const fileItems = await Promise.all(files.map(async (f) => {
-      try {
-        const url = f.download_url || (RAW_CURATED_BASE + f.name)
-        const res = await fetch(url)
-        if (!res.ok) return null
-        return await res.json()
-      } catch { return null }
-    }))
+    const fileItems = await Promise.all(files.map((f) => fetchCuratedFile(f)))
 
     const merged = overlayCatalog(indexItems, fileItems.filter(Boolean))
     return merged.length > 0 ? merged : []

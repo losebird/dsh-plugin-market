@@ -552,6 +552,44 @@ window.__ModuleLoader__.load({
 
     const CURATED_REPO = 'losebird/dsh-plugin-market'
     const CURATED_RAW = 'https://raw.githubusercontent.com/' + CURATED_REPO + '/main/registry/'
+    const CURATED_CONTENTS = 'https://api.github.com/repos/' + CURATED_REPO + '/contents/'
+
+    // raw.githubusercontent.com 在部分网络环境下不可达，会让「大神手作」的补齐全链路
+    // 静默失败（overlay 只拿到空数组）。contents API 的响应自带 base64 content，
+    // 直接解码即可绕开 raw 域名，作为 raw 失败后的回退。
+    function decodeContentsBase64(b64) {
+      if (typeof b64 !== 'string' || b64 === '') return null
+      try {
+        const bin = atob(b64.replace(/\s+/g, ''))
+        const bytes = new Uint8Array(bin.length)
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
+        return new TextDecoder('utf-8').decode(bytes)
+      } catch {
+        return null
+      }
+    }
+
+    async function fetchJsonViaContents(path) {
+      try {
+        const res = await fetch(CURATED_CONTENTS + path, { headers: { Accept: 'application/vnd.github+json' } })
+        if (!res.ok) return null
+        const payload = await res.json()
+        if (!payload || Array.isArray(payload) || typeof payload.content !== 'string') return null
+        const text = decodeContentsBase64(payload.content)
+        return text == null ? null : JSON.parse(text)
+      } catch {
+        return null
+      }
+    }
+
+    async function fetchCuratedFile(entry) {
+      const rawUrl = entry.download_url || (CURATED_RAW + 'curated/' + entry.name)
+      try {
+        const res = await fetch(rawUrl)
+        if (res.ok) return await res.json()
+      } catch {}
+      return fetchJsonViaContents('registry/curated/' + encodeURIComponent(entry.name))
+    }
 
     function catalogKeyOf(it) {
       if (it && it.githubId != null && it.githubId !== '') return 'ghid:' + it.githubId
@@ -603,11 +641,17 @@ window.__ModuleLoader__.load({
     // 浏览器直连 GitHub：大神手作不依赖 host all.json 缓存
     async function loadLiveCurated() {
       try {
-        const indexRes = await fetch(CURATED_RAW + 'index.json')
         let indexItems = []
-        if (indexRes.ok) {
-          const data = await indexRes.json()
-          indexItems = (data && Array.isArray(data.items)) ? data.items : []
+        try {
+          const indexRes = await fetch(CURATED_RAW + 'index.json')
+          if (indexRes.ok) {
+            const data = await indexRes.json()
+            indexItems = (data && Array.isArray(data.items)) ? data.items : []
+          }
+        } catch {}
+        if (indexItems.length === 0) {
+          const data = await fetchJsonViaContents('registry/index.json')
+          if (data && Array.isArray(data.items)) indexItems = data.items
         }
         let fileBodies = []
         try {
@@ -618,14 +662,7 @@ window.__ModuleLoader__.load({
             const entries = await dirRes.json()
             if (Array.isArray(entries)) {
               const jsonFiles = entries.filter((e) => e && e.type === 'file' && e.name && e.name.endsWith('.json') && e.name !== '.gitkeep')
-              fileBodies = await Promise.all(jsonFiles.map(async (entry) => {
-                try {
-                  const url = entry.download_url || (CURATED_RAW + 'curated/' + entry.name)
-                  const res = await fetch(url)
-                  if (!res.ok) return null
-                  return res.json()
-                } catch { return null }
-              }))
+              fileBodies = await Promise.all(jsonFiles.map((entry) => fetchCuratedFile(entry)))
             }
           }
         } catch {}
