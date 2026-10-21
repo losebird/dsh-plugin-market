@@ -3,14 +3,14 @@
   "name": "图片/视频生成调度",
   "type": "pack",
   "repo": "vibe-weaver/media-router-skill",
-  "spec": "https://github.com/vibe-weaver/media-router-skill/releases/download/v1.0.0/media-router-skill-v1.0.0.zip",
+  "spec": "https://github.com/vibe-weaver/media-router-skill/releases/download/v1.2.0/media-router-skill-v1.2.0.zip",
   "description": "给文本模型补上出图、出视频的能力，多模型池调度，失败自动降级和熔断，零依赖纯标准库",
   "license": "MIT",
   "author": {
     "name": "vibe-weaver",
     "url": "https://github.com/vibe-weaver/"
   },
-  "version": "v1.0.0",
+  "version": "v1.2.0",
   "longDescription": "文本模型遇到「生成一张图」「做个视频」这类步骤时只会说「我做不到」，任务就断在那里。media-router 用一个你自己维护的多模型池把这一步接上：挑模型、调接口、下载产物，再把产物路径和文字描述交回给文本模型，原任务继续往下走。\n\n模型池写在 `config/models.yaml`，两个字段决定路由：`priority` 是优先级档位，数值越小越优先；`weight` 是同档内的权重，50 和 30 就是 5:3 的出手比例。想让某个模型永远优先就分开档位，想分摊流量就同档配权重。\n\n调用失败自动换下一个候选，缺密钥的模型直接跳过、不占重试次数；同一模型连续失败到阈值（默认 3 次）进入冷却，成功后计数清零。出厂配置的图片池和视频池各带一条 `native` 兜底，真模型全不可用时返回「请调用内置 ImageGen / VideoGen」的委托指令，没配 Key 也不会卡死。\n\n需要 Python 3.8+，零第三方依赖。在 DSH 里可以直接从插件市场一键安装，装完落在 `~/.agents/skills/media-router/`，新开一个会话就能用；手动安装则把目录复制到 agent 的 skills 目录并改名为 `media-router`（`~/.dsh/skills/`、`~/.claude/skills/`、`~/.codex/skills/`）。\n\n不想手写 YAML 就开网页配置台，配厂商、粘 Key、拖权重滑块，点「测试连通性」验密钥不花钱：\n\n```bash\npython3 scripts/media_router.py web\n```\n\n习惯命令行的走这条：\n\n```bash\npython3 scripts/media_router.py list --pretty\nexport ARK_API_KEY=\"你的-key\"\npython3 scripts/media_router.py generate --kind image --prompt \"一只戴圆框眼镜的橘猫\"\n```\n\n返回的 JSON 里 `files[0].path` 就是产物的绝对路径。密钥存在 `config/secrets.yaml`，已在 `.gitignore` 里，不会进版本库。\n\n完整文档：https://github.com/vibe-weaver/media-router-skill",
   "tags": ["文生图", "文生视频", "多模型池", "模型调度", "失败降级", "熔断", "零依赖"],
   "category": "skills",
