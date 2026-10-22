@@ -1,0 +1,24 @@
+{
+  "id": "dsh-global-todo",
+  "name": "全局待办 / dsh-global-todo",
+  "type": "bundle",
+  "repo": "LUgABeEEE/dsh-global-todo",
+  "spec": "dsh-global-todo",
+  "package": "dsh-global-todo",
+  "description": "Cross-session todo list for DeepSeek Harness: one JSON file you own, written by you and your agent, handed to a conversation in one click, with steps that ship as a numbered plan and a review step so an agent's \"done\" is a claim a person confirms.",
+  "longDescription": "DeepSeek Harness 的跨会话待办清单：一份属于你的 JSON 文件，人和 Agent 读写同一份，一键交给某个对话继续干；待办可带步骤（派发时作为编号计划），Agent 标完成只是声明、需人确认。\n\n- 24 条 HTTP 路由、10 个 agent 工具、257 个测试\n- 零运行时依赖，无构建步骤；MIT 许可\n- DSH >=0.2.0-rc.1 <0.3.0，Node >=22.19.0\n- 安装：`dsh plugin add dsh-global-todo`；介绍页 https://lugabeeee.github.io/dsh-global-todo/",
+  "tags": [
+    "todo",
+    "task-management",
+    "cross-session",
+    "hand-off",
+    "agent-tools"
+  ],
+  "category": "session",
+  "license": "MIT",
+  "author": {
+    "name": "LUgABeEEE",
+    "url": "https://github.com/LUgABeEEE"
+  },
+  "source": "curated"
+}
