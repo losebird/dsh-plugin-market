@@ -1,0 +1,20 @@
+{
+  "id": "gulagala001-dsh-btw",
+  "name": "DSH BTW",
+  "type": "bundle",
+  "repo": "gulagala001/dsh-btw",
+  "spec": "https://github.com/gulagala001/dsh-btw/releases/download/v0.1.0-dsh.0.2.1-rc.2/gulagala001-dsh-btw-0.1.0-dsh.0.2.1-rc.2.tgz",
+  "description": "在主输入框上方使用原生弹窗，借助当前会话上下文进行旁聊与追问，主任务可继续运行。",
+  "longDescription": "The sole entry point is `/btw`. Native history and follow-up controls stay above the main composer. It preserves the main request prefix and cache affinity for possible provider cache reuse. Side requests do not execute tools or append to the main conversation. The latest 20 side exchanges per main conversation live only in this window memory and disappear on reload. It uses the existing model provider with normal provider usage charges; actual cache hits depend on the provider.\n\nTargets DeepSeek Harness 0.2.1-rc.2 exactly, Cordis 4.0.5 and Node.js 22.19+. Verified on macOS with the real release runtime in an isolated native DSH Web profile: package installation, /btw entry, native popover/history/follow-up interactions, independent cancellation and main-conversation preservation. Four focused tests and the main/tag CI passed. Windows, Linux and Electron desktop device flows have not been tested. Cache reuse preserves the main request prefix and provider affinity, but actual cache hits depend on the provider.",
+  "tags": [
+    "btw",
+    "side-chat",
+    "conversation"
+  ],
+  "category": "session",
+  "license": "MIT",
+  "author": {
+    "name": "gulagala001",
+    "url": "https://github.com/gulagala001"
+  }
+}
