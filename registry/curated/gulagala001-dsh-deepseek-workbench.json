@@ -1,0 +1,19 @@
+{
+  "id": "gulagala001-dsh-deepseek-workbench",
+  "name": "DeepSeek Workbench",
+  "type": "bundle",
+  "repo": "gulagala001/dsh-deepseek-workbench",
+  "spec": "https://github.com/gulagala001/dsh-deepseek-workbench/releases/download/v0.1.0-dsh.0.2.1-rc.2/dsh-deepseek-workbench-0.1.0-dsh.0.2.1-rc.2.tgz",
+  "description": "在 DeepSeek Harness 中使用 DeepSeek 网页聊天、临时侧栏聊天和 API 开放平台，并将网页历史迁移为可继续的 DSH 会话。",
+  "category": "comm",
+  "tags": [
+    "web-chat",
+    "sidebar",
+    "conversation-import"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "gulagala001",
+    "url": "https://github.com/gulagala001"
+  }
+}
