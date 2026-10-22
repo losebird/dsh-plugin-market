@@ -1,0 +1,19 @@
+{
+  "id": "gulagala001-dsh-undo-plugin",
+  "name": "dsh-undo-plugin",
+  "type": "bundle",
+  "repo": "gulagala001/dsh-undo-plugin",
+  "spec": "https://github.com/gulagala001/dsh-undo-plugin/releases/download/v0.1.0-dsh.0.2.1-rc.2/gulagala001-dsh-undo-plugin-0.1.0-dsh.0.2.1-rc.2.tgz",
+  "description": "对话与工作区文件原地撤回，支持确认和撤销撤回。",
+  "category": "session",
+  "tags": [
+    "undo",
+    "rewind",
+    "checkpoint"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "gulagala001",
+    "url": "https://github.com/gulagala001"
+  }
+}
