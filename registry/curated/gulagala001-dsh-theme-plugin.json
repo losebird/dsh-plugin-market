@@ -1,0 +1,21 @@
+{
+  "id": "gulagala001-dsh-theme-plugin",
+  "name": "dsh-theme-plugin",
+  "type": "bundle",
+  "repo": "gulagala001/dsh-theme-plugin",
+  "spec": "https://github.com/gulagala001/dsh-theme-plugin/releases/download/v0.2.0-dsh.0.2.1-rc.2/gulagala001-dsh-theme-plugin-0.2.0-dsh.0.2.1-rc.2.tgz",
+  "description": "在 DSH 设置中统一管理外观和主题，浏览带图片的多来源市场，一键检查安装，并提供失败恢复与 AI 修复说明。",
+  "longDescription": "Three native Appearance pages cover settings, theme management and four visual market sources. Includes six appearances and 29 palettes, discovery of existing themes without duplicate installation, automatic preparation of source packages, current-host version selection, native backend/configuration lifecycles, recovery and AI repair guidance. Host/adapter changes trigger affected-theme revalidation. Catalog inclusion does not establish compatibility.\n\nTargets DSH 0.2.1-rc.2 exactly, Cordis 4.0.5 and Node.js 22.19+. Version 0.2.0 uses real native theme backends, configuration validation/persistence and isolated pre-install checks. A fixed 549-entry catalog snapshot was prepared and runnable candidates exercised individually on macOS: 454 passed basic runtime checks; 95 remained blocked, including obsolete interfaces, missing resources and runtime faults. Real market installation of dsh-ads and ORCA Link, native configuration writes, restart recovery and coinstallation were verified. Windows/Linux devices and every additional feature or plugin combination are not verified. Theme backends retain normal Node/DSH capabilities; preflight is not a malicious-code sandbox.",
+  "tags": [
+    "themes",
+    "appearance",
+    "market",
+    "compatibility"
+  ],
+  "category": "ui",
+  "license": "MIT",
+  "author": {
+    "name": "gulagala001",
+    "url": "https://github.com/gulagala001"
+  }
+}
