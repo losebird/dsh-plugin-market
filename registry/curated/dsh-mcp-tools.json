@@ -1,0 +1,16 @@
+{
+  "id": "dsh-mcp-tools",
+  "name": "MCP 工具管理器",
+  "type": "bundle",
+  "category": "tools",
+  "repo": "hxlog/dsh-mcp-tools",
+  "spec": "dsh-mcp-tools",
+  "description": "在 DeepSeek Harness 设置里管理 MCP 服务器与工具：支持 streamable-http / stdio、Postman 式请求头、连通性测试，并按工具开关——停用的工具不会注册进模型。",
+  "longDescription": "为 DeepSeek Harness 提供设置内的 MCP 服务器管理：添加 streamable-http（URL + 请求头）或 stdio（命令/参数/环境变量）服务器，请求头按 Postman 方式逐行填写并默认掩码；启用前可测试连通性并查看工具数量；每个工具是一个 chip，点击即从模型工具列表中移除，停用的工具不占上下文也无法被误调用。状态保存在本机 ~/.dsh/dsh-mcp-tools/state.json。",
+  "license": "MIT",
+  "author": {
+    "name": "hxlog",
+    "url": "https://github.com/hxlog"
+  },
+  "version": "1.0.2"
+}
