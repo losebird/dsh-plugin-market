@@ -1,0 +1,19 @@
+{
+  "id": "gulagala001-dsh-extensions",
+  "name": "dsh-extensions",
+  "type": "bundle",
+  "repo": "gulagala001/dsh-extensions",
+  "spec": "https://github.com/gulagala001/dsh-extensions/releases/download/v0.1.2-dsh.0.2.1-rc.3/dsh-extensions-0.1.2-dsh.0.2.1-rc.3.tgz",
+  "description": "在 DSH 插件页管理 Skill、MCP 服务器、指令文件、自定义命令和 Hooks。",
+  "longDescription": "Manage skills, MCP servers, instruction files, custom commands and hooks. Exact DSH 0.2.1-rc.3; Node.js 22.19+. See README for usage and permissions.",
+  "tags": [
+    "extensions",
+    "skills"
+  ],
+  "category": "skills",
+  "license": "MIT",
+  "author": {
+    "name": "gulagala001",
+    "url": "https://github.com/gulagala001"
+  }
+}
