@@ -1,0 +1,19 @@
+{
+  "id": "gulagala001-dsh-persona-plugin",
+  "name": "dsh-persona-plugin",
+  "type": "bundle",
+  "repo": "gulagala001/dsh-persona-plugin",
+  "spec": "https://github.com/gulagala001/dsh-persona-plugin/releases/download/v0.1.2-dsh.0.2.1-rc.3/gulagala001-dsh-persona-plugin-0.1.2-dsh.0.2.1-rc.3.tgz",
+  "description": "创建、导入和管理人格预设，支持全局与单会话选择。",
+  "longDescription": "Create and manage personality presets with global and per-conversation choices. Exact DSH 0.2.1-rc.3; Node.js 22.19+. See README for usage and permissions.",
+  "tags": [
+    "persona",
+    "personality"
+  ],
+  "category": "agent",
+  "license": "MIT",
+  "author": {
+    "name": "gulagala001",
+    "url": "https://github.com/gulagala001"
+  }
+}
