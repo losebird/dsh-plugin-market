@@ -1,0 +1,18 @@
+{
+  "id": "dsh-radeon-capacity",
+  "name": "Radeon 容量",
+  "type": "bundle",
+  "package": "dsh-radeon-capacity",
+  "repo": "lcy362/dsh-radeon-capacity",
+  "spec": "https://github.com/lcy362/dsh-radeon-capacity/releases/download/v0.1.0/dsh-radeon-capacity-0.1.0.tgz",
+  "version": "v0.1.0",
+  "description": "AMD Radeon Cloud 模型的忙闲度（AI Capacity）：模型选择器里每个模型一枚容量徽章，当前模型的容量就在模型名同一行。",
+  "longDescription": "在点下模型之前就知道它现在挤不挤。\n\nAMD 控制台那根「AI Capacity」进度条的来源是 `GET /radeon/api/tokenfactory/load`，这个插件把它接到 DSH 的模型选择器上：\n\n- **模型选择器**：每个 Radeon 模型名后一枚徽章，`● Idle 18%`（绿）/ `● Busy 63%`（橙）/ `● Full 100%`（红）\n- **模型名同一行**：当前选中模型的容量读数，就在模型名左边 —— 和 WorkBuddy / Trae 挂积分的位置一致，而不是掉到输入框下方。选定模型、还没开始会话时同样显示\n- **设置页**：已写入的模型连同实时容量逐条列出\n\n徽章是**探测到 Radeon provider 之后才注册**的。没有 Radeon provider 时它根本不占那个槽，不会把内核自带的模型标注（含 1017 发布标记）顶掉。\n\n**已经配好 Radeon provider 的人装完就有读数**：插件按 baseURL 里是否含 `developer.amd.com.cn` 认人，不看你把 provider 叫 `amd` 还是别的，也不管密钥引用叫什么，已有配置不需要改任何东西。\n\n**顺带的配置能力**（可选）：可以在插件自己的设置页里一键把 provider 写进 DSH **用户层**配置 —— 写在用户层意味着**卸载本插件后 provider 依然可用**，不会出现「卸插件 = 删供应商」。也可以在插件里选收录哪些模型，未实测的新模型会以「不声明思考档位」的方式写入（猜档位会 400）。\n\n**额度仅作展示**：网关会回 `x-ratelimit-*-user-daily-usd`，但 AMD 目前免费不限量，这个数不按它限量，所以只作参考值弱化显示，永远不 gate 调用。\n\n界面读数一律英文（`Idle / Busy / Full` 是 AMD 控制台自己的术语），设置页中英双语跟随界面语言。\n\n44 项测试全绿（含把客户端 bundle 真加载一遍的界面集成测试）。MIT。\n\n源码与说明：https://github.com/lcy362/dsh-radeon-capacity\n需要 DeepSeek Harness >= 0.2.0-rc.1。",
+  "category": "ui",
+  "tags": ["amd", "radeon", "capacity", "ai-capacity", "quota", "model-picker", "token-factory"],
+  "license": "MIT",
+  "author": {
+    "name": "lcy362",
+    "url": "https://github.com/lcy362"
+  }
+}
