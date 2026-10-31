@@ -1597,7 +1597,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [auth-gate](https://github.com/javaxiaov/deepseek-herness-login) Login gate + account settings for the DeepSeek Harness web UI. Host persists account/passw ⭐ 1 ⬇ 0 · 手动安装
 - [dsh-client-ui-m3-theme](https://github.com/DarkskyX15/dsh-client-ui-m3-theme) Material 3 theme plugin for DeepSeek Harness: full M3 token mapping (light/dark palettes w ⭐ 1 ⬇ 0 · 未验证 · 手动安装
 - [dsh-theme-plugin](https://github.com/gulagala001/dsh-theme-plugin) 在 DSH 设置中统一管理外观和主题，浏览带图片的多来源市场，一键检查安装，并提供失败恢复与 AI 修复说明。 ⭐ 0 ⬇ 0
-- [提示词改写](https://github.com/huaguoxingkong/dsh-prompt-rewriter) 在输入框旁加一个按钮，把草稿原地改写成目标、格式、约束齐全的可执行提示词；不发送、不弹预览窗，可按 Ctrl+Z 还原。 ⭐ 0 ⬇ 0 · v1.5.1
+- [提示词改写](https://github.com/huaguoxingkong/dsh-prompt-rewriter) 在输入框旁加一个按钮，把草稿原地改写成目标、格式、约束齐全的可执行提示词；不发送、不弹预览窗，可按 Ctrl+Z 还原。 ⭐ 0 ⬇ 0 · v1.6.2
 - [DSH Background · 多区域背景](https://github.com/flora-ari/dsh-background) 为全局、聊天和侧边栏设置独立图片背景，支持图库轮播、透明度与按比例缩放。 ⭐ 0 ⬇ 0 · v0.1.9
 - [dsh-projects](https://github.com/WenhongPan/dsh-projects) Project and session organization for DeepSeek Harness: multi-folder projects, attention su ⭐ 0 ⬇ 0 · v0.3.0-alpha.1
 - [dsh-pwa](https://github.com/jackxu925/dsh-pwa) Phone-first PWA for DeepSeek Harness: sessions, streaming chat, approvals on iOS and Andro ⭐ 0 ⬇ 0 · 1.10.2
