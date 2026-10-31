@@ -1,0 +1,18 @@
+{
+  "id": "dsh-session-categories",
+  "name": "会话分类（Session Categories）",
+  "type": "bundle",
+  "repo": "CleverYyt/dsh-session-categories",
+  "spec": "https://github.com/CleverYyt/dsh-session-categories/releases/download/v0.2.0/dsh-session-categories-0.2.0.tgz",
+  "description": "把 DSH 会话划进分类、在分类下新建会话，并在每轮对话结束后用 AI 判定该归哪一类、标题是否该改。",
+  "longDescription": "给 DSH Web 界面加一层「会话分类」。\n\n- **划入分类**：任意会话归入某个分类，原生侧边栏行首出现分类色条。\n- **在分类下新建会话**：点分类标题右侧的 `+`，新建的空白会话直接归入该分类。\n- **AI 自动分类**：每轮结束后后台判断该归哪一类、标题是否还能靠它找回来，建议以 chip 形式出现在输入框工具行，点一下采纳或忽略。\n- **侧边栏按分类筛选**：工作区列表上方的漏斗按钮，用原生列表过滤，不替换原生组件。\n- **归档 / 搜索 / 花费台账**：归档分类独立成视图；面板支持搜索、分类跳转条、吸顶标题，并记录每次模型调用的花费（可设上限）。\n\n无构建步骤、无运行时依赖（peer 依赖由宿主提供）。状态只写在 `$DSH_HOME/storages/dsh-session-categories/state.json`，不写任何会话日志。\n\n仓库：https://github.com/CleverYyt/dsh-session-categories",
+  "license": "MIT",
+  "author": {
+    "name": "CleverYyt",
+    "url": "https://github.com/CleverYyt"
+  },
+  "version": "v0.2.0",
+  "tags": ["session", "sidebar", "categories", "ai", "i18n", "productivity"],
+  "category": "session",
+  "source": "curated"
+}
