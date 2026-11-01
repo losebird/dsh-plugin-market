@@ -1,0 +1,17 @@
+{
+  "id": "dsh-plugin-toolkit",
+  "name": "插件体检",
+  "type": "bundle",
+  "repo": "WJDdidi-1/dsh-plugin-toolkit",
+  "spec": "dsh-plugin-toolkit",
+  "version": "0.13.6",
+  "description": "插件作者的安装前检查：按 npm 的方式打包、安装、import 根导出并挂载面板，发布前就发现装不上的问题。",
+  "longDescription": "写 DSH 插件最贵的一课是「装上了，但什么都不做」。这个工具把那一步提前到发布之前：\n\n- `verify`：按 npm 的方式打包 → 把 tarball 装进临时目录 → import 加载器真正会 import 的那个根导出 → 挂载面板。`files` 漏了 `client.js`、根导出指向 CLI、声明了 `dsh.client` 却没有 `exports[\"./client\"]`，都会在这里失败，而不是在别人的 profile 里。\n- `doctor`：清单层面的检查（engines、README 的 Requirements、bundle patch、根导出、client 声明、files 清单）。\n- `init`：脚手架，钉住自己的版本，生成的 README 自带「通过检查」徽章。\n- `dev`：源码变化 → 推给正在运行的应用，并在 `/plugins/events` 上等到真正的重载帧。\n- `release`：打 tag、轮询 npm 传播、写市场索引、开 PR。\n\n侧栏面板「Plugin doctor」是同一套检查的图形版：输入插件文件夹，直接看哪一项会失败。它也支持填 `owner/repo` 或 GitHub 链接，先把仓库拉下来再检查。\n\n131 项测试，CI 跑三平台 × 三个 Node 版本。Apache-2.0。\n\n源码：https://github.com/WJDdidi-1/dsh-plugin-toolkit\n需要 DeepSeek Harness >= 0.2.0。",
+  "category": "dev",
+  "tags": ["preflight", "plugin-authoring", "verify", "release", "ci"],
+  "license": "Apache-2.0",
+  "author": {
+    "name": "WJDdidi-1",
+    "url": "https://github.com/WJDdidi-1"
+  }
+}
