@@ -6,7 +6,7 @@
   "spec": "https://github.com/Wuzeyu-sz/dsh-orig-protocols/releases/download/v0.1.0/dsh-orig-protocols-v0.1.0.zip",
   "version": "v0.1.0",
   "author": {
-    "name": "Mercy",
+    "name": "Wuzeyu-sz",
     "url": "https://github.com/Wuzeyu-sz"
   },
   "description": "作者自建的六道结论关卡，从本机生产事故逐条蒸馏：度量自检、对照稳健性、事件级 R、证伪后落点清理、派生字段一致性、审计报告复核。",
