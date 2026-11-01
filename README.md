@@ -10200,7 +10200,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-columbina-pet](https://github.com/Yuanawaqwq/dsh-columbina-pet) 哥伦比娅 2D live 桌宠 —— 四套形象、76 句三语原声台词、天气播报、真实物理。DeepSeek Harness 插件（基于 dsh-pet 0.3.8，已移除 3D 形 ⭐ 1 ⬇ 116 · 手动安装 · v1.2.1
 - [yuhao-pet](https://github.com/dlpufan/yuhao-pet) DSH Web GUI 桌面宠物「宇昊」：可拖拽/投喂/玩耍/洗澡/打针吃药/学习/打工/积分商店，token 消耗自动攒积分。 ⭐ 1 ⬇ 0 · 手动安装
 - [大肥鱼](https://github.com/AiChiJiMaoRen/dsh-dafeiyu-chan) 鲸鱼娘陪伴看板娘：九分娇一分傲人设，桌宠气泡会话 + 记忆 + 点子 + 新建会话护航 ⭐ 0 ⬇ 0 · v0.1.0
-- [赛博木鱼](https://github.com/TongY1n/ui-muyu) 一个赛博木鱼：可拖拽、点击敲击、累积功德的 Web 悬浮小摆件 ⭐ 0 ⬇ 0 · 0.1.4
+- [赛博木鱼](https://github.com/TongY1n/ui-muyu) 一个赛博木鱼：可拖拽、点击敲击、累积功德的 Web 悬浮小摆件 ⭐ 0 ⬇ 0 · 0.1.6
 - [dsh-chang-kaishen-mode](https://github.com/yue-xiaxing/dsh-chang-kaishen-mode) 常凯申模式：一个纯娱乐向的人物饰演开关，打开后自动向 AI 注入蒋介石（常凯申）角色扮演提示词。 ⭐ 0 ⬇ 6 · v1.0.2
 - [dsh-other-api](https://github.com/ShukebtAb/Dsh-OtherAPI) DeepSeek Harness 插件：一键配置任意 OpenAI 兼容 API 并自动带思考模式，同时规避 developer 角色被第三方端点拒绝（content_filter ⭐ 0 ⬇ 0
 - [dsh-personal](https://github.com/ChengqianHuang/dsh-personal) Personal assistant bundle: structured personal data in SQLite with capture, query, and rev ⭐ 0 ⬇ 0 · 手动安装

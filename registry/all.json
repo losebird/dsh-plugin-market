@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-31T16:41:26.945Z",
+  "updatedAt": "2026-11-01T03:06:02.035Z",
   "items": [
     {
       "id": "rea-agents",
@@ -241400,14 +241400,14 @@
       "name": "赛博木鱼",
       "type": "bundle",
       "repo": "TongY1n/ui-muyu",
-      "spec": "https://github.com/TongY1n/ui-muyu/releases/download/v0.1.4/deepseek-ai-dsh-client-ui-muyu-0.1.4.tgz",
+      "spec": "https://github.com/TongY1n/ui-muyu/releases/download/v0.1.6/dsh-ui-muyu-0.1.6.tgz",
       "description": "一个赛博木鱼：可拖拽、点击敲击、累积功德的 Web 悬浮小摆件",
       "license": "MIT",
       "author": {
         "name": "TongY1n",
         "url": "https://github.com/TongY1n"
       },
-      "version": "0.1.4",
+      "version": "0.1.6",
       "category": "fun",
       "tags": [
         "fun",
