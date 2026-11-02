@@ -2,15 +2,15 @@
   "id": "dsh-original-skills",
   "name": "纯原创技能包",
   "type": "pack",
-  "repo": "Wuzeyu-sz/dsh-original-skills",
-  "spec": "https://github.com/Wuzeyu-sz/dsh-original-skills/releases/download/v0.1.0/dsh-original-skills-v0.1.0.zip",
+  "repo": "OWNER/dsh-original-skills",
+  "spec": "https://github.com/OWNER/dsh-original-skills/releases/download/v0.1.0/dsh-original-skills-v0.1.0.zip",
   "version": "v0.1.0",
   "author": {
     "name": "Wuzeyu-sz",
     "url": "https://github.com/Wuzeyu-sz"
   },
-  "description": "作者自建的纯原创 DSH 技能（5 个）：dsh-memory-management, dsh-superagent-setup, github-device-flow-auth, pa-descriptive-claim-repro, windows-toast-provenance-forensics",
-  "longDescription": "作者自建的纯原创 DSH 技能（5 个）：dsh-memory-management, dsh-superagent-setup, github-device-flow-auth, pa-descriptive-claim-repro, windows-toast-provenance-forensics",
+  "description": "作者自建的纯原创 DSH 技能（2 个）：dsh-local-plugin-authoring, dsh-plugin-upstream-contribute",
+  "longDescription": "作者自建的纯原创 DSH 技能（2 个）：dsh-local-plugin-authoring, dsh-plugin-upstream-contribute",
   "tags": [
     "skill",
     "original"
@@ -19,11 +19,8 @@
   "license": "MIT",
   "contents": {
     "skills": [
-      "dsh-memory-management",
-      "dsh-superagent-setup",
-      "github-device-flow-auth",
-      "pa-descriptive-claim-repro",
-      "windows-toast-provenance-forensics"
+      "dsh-local-plugin-authoring",
+      "dsh-plugin-upstream-contribute"
     ],
     "presets": []
   },
