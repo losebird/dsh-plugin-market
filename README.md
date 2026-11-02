@@ -9407,7 +9407,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [世舶科技招投标数据 Skills](https://github.com/Tingman/baobiao-api-skills) 世舶科技招投标数据 API 场景 Skill 扩展包，覆盖招标项目查询、招标公告查询、中标项目查询、中标结果查询、项目详情与附件获取、政府采购意向、合同公告、拟在建项目查询等高频需 ⭐ 0 ⬇ 0 · 扩展包 · v1.0.1
 - [dsh-plugin-upgrade](https://github.com/PerryLink/dsh-plugin-upgrade) Upgrade skill for DSH plugin authors: one package carrying one corridor index that reads t ⭐ 0 ⬇ 0
 - [dsh-extensions](https://github.com/gulagala001/dsh-extensions) 在 DSH 插件页管理 Skill、MCP 服务器、指令文件、自定义命令和 Hooks。 ⭐ 0 ⬇ 0
-- [语音生成调度](https://github.com/vibe-weaver/media-router-skill) 给文本模型补上出图、出视频、出语音的能力，多模型池调度，失败自动降级和熔断，零依赖纯标准库 ⭐ 0 ⬇ 0 · 扩展包 · v1.3.0
+- [语音生成调度](https://github.com/vibe-weaver/media-router-skill) 给文本模型补上出图、出视频、出语音的能力，多模型池调度，失败自动降级和熔断，零依赖纯标准库 ⭐ 0 ⬇ 0 · 扩展包 · v1.4.0
 - [dsh-browser-service](https://github.com/lyp88997/dsh-browser-service) 一个包把 DSH 接上自建的无头浏览器：单例 CDP 守护进程 + 33 个 browser_* 工具面 + ctx.browser provider（cdp-daemon），另带 ⭐ 0 ⬇ 1.1k · v0.8.3
 - [hotspot](https://github.com/zhikai0915-netizen/hotspot) DSH GitHub 热榜插件：独立可拖拽浮层，按日/周/月给模型插件、Skill、MCP 服务等小工具排名；用 DSH 的模型判定相关性（剔除平台级项目与合集）并生成中文简介，另 ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-group-meeting-slides](https://github.com/wld12314/dsh-group-meeting-slides) DeepSeek Harness skill that turns an English research paper PDF into a Chinese group-meeti ⭐ 0 ⬇ 0 · v1.0.0
