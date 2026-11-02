@@ -1,0 +1,32 @@
+{
+  "id": "dsh-orig-protocols",
+  "name": "证据协议族：尺子/对照/E[R]/落点/派生字段/复核",
+  "type": "pack",
+  "repo": "Wuzeyu-sz/dsh-orig-protocols",
+  "spec": "https://github.com/Wuzeyu-sz/dsh-orig-protocols/releases/download/v0.1.1/dsh-orig-protocols-v0.1.1.zip",
+  "version": "v0.1.1",
+  "author": {
+    "name": "Wuzeyu-sz",
+    "url": "https://github.com/Wuzeyu-sz"
+  },
+  "description": "作者自建的六道结论关卡，从本机生产事故逐条蒸馏：度量自检、对照稳健性、事件级 R、证伪后落点清理、派生字段一致性、审计报告复核。",
+  "longDescription": "作者自建的六道结论关卡，从本机生产事故逐条蒸馏：度量自检、对照稳健性、事件级 R、证伪后落点清理、派生字段一致性、审计报告复核。",
+  "tags": [
+    "methodology",
+    "statistics",
+    "evidence",
+    "audit"
+  ],
+  "category": "skills",
+  "license": "MIT",
+  "contents": {
+    "skills": [
+      "evidence-protocol"
+    ],
+    "presets": []
+  },
+  "install": {
+    "method": "pack"
+  },
+  "source": "curated"
+}
