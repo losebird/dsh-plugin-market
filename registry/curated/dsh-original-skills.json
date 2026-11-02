@@ -2,8 +2,8 @@
   "id": "dsh-original-skills",
   "name": "纯原创技能包",
   "type": "pack",
-  "repo": "OWNER/dsh-original-skills",
-  "spec": "https://github.com/OWNER/dsh-original-skills/releases/download/v0.1.0/dsh-original-skills-v0.1.0.zip",
+  "repo": "Wuzeyu-sz/dsh-original-skills",
+  "spec": "https://github.com/Wuzeyu-sz/dsh-original-skills/releases/download/v0.1.0/dsh-original-skills-v0.1.0.zip",
   "version": "v0.1.0",
   "author": {
     "name": "Wuzeyu-sz",
