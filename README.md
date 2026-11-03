@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**11587** 个插件 · **10708** 个可一键安装
+**11588** 个插件 · **10709** 个可一键安装
 
 安装市场：
 
@@ -22,7 +22,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [Agent 与工作流](#agent) (1686)
 - [工具与集成](#tools) (1189)
 - [开发与输入](#dev) (654)
-- [通信与移动](#comm) (394)
+- [通信与移动](#comm) (395)
 - [安全与权限](#auth) (576)
 - [技能与扩展](#skills) (247)
 - [市场与发现](#market) (730)
@@ -8788,6 +8788,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-voice](https://github.com/motongv/dsh-voice) 给 DeepSeek Harness（DSH / DeepSeek Hermes）加语音能力的社区插件：输入框语音输入（可配快捷键）+ 回答朗读（微软 Edge 神经网络音色，可换 ⭐ 0 ⬇ 0
 - [lingmu-dsh-plugin](https://github.com/BigGayJiuMo/lingmu-dsh-plugin) LingMu (lmuai.com) relay usage dashboard for DeepSeek Harness: token usage, balance, cache ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [dshpilot](https://github.com/zoomc/dshpilot) DSHPilot — Desktop Workstation for DeepSeek Harness ⭐ 0 ⬇ 0 · 未验证 · git clone
+- [dsh-toast-log](https://github.com/lvwancong/dsh-toast-log) Toast 留痕铃铛：一闪而过的提示全部进可回看面板（IDEA Event Log 式）。网页 toast + Windows 系统通知双通道合并，侧栏铃铛 + 未读角标，SSE  ⭐ 0 ⬇ 0 · v0.1.7
 
 ## 安全与权限
 
