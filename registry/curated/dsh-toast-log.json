@@ -1,0 +1,15 @@
+{
+  "id": "dsh-toast-log",
+  "name": "dsh-toast-log",
+  "type": "bundle",
+  "repo": "lvwancong/dsh-toast-log",
+  "spec": "https://github.com/lvwancong/dsh-toast-log/releases/download/v0.1.7/dsh-toast-log-0.1.7.tgz",
+  "description": "Toast 留痕铃铛：一闪而过的提示全部进可回看面板（IDEA Event Log 式）。网页 toast + Windows 系统通知双通道合并，侧栏铃铛 + 未读角标，SSE 亚秒推送。",
+  "license": "MIT",
+  "author": {
+    "name": "lvwancong",
+    "url": "https://github.com/lvwancong"
+  },
+  "version": "v0.1.7",
+  "source": "curated"
+}
