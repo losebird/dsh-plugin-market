@@ -1,0 +1,32 @@
+{
+  "id": "dsh-plugin-authoring",
+  "name": "插件开发与上游协作 / Plugin Authoring & Upstream Contribution",
+  "type": "pack",
+  "repo": "Wuzeyu-sz/dsh-plugin-authoring",
+  "spec": "https://github.com/Wuzeyu-sz/dsh-plugin-authoring/releases/download/v0.2.1/dsh-plugin-authoring-v0.2.1.zip",
+  "version": "v0.2.1",
+  "author": {
+    "name": "Wuzeyu-sz",
+    "url": "https://github.com/Wuzeyu-sz"
+  },
+  "description": "在本机新建非 npm 的 DSH 插件并挂进 profile，再按上游 CONTRIBUTING 把改动回提（Issue/PR）。 / Author a local DSH plugin, mount it into a profile, and contribute the change upstream (Issue/PR).",
+  "longDescription": "## 中文\n\n两个技能：\n\n- **dsh-local-plugin-authoring**：读已装插件当契约样本 → 写 package.json（main + exports）→ 宿主路由 → 客户端 `__ModuleLoader__` 注册 → 挂进 profile → 三重验收。\n- **dsh-plugin-upstream-contribute**：读上游 CONTRIBUTING 判断能否直接 PR → 按 ISSUE_TEMPLATE 查重与写正文 → 提交并回读核验。\n\n安装后落在 `~/.agents/skills/<id>/`。\n\n## English\n\nTwo skills:\n\n- **dsh-local-plugin-authoring**: read an installed plugin as the contract sample, write `package.json` (main + exports), register host routes, mount client slots via `__ModuleLoader__`, wire the profile, then verify in three ways.\n- **dsh-plugin-upstream-contribute**: read the upstream CONTRIBUTING to decide whether a direct PR is allowed, dedupe and draft by its ISSUE_TEMPLATE, submit, then read back to verify.\n\nInstalls under `~/.agents/skills/<id>/`.",
+  "tags": [
+    "skill",
+    "plugin",
+    "contribution"
+  ],
+  "category": "skills",
+  "license": "MIT",
+  "contents": {
+    "skills": [
+      "dsh-local-plugin-authoring",
+      "dsh-plugin-upstream-contribute"
+    ],
+    "presets": []
+  },
+  "install": {
+    "method": "pack"
+  },
+  "source": "curated"
+}
