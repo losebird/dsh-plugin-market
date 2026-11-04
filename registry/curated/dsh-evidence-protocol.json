@@ -1,10 +1,10 @@
 {
   "id": "dsh-evidence-protocol",
-  "name": "DSH 证据协议技能包 / DSH Evidence Protocol Skills",
+  "name": "证据协议：结论前的六道关卡 / Evidence Protocol: Six Gates Before a Conclusion",
   "type": "pack",
   "repo": "Wuzeyu-sz/dsh-evidence-protocol",
-  "spec": "https://github.com/Wuzeyu-sz/dsh-evidence-protocol/releases/download/v0.2.0/dsh-evidence-protocol-v0.2.0.zip",
-  "version": "v0.2.0",
+  "spec": "https://github.com/Wuzeyu-sz/dsh-evidence-protocol/releases/download/v0.2.1/dsh-evidence-protocol-v0.2.1.zip",
+  "version": "v0.2.1",
   "author": {
     "name": "Wuzeyu-sz",
     "url": "https://github.com/Wuzeyu-sz"
