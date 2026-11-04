@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**11761** 个插件 · **10881** 个可一键安装
+**11762** 个插件 · **10882** 个可一键安装
 
 安装市场：
 
@@ -24,7 +24,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [开发与输入](#dev) (659)
 - [通信与移动](#comm) (404)
 - [安全与权限](#auth) (581)
-- [技能与扩展](#skills) (252)
+- [技能与扩展](#skills) (253)
 - [市场与发现](#market) (742)
 - [趣味与个性](#fun) (155)
 - [其他](#other) (1160)
@@ -9756,6 +9756,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [airesearch-plugin](https://github.com/WOOK98/airesearch-plugin) AIResearch skills for DeepSeek Harness: snapshot, deep dive, morning brief, and SEC filing ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-provision](https://github.com/MoYuSOwO/dsh-provision) Manifest-driven multi-source asset manager for DeepSeek Harness profiles (npm/github/relea ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [dsh-understand-anything](https://github.com/GongYuanCaiJi/dsh-understand-anything) 理解任何东西技能包（移植自 Understand-Anything） ⭐ 0 ⬇ 0
+- [ Evidence Protocol: Six Gates Before a Conclusion](https://github.com/Wuzeyu-sz/dsh-evidence-protocol) 下结论前的六道关卡：度量自检、对照稳健性、事件级 R、证伪后落点清理、派生字段一致性、审计报告复核。 / Six gates before a conclusion: metric ⭐ 0 ⬇ 0 · 扩展包 · v0.2.1
 
 ## 市场与发现
 
