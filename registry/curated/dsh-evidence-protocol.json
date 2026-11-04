@@ -1,0 +1,32 @@
+{
+  "id": "dsh-evidence-protocol",
+  "name": "证据协议：结论前的六道关卡 / Evidence Protocol: Six Gates Before a Conclusion",
+  "type": "pack",
+  "repo": "Wuzeyu-sz/dsh-evidence-protocol",
+  "spec": "https://github.com/Wuzeyu-sz/dsh-evidence-protocol/releases/download/v0.2.1/dsh-evidence-protocol-v0.2.1.zip",
+  "version": "v0.2.1",
+  "author": {
+    "name": "Wuzeyu-sz",
+    "url": "https://github.com/Wuzeyu-sz"
+  },
+  "description": "下结论前的六道关卡：度量自检、对照稳健性、事件级 R、证伪后落点清理、派生字段一致性、审计报告复核。 / Six gates before a conclusion: metric self-test, comparison robustness, event-level R, post-falsification cleanup, derived-field consistency, audit-report review.",
+  "longDescription": "## 中文\n\n一个技能 `evidence-protocol`，内含 6 份逐字保留的协议正文（references/）：\n\n1. 度量自检（正例/负例/数量级三关）\n2. 对照稳健性（C1~C26）\n3. 事件级 R 验证（真实出场 + 实测成本 + 四验）\n4. 证伪后生产落点清理\n5. 派生字段生命周期审计\n6. 审计报告复核\n\n## English\n\nOne skill `evidence-protocol` with six verbatim protocols under `references/`: metric self-test, comparison robustness (C1–C26), event-level R verification, post-falsification production cleanup, derived-field lifecycle audit, and audit-report review.",
+  "tags": [
+    "skill",
+    "methodology",
+    "statistics",
+    "audit"
+  ],
+  "category": "skills",
+  "license": "MIT",
+  "contents": {
+    "skills": [
+      "evidence-protocol"
+    ],
+    "presets": []
+  },
+  "install": {
+    "method": "pack"
+  },
+  "source": "curated"
+}
