@@ -1,0 +1,19 @@
+{
+  "id": "dsh-auto-click",
+  "name": "侧栏文件手势",
+  "type": "bundle",
+  "package": "dsh-auto-click",
+  "repo": "Analoty/dsh-auto-click",
+  "spec": "dsh-auto-click",
+  "version": "v0.1.3",
+  "description": "侧边栏文件的鼠标手势：Ctrl+左键用系统默认应用打开，右键弹出打开、打开方式、另存为、复制路径、复制内容、在资源管理器中定位的菜单。",
+  "longDescription": "给 DSH Web GUI 侧边栏的文件加三条鼠标手势，不动宿主的单击预览。\n\n| 操作 | 结果 |\n|---|---|\n| 左键单击 | 保持 DSH 自己的侧栏预览 |\n| Ctrl + 左键单击 | 用系统默认应用打开；没有默认应用时弹出系统的「打开方式」 |\n| 右键单击文件 | 弹出文件菜单 |\n| 右键单击普通链接 | 弹出「复制链接」 |\n\n文件菜单包含：打开文件、打开方式、另存为、复制绝对路径、复制文件内容、在资源管理器中定位。成功操作不弹提示——复制路径本身就是反馈，只有失败或被拒绝时才提示。\n\n**「打开方式」交给操作系统。** 插件不维护自己的应用列表。早期版本按扩展名枚举处理器，两个方向都错过：给 `.md` 列出过根本不支持 Markdown 的程序，也把 `.html` 的列表清空过（该格式的 ProgId 是 `htmlfile` / `ChromeHTML` / `MSEdgeHTM`，没有一个含 `.html`）。现在 Windows 走 Shell COM 的 `InvokeVerb('openas')`，macOS 走 `open -a`。\n\n**打开与定位走 DSH 自己的 `sessionController.openWorkspacePath`**，因此继承宿主的路径校验，插件不会绕开它自己启动程序。聊天里的文件链接和侧栏节点携带的是工作区相对路径，所以浏览器半会把当前会话 id 一并发送，由 Host 在该会话的工作区内解析；没有已知工作区时相对路径会被拒绝，而不是拿进程目录去猜。\n\n路径通过环境变量传给子进程，不拼接进命令行，因此文件名包含引号、`&`、`$(…)` 时也无法改变实际执行的命令。读取文件内容与另存为拒绝大于 8 MiB 的文件，而不是截断。\n\n需要 DSH >= 0.2.0-rc.1。Windows 完整支持，macOS 的「打开方式」可用，其他平台会明确报告不支持。MIT。\n\n源码与截图：https://github.com/Analoty/dsh-auto-click",
+  "category": "ui",
+  "tags": ["sidebar", "file-menu", "context-menu", "mouse-gesture", "open-with"],
+  "license": "MIT",
+  "author": {
+    "name": "Analoty",
+    "url": "https://github.com/Analoty"
+  },
+  "source": "curated"
+}
