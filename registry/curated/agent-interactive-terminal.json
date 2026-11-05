@@ -1,0 +1,23 @@
+{
+  "id": "agent-interactive-terminal",
+  "name": "Agent 交互式终端",
+  "type": "bundle",
+  "repo": "AyanamiiiRei/agent-interactive-terminal",
+  "spec": "https://github.com/AyanamiiiRei/agent-interactive-terminal/releases/download/v0.5.1/agent-interactive-terminal-0.5.1.tgz",
+  "description": "让 Agent 和人共用一个真正的 PTY 终端：屏幕投影、按键、等待条件，以及协作、只读、隔离三档访问权限。",
+  "longDescription": "把终端交给 Agent 使用，也让人随时接管。八个工具覆盖打开、写入、按键、截图、等待、调整尺寸、关闭和列出会话。右侧边栏的 xterm.js 面板与 Agent 共享同一个 PTY，真正敲键才转移控制权，空闲四秒自动交还。面板上的锁形与插头按钮分别切换到只读和隔离，权限由服务端强制；隔离会立刻中止 Agent 正在进行的等待，terminal_list 只留下脱敏记录。",
+  "category": "tools",
+  "tags": [
+    "terminal",
+    "pty",
+    "human-in-the-loop",
+    "xterm",
+    "interactive"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Ribo Skubla",
+    "url": "https://github.com/AyanamiiiRei"
+  },
+  "source": "curated"
+}
