@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-05T11:55:34.988Z",
+  "updatedAt": "2026-11-05T11:58:08.779Z",
   "items": [
     {
       "id": "rea-agents",
@@ -394313,6 +394313,33 @@
         "command": "git clone --recurse-submodules"
       },
       "githubId": 1334418427
+    },
+    {
+      "id": "dsh-code-report",
+      "name": "发布报告 / DSH Code Report",
+      "type": "bundle",
+      "repo": "f-e-n-g-0531/dsh-code-report",
+      "spec": "https://github.com/f-e-n-g-0531/dsh-code-report/releases/download/v1.0.2/feng0531-dsh-code-report-1.0.2.tgz",
+      "version": "1.0.2",
+      "description": "比较多个 Git/SVN 项目的固定版本差异，导出中文 Markdown 发布报告；模型分析需明确授权。",
+      "longDescription": "DSH Code Report 为 DeepSeek Harness 提供多项目发布报告，区分本地差异证据与可选模型分析，报告涵盖改动、对外接口、影响范围和 QA 测试范围。v1.0.2 比较范围保留所选分支名与固定提交号／SVN 修订号。\n\n要求 Node.js >=22、Git；SVN 项目还需 svn。使用 DSH 已配置模型，发送证据需明确许可；不自动重启 DSH。不宣称所有宿主版本兼容或市场安全认证。\n\n许可证为 DSH Code Report Non-Commercial Source Available License 1.0（自定义非商业源码公开许可证），不是 OSI 开源许可证；商业用途（含商业项目内部使用）需另行书面授权。完整条款：https://github.com/f-e-n-g-0531/dsh-code-report/blob/v1.0.2/LICENSE",
+      "category": "dev",
+      "license": "LicenseRef-DSH-Code-Report-NonCommercial-1.0",
+      "author": {
+        "name": "f-e-n-g-0531",
+        "url": "https://github.com/f-e-n-g-0531"
+      },
+      "tags": [
+        "git",
+        "svn",
+        "release-reports",
+        "qa"
+      ],
+      "source": "curated",
+      "install": {
+        "method": "dsh-plugin-add"
+      },
+      "verified": true
     }
   ]
 }

@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**11913** 个插件 · **11032** 个可一键安装
+**11914** 个插件 · **11033** 个可一键安装
 
 安装市场：
 
@@ -21,7 +21,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [会话与记忆](#session) (2379)
 - [Agent 与工作流](#agent) (1720)
 - [工具与集成](#tools) (1211)
-- [开发与输入](#dev) (665)
+- [开发与输入](#dev) (666)
 - [通信与移动](#comm) (412)
 - [安全与权限](#auth) (589)
 - [技能与扩展](#skills) (256)
@@ -8622,6 +8622,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-news](https://github.com/SongChengMing1/dsh-news) DSH Web GUI 新闻插件：侧边栏入口 + 弹窗聚合浏览国际新闻、知识科普、历史科普、AI 大模型新闻。Host 端 RSS 抓取/正文提取/图片代理（SSRF 防护 + 缓 ⭐ 0 ⬇ 0 · v0.1.0
 - [dsh-web-search-searxng](https://github.com/acdcgz/dsh-web-search-searxng) SearXNG-backed search provider (local meta-search JSON API) for the DeepSeek Harness web c ⭐ 0 ⬇ 0 · 手动安装
 - [dsh-anysearch](https://github.com/kenzone/dsh-anysearch) AnySearch-backed web search provider for DeepSeek Harness (ctx.web) ⭐ 0 ⬇ 0 · 未验证
+- [ DSH Code Report](https://github.com/f-e-n-g-0531/dsh-code-report) 比较多个 Git/SVN 项目的固定版本差异，导出中文 Markdown 发布报告；模型分析需明确授权。 ⭐ 0 ⬇ 0 · 1.0.2
 
 ## 通信与移动
 
