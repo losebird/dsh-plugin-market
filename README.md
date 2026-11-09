@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**12581** 个插件 · **11693** 个可一键安装
+**12583** 个插件 · **11695** 个可一键安装
 
 安装市场：
 
@@ -17,12 +17,12 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 
 ## 目录
 
-- [界面与主题](#ui) (2771)
+- [界面与主题](#ui) (2772)
 - [会话与记忆](#session) (2536)
 - [Agent 与工作流](#agent) (1805)
 - [工具与集成](#tools) (1254)
 - [开发与输入](#dev) (699)
-- [通信与移动](#comm) (436)
+- [通信与移动](#comm) (437)
 - [安全与权限](#auth) (617)
 - [技能与扩展](#skills) (267)
 - [市场与发现](#market) (785)
@@ -2802,6 +2802,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-ocgo-quota](https://github.com/fuzz1og/dsh-ocgo-quota) OpenCode Go usage floating widget for the DeepSeek Harness Web UI: a bottom-right overlay  ⭐ 0 ⬇ 0 · 未验证
 - [dsh-workbench](https://github.com/doebkblcya/dsh-workbench) DSH Web GUI right-side workbench plugin: a VS Code-style single right panel with Files/Git ⭐ 0 ⬇ 0
 - [dsh-settings-mcp-skills](https://github.com/w123456789zy/dsh-settings-mcp-skills) MCP Servers and Skills settings pages for the dsh web UI: mounts the official DeepSeek too ⭐ 0 ⬇ 0
+- [Muse 毛绒](https://github.com/zhule33-cmyk/muse-plush-skin) 毛绒玩偶皮肤：整窗粉蓝长绒，气泡和输入框是带毛边的肚皮色绒，品牌色变棕色纽扣，输入框上趴着一只小 Muse。 ⭐ 0 ⬇ 0
 
 ## 会话与记忆
 
@@ -9547,6 +9548,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-voice](https://github.com/motongv/dsh-voice) 给 DeepSeek Harness（DSH / DeepSeek Hermes）加语音能力的社区插件：输入框语音输入（可配快捷键）+ 回答朗读（微软 Edge 神经网络音色，可换 ⭐ 0 ⬇ 0
 - [lingmu-dsh-plugin](https://github.com/BigGayJiuMo/lingmu-dsh-plugin) LingMu (lmuai.com) relay usage dashboard for DeepSeek Harness: token usage, balance, cache ⭐ 0 ⬇ 0 · 未验证 · 手动安装
 - [dshpilot](https://github.com/zoomc/dshpilot) DSHPilot — Desktop Workstation for DeepSeek Harness ⭐ 0 ⬇ 0 · 未验证 · git clone
+- [DSH Pocket iOS](https://github.com/jqlong17/dsh-pocket-ios) 在 DSH「手机访问」设置页加入 iOS 客户端下载二维码与安装引导，把 DSH Pocket iOS 连接到本机 DSH。 ⭐ 0 ⬇ 0
 
 ## 安全与权限
 
