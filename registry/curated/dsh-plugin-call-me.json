@@ -1,0 +1,16 @@
+{
+  "id": "dsh-plugin-call-me",
+  "name": "dsh-plugin-call-me",
+  "type": "bundle",
+  "repo": "radres/dsh-plugin-call-me",
+  "spec": "github:radres/dsh-plugin-call-me",
+  "description": "Your DSH agent rings your phone through the /call-me app, reads its question aloud and gets the spoken answer back as text. Also sends and receives texts.",
+  "category": "comm",
+  "tags": ["phone", "voice", "notifications"],
+  "license": "MIT",
+  "author": {
+    "name": "radres",
+    "url": "https://github.com/radres"
+  },
+  "source": "curated"
+}
