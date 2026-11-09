@@ -1,0 +1,28 @@
+{
+  "id": "dsh-code-rules",
+  "name": "浠ｇ爜绾︽潫瑙勫垯 / DSH Code Rules",
+  "type": "bundle",
+  "repo": "codthewall/dsh-code-rules",
+  "spec": "https://github.com/codthewall/dsh-code-rules/releases/download/v0.2.0/dsh-code-rules-0.2.0.tgz",
+  "package": "dsh-code-rules",
+  "version": "0.2.0",
+  "description": "鎶婇」鐩殑浠ｇ爜绾︽潫鍐欐垚 CODE-RULES.md锛屾瘡杞嚜鍔ㄦ敞鍏ョ粰妯″瀷锛屽苟鎻愪緵鍛戒护涓庡伐鍏疯瀹冮殢浠ｇ爜涓€璧锋紨杩涖€?,
+  "longDescription": "缁?DeepSeek Harness 鐢ㄧ殑椤圭洰绾с€屼唬鐮佺害鏉熻鍒欍€嶆彃浠躲€俓n\n`/rules init` 浼氭帰娴嬩粨搴擄紙璇█鏍堛€佺洰褰曠粨鏋勩€佹祴璇曞懡浠ゃ€佸懡鍚嶉鏍硷級锛岀敓鎴愪竴浠戒節鑺傞鏋剁殑 `CODE-RULES.md`锛氭€诲垯銆佹枃浠朵笌鐩綍銆佸懡鍚嶃€佸崟鏂囦欢瑙勬ā涓婇檺銆佹敞閲婁笌鏂囨。銆侀敊璇鐞嗕笌鏃ュ織銆佸苟鍙戜笌姝婚攣銆佽嚜娴嬩笌楠岃瘉銆佸喕缁撴竻鍗曪紝鍏跺悗鏄彉鏇磋褰曘€傜敓鎴愬櫒涓嶄細鍐欍€屾湭璇嗗埆璇█銆嶃€屾湭鎺㈡祴鍒版祴璇曞懡浠ゃ€嶈繖绫荤┖璇濃€斺€旀帰娴嬩笉鍒板氨鎹㈡垚涓嶅甫鍗犱綅绗︾殑閫氱敤瑕佹眰銆俓n\n鍐欒繘鏂囦欢鐨勮鍒欐瘡杞嚜鍔ㄦ敞鍏ワ細鈮?000 瀛楃娉ㄥ叆鍏ㄦ枃锛屸墹12000 瀛楃娉ㄥ叆浜?40 琛屾憳瑕佸姞绔犺妭绱㈠紩锛屽啀闀垮氨鍙敞鍏?20 琛屾憳瑕侊紱鍐荤粨娓呭崟鍦ㄤ换浣曟。浣嶉兘瀹屾暣淇濈暀銆俓n\n缁存姢瀹冩湁涓夋潯璺細\n\n- 鍛戒护锛歚/rules status|add|update|freeze|unfreeze|rollback|off|on`\n- 宸ュ叿锛歚rules_update`锛屾ā鍨嬫敼瀹屼唬鐮佸悗鍙互鑷繁琛ヨ鍒欏苟璇存槑鐞嗙敱\n- 璁剧疆椤碉細宸︿晶瀵艰埅閲岀殑銆屼唬鐮佺害鏉熻鍒欍€嶆暣椤碉紝绠￠粯璁ゅ紑鍏充笌涓ゆ。娉ㄥ叆棰勭畻\n\n鍐欏叆鏄崟涓€璺緞锛氭棫姝ｆ枃鍏堣繘 `.rules/history/`锛堢幆褰笁浠ｏ級锛屽揩鐓у啓涓嶈繘鍘诲氨鏀惧純鏁存淇敼锛屾鏂囦竴涓瓧鑺傞兘涓嶅姩锛沗/rules rollback 1|2` 鍙互閫€鍥炰笂涓や唬锛屽洖閫€鏈韩涔熻繘鍘嗗彶銆俓n\n瑕佹眰锛歂ode.js >= 22.19锛汥SH >= 0.2.1-rc.2 < 0.4.0-0锛堝尯闂村瀹夸富浼氬湪鍚姩鏃舵嫆缁濆苟璇存槑鍘熷洜锛夈€傛彃浠舵湰韬病鏈夌涓夋柟杩愯鏃朵緷璧栵紝娴嬭瘯鐢?`node:test`銆俓n\n鏄庣‘涓嶅仛锛歮onorepo 鍒嗗奖鍝嶈寖鍥淬€佹牴鎹?diff 鑷姩鎺ㄦ柇瑙勫垯銆佸己鍒舵嫤鎴笉鍚堣浠ｇ爜銆佸彲瑙嗗寲瑙勫垯缂栬緫鍣ㄣ€佸鍑?ESLint 閰嶇疆銆?,
+  "category": "dev",
+  "license": "MIT",
+  "author": {
+    "name": "codthewall",
+    "url": "https://github.com/codthewall"
+  },
+  "tags": [
+    "code-conventions",
+    "code-review",
+    "rules",
+    "context-injection",
+    "maintainability"
+  ],
+  "source": "curated",
+  "install": {
+    "method": "dsh-plugin-add"
+  }
+}
