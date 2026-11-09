@@ -1,0 +1,23 @@
+{
+  "id": "dsh-pocket-ios",
+  "name": "DSH Pocket iOS",
+  "type": "bundle",
+  "repo": "jqlong17/dsh-pocket-ios",
+  "spec": "dsh-pocket-ios",
+  "description": "在 DSH「手机访问」设置页加入 iOS 客户端下载二维码与安装引导，把 DSH Pocket iOS 连接到本机 DSH。",
+  "longDescription": "在 DSH 设置 → 手机访问 页的局域网访问上方加入一张 iOS 卡片：下载二维码、最新 Release 页面和 IPA 直链，引导用户安装 DSH Pocket iOS（iPhone 原生客户端，开源、自签安装）。插件依赖 dsh-pocket，`dsh plugin add dsh-pocket-ios` 会一并装好手机访问所需的 dsh-pocket。iOS 客户端支持局域网与公网隧道连接、会话列表、历史与实时消息、Markdown 渲染、图片收发。",
+  "category": "comm",
+  "tags": [
+    "ios",
+    "mobile",
+    "qr",
+    "client",
+    "pocket"
+  ],
+  "license": "GPL-2.0",
+  "author": {
+    "name": "jqlong17",
+    "url": "https://github.com/jqlong17"
+  },
+  "source": "curated"
+}
