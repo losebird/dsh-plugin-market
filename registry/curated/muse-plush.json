@@ -1,0 +1,23 @@
+{
+  "id": "muse-plush",
+  "name": "Muse 毛绒",
+  "type": "bundle",
+  "repo": "zhule33-cmyk/muse-plush-skin",
+  "spec": "dsh-client-ui-skin-muse-plush",
+  "description": "毛绒玩偶皮肤：整窗粉蓝长绒，气泡和输入框是带毛边的肚皮色绒，品牌色变棕色纽扣，输入框上趴着一只小 Muse。",
+  "longDescription": "一只毛绒玩偶穿上 DSH —— 角色 Muse 是作者自设的原创形象，绒毛身体、耳朵、纽扣眼睛和输入框上那只小团子都出自这套皮肤自己的画法。\n\n- **身体**：整个窗口是粉蓝色长绒；侧栏直接露出绒毛，对话区盖一层半透明浅蓝，读字不累。\n- **肚皮**：用户气泡、输入框是灰米色肚皮绒，边缘经 SVG 位移滤镜变成毛茸茸的毛边，文字不受影响。\n- **纽扣**：品牌标记与发送键是玩偶胸前的深棕色纽扣。\n- **小团子**：输入框右上角趴着一只小 Muse，会眨眼、轻轻晃，可关。\n- **夜间**：同一只 Muse 关了灯，深蓝灰绒 + 暗米色肚皮。\n\n绒毛纹理不打包任何图片，启动时用 canvas 现画（按簇生成的上万根短纤维 + 绒团明暗，无缝平铺），所以毛色随便换。\n\n配合皮肤管理（`@smalltailqwq/dsh-client-ui-skin-deep-whale-manager`）可在「设置 → 皮肤管理 → Muse 毛绒」里调小团子、毛边、绒长、毛色与肚皮色；不装皮肤管理也能用，默认开满。",
+  "tags": [
+    "skin",
+    "theme",
+    "plush",
+    "fluffy",
+    "pastel",
+    "cute"
+  ],
+  "category": "ui",
+  "license": "MIT",
+  "author": {
+    "name": "zhule33-cmyk",
+    "url": "https://github.com/zhule33-cmyk"
+  }
+}
