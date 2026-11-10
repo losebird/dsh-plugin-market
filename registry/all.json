@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-10T13:48:56.450Z",
+  "updatedAt": "2026-11-10T13:49:29.797Z",
   "items": [
     {
       "id": "rea-agents",
@@ -423445,6 +423445,35 @@
         "command": "git clone --recurse-submodules"
       },
       "githubId": 1334418427
+    },
+    {
+      "id": "dsh-code-rules",
+      "name": "代码约束规则 / DSH Code Rules",
+      "type": "bundle",
+      "repo": "codthewall/dsh-code-rules",
+      "spec": "https://github.com/codthewall/dsh-code-rules/releases/download/v0.2.0/dsh-code-rules-0.2.0.tgz",
+      "package": "dsh-code-rules",
+      "version": "0.2.0",
+      "description": "把项目的代码约束写成 CODE-RULES.md，每轮自动注入给模型，并提供命令与工具让它随代码一起演进。",
+      "longDescription": "给 DeepSeek Harness 用的项目级「代码约束规则」插件。\n\n`/rules init` 会探测仓库（语言栈、目录结构、测试命令、命名风格），生成一份九节骨架的 `CODE-RULES.md`：总则、文件与目录、命名、单文件规模上限、注释与文档、错误处理与日志、并发与死锁、自测与验证、冻结清单，其后是变更记录。生成器不会写「未识别语言」「未探测到测试命令」这类空话——探测不到就换成不带占位符的通用要求。\n\n写进文件的规则每轮自动注入：≤6000 字符注入全文，≤12000 字符注入了 40 行摘要加章节索引，再长就只注入 20 行摘要；冻结清单在任何档位都完整保留。\n\n维护它有三条路：\n\n- 命令：`/rules status|add|update|freeze|unfreeze|rollback|off|on`\n- 工具：`rules_update`，模型改完代码后可以自己补规则并说明理由\n- 设置页：左侧导航里的「代码约束规则」整页，管默认开关与两档注入预算\n\n写入是单一路径：旧正文先进 `.rules/history/`（环形三代），快照写不进去就放弃整次修改，正文一个字节都不动；`/rules rollback 1|2` 可以退回上两代，回退本身也进历史。\n\n要求：Node.js >= 22.19；DSH >= 0.2.1-rc.2 < 0.4.0-0（区间外宿主会在启动时拒绝并说明原因）。插件本身没有第三方运行时依赖，测试用 `node:test`。\n\n明确不做：monorepo 分影响范围、根据 diff 自动推断规则、强制拦截不合规代码、可视化规则编辑器、导出 ESLint 配置。",
+      "category": "dev",
+      "license": "MIT",
+      "author": {
+        "name": "codthewall",
+        "url": "https://github.com/codthewall"
+      },
+      "tags": [
+        "code-conventions",
+        "code-review",
+        "rules",
+        "context-injection",
+        "maintainability"
+      ],
+      "source": "curated",
+      "install": {
+        "method": "dsh-plugin-add"
+      },
+      "verified": true
     }
   ]
 }
