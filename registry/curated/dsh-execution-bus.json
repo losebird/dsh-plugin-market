@@ -1,0 +1,26 @@
+{
+  "id": "dsh-execution-bus",
+  "name": "萧何 / Xiao He",
+  "type": "bundle",
+  "repo": "f-e-n-g-0531/dsh-execution-bus",
+  "spec": "https://github.com/f-e-n-g-0531/dsh-execution-bus/releases/download/v1.7.1/feng0531-dsh-execution-bus-1.7.1.tgz",
+  "version": "1.7.1",
+  "description": "DSH 工具计划的声明式 DAG 运行时：有界并行执行、只读重试、逐步检查点与保守恢复。",
+  "longDescription": "萧何 / Xiao He 为 DeepSeek Harness 提供声明式 DAG 运行时：模型声明步骤与依赖，运行时按依赖并行执行、对只读步骤有限重试、逐步保存检查点，支持取消、跨任务待办查询与中断后的保守恢复。执行与验收分离，运行成功不等于任务完成。\n\n要求 DSH 0.2.2-rc.1 与 Node.js >=22。标准 rc.1 下独立只读 Worker 不可直接使用，含 agent 的计划会被拒绝；普通工具 DAG 可用。授权与沙箱仍由宿主管理；发布不会自动安装或重启 DSH。\n\n许可证为 Execution Bus Non-Commercial Source Available License 1.0（自定义非商业源码公开许可证），不是 OSI 开源许可证；商业用途（含商业项目内部使用）需另行书面授权。完整条款：https://github.com/f-e-n-g-0531/dsh-execution-bus/blob/v1.7.1/LICENSE",
+  "category": "dev",
+  "license": "LicenseRef-Execution-Bus-NonCommercial-1.0",
+  "author": {
+    "name": "f-e-n-g-0531",
+    "url": "https://github.com/f-e-n-g-0531"
+  },
+  "tags": [
+    "dag",
+    "runtime",
+    "workflow",
+    "scheduling"
+  ],
+  "source": "curated",
+  "install": {
+    "method": "dsh-plugin-add"
+  }
+}
