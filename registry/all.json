@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-09T14:15:23.158Z",
+  "updatedAt": "2026-11-10T13:48:56.450Z",
   "items": [
     {
       "id": "rea-agents",
@@ -266795,8 +266795,8 @@
         "presets": []
       },
       "category": "skills",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "pack"
       }
@@ -266821,7 +266821,8 @@
         "obj",
         "stl",
         "step",
-        "cad"
+        "cad",
+        "llm"
       ],
       "category": "tools",
       "source": "curated",
@@ -266853,8 +266854,8 @@
         "name": "LFY-bot",
         "url": "https://github.com/LFY-bot"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -266882,8 +266883,8 @@
         "gemini",
         "copilot"
       ],
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -266962,8 +266963,8 @@
       "name": "发布报告 / DSH Code Report",
       "type": "bundle",
       "repo": "f-e-n-g-0531/dsh-code-report",
-      "spec": "https://github.com/f-e-n-g-0531/dsh-code-report/releases/download/v1.0.2/feng0531-dsh-code-report-1.0.2.tgz",
-      "version": "1.0.2",
+      "spec": "https://github.com/f-e-n-g-0531/dsh-code-report/releases/download/v1.0.5/feng0531-dsh-code-report-1.0.5.tgz",
+      "version": "1.0.5",
       "description": "比较多个 Git/SVN 项目的固定版本差异，导出中文 Markdown 发布报告；模型分析需明确授权。",
       "longDescription": "DSH Code Report 为 DeepSeek Harness 提供多项目发布报告，区分本地差异证据与可选模型分析，报告涵盖改动、对外接口、影响范围和 QA 测试范围。v1.0.2 比较范围保留所选分支名与固定提交号／SVN 修订号。\n\n要求 Node.js >=22、Git；SVN 项目还需 svn。使用 DSH 已配置模型，发送证据需明确许可；不自动重启 DSH。不宣称所有宿主版本兼容或市场安全认证。\n\n许可证为 DSH Code Report Non-Commercial Source Available License 1.0（自定义非商业源码公开许可证），不是 OSI 开源许可证；商业用途（含商业项目内部使用）需另行书面授权。完整条款：https://github.com/f-e-n-g-0531/dsh-code-report/blob/v1.0.2/LICENSE",
       "category": "dev",
@@ -267132,8 +267133,8 @@
         "name": "chenzhi-clude",
         "url": "https://github.com/chenzhi-clude"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267153,6 +267154,7 @@
       "version": "v0.2.4",
       "longDescription": " pi、opencode、codex、claude-code 的会话、聊天记录与 agent 导入 DeepSeek Harness（dsh）。导入的会话出现在会话列表，可携带完整上下文继续对话；自定义 agent 与模式提示词变成可发现的 dsh skills；composer 里的一键 同步 按钮即可完成全部导入。",
       "tags": [
+        "agents",
         "codex",
         "claude",
         "opencode",
@@ -267160,8 +267162,8 @@
       ],
       "package": "dsh-import-agents",
       "category": "session",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267241,8 +267243,8 @@
         "url": "https://github.com/hxlog"
       },
       "version": "1.0.2",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267319,6 +267321,7 @@
       "longDescription": "## 中文\n\n两个技能：\n\n- **dsh-local-plugin-authoring**：读已装插件当契约样本 → 写 package.json（main + exports）→ 宿主路由 → 客户端 `__ModuleLoader__` 注册 → 挂进 profile → 三重验收。\n- **dsh-plugin-upstream-contribute**：读上游 CONTRIBUTING 判断能否直接 PR → 按 ISSUE_TEMPLATE 查重与写正文 → 提交并回读核验。\n\n安装后落在 `~/.agents/skills/<id>/`。\n\n## English\n\nTwo skills:\n\n- **dsh-local-plugin-authoring**: read an installed plugin as the contract sample, write `package.json` (main + exports), register host routes, mount client slots via `__ModuleLoader__`, wire the profile, then verify in three ways.\n- **dsh-plugin-upstream-contribute**: read the upstream CONTRIBUTING to decide whether a direct PR is allowed, dedupe and draft by its ISSUE_TEMPLATE, submit, then read back to verify.\n\nInstalls under `~/.agents/skills/<id>/`.",
       "tags": [
         "skill",
+        "plugin",
         "contribution"
       ],
       "category": "skills",
@@ -267425,8 +267428,8 @@
         "name": "MengYuil",
         "url": "https://github.com/MengYuil"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267457,8 +267460,8 @@
       ],
       "package": "dsh-projects",
       "category": "ui",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267485,8 +267488,8 @@
         "name": "huaguoxingkong",
         "url": "https://github.com/huaguoxingkong"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267542,8 +267545,8 @@
         "name": "lcy362",
         "url": "https://github.com/lcy362"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267566,6 +267569,7 @@
         "session",
         "sidebar",
         "categories",
+        "ai",
         "i18n",
         "productivity"
       ],
@@ -267635,8 +267639,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267659,8 +267663,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267683,8 +267687,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267712,8 +267716,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267736,8 +267740,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267762,8 +267766,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267786,8 +267790,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267815,8 +267819,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267867,8 +267871,8 @@
         "name": "klarkxy",
         "url": "https://github.com/klarkxy"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267931,8 +267935,8 @@
         "name": "zhule33-cmyk",
         "url": "https://github.com/zhule33-cmyk"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -267958,8 +267962,8 @@
         "merit"
       ],
       "longDescription": "工作间隙敲一敲、攒一攒\"功德\"。\n\n点击木鱼即敲击，鼠标按住木鱼移动可随意拖拽，刷新页面不丢进度，其他的留给大家自由探索～",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -389941,38 +389945,31 @@
       "category": "ui"
     },
     {
-      "id": "feng0531-dsh-execution-bus",
-      "name": "@feng0531/dsh-execution-bus",
+      "id": "dsh-execution-bus",
+      "name": "萧何 / Xiao He",
       "type": "bundle",
-      "package": "@feng0531/dsh-execution-bus",
       "repo": "f-e-n-g-0531/dsh-execution-bus",
-      "githubId": 1420361340,
-      "spec": "github:f-e-n-g-0531/dsh-execution-bus#v1.7.0",
-      "version": "v1.7.0",
-      "releaseCheckedAt": "2026-11-09T13:23:01.275Z",
+      "spec": "https://github.com/f-e-n-g-0531/dsh-execution-bus/releases/download/v1.7.1/feng0531-dsh-execution-bus-1.7.1.tgz",
+      "version": "1.7.1",
+      "description": "DSH 工具计划的声明式 DAG 运行时：有界并行执行、只读重试、逐步检查点与保守恢复。",
+      "longDescription": "萧何 / Xiao He 为 DeepSeek Harness 提供声明式 DAG 运行时：模型声明步骤与依赖，运行时按依赖并行执行、对只读步骤有限重试、逐步保存检查点，支持取消、跨任务待办查询与中断后的保守恢复。执行与验收分离，运行成功不等于任务完成。\n\n要求 DSH 0.2.2-rc.1 与 Node.js >=22。标准 rc.1 下独立只读 Worker 不可直接使用，含 agent 的计划会被拒绝；普通工具 DAG 可用。授权与沙箱仍由宿主管理；发布不会自动安装或重启 DSH。\n\n许可证为 Execution Bus Non-Commercial Source Available License 1.0（自定义非商业源码公开许可证），不是 OSI 开源许可证；商业用途（含商业项目内部使用）需另行书面授权。完整条款：https://github.com/f-e-n-g-0531/dsh-execution-bus/blob/v1.7.1/LICENSE",
+      "category": "dev",
+      "license": "LicenseRef-Execution-Bus-NonCommercial-1.0",
       "author": {
         "name": "f-e-n-g-0531",
         "url": "https://github.com/f-e-n-g-0531"
       },
-      "description": "萧何 / Xiao He: declarative runtime for DSH agent tool plans (DAG execution, retries, persistence, recovery)",
       "tags": [
         "dag",
         "runtime",
-        "workflow"
+        "workflow",
+        "scheduling"
       ],
-      "license": "NOASSERTION",
-      "downloads": 115,
-      "stars": 0,
-      "releasedAt": "2026-11-09T11:01:12Z",
-      "topicSourced": false,
-      "verified": true,
+      "source": "curated",
       "install": {
-        "method": "manual",
-        "source": "readme"
+        "method": "dsh-plugin-add"
       },
-      "source": "auto",
-      "auto": true,
-      "category": "agent"
+      "verified": true
     },
     {
       "id": "dsh-plugin-nexus-sdlc",

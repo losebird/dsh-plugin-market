@@ -19,9 +19,9 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 
 - [界面与主题](#ui) (2820)
 - [会话与记忆](#session) (2582)
-- [Agent 与工作流](#agent) (1829)
+- [Agent 与工作流](#agent) (1828)
 - [工具与集成](#tools) (1272)
-- [开发与输入](#dev) (717)
+- [开发与输入](#dev) (718)
 - [通信与移动](#comm) (445)
 - [安全与权限](#auth) (623)
 - [技能与扩展](#skills) (272)
@@ -7087,7 +7087,6 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-devflow](https://github.com/BinXie-lixiangdehua/dsh-devflow) DevFlow multi-agent workflow orchestration plugin for DeepSeek Harness ⭐ 0 ⬇ 0 · git clone · v1.5.1
 - [dsh-search-first](https://github.com/Cindy-ponoiyvhj/dsh-search-first) Look before you build: injects a search-first rule into the system prompt and can block ha ⭐ 0 ⬇ 0
 - [dsh-board](https://github.com/DeepCollaboration/DeepSeekCollaborationBoard-Plugin) CollaborationBoard — Stationen, Workflows und Vorhaben als gemeinsame Fläche im DeepSeek H ⭐ 0 ⬇ 0 · v0.1.0
-- [dsh-execution-bus](https://github.com/f-e-n-g-0531/dsh-execution-bus) 萧何 / Xiao He: declarative runtime for DSH agent tool plans (DAG execution, retries, persis ⭐ 0 ⬇ 115 · 手动安装 · v1.7.0
 - [dsh-plugin-nexus-sdlc](https://github.com/Fnckerpoi/dsh-plugin-nexus-sdlc) Spec-driven development preset with Claude Code planning/review and Codex implementation t ⭐ 0 ⬇ 1 · 手动安装 · v1.0.0
 - [dsh-subagent-delegation](https://github.com/gezi-wen/dsh-subagent-delegation) Ships a skill that tells the agent when to delegate work to subagents instead of doing it  ⭐ 0 ⬇ 0
 - [dsh-codex-runner](https://github.com/halftin/dsh-codex-runner) Run and manage Codex CLI tasks in DSH with complete answers, background execution, live se ⭐ 0 ⬇ 32 · 手动安装 · v0.5.3-beta
@@ -8962,7 +8961,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-go-usage](https://github.com/6pofx/dsh-go) DeepSeek Harness plugin: OpenCode GO 套餐用量（三窗口额度 + DSH 按模型 token/金额统计 + 输入框迷你条） ⭐ 1 ⬇ 0
 - [API 体检](https://github.com/LFY-bot/dsh-api-probe) 配置前先体检 API：30 秒测出能不能用、快不快，以及坏在哪一层。 ⭐ 0 ⬇ 0 · v1.0.0
 - [dsh-cert-mcp](https://github.com/PerryLink/dsh-cert-mcp) Read-only MCP server over the DSH plugin-certification registry: query a plugin certificat ⭐ 0 ⬇ 0
-- [ DSH Code Report](https://github.com/f-e-n-g-0531/dsh-code-report) 比较多个 Git/SVN 项目的固定版本差异，导出中文 Markdown 发布报告；模型分析需明确授权。 ⭐ 0 ⬇ 0 · 1.0.2
+- [ DSH Code Report](https://github.com/f-e-n-g-0531/dsh-code-report) 比较多个 Git/SVN 项目的固定版本差异，导出中文 Markdown 发布报告；模型分析需明确授权。 ⭐ 0 ⬇ 0 · 1.0.5
 - [dsh-github](https://github.com/PerryLink/dsh-github) GitHub integration for DSH: pull request, issue, repository and file tools, a review bot w ⭐ 0 ⬇ 0
 - [dsh-mcp-panel](https://github.com/PerryLink/dsh-mcp-panel) Management console for the official DSH MCP client: a /mcp command with health diagnostics ⭐ 0 ⬇ 0
 - [dsh-plugin-doctor](https://github.com/PerryLink/dsh-plugin-doctor) Zero-dependency detector for DSH plugins: package-structure checks, cordis contract scanni ⭐ 0 ⬇ 0
@@ -9209,6 +9208,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-auto-shutdown](https://github.com/873360545/dsh-auto-shutdown) Windows-only DSH plugin: a switch in Settings → General that shuts the computer down when  ⭐ 0 ⬇ 0
 - [dsh-hooks](https://github.com/abworks-dev/dsh-hooks) DSH 生命周期钩子：本地命令、正则匹配、文件指纹审阅、受限 Codex JSON 导入与工具前后反馈控制，不绕过审批 ⭐ 0 ⬇ 61 · 手动安装 · v0.19.1
 - [dsh-plugin-translate-flow](https://github.com/CilaWaller/dsh-plugin-translate-flow) 自定义翻译流程：高度可自定义的可视化翻译链路，包含中译英、英译中、学术中文润色、学术英文润色等模块，每步独立调用，严格隔离。 ⭐ 0 ⬇ 344 · v0.2.0
+- [ Xiao He](https://github.com/f-e-n-g-0531/dsh-execution-bus) DSH 工具计划的声明式 DAG 运行时：有界并行执行、只读重试、逐步检查点与保守恢复。 ⭐ 0 ⬇ 0 · 1.7.1
 - [dsh-poke-todo](https://github.com/JessenReinhart/dsh-poke-todo) DeepSeek Harness Cordis plugin porting jcode's auto-poke incomplete-todos feature. ⭐ 0 ⬇ 0
 - [dsh-video-replica](https://github.com/limomss-dunang/dsh-video-replica) 爆款视频复刻：抖音/视频号/小红书链接 → 自动下载解析 → AI 拆解 → AI 仿写 → 产品参考图匹配分镜 → AI 生成分镜视频 → ffmpeg 合成成片（DeepSee ⭐ 0 ⬇ 11 · git clone · v0.3.0
 - [dsh-batch-triage](https://github.com/Phocinae/dsh-batch-triage) Deterministic-first triage for DeepSeek Harness: a rule prefilter classifies every ticket, ⭐ 0 ⬇ 0 · 手动安装 · v0.1.4
