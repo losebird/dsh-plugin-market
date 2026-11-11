@@ -1,0 +1,25 @@
+{
+  "id": "dsh-chapter-whale",
+  "name": "码章鲸 · 全自动小说写作与番茄发布",
+  "type": "bundle",
+  "package": "dsh-chapter-whale",
+  "repo": "thus-zhou/dsh-chapter-whale",
+  "spec": "https://github.com/thus-zhou/dsh-chapter-whale/releases/download/v0.2.0-rc.1/dsh-chapter-whale-0.2.0-rc.1.tgz",
+  "version": "0.2.0-rc.1",
+  "author": {
+    "name": "thus-zhou",
+    "url": "https://github.com/thus-zhou"
+  },
+  "description": "Windows x64 小说自动写作与番茄发布工作台，自定义日更任务，支持部分免费模型和厂商账号登录。",
+  "longDescription": "按设定时间、章数和目标字数执行写作、审查修订、发布与状态核验。首次配置后可无人值守运行，需要保持电脑、本地服务、模型及发布账号可用。当前仅验收 Windows 10/11 x64，DSH >= 0.2.2-rc.1。完整 Release 包内含 Python、后端和 Chromium；用户自行提供模型连接并登录自己的平台账号。组件许可见仓库 THIRD_PARTY_NOTICES.md（连接器 MIT，写作器 GPL v3）。\n\n[完整教程](https://github.com/thus-zhou/dsh-chapter-whale/blob/main/docs/quickstart.md) · [脱敏实机图](https://github.com/thus-zhou/dsh-chapter-whale/blob/main/docs/screenshots.md)",
+  "category": "agent",
+  "tags": [
+    "小说",
+    "写作",
+    "自动化",
+    "日更",
+    "番茄发布",
+    "免费模型"
+  ],
+  "license": "SEE LICENSE IN THIRD_PARTY_NOTICES.md"
+}
