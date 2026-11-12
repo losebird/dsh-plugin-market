@@ -8948,7 +8948,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-plugin-browser-use](https://github.com/coderdailyone/dsh-plugin-browser-use) Browser-automation tools for DeepSeek Harness (dsh): Chromium via playwright-core behind a ⭐ 0 ⬇ 0
 - [dsh-app-launcher](https://github.com/Alvin-Somedo/dsh-app-launcher) Open the DSH Web GUI in a dedicated browser app window; closing the window shuts down DSH  ⭐ 0 ⬇ 0
 - [dsh-show-diff](https://github.com/kaiarvin/dsh-show-diff) Expanded color-coded diff tool cards for the edit/write tools ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · v0.1.0
-- [桌面自动识图与可插拔 OCR](https://github.com/huanglihome1996-rgb/dsh-desktop-tool-ocr) 视觉模型原图直传，非视觉模型自动识别图片后回答；支持本地 nbocr、自定义 OCR 命令与显式启用的 OpenAI-compatible 视觉 API。 ⭐ 0 ⬇ 0 · v0.1.0
+- [桌面自动识图与可插拔 OCR](https://github.com/huanglihome1996-rgb/dsh-desktop-tool-ocr) 视觉模型原图直传，非视觉模型自动识别图片后回答；支持本地 nbocr、自定义 OCR 命令与显式启用的 OpenAI-compatible 视觉 API。 ⭐ 0 ⬇ 0 · v0.2.0
 
 ## 开发与输入
 
