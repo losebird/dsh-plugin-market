@@ -1,0 +1,19 @@
+{
+  "id": "dsh-desktop-tool-ocr",
+  "name": "桌面自动识图与可插拔 OCR",
+  "type": "bundle",
+  "package": "dsh-desktop-tool-ocr",
+  "repo": "huanglihome1996-rgb/dsh-desktop-tool-ocr",
+  "spec": "https://github.com/huanglihome1996-rgb/dsh-desktop-tool-ocr/releases/download/v0.1.0/dsh-desktop-tool-ocr-0.1.0.tgz",
+  "version": "v0.1.0",
+  "description": "视觉模型原图直传，非视觉模型自动识别图片后回答；支持本地 nbocr、自定义 OCR 命令与显式启用的 OpenAI-compatible 视觉 API。",
+  "longDescription": "## 截图后直接发给 DSH\n\n通过增强供应商入口接收图片：底层模型声明支持图片时原图直传；不支持时先通过配置的识别后端生成文字，再交给原模型回答。不修改 DSH 安装包。\n\n### 可插拔识别后端\n- 本地 nbocr（默认，需单独安装引擎）\n- 自定义本地命令，支持纯文本/JSON 输出\n- 显式启用的 OpenAI-compatible 视觉 API\n- 注册接口可扩展其他后端\n\n独立 JSON 后端配置按需重新读取，切换后端无需重启；支持缓存、超时、取消与输出限制。默认不上传图片。线上后端需明确授权，可能产生费用。\n\n### 使用与兼容性\n针对 DSH 0.2.2-rc.1，Windows 桌面端已验证；其他宿主版本未保证兼容。Node.js >=22.19。安装后配置识别后端，并在模型选择器选择带“自动识图 / 本地 OCR”的供应商入口。旧会话需切换一次。\n\n13 项单元测试、实际 DSH 宿主路由测试及本地 OCR 已通过。线上 API 仅做模拟协议测试。OCR 只兜底文字，不能代替视觉模型理解照片或复杂图形。\n\n[配置与使用说明](https://github.com/huanglihome1996-rgb/dsh-desktop-tool-ocr#readme)",
+  "tags": ["ocr", "vision", "desktop", "local-first", "image", "privacy"],
+  "category": "tools",
+  "license": "MIT",
+  "author": {
+    "name": "huanglihome1996-rgb",
+    "url": "https://github.com/huanglihome1996-rgb"
+  },
+  "source": "curated"
+}
