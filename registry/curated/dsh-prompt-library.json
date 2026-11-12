@@ -2,10 +2,19 @@
   "id": "dsh-prompt-library",
   "name": "提示库",
   "type": "bundle",
+  "package": "@wngzwng/dsh-prompt-library",
   "repo": "wngzwng/dsh-prompt-library",
   "spec": "https://github.com/wngzwng/dsh-prompt-library/releases/download/1.0.0/wngzwng-dsh-prompt-library-1.0.0.tgz",
+  "version": "1.0.0",
   "description": "把散落的提示词集中保存，用标签、收藏、置顶、评分和搜索快速找到，并复制或安全插入当前会话草稿；支持快速收录、Markdown 预览与 CSV/JSON 备份。",
-  "longDescription": "DSH Web UI 的提示词管理插件：侧栏整页管理面板（搜索、标签、收藏、置顶、最近使用、半星评分与待复评）、输入框旁快捷选择面板（复制或安全插入草稿，不覆盖整份输入）、快速收录（收件箱、重复提醒、来源元数据）、纯文本 / Markdown 预览，以及 CSV / JSON 导入导出。数据默认只保存在本机浏览器；AI 辅助评价由用户主动触发，复用 DSH 已配置的模型服务，仅作参考。",
+  "longDescription": "## 提示词，不该只用一次\n\n把散落在聊天、备忘录和网页里的提示词集中保存，用标签、收藏、置顶、评分和搜索快速找到，再复制或安全插入当前会话草稿。\n\n### 主要功能\n- **侧栏整页管理**：搜索（标题 / 正文 / 标签）、标签分类、收藏、置顶、最近使用、1～5 星半星评分与「待复评」、评价备注。\n- **输入框旁快捷面板**：按全部 / 置顶 / 收藏 / 最近使用浏览，复制正文，或插入到光标处（可撤销，不覆盖整份草稿）。\n- **快速收录**：粘贴文本、整份输入框草稿、对话中选中的文本；收件箱整理、自动标题、重复提醒、来源元数据。\n- **正文显示**：默认纯文本，可切换只读 Markdown 预览；不执行 HTML，不加载远程图片。\n- **导入导出**：CSV 用于交换，JSON 用于完整备份。\n- **可选 AI 辅助评价**：仅在你主动点击时调用，复用 DSH 已配置的模型，输出不超过 200 字，只作参考。\n\n### 数据与隐私\n提示词、标签、评分、AI 评价与来源元数据只保存在本机浏览器，不上传；AI 评价由 Host 侧调用 DSH 模型服务，浏览器不接触密钥。\n\n### 兼容性\nDSH 0.2.2-rc.1 及以上、0.3.0 以下；Node.js >= 22.19。\n\n[使用说明](https://github.com/wngzwng/dsh-prompt-library#readme)",
+  "tags": [
+    "prompt",
+    "prompt-library",
+    "prompt-manager",
+    "提示词",
+    "productivity"
+  ],
   "category": "tools",
   "license": "MIT",
   "author": {
