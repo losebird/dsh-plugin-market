@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**13393** 个插件 · **12502** 个可一键安装
+**13394** 个插件 · **12503** 个可一键安装
 
 安装市场：
 
@@ -20,7 +20,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [界面与主题](#ui) (2953)
 - [会话与记忆](#session) (2722)
 - [Agent 与工作流](#agent) (1899)
-- [工具与集成](#tools) (1334)
+- [工具与集成](#tools) (1335)
 - [开发与输入](#dev) (753)
 - [通信与移动](#comm) (462)
 - [安全与权限](#auth) (644)
@@ -8948,6 +8948,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-plugin-browser-use](https://github.com/coderdailyone/dsh-plugin-browser-use) Browser-automation tools for DeepSeek Harness (dsh): Chromium via playwright-core behind a ⭐ 0 ⬇ 0
 - [dsh-app-launcher](https://github.com/Alvin-Somedo/dsh-app-launcher) Open the DSH Web GUI in a dedicated browser app window; closing the window shuts down DSH  ⭐ 0 ⬇ 0
 - [dsh-show-diff](https://github.com/kaiarvin/dsh-show-diff) Expanded color-coded diff tool cards for the edit/write tools ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · v0.1.0
+- [桌面自动识图与可插拔 OCR](https://github.com/huanglihome1996-rgb/dsh-desktop-tool-ocr) 视觉模型原图直传，非视觉模型自动识别图片后回答；支持本地 nbocr、自定义 OCR 命令与显式启用的 OpenAI-compatible 视觉 API。 ⭐ 0 ⬇ 0 · v0.1.0
 
 ## 开发与输入
 
