@@ -4,7 +4,7 @@
 
 > 数据文件：`registry/all.json`（上架新插件见 `docs/SUBMIT.md`）。
 
-**13513** 个插件 · **12619** 个可一键安装
+**13514** 个插件 · **12620** 个可一键安装
 
 安装市场：
 
@@ -20,7 +20,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [界面与主题](#ui) (2974)
 - [会话与记忆](#session) (2753)
 - [Agent 与工作流](#agent) (1908)
-- [工具与集成](#tools) (1352)
+- [工具与集成](#tools) (1353)
 - [开发与输入](#dev) (761)
 - [通信与移动](#comm) (468)
 - [安全与权限](#auth) (648)
@@ -9027,6 +9027,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-plugin-browser-use](https://github.com/coderdailyone/dsh-plugin-browser-use) Browser-automation tools for DeepSeek Harness (dsh): Chromium via playwright-core behind a ⭐ 0 ⬇ 0
 - [dsh-app-launcher](https://github.com/Alvin-Somedo/dsh-app-launcher) Open the DSH Web GUI in a dedicated browser app window; closing the window shuts down DSH  ⭐ 0 ⬇ 0
 - [dsh-show-diff](https://github.com/kaiarvin/dsh-show-diff) Expanded color-coded diff tool cards for the edit/write tools ⭐ 0 ⬇ 0 · 未验证 · 手动安装 · v0.1.0
+- [dsh-paperhub](https://github.com/YuigahamaHawk/dsh-paperhub) DeepSeek Harness插件：内置阅读器的文献库管理插件，具备AI排版、双语交替翻译与伴读助手功能，可从Zotero一键导入 ⭐ 0 ⬇ 0
 
 ## 开发与输入
 

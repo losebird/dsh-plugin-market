@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-13T11:09:58.236Z",
+  "updatedAt": "2026-11-13T11:14:23.244Z",
   "items": [
     {
       "id": "rea-agents",
@@ -447116,6 +447116,35 @@
         "command": "git clone --recurse-submodules"
       },
       "githubId": 1334418427
+    },
+    {
+      "id": "dsh-paperhub",
+      "name": "dsh-paperhub",
+      "type": "bundle",
+      "repo": "YuigahamaHawk/dsh-paperhub",
+      "spec": "@yuigahamahawk/dsh-paperhub",
+      "description": "DeepSeek Harness插件：内置阅读器的文献库管理插件，具备AI排版、双语交替翻译与伴读助手功能，可从Zotero一键导入",
+      "license": "MIT",
+      "author": {
+        "name": "YuigahamaHawk",
+        "url": "https://github.com/YuigahamaHawk"
+      },
+      "longDescription": "PaperHub 是 DeepSeek Harness 内的文献库与阅读器。支持批量导入 PDF、EPUB、文件夹和 ZIP，从公开网址导入，并通过 Zotero 同步附件。阅读时可使用 AI 精排、逐段双语翻译、思维导图、带引用问答、批注和 Markdown 导出。支持本机 MinerU 解析与结果缓存。在 DSH 的「添加插件」中搜索 @yuigahamahawk/dsh-paperhub 即可安装。使用说明和演示见下方 README。",
+      "tags": [
+        "PDF",
+        "文献管理",
+        "AI排版",
+        "双语逐段翻译",
+        "阅读助手",
+        "Zotero"
+      ],
+      "package": "@yuigahamahawk/dsh-paperhub",
+      "source": "curated",
+      "category": "tools",
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add"
+      }
     }
   ]
 }
