@@ -1837,7 +1837,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-client-ui-m3-theme](https://github.com/DarkskyX15/dsh-client-ui-m3-theme) Material 3 theme plugin for DeepSeek Harness: full M3 token mapping (light/dark palettes w ⭐ 1 ⬇ 0 · 未验证 · 手动安装
 - [DSH Background · 多区域背景](https://github.com/flora-ari/dsh-background) 为全局、聊天和侧边栏设置独立图片背景，支持图库轮播、透明度与按比例缩放。 ⭐ 0 ⬇ 0 · v0.2.2
 - [dsh-projects](https://github.com/WenhongPan/dsh-projects) Project and session organization for DeepSeek Harness: multi-folder projects, attention su ⭐ 0 ⬇ 0 · v0.3.0-alpha.1
-- [提示词改写](https://github.com/huaguoxingkong/dsh-prompt-rewriter) 在输入框旁加一个按钮，把草稿原地改写成目标、格式、约束齐全的可执行提示词；不发送、不弹预览窗，可按 Ctrl+Z 还原。 ⭐ 0 ⬇ 0 · v1.7.0
+- [提示词改写](https://github.com/huaguoxingkong/dsh-prompt-rewriter) 在输入框旁加一个按钮，把草稿原地改写成目标、格式、约束齐全的可执行提示词；不发送、不弹预览窗，可按 Ctrl+Z 还原。 ⭐ 0 ⬇ 0 · v1.8.3
 - [dsh-pwa](https://github.com/jackxu925/dsh-pwa) Phone-first PWA for DeepSeek Harness: sessions, streaming chat, approvals on iOS and Andro ⭐ 0 ⬇ 0 · 1.10.2
 - [Radeon 容量](https://github.com/lcy362/dsh-radeon-capacity) AMD Radeon Cloud 模型的忙闲度（AI Capacity）：模型选择器里每个模型一枚容量徽章，当前模型的容量就在模型名同一行。 ⭐ 0 ⬇ 0 · v0.1.0
 - [DSH Intelligent UI (IUI)](https://github.com/gulagala001/dsh-intelligent-ui) 让 DSH 回答变成可操作的计算器、图表、表单、清单、模拟与小游戏，支持保存界面状态与会话恢复。 ⭐ 0 ⬇ 0 · 0.2.1-alpha.2.iui.1.0.0
