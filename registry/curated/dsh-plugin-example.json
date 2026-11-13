@@ -1,0 +1,17 @@
+{
+  "id": "dsh-plugin-example",
+  "name": "插件示例",
+  "type": "bundle",
+  "repo": "WJDdidi-1/dsh-plugin-example",
+  "spec": "dsh-plugin-example",
+  "version": "0.1.2",
+  "description": "约 70 行、可直接抄的 DSH 插件示例：侧栏标签、宿主半、bundle 清单和能过的安装前检查。",
+  "longDescription": "一个能跑的最小插件，用来回答「一个 DSH 插件到底由什么组成」：\n\n- `index.js`：宿主半（这里故意留空，注释里写了真实插件通常在这里注册 HTTP 路由）\n- `client.js`：浏览器半，注册一个侧栏标签，点一下计数\n- `cordis.patch.yml`：bundle patch，宿主靠它把插件插进启动图\n- `package.json`：`dsh.bundle`、`dsh.client`、`exports[\"./client\"]`、`engines.dsh`\n\n`npm run check` 跑的就是 `dsh-plugin-toolkit verify`，所以这个示例本身是「检查能过」的活例子。\n\nApache-2.0。\n\n源码：https://github.com/WJDdidi-1/dsh-plugin-example\n需要 DeepSeek Harness >= 0.2.0。",
+  "category": "dev",
+  "tags": ["example", "starter", "template", "tutorial"],
+  "license": "Apache-2.0",
+  "author": {
+    "name": "WJDdidi-1",
+    "url": "https://github.com/WJDdidi-1"
+  }
+}
