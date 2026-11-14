@@ -1879,7 +1879,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [dsh-projects](https://github.com/WenhongPan/dsh-projects) Project and session organization for DeepSeek Harness: multi-folder projects, attention su ⭐ 0 ⬇ 0 · v0.3.0-alpha.1
 - [提示词改写](https://github.com/huaguoxingkong/dsh-prompt-rewriter) 在输入框旁加一个按钮，把草稿原地改写成目标、格式、约束齐全的可执行提示词；不发送、不弹预览窗，可按 Ctrl+Z 还原。 ⭐ 0 ⬇ 0 · v1.8.3
 - [dsh-pwa](https://github.com/jackxu925/dsh-pwa) Phone-first PWA for DeepSeek Harness: sessions, streaming chat, approvals on iOS and Andro ⭐ 0 ⬇ 0 · 1.10.2
-- [Radeon 容量](https://github.com/lcy362/dsh-radeon-capacity) AMD Radeon Cloud 模型的忙闲度（AI Capacity）：模型选择器里每个模型一枚容量徽章，当前模型的容量就在模型名同一行。 ⭐ 0 ⬇ 0 · v0.1.0
+- [Radeon 容量](https://github.com/lcy362/dsh-radeon-capacity) AMD Radeon Cloud 模型的忙闲度（AI Capacity）：模型选择器里每个模型一枚容量徽章，当前模型的容量就在模型名同一行。 ⭐ 0 ⬇ 0 · v0.1.1
 - [DSH Intelligent UI (IUI)](https://github.com/gulagala001/dsh-intelligent-ui) 让 DSH 回答变成可操作的计算器、图表、表单、清单、模拟与小游戏，支持保存界面状态与会话恢复。 ⭐ 0 ⬇ 0 · 0.2.1-alpha.2.iui.1.0.0
 - [dsh-theme-plugin](https://github.com/gulagala001/dsh-theme-plugin) 在 DSH 设置中统一管理外观和主题，浏览带图片的多来源市场，一键检查安装，并提供失败恢复与 AI 修复说明。 ⭐ 0 ⬇ 0
 - [Muse 毛绒](https://github.com/zhule33-cmyk/muse-plush-skin) 毛绒玩偶皮肤：整窗粉蓝长绒，气泡和输入框是带毛边的肚皮色绒，品牌色变棕色纽扣，输入框上趴着一只小 Muse。 ⭐ 0 ⬇ 0
