@@ -1,0 +1,25 @@
+{
+  "id": "dsh-project-todo-list",
+  "name": "Project Todo List",
+  "type": "bundle",
+  "repo": "huanglihome1996-rgb/dsh-project-todo-list",
+  "spec": "github:huanglihome1996-rgb/dsh-project-todo-list#v1.2.0",
+  "description": "AI-ranked personal next actions from project documents and GitHub issues, shown in a compact new-session panel.",
+  "license": "MIT",
+  "author": {
+    "name": "huanglihome1996-rgb",
+    "url": "https://github.com/huanglihome1996-rgb"
+  },
+  "version": "v1.2.0",
+  "longDescription": "AI combines default-branch project documentation and GitHub issues to identify concrete next actions belonging to the current user, distinguish delivered work from remaining gaps, and rank tasks by priority and rough effort. It shows a compact list only in a selected project workspace's new session, lets the user insert an execution prompt without sending it, keeps task status and session associations local to DSH, and never changes project files or GitHub issues automatically. Requires DSH 0.2.2-rc.1 and Node.js 22 or newer. GitHub issue enrichment is optional and falls back to local project documentation.",
+  "tags": [
+    "project",
+    "todo",
+    "productivity",
+    "github-issues",
+    "workspace",
+    "session"
+  ],
+  "category": "tools",
+  "package": "dsh-project-todo-list"
+}
