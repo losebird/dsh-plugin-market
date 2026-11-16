@@ -5,5 +5,6 @@
 # 用户安装：dsh plugin --profile web add @ace-zone/dsh-market
 
 - insert:
-    - id: plugin-market
+    # id `plugin-market` is reserved by official @deepseek-ai/dsh-plugin-market / experimental bundle
+    - id: ace-market
       name: '@ace-zone/dsh-market'

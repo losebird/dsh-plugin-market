@@ -12,8 +12,8 @@ const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 const UNVER = '未验证（仓库没声明能挂上的插件）。没有一键安装，请到仓库看作者说明。'
 const PACK = '下载 zip 后解压：skill 放到 ~/.agents/skills/，preset 放到 ~/.dsh/.agent-presets/。'
 
-test('package.json is 0.1.67', () => {
-  assert.equal(pkg.version, '0.1.67')
+test('package.json is 0.1.68', () => {
+  assert.equal(pkg.version, '0.1.68')
   assert.equal(pkg.engines.dsh, '>=0.1.0 <0.3.0')
 })
 
@@ -98,6 +98,56 @@ test('market 卸载 hides 交给 DSH 卸载', () => {
   assert.match(detail, /t\('uninstall'\)/)
   assert.doesNotMatch(detail, /agentUninstall/)
   assert.doesNotMatch(manage, /agentUninstall/)
+})
+
+test('api uses AbortSignal.timeout', () => {
+  assert.match(clientJs, /AbortSignal\.timeout/)
+  assert.match(clientJs, /LIST_CLIENT_TIMEOUT_MS = 20000/)
+  assert.match(clientJs, /CURATED_TIMEOUT_MS = 8000/)
+})
+
+test('refresh paints host items before background loadLiveCurated', () => {
+  const refreshStart = clientJs.indexOf('const refresh = async () => {')
+  const loadInstalled = clientJs.indexOf('const loadInstalled = async () => {')
+  assert.ok(refreshStart >= 0 && loadInstalled > refreshStart)
+  const refresh = clientJs.slice(refreshStart, loadInstalled)
+  assert.match(refresh, /await api\('list'\)/)
+  assert.match(refresh, /patch\(\{[\s\S]*items:/)
+  assert.doesNotMatch(refresh, /await loadLiveCurated/)
+  assert.match(refresh, /loadLiveCurated\(\)\.then/)
+})
+
+test('loadLiveCurated fetches use timeout signal', () => {
+  const block = clientJs.slice(clientJs.indexOf('async function loadLiveCurated()'), clientJs.indexOf('function apply(ctx)'))
+  assert.match(block, /AbortSignal\.timeout\(CURATED_TIMEOUT_MS\)/)
+  assert.match(block, /\{\s*signal\s*\}/)
+})
+
+test('I18N has load UX keys in zh and en', () => {
+  assert.match(clientJs, /sourceFallback:\s*'备用源'/)
+  assert.match(clientJs, /sourceFallback:\s*'fallback source'/)
+  assert.match(clientJs, /loadFailed:\s*'加载失败'/)
+  assert.match(clientJs, /loadFailed:\s*'Load failed'/)
+  assert.match(clientJs, /retry:\s*'重试'/)
+  assert.match(clientJs, /retry:\s*'Retry'/)
+})
+
+test('overlay render does not collapse full list on every paint', () => {
+  const overlay = clientJs.slice(clientJs.indexOf("slots.inject('shell.overlay'"), clientJs.lastIndexOf('return { apply }'))
+  assert.doesNotMatch(overlay, /collapsePackageOwnerDuplicates\(st\.items/)
+  const refreshStart = clientJs.indexOf('const refresh = async () => {')
+  const loadInstalled = clientJs.indexOf('const loadInstalled = async () => {')
+  const refresh = clientJs.slice(refreshStart, loadInstalled)
+  assert.match(refresh, /collapsePackageOwnerDuplicates\(base/)
+})
+
+test('overlay shows loading, fallback, error and retry', () => {
+  const overlay = clientJs.slice(clientJs.indexOf("slots.inject('shell.overlay'"), clientJs.lastIndexOf('return { apply }'))
+  assert.match(overlay, /st\.loadState === 'loading' \? t\('loading'\)/)
+  assert.match(overlay, /st\.loadState === 'fallback' \? t\('sourceFallback'\)/)
+  assert.match(overlay, /st\.loadState === 'error' \? t\('loadFailed'\)/)
+  assert.match(overlay, /t\('retry'\)/)
+  assert.match(overlay, /st\.loadState === 'error' && filtered\.length === 0/)
 })
 
 test('shop I18N matches pack / unverified / none copy', () => {
