@@ -1,0 +1,17 @@
+{
+  "id": "dsh-starmap",
+  "name": "记忆星图",
+  "type": "bundle",
+  "repo": "1034450425/dsh-starmap",
+  "spec": "https://github.com/1034450425/dsh-starmap/releases/download/v0.3.0/dsh-starmap-0.3.0.tgz",
+  "description": "四层天体星图：工作区当银心、对话当恒星、记忆当行星、子代理会话当卫星，各层自己公转。只读，不写回记忆。",
+  "license": "MIT",
+  "author": {
+    "name": "1034450425",
+    "url": "https://github.com/1034450425"
+  },
+  "version": "v0.3.0",
+  "tags": ["memory", "3d", "graph", "galaxy", "mnemon", "visualization", "orbit", "dsh-plugin"],
+  "category": "tools",
+  "source": "curated"
+}
