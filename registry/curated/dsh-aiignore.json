@@ -1,0 +1,17 @@
+{
+  "id": "dsh-aiignore",
+  "name": "上下文体检",
+  "type": "bundle",
+  "repo": "WJDdidi-1/ai-context-doctor",
+  "spec": "dsh-aiignore",
+  "version": "0.38.1",
+  "description": "给仓库和过往会话的读取打分，在淹没上下文窗口之前提醒，并写出挡住噪音的 .aiignore 规则。",
+  "longDescription": "这个面板回答两个问题：这个仓库会往我的上下文窗口里塞多少东西，以及哪些读取是可以避免的。\n\n评分基于三件事：读取的文件总量、单个超大文件、以及重复/生成的噪音（构建产物、锁文件、日志、二进制）。列表按「这个对话读得多脏」排序，先修最脏的那个。\n\n「优化」不是一句建议，它真的写文件：按当前力度把该挡的路径写进仓库的 `.aiignore`，然后重新扫描并给出新的分数——所以分数会跟着规则变，而不是停在原地。力度五档，从只挡构建产物到连大文件一起挡。\n\n面板跟随当前对话：切换对话时它会去取那个对话的投影，而不是靠「最后写入的文件」去猜，所以不会停在上一个对话上。\n\n命令行侧同一个仓库还提供 `ai-context-doctor` CLI，可以在 CI 里跑并输出 JSON。\n\n代码与测试：仓库内 `plugin/`（152 项测试，含真 bundle 的挂载测试），CLI 另有 53 项。Apache-2.0。\n\n源码：https://github.com/WJDdidi-1/ai-context-doctor\n需要 DeepSeek Harness >= 0.2.0。",
+  "category": "session",
+  "tags": ["context", "aiignore", "budget", "audit", "score"],
+  "license": "Apache-2.0",
+  "author": {
+    "name": "WJDdidi-1",
+    "url": "https://github.com/WJDdidi-1"
+  }
+}
