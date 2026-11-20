@@ -1,0 +1,21 @@
+{
+  "id": "kadaliao-dsh-prompt-en",
+  "name": "Prompt EN",
+  "type": "bundle",
+  "repo": "kadaliao/dsh-prompt-en",
+  "spec": "@kadaliao/dsh-prompt-en",
+  "description": "在每条 prompt 下方写一行英文：其他语言给出译文，英文给出纠错和更地道的说法；教过的说法收进生词本，用 /vocab 复习。",
+  "longDescription": "边用 DSH 边学英文。用中文等其他语言写的 prompt 下方给出英文译文；用英文写的给出纠错，或两种更地道的说法。\n\n只做展示：模型收到的仍是你原来的 prompt，什么都不会加进对话。每条需要的 prompt 多一次小模型请求，相同文本只读一次并缓存；默认用当前会话的模型，可以在设置里换成更便宜的模型。教过的说法收进生词本，用 /vocab 复习。中英双语，MIT。\n\n源码：https://github.com/kadaliao/dsh-prompt-en",
+  "category": "ui",
+  "tags": [
+    "english",
+    "translation",
+    "vocabulary",
+    "learning"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Kada Liao",
+    "url": "https://github.com/kadaliao"
+  }
+}

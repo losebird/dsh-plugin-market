@@ -1,0 +1,21 @@
+{
+  "id": "kadaliao-dsh-images",
+  "name": "图片 Images",
+  "type": "bundle",
+  "repo": "kadaliao/dsh-images",
+  "spec": "@kadaliao/dsh-images",
+  "description": "给模型一个 generate_image 工具，用你供应商的生图模型出图；「图片」面板收成图库，每张图标出费用，支持参考图改图和循环 GIF。",
+  "longDescription": "要一张图就给一张图：图直接显示在对话里，「图片」面板把画过的都收成图库，可浏览、放大、下载。\n\n设置抽屉里选供应商、密钥和模型（输入即可模糊搜索），每张图都标出费用；供应商不给价的模型用公开的 LiteLLM 价目表兜底。要动图时让模型画一张精灵图，自动拼成循环播放的 GIF；也能带参考图（对话附件、文件、之前生成的图）改图或接着画。中英双语，MIT。\n\n源码：https://github.com/kadaliao/dsh-images",
+  "category": "tools",
+  "tags": [
+    "image-generation",
+    "gallery",
+    "gif",
+    "gpt-image"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Kada Liao",
+    "url": "https://github.com/kadaliao"
+  }
+}

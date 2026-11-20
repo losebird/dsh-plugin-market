@@ -1,0 +1,25 @@
+{
+  "id": "kadaliao-dsh-bots",
+  "name": "Bots",
+  "type": "bundle",
+  "repo": "kadaliao/dsh-bots",
+  "spec": "@kadaliao/dsh-bots",
+  "description": "Grok 式 bot 团队：每个 bot 有自己的人设、模型、技能、记忆和定时任务，调度员把工作派成任务，看板跟踪每件事，飞书、Telegram、Slack、Discord 里也能派活。",
+  "longDescription": "一键雇用现成团队（一人公司、研发小队、内容工作室、研究台），每个 bot 有自己的人设、头像、模型、技能、能力、应用和定时任务，还有自己的记忆：每个任务后自动总结，每晚和团队的共享笔记一起整理。\n\nbot 之间私信协作，同一个调度员把工作分派给各团队的负责人；每件分派出去的工作都是一个任务，在自己的会话里进行，结果回到发起它的那个聊天。看板把你交给团队的每件事做成卡片，按项目归档，打了标签的 GitHub issue 也会变成卡片。\n\n复用 Harness 已装的技能，可以从 GitHub 或本地文件夹导入技能，从 Codex、Claude Code、Cursor 导入 MCP 服务。bot 可以用自定义端点或 Codex CLI 的 ChatGPT 登录；用量页按 bot、任务、日期统计 tokens 和费用。中英双语，MIT。\n\n源码与截图：https://github.com/kadaliao/dsh-bots",
+  "category": "agent",
+  "tags": [
+    "multi-agent",
+    "bots",
+    "dispatcher",
+    "kanban",
+    "memory",
+    "feishu",
+    "telegram",
+    "schedule"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Kada Liao",
+    "url": "https://github.com/kadaliao"
+  }
+}

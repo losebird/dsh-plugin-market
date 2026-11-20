@@ -1,0 +1,23 @@
+{
+  "id": "kadaliao-dsh-atlas",
+  "name": "足迹 Atlas",
+  "type": "bundle",
+  "repo": "kadaliao/dsh-atlas",
+  "spec": "@kadaliao/dsh-atlas",
+  "description": "把 macOS「照片」图库放到能放大到街道的夜色地球上：足迹、可回放的旅行航线、往年今天，模型能搜你的照片、移动地图。",
+  "longDescription": "拍过照的地方发光，缩略图从去过的地方冒出来，放大后有 3D 地形和建筑、照片里认出的店铺景点、附近的维基百科条目。旅行画成航线、可以用故事模式回放，时间轴回放这些年，每天翻出往年今天的照片。\n\n模型能搜你的照片、移动地图。底图可选夜景 OpenStreetMap、高德（国内最详细）、卫星或离线。仅限 macOS，只读访问「照片」图库，不需要 API Key。中英双语，MIT。\n\n源码：https://github.com/kadaliao/dsh-atlas",
+  "category": "fun",
+  "tags": [
+    "photos",
+    "map",
+    "globe",
+    "travel",
+    "on-this-day",
+    "macos"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Kada Liao",
+    "url": "https://github.com/kadaliao"
+  }
+}
