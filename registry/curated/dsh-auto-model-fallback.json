@@ -1,0 +1,24 @@
+{
+  "id": "dsh-auto-model-fallback",
+  "name": "自动模型切换",
+  "type": "bundle",
+  "repo": "lis212-cloud/dsh-auto-model-fallback",
+  "spec": "https://github.com/lis212-cloud/dsh-auto-model-fallback/releases/download/dsh/dsh-auto-model-fallback-1.0.1.tgz",
+  "description": "模型额度耗尽（QUOTA / ACCOUNT_QUOTA）时自动切到备用 provider 并重试当前请求，Agent 任务不中断。",
+  "longDescription": "## 它做什么\n\n监听 `agent/request-error`，当失败码是 `QUOTA` 或 `ACCOUNT_QUOTA` 时：先让下游监听器（如 dsh-llm-retry）处理，仍未恢复则按 `fallbackModels` 优先级列表挑一个可用备用模型，`agentDefaultModel.saveSelection()` 切换会话默认模型，注入一条 developer 消息告知 Agent，然后返回 `{ kind: 'retry' }` 重发当前请求。\n\n## 能力边界\n\n- 只处理 `QUOTA`、`ACCOUNT_QUOTA` 两类失败，不处理 429 限流、401 鉴权、超时、5xx。\n- 无图形化配置面板，配置写 `cordis.patch.yml`。\n- 切换后不自动切回，额度恢复需手动改回默认模型。\n- 单步骤最多切换 `maxAttempts`（默认 3）次，防死循环。\n\n## 配置示例\n\n```yaml\n- insert:\n    - id: auto-model-fallback\n      name: '@lis212-cloud/dsh-auto-model-fallback'\n      config:\n        fallbackModels:\n          - provider: deepseek\n            model: deepseek-chat\n          - provider: volcengine\n            model: doubao-seed-1-6-flash-250616\n        quotaCodes: [QUOTA, ACCOUNT_QUOTA]\n        notify: true\n        maxAttempts: 3\n```",
+  "tags": [
+    "model",
+    "fallback",
+    "quota",
+    "reliability",
+    "provider"
+  ],
+  "category": "agent",
+  "license": "MIT",
+  "author": {
+    "name": "lis212-cloud",
+    "url": "https://github.com/lis212-cloud"
+  },
+  "version": "v1.0.1",
+  "source": "curated"
+}
