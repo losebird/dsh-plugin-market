@@ -122,7 +122,7 @@ test('MARKET_VERSION matches package.json', () => {
   const m = clientJs.match(/const MARKET_VERSION = '([^']+)'/)
   assert.ok(m, 'MARKET_VERSION')
   assert.equal(m[1], pkg.version)
-  assert.equal(pkg.version, '0.1.67')
+  assert.equal(pkg.version, '0.1.68')
 })
 
 test('helpDownloadUrl: pack zip, dsh-tui homepage, unverified repo releases', () => {

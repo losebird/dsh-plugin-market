@@ -296,7 +296,9 @@ window.__ModuleLoader__.load({
     const { useState, useEffect } = React
     const h = React.createElement
 
-    const MARKET_VERSION = '0.1.67'
+    const MARKET_VERSION = '0.1.68'
+    const LIST_CLIENT_TIMEOUT_MS = 20000
+    const CURATED_TIMEOUT_MS = 8000
 
     const CATEGORIES = {
       ui: { zh: '界面与主题', en: 'UI & Themes' },
@@ -326,7 +328,8 @@ window.__ModuleLoader__.load({
         offlineNote: '仓库已下线，无法安装', unverNote: INSTALL_COPY.zh.unverNote,
         typeBundle: 'DSH 插件', typePack: '扩展包', downloads: '下载量', stars: '星标',
         loading: '加载中…', empty: '没有匹配的插件', emptyFilter: '没有匹配的插件（{filter}）',
-        sourceRemote: 'registry 实时', sourceDemo: '演示数据',
+        sourceRemote: 'registry 实时', sourceDemo: '演示数据', sourceFallback: '备用源',
+        loadFailed: '加载失败', loadTimeout: '加载超时', retry: '重试',
         pagerPrev: '上一页', pagerNext: '下一页', page: '第 {p}/{total} 页',
         detailBtn: '详情', back: '返回', readmeLoading: '加载项目说明中…', readmeError: '项目说明加载失败',
         repoBtn: '查看仓库', latest: '最新',
@@ -376,7 +379,8 @@ window.__ModuleLoader__.load({
         offlineNote: 'Repo offline, cannot install', unverNote: INSTALL_COPY.en.unverNote,
         typeBundle: 'DSH plugin', typePack: 'Pack', downloads: 'Downloads', stars: 'Stars',
         loading: 'Loading…', empty: 'No matching plugins', emptyFilter: 'No matching plugins ({filter})',
-        sourceRemote: 'registry live', sourceDemo: 'demo data',
+        sourceRemote: 'registry live', sourceDemo: 'demo data', sourceFallback: 'fallback source',
+        loadFailed: 'Load failed', loadTimeout: 'Timed out', retry: 'Retry',
         pagerPrev: 'Prev', pagerNext: 'Next', page: 'Page {p}/{total}',
         detailBtn: 'Details', back: 'Back', readmeLoading: 'Loading README…', readmeError: 'Failed to load README',
         repoBtn: 'View repo', latest: 'latest',
@@ -546,9 +550,16 @@ window.__ModuleLoader__.load({
     }
 
     async function api(method, body) {
-      const res = await fetch('/plugin-market/' + method, body
-        ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }
-        : undefined)
+      const path = String(method)
+      const timeoutMs = path === 'list' || path.startsWith('list?') ? LIST_CLIENT_TIMEOUT_MS : 15000
+      const opts = { signal: AbortSignal.timeout(timeoutMs) }
+      if (body) {
+        opts.method = 'POST'
+        opts.headers = { 'content-type': 'application/json' }
+        opts.body = JSON.stringify(body)
+      }
+      const res = await fetch('/plugin-market/' + method, opts)
+      if (!res.ok) throw new Error('HTTP ' + res.status)
       return res.json()
     }
 
@@ -571,9 +582,12 @@ window.__ModuleLoader__.load({
       }
     }
 
-    async function fetchJsonViaContents(path) {
+    async function fetchJsonViaContents(path, signal) {
       try {
-        const res = await fetch(CURATED_CONTENTS + path, { headers: { Accept: 'application/vnd.github+json' } })
+        const res = await fetch(CURATED_CONTENTS + path, {
+          headers: { Accept: 'application/vnd.github+json' },
+          signal,
+        })
         if (!res.ok) return null
         const payload = await res.json()
         if (!payload || Array.isArray(payload) || typeof payload.content !== 'string') return null
@@ -584,13 +598,13 @@ window.__ModuleLoader__.load({
       }
     }
 
-    async function fetchCuratedFile(entry) {
+    async function fetchCuratedFile(entry, signal) {
       const rawUrl = entry.download_url || (CURATED_RAW + 'curated/' + entry.name)
       try {
-        const res = await fetch(rawUrl)
+        const res = await fetch(rawUrl, { signal })
         if (res.ok) return await res.json()
       } catch {}
-      return fetchJsonViaContents('registry/curated/' + encodeURIComponent(entry.name))
+      return fetchJsonViaContents('registry/curated/' + encodeURIComponent(entry.name), signal)
     }
 
     function catalogKeyOf(it) {
@@ -640,31 +654,33 @@ window.__ModuleLoader__.load({
       return items
     }
 
-    // 浏览器直连 GitHub：大神手作不依赖 host all.json 缓存
+    // 浏览器直连 GitHub：大神手作不依赖 host all.json 缓存（有界超时，不阻塞首屏列表）
     async function loadLiveCurated() {
+      const signal = AbortSignal.timeout(CURATED_TIMEOUT_MS)
       try {
         let indexItems = []
         try {
-          const indexRes = await fetch(CURATED_RAW + 'index.json')
+          const indexRes = await fetch(CURATED_RAW + 'index.json', { signal })
           if (indexRes.ok) {
             const data = await indexRes.json()
             indexItems = (data && Array.isArray(data.items)) ? data.items : []
           }
         } catch {}
         if (indexItems.length === 0) {
-          const data = await fetchJsonViaContents('registry/index.json')
+          const data = await fetchJsonViaContents('registry/index.json', signal)
           if (data && Array.isArray(data.items)) indexItems = data.items
         }
         let fileBodies = []
         try {
           const dirRes = await fetch('https://api.github.com/repos/' + CURATED_REPO + '/contents/registry/curated', {
             headers: { Accept: 'application/vnd.github+json' },
+            signal,
           })
           if (dirRes.ok) {
             const entries = await dirRes.json()
             if (Array.isArray(entries)) {
               const jsonFiles = entries.filter((e) => e && e.type === 'file' && e.name && e.name.endsWith('.json') && e.name !== '.gitkeep')
-              fileBodies = await Promise.all(jsonFiles.map((entry) => fetchCuratedFile(entry)))
+              fileBodies = await Promise.all(jsonFiles.map((entry) => fetchCuratedFile(entry, signal)))
             }
           }
         } catch {}
@@ -694,7 +710,7 @@ window.__ModuleLoader__.load({
         items: [], installed: {}, busy: {}, copiedRepo: null, detail: null, readme: null,
         q: '', cat: null, group: 'verified', page: 0, lang: savedLang,
         view: 'market', mRows: [], mQ: '', mCat: null, mLoading: false,
-        notice: null, error: null, loading: false, source: 'demo', open: false,
+        notice: null, error: null, loading: false, loadState: 'idle', source: 'demo', open: false,
         os: 'darwin', osTab: null, job: null, helpItem: null, readmeVariants: [], readmeVariant: 'README.md', sessionId: null,
       }
       const subs = new Set()
@@ -736,29 +752,47 @@ window.__ModuleLoader__.load({
         try { localStorage.setItem('dsh-market-lang', next) } catch {}
       }
 
+      const refreshErrorMessage = (e) => {
+        const name = e && e.name
+        if (name === 'TimeoutError' || name === 'AbortError') return t('loadTimeout')
+        return String(e && e.message ? e.message : e) || t('loadFailed')
+      }
+
+      const resolveLoadState = (res) => {
+        const src = (res && res.source) || 'demo'
+        if (src === 'demo') return 'demo'
+        if (res && res.notice === '首选源不可用，已改用备用源') return 'fallback'
+        return 'remote'
+      }
+
       const refresh = async () => {
-        patch({ loading: true, error: null })
+        patch({ loading: true, error: null, loadState: 'loading' })
         try {
           const res = await api('list')
           const base = res && Array.isArray(res.items) ? res.items : []
-          let curated = []
-          try {
-            curated = await loadLiveCurated()
-          } catch {
-            curated = []
-          }
-          const items = curated.length ? overlayCatalog(base, curated) : base
+          const collapsed = collapsePackageOwnerDuplicates(base, { preferCurated: true })
           patch({
-            items,
+            items: collapsed,
             installed: (res && res.installed && typeof res.installed === 'object') ? res.installed : {},
             source: (res && res.source) || 'demo',
             notice: (res && res.notice) || null,
             os: (res && res.os) || 'darwin',
             loading: false,
+            loadState: resolveLoadState(res),
           })
+          loadLiveCurated().then((curated) => {
+            if (!curated || curated.length === 0) return
+            const merged = collapsePackageOwnerDuplicates(overlayCatalog(collapsed, curated), { preferCurated: true })
+            patch({ items: merged })
+          }).catch(() => {})
           await loadInstalled()
         } catch (e) {
-          patch({ loading: false, error: String(e && e.message ? e.message : e) })
+          const err = refreshErrorMessage(e)
+          if (store.items.length > 0) {
+            patch({ loading: false, loadState: 'error', error: err })
+          } else {
+            patch({ items: [], loading: false, loadState: 'error', error: err })
+          }
           await loadInstalled()
         }
       }
@@ -1403,7 +1437,10 @@ window.__ModuleLoader__.load({
             if (props && typeof props.close === 'function') props.close()
             patch({ open: true, detail: null })
             loadInstalled()
-            if (st.items.length === 0 && !st.loading) refresh()
+            if (st.items.length === 0) {
+              patch({ loading: true, loadState: 'loading' })
+              refresh()
+            }
           }, [currentSid])
           return h('div', { className: 'dshm-root' },
             h('button', {
@@ -1412,7 +1449,10 @@ window.__ModuleLoader__.load({
                 if (props && typeof props.close === 'function') props.close()
                 patch({ open: true, detail: null })
                 loadInstalled()
-                if (st.items.length === 0 && !st.loading) refresh()
+                if (st.items.length === 0) {
+                  patch({ loading: true, loadState: 'loading' })
+                  refresh()
+                }
               },
             },
               h('span', { className: 'dshm-launch-title' },
@@ -1557,7 +1597,7 @@ window.__ModuleLoader__.load({
           const qTrim = (st.q || '').trim()
           const qv = normSearch(qTrim)
           const searchActive = qTrim.length > 0
-          const catalog = collapsePackageOwnerDuplicates(st.items, { preferCurated: true })
+          const catalog = st.items
           let base = catalog
           if (searchActive) {
             base = catalog
@@ -1602,8 +1642,8 @@ window.__ModuleLoader__.load({
                     onClick: () => { patch({ view: 'manage' }); loadInstalled() },
                   }, t('viewManage') + ' ' + st.mRows.length),
                 ),
-                (st.error || st.notice)
-                  ? h('div', { className: 'dshm-strip ' + (st.error ? 'dshm-strip-err' : 'dshm-strip-ok') }, st.error || st.notice)
+                (st.error || st.notice || st.loadState === 'loading')
+                  ? h('div', { className: 'dshm-strip ' + (st.error ? 'dshm-strip-err' : (st.loadState === 'loading' ? '' : 'dshm-strip-ok')) }, st.error || (st.loadState === 'loading' ? t('loading') : st.notice))
                   : null,
                 st.view === 'manage'
                   ? ManageView(st)
@@ -1616,6 +1656,9 @@ window.__ModuleLoader__.load({
                             : null,
                         ),
                         h('button', { className: 'dshm-btn dshm-btn-ghost', onClick: () => refresh() }, st.loading ? t('refreshing') : t('refresh')),
+                        st.loadState === 'error'
+                          ? h('button', { className: 'dshm-btn dshm-btn-primary dshm-btn-sm', onClick: () => refresh() }, t('retry'))
+                          : null,
                       ),
                       h('div', { className: 'dshm-seg' },
                         h('button', { className: 'dshm-seg-btn' + (st.group === 'verified' ? ' on' : ''), onClick: () => patch({ group: 'verified', cat: null, page: 0 }) }, t('tabVerified') + ' ' + vCount),
@@ -1636,6 +1679,8 @@ window.__ModuleLoader__.load({
                         : null,
                       st.loading
                         ? h('div', { className: 'dshm-empty' }, t('loading'))
+                        : (st.loadState === 'error' && filtered.length === 0)
+                          ? h('div', { className: 'dshm-empty' }, st.error || t('loadFailed'))
                         : filtered.length === 0
                           ? h('div', { className: 'dshm-empty' }, searchActive
                               ? t('empty')
@@ -1666,7 +1711,11 @@ window.__ModuleLoader__.load({
                 h('div', { className: 'dshm-head' },
                   h('div', { className: 'dshm-title' }, t('title')),
                   h('div', { className: 'dshm-head-badges' },
-                    h('span', { className: 'dshm-pill' }, st.source === 'remote' ? t('sourceRemote') : t('sourceDemo')),
+                    h('span', { className: 'dshm-pill' },
+                      st.loadState === 'loading' ? t('loading')
+                        : st.loadState === 'error' ? t('loadFailed')
+                        : st.loadState === 'fallback' ? t('sourceFallback')
+                        : (st.loadState === 'demo' || st.source === 'demo') ? t('sourceDemo') : t('sourceRemote')),
                     h('span', { className: 'dshm-slogan' }, 'Everything is a Plugin.'),
                   ),
                   h('span', { className: 'dshm-ver', title: '@ace-zone/dsh-market' }, MARKET_VERSION),
