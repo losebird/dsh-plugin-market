@@ -1,0 +1,18 @@
+{
+  "id": "dsh-better-tips",
+  "name": "Better Tips",
+  "type": "bundle",
+  "repo": "HakureiMonika/dsh-better-tips",
+  "spec": "dsh-better-tips",
+  "description": "补充 DSH 报错排查信息（异常原因链、关键响应头和限长错误正文），并提供次数受限的额外重试与一键排障报告",
+  "license": "MIT",
+  "author": {
+    "name": "HakureiMonika",
+    "url": "https://github.com/HakureiMonika"
+  },
+  "version": "v0.13.2",
+  "longDescription": "**dsh-better-tips** 在对话中补充 DSH 报错的排查信息，并提供次数受限的额外重试。\n\n- **更清楚的报错与排查建议**：还原失败请求的异常原因链（如 `SocketError: other side closed [UND_ERR_SOCKET]`）、关键 HTTP 响应头和限长错误正文（默认最多 4096 字符），与 DSH 原生报错并排展示。\n- **没有证据时不遮挡原生错误**：没有可用的底层捕获时，直接显示原生报错和完整错误复制入口。\n- **失败重试**：普通请求每步、上下文压缩请求每次默认各额外重试 2 次，可分别配置，设为 0 即关闭。\n- **压缩失败可见**：自动与手动 `/compact` 失败都会在对话中显示，附带已取得的模型、用量和网络诊断信息。\n- **一键复制排障报告**：汇总错误、模型、耗时和已启用的第三方插件版本。\n- **日志切片**：按事件位置查看原始日志及相邻记录。\n- **跟随 DSH 中英文**：界面文案自动切换，上游原始错误不翻译。\n\n兼容 DSH `>=0.2.2-rc.2 <0.3.0`、Node.js `>=24.9.0`；已在 Windows + DSH 0.2.2-rc.3 验证，Linux/macOS 尚未实机验证。额外重试会产生真实请求费用；网络证据有长度上限且仅保存在当前进程内。",
+  "tags": ["error", "diagnostics", "retry", "troubleshooting", "logs"],
+  "package": "dsh-better-tips",
+  "source": "curated"
+}
