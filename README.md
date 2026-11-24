@@ -6686,6 +6686,7 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [tongflow-app](https://github.com/tong-io/tongflow) TongFlow — Agent-Human-Friendly, Modality-First, Enterprise-Level GenAI Workflow Platform ⭐ 1.0k ⬇ 1.4k · 未验证 · 手动安装 · v1.1.1
 - [modsearch](https://github.com/liustack/modsearch) The strongest free web search plugin for coding agents. Plug-in web search, X search, and  ⭐ 1.0k ⬇ 0 · 手动安装 · v5.10.14
 - [phi](https://github.com/pulseaiclub/phi) A fast coding agent, rpc plugin, sub-agents, sloppy edits, and mcp ⭐ 1.0k ⬇ 73 · 未验证 · 官方脚本安装 · v0.10.0
+- [OpenWrite 小说创作](https://github.com/LiPu-jpg/Openwrite) OpenWrite 长篇小说创作工作台：统一创作 Agent 预设 + 原生工作台，含大纲与人物设定、正文批注与版本锁、六域审稿 DAG、本地向量检索与 EPUB 成书导出。 ⭐ 1.0k ⬇ 5.9k · v0.2.40
 - [dsh-handbook](https://github.com/Electricitysheep/dsh-handbook) DeepSeek Harness (dsh) 从 0 到 1 深度手册：安装/插件开发/性能调优/实测案例/同模型多 Agent 实测对比（中文 + 英文 PDF） ⭐ 994 ⬇ 11 · 未验证 · 手动安装 · v1.8.0
 - [wesight](https://github.com/freestylefly/wesight) AI-Powered WeChat Intelligence ⭐ 975 ⬇ 7.3k · 未验证 · 手动安装 · v1.0.12
 - [agy-staff](https://github.com/keli-wen/agy-staff) Hire Google's Antigravity CLI (agy) as a fast Gemini staffer for Claude Code, OpenAI Codex ⭐ 914 ⬇ 0 · 手动安装 · v0.9.3
@@ -8069,7 +8070,6 @@ dsh web   # 重启后侧栏 Settings 旁常驻「插件市场」按钮
 - [ag-dsh-coding-plugins](https://github.com/AlphaGodzilla/ag-dsh-coding-plugins) DeepSeek Harness (DSH) coding-plugins monorepo: independent TypeScript plugin packages und ⭐ 1 ⬇ 0 · 未验证 · 手动安装
 - [dsh-auto-review](https://github.com/PerryLink/dsh-auto-review) Second-model AI auto-review on the DSH approval chain: a read-only reviewer subagent retur ⭐ 0 ⬇ 0
 - [dsh-hooks-pack](https://github.com/chenzhi-clude/dsh-hooks-pack) One-click Claude Code & Codex hooks for DeepSeek Harness: auto-discovers your existing ~/. ⭐ 0 ⬇ 0
-- [OpenWrite 小说创作](https://github.com/LiPu-jpg/Openwrite) 小说创作工作台：创作预设、大纲与人物管理、正文批注和审稿流程。 ⭐ 0 ⬇ 0 · 0.2.9
 - [dsh-plugin-agent-groups](https://github.com/flowfire/dsh-plugin-agent-groups) 把多个 DSH 会话组织成协作群，只转达每轮最终输出并按时间线合并投递。 ⭐ 0 ⬇ 0 · 0.1.1
 - [dsh-persona-plugin](https://github.com/gulagala001/dsh-persona-plugin) 创建、导入和管理人格预设，支持全局与单会话选择。 ⭐ 0 ⬇ 0
 - [DSH Workflow](https://github.com/gulagala001/dsh-workflow) 为 DSH 提供可恢复的 JavaScript 工作流、原生子智能体、嵌套调用、token 预算和 worktree 隔离。 ⭐ 0 ⬇ 0 · 0.1.1-dsh.0.2.1-rc.2

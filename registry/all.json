@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-23T16:24:44.429Z",
+  "updatedAt": "2026-11-24T09:27:38.680Z",
   "items": [
     {
       "id": "rea-agents",
@@ -5236,6 +5236,42 @@
       "source": "auto",
       "auto": true,
       "category": "agent"
+    },
+    {
+      "id": "dsh-openwrite",
+      "name": "OpenWrite 小说创作",
+      "type": "bundle",
+      "repo": "LiPu-jpg/Openwrite",
+      "package": "dsh-openwrite",
+      "spec": "dsh-openwrite@latest",
+      "version": "v0.2.40",
+      "author": {
+        "name": "LiPu-jpg",
+        "url": "https://github.com/LiPu-jpg"
+      },
+      "description": "OpenWrite 长篇小说创作工作台：统一创作 Agent 预设 + 原生工作台，含大纲与人物设定、正文批注与版本锁、六域审稿 DAG、本地向量检索与 EPUB 成书导出。",
+      "longDescription": "DeepSeek Harness 上的长篇小说创作套件：结构化设定库（角色、世界观、分卷大纲）、Vditor 正文工作台与逐章版本锁、六域审稿 DAG、多模型盲测、本地 FastEmbed 向量检索与 EPUB 成书导出，内置统一创作 Agent 预设与 56 个 novel_* 工具。\n\n安装走 npm 预编译包（dsh-openwrite@latest），与 GitHub Release 的同名 .tgz 是同一份 CI 验收产物，不需要在安装时执行 prepare 构建。latest 只在执行安装或升级时解析，运行中不会自动替换正在运行的服务。\n\n兼容宿主（精确版本）：0.1.2-rc.1、0.1.5-alpha.1、0.1.7-rc.2、0.2.0-rc.2、0.2.1-rc.2、0.2.1-rc.3、0.2.1-rc.4、0.2.1-rc.5、0.2.2-rc.1、0.2.2-rc.2、0.2.2-rc.3；需要 Node.js >= 22.19，平台覆盖 macOS arm64/x64、Linux x64、Windows x64。本条目版本字段对应已核验的 0.2.40，升级前请核对目标 Release 的宿主兼容范围。\n\n权限与风险：作品目录、设定文件与 API 凭据保存在作者自选的本地目录；首次启动会下载固定版本的 uv 与 Python 3.12 及锁定依赖；插件会管理自己的子进程（uv/Python 与回环后端），读写作者选定的工作目录，并在用户发起任务时访问其配置的服务商。工具策略不是操作系统沙箱。卸载默认保留作品、凭据与历史，清缓存是单独操作。",
+      "tags": [
+        "小说",
+        "长篇小说",
+        "写作",
+        "大纲",
+        "人物设定",
+        "世界观",
+        "审稿",
+        "EPUB"
+      ],
+      "category": "agent",
+      "license": "Apache-2.0",
+      "downloads": 5879,
+      "stars": 1004,
+      "releasedAt": "2026-11-19T03:42:51Z",
+      "source": "curated",
+      "verified": true,
+      "install": {
+        "method": "dsh-plugin-add",
+        "source": "curated"
+      }
     },
     {
       "id": "todd-dsh-tui-harness",
@@ -311860,8 +311896,8 @@
         "presets": []
       },
       "category": "skills",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "pack"
       }
@@ -311886,7 +311922,8 @@
         "obj",
         "stl",
         "step",
-        "cad"
+        "cad",
+        "llm"
       ],
       "category": "tools",
       "source": "curated",
@@ -311918,8 +311955,8 @@
         "name": "LFY-bot",
         "url": "https://github.com/LFY-bot"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -311947,8 +311984,8 @@
         "gemini",
         "copilot"
       ],
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312283,8 +312320,8 @@
         "name": "chenzhi-clude",
         "url": "https://github.com/chenzhi-clude"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312304,6 +312341,7 @@
       "version": "v0.2.4",
       "longDescription": " pi、opencode、codex、claude-code 的会话、聊天记录与 agent 导入 DeepSeek Harness（dsh）。导入的会话出现在会话列表，可携带完整上下文继续对话；自定义 agent 与模式提示词变成可发现的 dsh skills；composer 里的一键 同步 按钮即可完成全部导入。",
       "tags": [
+        "agents",
         "codex",
         "claude",
         "opencode",
@@ -312311,8 +312349,8 @@
       ],
       "package": "dsh-import-agents",
       "category": "session",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312392,37 +312430,7 @@
         "url": "https://github.com/hxlog"
       },
       "version": "1.0.2",
-      "verified": true,
       "source": "curated",
-      "install": {
-        "method": "dsh-plugin-add"
-      }
-    },
-    {
-      "id": "dsh-openwrite",
-      "name": "OpenWrite 小说创作",
-      "type": "bundle",
-      "repo": "LiPu-jpg/Openwrite",
-      "spec": "dsh-openwrite@latest",
-      "version": "0.2.9",
-      "description": "小说创作工作台：创作预设、大纲与人物管理、正文批注和审稿流程。",
-      "longDescription": "为 DeepSeek Harness web profile 提供小说创作工作台。作品保存在作者选择的本地目录，支持大纲、人物、正文批注与审稿流程。\n\n首次使用下载并校验隔离 Python 环境，启动带实例认证的回环后端；不需要修改系统 Python。模型生成与评审使用用户配置的服务商，会产生相应 API 费用；安装与健康检查不调用写作模型。\n\n推荐宿主 dsh 0.1.2-rc.1。macOS arm64/x64、Linux x64、Windows x64 原生验收见 Release 的 release-acceptance.json。0.1.5-alpha.1 仅按 docs/DSH_STORE.md 记录的依赖图验证。真实模型测量 not-run。\n\n本条目通过 npm latest 安装预编译包，不依赖 GitHub 源码安装时的 prepare。latest 在执行安装/升级时解析；运行中不会自动更新。版本字段和验收记录对应已核验的 0.2.9，升级前请核对目标 Release 的宿主兼容范围。插件会下载依赖、读写选定作品并管理自身子进程；工具策略不是操作系统沙箱。卸载默认保留作品与历史。",
-      "tags": [
-        "小说",
-        "写作",
-        "大纲",
-        "人物",
-        "批注",
-        "审稿"
-      ],
-      "category": "agent",
-      "license": "Apache-2.0",
-      "author": {
-        "name": "LiPu-jpg",
-        "url": "https://github.com/LiPu-jpg"
-      },
-      "source": "curated",
-      "package": "dsh-openwrite",
       "verified": true,
       "install": {
         "method": "dsh-plugin-add"
@@ -312499,6 +312507,7 @@
       "longDescription": "## 中文\n\n两个技能：\n\n- **dsh-local-plugin-authoring**：读已装插件当契约样本 → 写 package.json（main + exports）→ 宿主路由 → 客户端 `__ModuleLoader__` 注册 → 挂进 profile → 三重验收。\n- **dsh-plugin-upstream-contribute**：读上游 CONTRIBUTING 判断能否直接 PR → 按 ISSUE_TEMPLATE 查重与写正文 → 提交并回读核验。\n\n安装后落在 `~/.agents/skills/<id>/`。\n\n## English\n\nTwo skills:\n\n- **dsh-local-plugin-authoring**: read an installed plugin as the contract sample, write `package.json` (main + exports), register host routes, mount client slots via `__ModuleLoader__`, wire the profile, then verify in three ways.\n- **dsh-plugin-upstream-contribute**: read the upstream CONTRIBUTING to decide whether a direct PR is allowed, dedupe and draft by its ISSUE_TEMPLATE, submit, then read back to verify.\n\nInstalls under `~/.agents/skills/<id>/`.",
       "tags": [
         "skill",
+        "plugin",
         "contribution"
       ],
       "category": "skills",
@@ -312605,8 +312614,8 @@
         "name": "MengYuil",
         "url": "https://github.com/MengYuil"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312637,8 +312646,8 @@
       ],
       "package": "dsh-projects",
       "category": "ui",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312665,8 +312674,8 @@
         "name": "huaguoxingkong",
         "url": "https://github.com/huaguoxingkong"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312722,8 +312731,8 @@
         "name": "lcy362",
         "url": "https://github.com/lcy362"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312746,6 +312755,7 @@
         "session",
         "sidebar",
         "categories",
+        "ai",
         "i18n",
         "productivity"
       ],
@@ -312815,8 +312825,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312839,8 +312849,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312863,8 +312873,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312892,8 +312902,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312916,8 +312926,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312942,8 +312952,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312966,8 +312976,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -312995,8 +313005,8 @@
         "name": "gulagala001",
         "url": "https://github.com/gulagala001"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -313047,8 +313057,8 @@
         "name": "klarkxy",
         "url": "https://github.com/klarkxy"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -313111,8 +313121,8 @@
         "name": "zhule33-cmyk",
         "url": "https://github.com/zhule33-cmyk"
       },
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
@@ -313138,8 +313148,8 @@
         "merit"
       ],
       "longDescription": "工作间隙敲一敲、攒一攒\"功德\"。\n\n点击木鱼即敲击，鼠标按住木鱼移动可随意拖拽，刷新页面不丢进度，其他的留给大家自由探索～",
-      "verified": true,
       "source": "curated",
+      "verified": true,
       "install": {
         "method": "dsh-plugin-add"
       }
