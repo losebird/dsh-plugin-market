@@ -6,7 +6,7 @@
   "spec": "https://github.com/xuxugei07/DeepSchedule/releases/download/DeepSchedule-V1.0.4/DeepSchedule-V1.0.4-Basic.zip",
   "version": "v1.0.4",
   "description": "桌面上趴着的鲸鱼娘：单击看今天的课，双击碎碎念 + 报余额，连敲八下暴走",
-  "longDescription": "把课程表变成一只趴在桌面右下角的鲸鱼娘。\n\n**能做什么**\n\n- 单击：弹出本周课程表（支持 xlsx / xls / 教务系统 html / csv 导入）\n- 双击：随机一句碎碎念，并显示 DeepSeek 账户余额（低于 5 元会喊饿）\n- 连敲 8 下：暴走（收起所有窗口 + 竖向弹跳 + 循环音效），再敲 8 下恢复\n- 右键：今日课程 / 一起画画 / 换肤 / 导入皮肤 / 导入课表 / 设置周次 / 边框颜色\n- 拖动换位置，全屏应用时自动隐藏\n\n**附带技能**：`deepschedule` —— 装好后 agent 也能回答「今天有什么课」。\n\n**凭据用途**：双击时会读本机 `~/.dsh/.credentials.yaml` 中 `deepseek-account-platform/default` 的 token，仅用于调用 DeepSeek 官方余额接口取一个数字，不上传、不存储、不发给第三方；`config.json` 里 `\"balance\": false` 可关闭。除该接口外桌宠不联网。\n\n**许可分层**：代码 MIT；美术资源（立绘/皮肤）CC BY-NC-SA 4.0，禁止商用，署名链见包内 `NOTICE.md`。市场安装的是 Basic 资产，**不含任何第三方音频**；想听视频原声请下 Releases 里的 `-Original`（非商业，音轨版权归原视频作者）。\n\n**版本**：Basic（本条目）／Minimal（仅课表）／Original（带原声）／SD（带 SeekPainting 绘画技能）四份资产都在 Releases 里。",
+  "longDescription": "把课程表变成一只趴在桌面右下角的鲸鱼娘。\n\n**能做什么**\n\n- 单击：弹出本周课程表（支持 xlsx / xls / 教务系统 html / csv 导入）\n- 双击：随机一句碎碎念，并显示 DeepSeek 账户余额（低于 5 元会喊饿）\n- 连敲 8 下：暴走（收起所有窗口 + 竖向弹跳 + 循环音效），再敲 8 下恢复\n- 右键：今日课程 / 一起画画 / 换肤 / 导入皮肤 / 导入课表 / 设置周次 / 边框颜色\n- 拖动换位置，全屏应用时自动隐藏\n\n**附带技能**：`deepschedule` —— 装好后 agent 也能回答「今天有什么课」。\n\n**凭据用途**：双击时会读本机 `~/.dsh/.credentials.yaml` 中 `deepseek-account-platform/default` 的 token，仅用于调用 DeepSeek 官方余额接口取一个数字，不上传、不存储、不发给第三方；`config.json` 里 `\"balance\": false` 可关闭。除该接口外桌宠不联网。\n\n**许可分层**：代码 MIT；美术资源（立绘/皮肤）CC BY-NC-SA 4.0，禁止商用，署名链见包内 `NOTICE.md`。市场安装的是 Basic 资产，**不含任何第三方音频**；想听视频原声请下 Releases 里的 `-Original`（非商业，音轨版权归原视频作者）。\n\n**版本**：Basic（本条目）／Minimal（仅课表）／SD（附带 SeekPainting 绘画技能）。三者**均不含任何第三方音频**；旧 Original 版因音轨版权属于他人视频，已停止分发。",
   "category": "fun",
   "tags": [
     "desktop-pet",
