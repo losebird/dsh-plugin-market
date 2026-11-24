@@ -6,7 +6,7 @@ import { readFile, writeFile, mkdir, rm, readdir, stat } from 'node:fs/promises'
 import { marked } from 'marked'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
-import { catalogFromParsed, registryUrls, REGISTRY_TIMEOUT_MS } from './registry-load.mjs'
+import { registryUrls, loadRegistryCatalog, registryNotice } from './registry-load.mjs'
 
 // DSH ≥0.1.7 / 0.2.x: launcher provides profileContext on the host (name is
 // the --profile value). DSH_PROFILE is only injected into shell children
@@ -209,23 +209,9 @@ function validBundleSpec(s) {
 async function list() {
   const state = await readState()
   const installed = state.installed && typeof state.installed === 'object' ? state.installed : {}
-  let items = null
-  let source = 'demo'
-  let notice = null
-  // Shop copy first, then raw GitHub. Env override wins if set. 8s timeout per URL.
-  for (const url of registryUrls({ envUrl: process.env.DSH_MARKET_REGISTRY })) {
-    try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(REGISTRY_TIMEOUT_MS) })
-      if (!res.ok) continue
-      const got = catalogFromParsed(await res.json())
-      if (got) {
-        items = got
-        source = 'remote'
-        break
-      }
-    } catch {}
-  }
-  if (!items) notice = '远程 registry 暂不可用，已回退演示数据'
+  const catalog = await loadRegistryCatalog({ urls: registryUrls({ envUrl: process.env.DSH_MARKET_REGISTRY }) })
+  const { items, source, attempts } = catalog
+  const notice = registryNotice({ items, attempts })
   const finalItems = items || DEMO_ITEMS
   // 手动安装（dsh plugin add）识别：profile 依赖/bundles 里有这个包名 → 标记已安装
   const manifest = await readProfileManifest()
@@ -240,7 +226,7 @@ async function list() {
       installed[it.id] = { type: 'bundle', spec: it.spec || '', package: it.package, source: 'other', profile: otherMap.get(it.package)[0] }
     }
   }
-  return { source, notice, items: finalItems, installed, os: process.platform }
+  return { source, notice, items: finalItems, installed, os: process.platform, attempts }
 }
 
 async function performInstall(args, job) {
