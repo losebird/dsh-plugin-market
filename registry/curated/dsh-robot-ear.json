@@ -3,8 +3,8 @@
   "name": "机器人耳朵",
   "type": "bundle",
   "repo": "qiumingzhi2006-web/dsh-robot-ear",
-  "spec": "https://github.com/qiumingzhi2006-web/dsh-robot-ear/releases/download/v0.1.0/dsh-robot-ear-0.1.0.tgz",
-  "version": "v0.1.0",
+  "spec": "https://github.com/qiumingzhi2006-web/dsh-robot-ear/releases/download/v0.1.1/dsh-robot-ear-0.1.1.tgz",
+  "version": "v0.1.1",
   "author": {
     "name": "qiumingzhi2006-web",
     "url": "https://github.com/qiumingzhi2006-web"
