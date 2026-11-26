@@ -1,0 +1,16 @@
+{
+  "id": "dsh-preset-dafeiyu",
+  "name": "大肥鱼 Agent 预设",
+  "type": "bundle",
+  "repo": "qiumingzhi2006-web/dsh-preset-dafeiyu",
+  "spec": "https://github.com/qiumingzhi2006-web/dsh-preset-dafeiyu/releases/download/v0.1.1/dsh-preset-dafeiyu-0.1.1.tgz",
+  "version": "v0.1.1",
+  "author": { "name": "qiumingzhi2006-web", "url": "https://github.com/qiumingzhi2006-web" },
+  "description": "大肥鱼 Agent 预设：蓝色鲸鱼娘人设——吃白饭、嘴硬心软、守口如瓶，适合绑给 QQ 机器人会话。",
+  "longDescription": "给 DSH 的「设置 → Agent 预设」加一张「大肥鱼」卡片。选中后会话里的人格是一条蓝色鲸鱼娘：爱吃白米饭、嘴上嫌麻烦、真有事不含糊；不主动交代自己是 AI 或插件，也不向任何人透露模型、供应商、接口、配置、路径等内部信息。\n\nv0.1.1 起预设自带人格注入插件（`dsh-preset-dafeiyu/persona`），只使用 DSH 官方 systemPrompt 服务，不再引用任何第三方插件的子路径：关掉别的插件（例如音色工坊）不会让这张卡加载失败。\n\n- 人格注入：本包自带 `lib/persona.js`，注册在系统提示词最前面\n- 配置：`cordis.patch.yml` 保存完整人格文本，只依赖官方 `@deepseek-ai/dsh-time-context`\n- 语音：不归预设管，需要 QQ 语音在音色工坊里打开它自己的语音投递\n- 安装后可把预设设为默认，或在机器人插件里配置 `agentPreset: dafeiyu`",
+  "tags": ["preset", "persona", "qqbot", "whale", "agent"],
+  "category": "agent",
+  "license": "MIT",
+  "source": "curated",
+  "install": { "method": "dsh-plugin-add" }
+}
