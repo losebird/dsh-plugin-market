@@ -1,0 +1,21 @@
+{
+  "id": "dsh-robot-ear",
+  "name": "机器人耳朵",
+  "type": "bundle",
+  "repo": "qiumingzhi2006-web/dsh-robot-ear",
+  "spec": "https://github.com/qiumingzhi2006-web/dsh-robot-ear/releases/download/v0.1.1/dsh-robot-ear-0.1.1.tgz",
+  "version": "v0.1.1",
+  "author": {
+    "name": "qiumingzhi2006-web",
+    "url": "https://github.com/qiumingzhi2006-web"
+  },
+  "description": "给 DSH 装一对耳朵：把视频或音频源（抖音 m3u8 直链、mp4、本地文件）喂进来，用 ffmpeg 抽出音轨，再用本地 Whisper 模型或任意 OpenAI 兼容接口转成文字。",
+  "longDescription": "把视频和音频转成文字的 DSH 插件。\n\n- 输入：抖音 m3u8 直链（自动补 Referer）、mp4 链接、本地音视频文件\n- 抽音轨：调用本机 ffmpeg\n- 转写后端二选一：本地 Whisper（onnx-community/whisper-base，不要 key、不联网）或任意 OpenAI 兼容 /v1/audio/transcriptions 接口\n- 繁体自动转简体（opencc-js）\n- 附带设置面板与三个 Agent 工具：ear_transcribe / ear_health / ear_config\n\n本地模型是可选依赖，不装也能用云端接口；装了就完全离线跑。",
+  "tags": ["asr", "whisper", "ffmpeg", "speech-to-text", "video"],
+  "category": "tools",
+  "license": "MIT",
+  "source": "curated",
+  "install": {
+    "method": "dsh-plugin-add"
+  }
+}

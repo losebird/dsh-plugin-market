@@ -1,0 +1,21 @@
+{
+  "id": "shua-douyin",
+  "name": "刷抖音",
+  "type": "bundle",
+  "repo": "qiumingzhi2006-web/shua-douyin",
+  "spec": "https://github.com/qiumingzhi2006-web/shua-douyin/releases/download/v0.1.2/shua-douyin-0.1.2.tgz",
+  "version": "v0.1.2",
+  "author": {
+    "name": "qiumingzhi2006-web",
+    "url": "https://github.com/qiumingzhi2006-web"
+  },
+  "description": "用小号在本地 Edge 窗口里读抖音推荐流，挑一条没刷过的视频写一句感想并记录结果；点赞、收藏、评论默认关闭，活跃时段、每日上限与最小间隔都可配置。",
+  "longDescription": "给 DeepSeek Harness 装上「刷抖音」的动作：用小号在本地 Edge 窗口登录抖音，打开推荐流往下刷，挑一条没看过的视频，生成一句自己的感想，并把看过哪些、写了什么记进本地记录。\n\n- 浏览与记录：默认只刷、只记，不改动账号\n- 可选动作：点赞、收藏、评论（评论带 @ 提及）默认全部关闭，开启后受每日配额与最小间隔限制\n- 节奏可控：活跃时段、每日上限、最小间隔都可配置\n- 详情页联动：可接上「机器人耳朵」把视频里的口播转成文字，再写评论\n\n浏览器自动化依赖 playwright-core 驱动本机 Edge，不会上传任何账号信息。",
+  "tags": ["douyin", "browser", "automation", "fun"],
+  "category": "fun",
+  "license": "MIT",
+  "source": "curated",
+  "install": {
+    "method": "dsh-plugin-add"
+  }
+}
